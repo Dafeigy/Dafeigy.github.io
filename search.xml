@@ -8,7 +8,33 @@
       <link href="/2020/07/31/%E9%98%BF%E8%8A%B1%E6%97%A5%E8%AE%B0/"/>
       <url>/2020/07/31/%E9%98%BF%E8%8A%B1%E6%97%A5%E8%AE%B0/</url>
       
-        <content type="html"><![CDATA[<h3 id="7-31-小雨"><a href="#7-31-小雨" class="headerlink" title="7/31  小雨"></a>7/31  小雨</h3><p>想了想还是记录一哈吧 之前的微博日记不知怎么回事就烂尾了</p><p>今天选课结果出来了，等了一年终于有选修了感动中国555</p><p>还差一门两学分的环心健就over了</p><p>下学期的课好多 而且也要开始考虑考研了</p><p>通信肯定是不会考虑的了 希望能转到计算机相关的</p><p>这次逼自己一把不知道能不能成</p><p>高考感觉已经摸到能力的顶了 还挺难平衡自身能力与理想之间的差距的哈哈哈哈</p><p>还是得努力 高考完之后懒散好多</p><p>明天早上要去游泳复健顺便饮早茶</p><p>上午的话看看Java？</p><p>中午睡个觉然后下午复习概率论晚上翻两下场论</p><p>然后就是开个新坑看看COVID-19相关的论文</p><p>游戏明天就不打了哈哈哈 如果被人发现了就steam批评我一下吼！</p>]]></content>
+        <content type="html"><![CDATA[<h3 id="7-31-小雨"><a href="#7-31-小雨" class="headerlink" title="7/31  小雨"></a>7/31  小雨</h3><p>​    想了想还是记录一哈吧 之前的微博日记不知怎么回事就烂尾了</p><p>​    今天选课结果出来了，等了一年终于有选修了感动中国555</p><p><img src="G:\BLOG\hexoblog\source_posts\IMG_5900.png"></p><p>​    还差一门两学分的环心健就over了</p><p>​    下学期的课好多 而且也要开始考虑考研了</p><p>​    通信肯定是不会考虑的了 希望能转到计算机相关的</p><p>​    这次逼自己一把不知道能不能成</p><p>​    高考感觉已经摸到能力的顶了 还挺难平衡自身能力与理想之间的差距的哈哈哈哈</p><p>​    还是得努力 高考完之后懒散好多</p><p>​    明天早上要去游泳复健顺便饮早茶</p><p>​    上午的话看看Java？</p><p>​    中午睡个觉然后下午复习概率论晚上翻两下场论</p><p>​    然后就是开个新坑看看COVID-19相关的论文</p><p>​    游戏明天就不打了哈哈哈 如果被人发现了打游戏就steam小窗批评我一下吼！</p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title></title>
+      <link href="/2020/07/31/%E3%80%90%E6%9C%AA%E3%80%91%E7%A0%B4%E8%AF%91%E9%80%A0%E7%89%A9%E5%AF%86%E7%A0%81%EF%BC%9A%E5%9F%BA%E4%BA%8E%E5%9B%BE%E7%81%B5%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%8D%95%E7%A5%9E%E7%BB%8F%E5%85%83%E7%9A%84%E4%BA%8C%E8%BF%9B%E5%88%B6%E7%94%9F%E7%89%A9%E8%A7%A3%E6%9E%84/"/>
+      <url>/2020/07/31/%E3%80%90%E6%9C%AA%E3%80%91%E7%A0%B4%E8%AF%91%E9%80%A0%E7%89%A9%E5%AF%86%E7%A0%81%EF%BC%9A%E5%9F%BA%E4%BA%8E%E5%9B%BE%E7%81%B5%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%8D%95%E7%A5%9E%E7%BB%8F%E5%85%83%E7%9A%84%E4%BA%8C%E8%BF%9B%E5%88%B6%E7%94%9F%E7%89%A9%E8%A7%A3%E6%9E%84/</url>
+      
+        <content type="html"><![CDATA[<h1 id="破译造物密码：基于图灵测试与单神经元的二进制生物解构"><a href="#破译造物密码：基于图灵测试与单神经元的二进制生物解构" class="headerlink" title="破译造物密码：基于图灵测试与单神经元的二进制生物解构"></a>破译造物密码：基于图灵测试与单神经元的二进制生物解构</h1><h3 id="（零）声明"><a href="#（零）声明" class="headerlink" title="（零）声明"></a>（零）声明</h3><p>​                <strong>本文纯属娱乐沙雕产物，以骚话居多，只负责搞笑</strong>（如果没让你笑的话我真的非常抱歉，也有可能是你半夜三更不睡觉打开网易云音乐看评论写评论过多了），<strong>不负责灌输有营养的东西</strong>。有营养的东西在书本和教学资源里，如果污染了你的知识框架的话：</p><p>​                只提供脑洞娱乐，学知识还得看书练习。</p><h3 id="（一）案例引入-Introduction"><a href="#（一）案例引入-Introduction" class="headerlink" title="（一）案例引入 Introduction"></a>（一）案例引入 Introduction</h3><p><strong>二十一世纪是生物的世纪</strong>。相信每一个浸润在<strong>完整的九年义务教育</strong>的祖国🌼都见过这句印在生物📚上的十字箴言，然而二十一世纪才刚过去20年，就目前的情况来看的话，…….生物领域的发展还是有很大的观望空间的吼！而十万八千里外的计算机科学抢占风头搞起了其中<a href="%5Bhttps://baike.baidu.com/item/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/9180?fr=aladdin%5D(https://baike.baidu.com/item/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/9180?fr=aladdin)">人工智能</a>与<a href="https://baike.baidu.com/item/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/9180?fr=aladdin">人工神经网络</a>。那么：</p><ul><li>什么是人工智能？</li><li>什么是人工神经网络？</li><li>他们有什么联系，又能用来做什么？</li><li>我怎样打造一个简单的人工智能？</li></ul><p>别急小可爱们，带着这些疑问，一起走进阿花装满奇怪知识的大脑里，一边感受脑海里的波浪滔滔，一边接受奇怪的知识。</p><h3 id="（二）脑海波浪滔滔-Waves-inside-the-brain"><a href="#（二）脑海波浪滔滔-Waves-inside-the-brain" class="headerlink" title="（二）脑海波浪滔滔 Waves inside the brain"></a>（二）脑海波浪滔滔 Waves inside the brain</h3><h5 id="首先先解决第一个问题：人工智能是什么？"><a href="#首先先解决第一个问题：人工智能是什么？" class="headerlink" title="首先先解决第一个问题：人工智能是什么？"></a>首先先解决第一个问题：人工智能是什么？</h5><p>​        这个问题我们可以用网络查询，但是请记住：<strong>二十一世纪是生物的世纪！不是计算机和网络说了算的！</strong></p><p>​        所以这里我要用<strong>生物学的方法</strong>来解决问题，希望大家也能学我这样用生物的方法来解决问题，不要过度依赖计算机与网络，不然你就会和我一样成为一条天天在宿舍打怪物猎人联机摸鱼还嫌弃队友菜的懒狗。回归正题，怎么利用生物学的知识解决问题呢？首先生物学法有一种观察描述的方法，我们就可以利用这个方法解决这个问题。</p><p>​        考虑“人工智能”的组成：形容词<strong>“人工”</strong>与名词<strong>“智能”</strong>。人工，就是人力创造的意思，智能，则是对事物</p><h3 id="（三）代码实现-Code-comes-into-reality"><a href="#（三）代码实现-Code-comes-into-reality" class="headerlink" title="（三）代码实现 Code comes into reality"></a>（三）代码实现 Code comes into reality</h3><h3 id="（四）产品呈现-Product-display"><a href="#（四）产品呈现-Product-display" class="headerlink" title="（四）产品呈现 Product display"></a>（四）产品呈现 Product display</h3><h2 id=""><a href="#" class="headerlink" title=""></a></h2>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title></title>
+      <link href="/2020/07/31/%E3%80%90%E6%9C%AA%E3%80%91%E4%BB%8E%E6%87%92%E7%8B%97%E5%88%B0%E6%87%92%E7%8B%97PRO%EF%BC%9A%E6%89%B9%E6%94%B9%E7%BD%91%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E7%94%9F%E4%B8%8E%E7%81%AD/"/>
+      <url>/2020/07/31/%E3%80%90%E6%9C%AA%E3%80%91%E4%BB%8E%E6%87%92%E7%8B%97%E5%88%B0%E6%87%92%E7%8B%97PRO%EF%BC%9A%E6%89%B9%E6%94%B9%E7%BD%91%E7%94%9F%E6%88%90%E5%99%A8%E7%9A%84%E7%94%9F%E4%B8%8E%E7%81%AD/</url>
+      
+        <content type="html"><![CDATA[<h1 id="从懒狗到懒狗PRO：批改网生成器的生与灭"><a href="#从懒狗到懒狗PRO：批改网生成器的生与灭" class="headerlink" title="从懒狗到懒狗PRO：批改网生成器的生与灭"></a>从懒狗到懒狗PRO：批改网生成器的生与灭</h1><h3 id="（一）情景引入"><a href="#（一）情景引入" class="headerlink" title="（一）情景引入"></a>（一）情景引入</h3><p>​        阿花是一个闷骚的笨比懒狗。他的理想生活是每天躺在床上睡觉吃零食看沙雕视频并利用他奇妙的声带在喉咙里奏响《红红火火恍恍惚惚鹅鹅鹅》奏鸣曲。不同于同龄的精英后浪在脑海里利用梯度下降法来疯狂拟合奖学金与投入时间的函数并虚空绘制函数曲线，阿花的快乐建立在学校附近小吃街寻找<del>美丽店主</del>美味食物的小资道路上，简单来说就是小资肥宅。我们一般称之为：肥怪。</p><p>​        在一个平凡的周日晚上，排练完的肥怪阿花和几个舍友去恰烧烤。无肉不欢的食肉怪兽阿花吃了很多的肉肉，在度数并不是很高的乙醇麦芽发酵物的作用下，迷失了心智，直到九点中才回到宿舍。这时候阿花遇到一个非常大的问题：</p><p>​        他忘记学校英语老师布置的<a href="http://www.pigai.org/">批改网</a>作业了。</p><p>​        <img src="C:\Users\asus-pc\AppData\Roaming\Typora\typora-user-images\image-20200731203736046.png" alt="image-20200731203736046"></p><p><code>图片展示的是这学期忘写的...期末考试的作文是系统崩溃了更换考试方式并不是没做！阿花还是想毕业的！</code></p><p>当阿花环顾四周寻求舍友帮助的时候，突然心里次楞了一下。</p>]]></content>
       
       
       
