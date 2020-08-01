@@ -29,7 +29,8 @@
 
     <script src="/libs/jquery/jquery.min.js"></script>
 
-<meta name="generator" content="Hexo 5.0.0"></head>
+<meta name="generator" content="Hexo 5.0.0"><link rel="stylesheet" href="/css/prism.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
 
 
 <body>
@@ -458,7 +459,7 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="前言-Java学习的目的"><a href="#前言-Java学习的目的" class="headerlink" title="前言   Java学习的目的"></a>前言   Java学习的目的</h2><p>任何计算机语言的学习都是循序渐进的过程。先从一开始的模仿，到明白逐个字词的意义、再到自己实践、完善，都是个不断模仿——超越的过程。万丈高楼平地起，希望能利用这个平台完善自己的代码学习。<strong>但是为什么要学Java啊我靠！Java和C++一样是那种老派风格的语言啊！各种奇怪的类和指针我要吐了555还是python友好白嫖也方便怎么学校就不开python😈</strong>不过话说回来Java泛用性很强，就这点还是值得研究的。</p>
+                <h2 id="前言-Java学习的目的"><a href="#前言-Java学习的目的" class="headerlink" title="前言   Java学习的目的"></a>前言   Java学习的目的</h2><p>谁他妈没事找事干啊！都是学校逼的！任何计算机语言的学习都是循序渐进的过程。先从一开始的模仿，到明白逐个字词的意义、再到自己实践、完善，都是个不断模仿——超越的过程。万丈高楼平地起，希望能利用这个平台完善自己的代码学习。<strong>但是为什么要学Java啊我靠！Java和C++一样是那种老派风格的语言啊！各种奇怪的类和指针我要吐了555还是python友好白嫖也方便怎么学校就不开python😈</strong>不过话说回来Java泛用性很强，就这点还是值得研究的。</p>
 <h2 id="（一）Java环境的配置"><a href="#（一）Java环境的配置" class="headerlink" title="（一）Java环境的配置"></a>（一）Java环境的配置</h2><p>Java环境的配置比较简单。</p>
 <ol>
 <li><strong>从<a target="_blank" rel="noopener" href="https://www.oracle.com/java/">官网</a>下载适用的安装包。</strong>之后一路跟着提示来安装即可。记住安装好的位置，配置环境的时候还会变量的时候还会用到。这个很简单可以摸。</li>
@@ -467,14 +468,14 @@
 </ol>
 <h2 id="（二）Java的个人理解（吐槽）"><a href="#（二）Java的个人理解（吐槽）" class="headerlink" title="（二）Java的个人理解（吐槽）"></a>（二）Java的个人理解（吐槽）</h2><p>如果学习过C++/C的话，Java上手不是很难，很多概念、语法都是相通的。但Java区别于C系列的是他的泛用性以及各种衍生。它是一种比较严谨、古典式的语言，但又不失活力。和我自学过的Python与R语言相比，Python上手容易，库比较多，学习python本质上还是学习各种库的使用；R语言是偏向统计类的编程，对大数据计算有着非常强大的运算能力，也拥有非常多的库方便运算。而Java更多应该是面向Web开发吧，暂时先写这些。Java的脚本很有用，也是我想学习的一部分，对Java 的印象还是停留在诺基亚时代的手机游戏哈哈哈，但也能印证Java在那个时代真的是扛起一片天。</p>
 <h2 id="（三）第一段代码"><a href="#（三）第一段代码" class="headerlink" title="（三）第一段代码"></a>（三）第一段代码</h2><p>首先先新建一个“Helloworld.java”的文件。文件内容如下，最好手打加深印象：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">class public Helloworld&#123;</span><br><span class="line">    public static void main(String [] args)&#123;</span><br><span class="line">        System.out.println(&quot;Hello world!&quot;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;&#x2F;&#x2F;                            屏幕显示输出为:Hello world！</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">public</span> <span class="title">Helloworld</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String [] args)</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Hello world!&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;<span class="comment">//                            屏幕显示输出为:Hello world！</span></span><br></pre></td></tr></table></figure>
 
 <p>在拿到一块代码时，我们要对他进行分割。</p>
 <p>我接触一门新的计算机语言时一般会这么解析：<strong>一行代表一个句子，一个括号</strong>（包括小括号（）、中括号[]以及大括号{}）<strong>代表句子的一层意思。</strong>先不管其他语句代表什么。我们只需要记住目前出了第三行，其他都是固定的格式。我们只关心输出那句“Hello world！”。我们在第三行的小括号内注入的内容正是“Hello world！”，那么如果我们修改了小括号的内容，最终的输出是否会改变呢？我们可以来看一下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">class public Helloworld&#123;</span><br><span class="line">    public static void main(String [] args)&#123;</span><br><span class="line">        System.out.println(&quot;Hello！&quot;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;&#x2F;&#x2F;                            屏幕显示输出为:Hello!</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">public</span> <span class="title">Helloworld</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String [] args)</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Hello！&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;<span class="comment">//                            屏幕显示输出为:Hello!</span></span><br></pre></td></tr></table></figure>
 
 <p>由此我们可见，</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">System.out.println(&quot;&quot;)</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">System.out.println(<span class="string">&quot;&quot;</span>)</span><br></pre></td></tr></table></figure>
 
 <p>这句子的作用就是输出双引号内的内容。利用拆解的方式来探索代码句子的作用，</p>
 <p><strong>好了，完成了第一段代码后可以摸鱼🐟了~</strong></p>
@@ -723,7 +724,7 @@
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            前言   Java学习的目的任何计算机语言的学习都是循序渐进的过程。先从一开始的模仿，到明白逐个字词的意义、再到自己实践、完善，都是个不断模仿——超越的过程。万丈高楼平地起，希望能利用这个平台完善自己的代码学习。但是为什么要学Java啊我靠
+                            前言   Java学习的目的谁他妈没事找事干啊！都是学校逼的！任何计算机语言的学习都是循序渐进的过程。先从一开始的模仿，到明白逐个字词的意义、再到自己实践、完善，都是个不断模仿——超越的过程。万丈高楼平地起，希望能利用这个平台完善自己的代码
                         
                     </div>
                     <div class="publish-info">
