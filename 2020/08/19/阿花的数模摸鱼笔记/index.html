@@ -476,19 +476,20 @@ statsmodels
 numpy
 scipy
 pandas
-sklearn</code></pre>
-<p>怎么安装库不用我多说了⑧？</p>
+sklearn
+</code></pre><p>怎么安装库不用我多说了⑧？</p>
 <p>pip install 或者pycharm file-&gt;setting-Project:xx-python intepreterl里 点击那个“+”寻找这些库等他下载就好了。</p>
 <p>前两个库主要是用来画图。</p>
 <p>statsmodels用来处理回归相关问题。</p>
 <p>numpy、pandas以及scipy数值处理。pandas其实也可以用来画图，但是效果没有seaborn和matplotlib的好。</p>
 <p>sklearn用来分割数据集、回归模型的拟合。</p>
 <h2 id="（二）基本思想"><a href="#（二）基本思想" class="headerlink" title="（二）基本思想"></a>（二）基本思想</h2><h3 id="1-首先是数据的处理。读取数据要看数据以什么文件呈现："><a href="#1-首先是数据的处理。读取数据要看数据以什么文件呈现：" class="headerlink" title="1.首先是数据的处理。读取数据要看数据以什么文件呈现："></a>1.首先是数据的处理。读取数据要看数据以什么文件呈现：</h3><p>具体代码有如下：</p>
-<pre class="line-numbers language-python"><code class="language-python"><span class="token keyword">import</span> pandas <span class="token keyword">as</span> pd
-<span class="token comment" spellcheck="true">#location是文件的所在目录</span>
-pd<span class="token punctuation">.</span>read_csv<span class="token punctuation">(</span>location<span class="token punctuation">)</span>    读取csv文件
-pd<span class="token punctuation">.</span>read_table<span class="token punctuation">(</span>location，sep<span class="token operator">=</span><span class="token string">''</span><span class="token punctuation">)</span>    <span class="token comment" spellcheck="true">#读取txt文件,sep用于数据的分割</span>
-pd<span class="token punctuation">.</span>read_excel<span class="token punctuation">(</span>location<span class="token punctuation">)</span>    <span class="token comment" spellcheck="true">#读取excel文件</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-lang-python"><code class="language-lang-python">import pandas as pd
+#location是文件的所在目录
+pd.read_csv(location)    读取csv文件
+pd.read_table(location，sep='')    #读取txt文件,sep用于数据的分割
+pd.read_excel(location)    #读取excel文件
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>如果不是数据的分析类而是函数建模类，第一步则是定义函数或者微分方程：</p>
 <pre><code>#定义微分方程 我这里用的是美赛的一道题的微分方程 注意微分方程的规范性
 def equal(x,y):
@@ -496,147 +497,145 @@ def equal(x,y):
     return a * b * vs * l * np.cos(angle) - 0.0016 * y
 #定义一个函数
 def fun(x):
-    return np.pi*x*x</code></pre>
-<h2 id="2-人脑分析问题"><a href="#2-人脑分析问题" class="headerlink" title="2.人脑分析问题"></a>2.人脑分析问题</h2><p>对于数据分析的问题。要明白自己要研究什么：</p>
+    return np.pi*x*x
+</code></pre><h2 id="2-人脑分析问题"><a href="#2-人脑分析问题" class="headerlink" title="2.人脑分析问题"></a>2.人脑分析问题</h2><p>对于数据分析的问题。要明白自己要研究什么：</p>
 <p>比如你研究利润和营业时间的关系那就关注营业时间而不是关注你的商品能不能一半放生一半拿来喂鱼。</p>
 <p>找到研究的对象后，可能要对研究的对象进行数据处理，减少程序处理数据的时间。</p>
 <p>对于“非黑即白之类”的分类问题可以把“是否”用0和1来表示；</p>
 <p>比如营业时间这种离散程度很大的指标，可以划分区间进行研究，比如以几分钟作为一个观察区间。</p>
 <h2 id="3-开始程序处理"><a href="#3-开始程序处理" class="headerlink" title="3.开始程序处理"></a>3.开始程序处理</h2><p>对于函数建模类，常用的操作无非是解方程、函数画图：</p>
 <p>这里给上一点自留的代码，可以新建保存文件直接白嫖起飞✈：</p>
-<pre class="line-numbers language-python"><code class="language-python"><span class="token keyword">import</span> numpy <span class="token keyword">as</span> np
-<span class="token keyword">import</span>  matplotlib<span class="token punctuation">.</span>pyplot <span class="token keyword">as</span> plt
-<span class="token keyword">from</span> scipy <span class="token keyword">import</span> integrate
-<span class="token keyword">import</span> statsmodels<span class="token punctuation">.</span>api <span class="token keyword">as</span> sm
-<span class="token keyword">import</span> pandas <span class="token keyword">as</span> pd
-<span class="token keyword">import</span> seaborn <span class="token keyword">as</span> sns
-<span class="token keyword">from</span> scipy<span class="token punctuation">.</span>stats <span class="token keyword">import</span> f
-<span class="token keyword">import</span> numpy <span class="token keyword">as</span> np
-<span class="token keyword">from</span> sklearn <span class="token keyword">import</span> linear_model
-<span class="token keyword">from</span> sklearn <span class="token keyword">import</span> model_selection
-<span class="token keyword">import</span>  matplotlib<span class="token punctuation">.</span>pyplot <span class="token keyword">as</span> plt
-<span class="token keyword">from</span> scipy <span class="token keyword">import</span> integrate
-<span class="token keyword">from</span> sklearn <span class="token keyword">import</span> model_selection
-<span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>linear_model <span class="token keyword">import</span> Ridge<span class="token punctuation">,</span>RidgeCV
-plt<span class="token punctuation">.</span>rcParams<span class="token punctuation">[</span><span class="token string">'font.sans-serif'</span><span class="token punctuation">]</span><span class="token operator">=</span><span class="token punctuation">[</span><span class="token string">'Microsoft YaHei'</span><span class="token punctuation">]</span>
-plt<span class="token punctuation">.</span>rcParams<span class="token punctuation">[</span><span class="token string">'axes.unicode_minus'</span><span class="token punctuation">]</span><span class="token operator">=</span><span class="token boolean">False</span>
-plt<span class="token punctuation">.</span>style<span class="token punctuation">.</span>use<span class="token punctuation">(</span><span class="token string">'ggplot'</span><span class="token punctuation">)</span>
-<span class="token comment" spellcheck="true">#常用的数据分析函数整合</span>
-<span class="token comment" spellcheck="true">#画图类函数至少需要两个参数（x,y）默认有先后顺序</span>
-<span class="token comment" spellcheck="true">#微分方程画图参数只需要传递函数等式名称即可</span>
-<span class="token comment" spellcheck="true">#x轴坐标</span>
-x<span class="token operator">=</span> np<span class="token punctuation">.</span>arange<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">15</span><span class="token punctuation">,</span> <span class="token number">0.01</span><span class="token punctuation">)</span>
-<span class="token comment" spellcheck="true">#已知函数</span>
-<span class="token keyword">def</span> <span class="token function">fun</span><span class="token punctuation">(</span>x<span class="token punctuation">)</span><span class="token punctuation">:</span>
-    <span class="token keyword">return</span> np<span class="token punctuation">.</span>pi<span class="token operator">*</span>x<span class="token operator">*</span>x
-<span class="token comment" spellcheck="true">#已知微分方程</span>
-<span class="token keyword">def</span> <span class="token function">equal</span><span class="token punctuation">(</span>x<span class="token punctuation">,</span>y<span class="token punctuation">)</span><span class="token punctuation">:</span>
-    l <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token number">1</span> <span class="token operator">/</span> u<span class="token punctuation">)</span> <span class="token operator">*</span> np<span class="token punctuation">.</span>exp<span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">1</span> <span class="token operator">*</span> u <span class="token operator">*</span> x<span class="token punctuation">)</span> <span class="token operator">*</span> <span class="token punctuation">(</span><span class="token punctuation">(</span>np<span class="token punctuation">.</span>exp<span class="token punctuation">(</span>u <span class="token operator">*</span> x<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">*</span> <span class="token punctuation">(</span>vf <span class="token operator">+</span> sigama <span class="token operator">*</span> b <span class="token operator">*</span> np<span class="token punctuation">.</span>sin<span class="token punctuation">(</span>angle<span class="token punctuation">)</span> <span class="token operator">*</span> vs <span class="token operator">*</span> np<span class="token punctuation">.</span>sin<span class="token punctuation">(</span>angle<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-    <span class="token keyword">return</span> a <span class="token operator">*</span> b <span class="token operator">*</span> vs <span class="token operator">*</span> l <span class="token operator">*</span> np<span class="token punctuation">.</span>cos<span class="token punctuation">(</span>angle<span class="token punctuation">)</span> <span class="token operator">-</span> <span class="token number">0.0016</span> <span class="token operator">*</span> y
+<pre class="line-numbers language-lang-python"><code class="language-lang-python">import numpy as np
+import  matplotlib.pyplot as plt
+from scipy import integrate
+import statsmodels.api as sm
+import pandas as pd
+import seaborn as sns
+from scipy.stats import f
+import numpy as np
+from sklearn import linear_model
+from sklearn import model_selection
+import  matplotlib.pyplot as plt
+from scipy import integrate
+from sklearn import model_selection
+from sklearn.linear_model import Ridge,RidgeCV
+plt.rcParams['font.sans-serif']=['Microsoft YaHei']
+plt.rcParams['axes.unicode_minus']=False
+plt.style.use('ggplot')
+#常用的数据分析函数整合
+#画图类函数至少需要两个参数（x,y）默认有先后顺序
+#微分方程画图参数只需要传递函数等式名称即可
+#x轴坐标
+x= np.arange(0, 15, 0.01)
+#已知函数
+def fun(x):
+    return np.pi*x*x
+#已知微分方程
+def equal(x,y):
+    l = ((1 / u) * np.exp(-1 * u * x) * ((np.exp(u * x)) - 1) * (vf + sigama * b * np.sin(angle) * vs * np.sin(angle)))
+    return a * b * vs * l * np.cos(angle) - 0.0016 * y
 
-<span class="token comment" spellcheck="true">#根据已知的函数解析式并画图</span>
-<span class="token keyword">def</span> <span class="token function">draw_pic</span><span class="token punctuation">(</span>x<span class="token punctuation">,</span>fun<span class="token punctuation">,</span>xlabel<span class="token operator">=</span><span class="token string">'x轴坐标'</span><span class="token punctuation">,</span>ylabel<span class="token operator">=</span><span class="token string">'y轴坐标'</span><span class="token punctuation">,</span>title<span class="token operator">=</span><span class="token string">'图标标题'</span><span class="token punctuation">,</span>legend<span class="token operator">=</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
-    <span class="token keyword">try</span><span class="token punctuation">:</span>
-        y<span class="token operator">=</span>fun
-        plt<span class="token punctuation">.</span>plot<span class="token punctuation">(</span>x<span class="token punctuation">,</span>y<span class="token punctuation">)</span>
-        plt<span class="token punctuation">.</span>title<span class="token punctuation">(</span>title<span class="token punctuation">)</span>
-        plt<span class="token punctuation">.</span>xlabel<span class="token punctuation">(</span>xlabel<span class="token punctuation">)</span>
-        plt<span class="token punctuation">.</span>ylabel<span class="token punctuation">(</span>ylabel<span class="token punctuation">)</span>
-        plt<span class="token punctuation">.</span>show<span class="token punctuation">(</span><span class="token punctuation">)</span>
-    <span class="token keyword">except</span><span class="token punctuation">:</span>
-        <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'【ERROR】\n'</span><span class="token operator">+</span><span class="token string">'【请检查最简参数模式设置是否符合如下格式】\n'</span><span class="token operator">+</span><span class="token string">'draw_pic(x,fun(x))'</span><span class="token punctuation">)</span>
-<span class="token comment" spellcheck="true">#根据已知的微分方程解方程并画图（无解西式）</span>
-<span class="token keyword">def</span> <span class="token function">draw_odient</span><span class="token punctuation">(</span>x<span class="token punctuation">,</span>equal<span class="token punctuation">,</span>init<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">,</span>xlabel<span class="token operator">=</span><span class="token string">'x轴坐标'</span><span class="token punctuation">,</span>ylabel<span class="token operator">=</span><span class="token string">'y轴坐标'</span><span class="token punctuation">,</span>title<span class="token operator">=</span><span class="token string">'图标标题'</span><span class="token punctuation">,</span>legend<span class="token operator">=</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
-    <span class="token keyword">try</span><span class="token punctuation">:</span>
-        y<span class="token operator">=</span>integrate<span class="token punctuation">.</span>odeint<span class="token punctuation">(</span>equal<span class="token punctuation">,</span>init<span class="token punctuation">,</span>x<span class="token punctuation">)</span>
-        plt<span class="token punctuation">.</span>plot<span class="token punctuation">(</span>x<span class="token punctuation">,</span>y<span class="token punctuation">)</span>
-        plt<span class="token punctuation">.</span>title<span class="token punctuation">(</span>title<span class="token punctuation">)</span>
-        plt<span class="token punctuation">.</span>xlabel<span class="token punctuation">(</span>xlabel<span class="token punctuation">)</span>
-        plt<span class="token punctuation">.</span>ylabel<span class="token punctuation">(</span>ylabel<span class="token punctuation">)</span>
-        plt<span class="token punctuation">.</span>show<span class="token punctuation">(</span><span class="token punctuation">)</span>
-    <span class="token keyword">except</span><span class="token punctuation">:</span>
-        <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'【ERROR】\n'</span><span class="token operator">+</span><span class="token string">'【请检查最简参数模式设置是否符合如下格式】\n'</span><span class="token operator">+</span><span class="token string">'draw_odient(x,fun,init=xxx)'</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+#根据已知的函数解析式并画图
+def draw_pic(x,fun,xlabel='x轴坐标',ylabel='y轴坐标',title='图标标题',legend=[]):
+    try:
+        y=fun
+        plt.plot(x,y)
+        plt.title(title)
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
+        plt.show()
+    except:
+        print('【ERROR】\n'+'【请检查最简参数模式设置是否符合如下格式】\n'+'draw_pic(x,fun(x))')
+#根据已知的微分方程解方程并画图（无解西式）
+def draw_odient(x,equal,init=0,xlabel='x轴坐标',ylabel='y轴坐标',title='图标标题',legend=[]):
+    try:
+        y=integrate.odeint(equal,init,x)
+        plt.plot(x,y)
+        plt.title(title)
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
+        plt.show()
+    except:
+        print('【ERROR】\n'+'【请检查最简参数模式设置是否符合如下格式】\n'+'draw_odient(x,fun,init=xxx)')
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>如果是数据拟合啥的，要注意要先对数据分割：</p>
 <p><strong>一部分用来做训练集，一部分用来作测试集。</strong></p>
 <p>直接白给代码吧：</p>
-<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true">#logistic回归</span>
-<span class="token keyword">import</span> numpy <span class="token keyword">as</span> np
-<span class="token keyword">import</span> pandas <span class="token keyword">as</span> pd
-<span class="token keyword">from</span> sklearn <span class="token keyword">import</span> linear_model
-<span class="token keyword">from</span> sklearn <span class="token keyword">import</span> model_selection
-sport<span class="token operator">=</span>pd<span class="token punctuation">.</span>read_csv<span class="token punctuation">(</span>r<span class="token string">'G:\Python-Data-Aanalysis-and-Miner\data\Run or Walk.csv'</span><span class="token punctuation">)</span>
-predictors<span class="token operator">=</span>sport<span class="token punctuation">.</span>columns<span class="token punctuation">[</span><span class="token number">4</span><span class="token punctuation">:</span><span class="token punctuation">]</span>
-x<span class="token operator">=</span>sport<span class="token punctuation">.</span>loc<span class="token punctuation">[</span><span class="token punctuation">:</span><span class="token punctuation">,</span>predictors<span class="token punctuation">]</span>
-<span class="token comment" spellcheck="true">#x是构造的dataframe 值得注意的是 现在的pandas已经将.ix移除 在这里替换成.loc</span>
+<pre class="line-numbers language-lang-python"><code class="language-lang-python">#logistic回归
+import numpy as np
+import pandas as pd
+from sklearn import linear_model
+from sklearn import model_selection
+sport=pd.read_csv(r'G:\Python-Data-Aanalysis-and-Miner\data\Run or Walk.csv')
+predictors=sport.columns[4:]
+x=sport.loc[:,predictors]
+#x是构造的dataframe 值得注意的是 现在的pandas已经将.ix移除 在这里替换成.loc
 
-y<span class="token operator">=</span>sport<span class="token punctuation">.</span>activity  <span class="token comment" spellcheck="true">#提取activity的值（必须要满足仅有0，1两种值，否则不是logistic回归）</span>
-x_train<span class="token punctuation">,</span>x_test<span class="token punctuation">,</span>y_train<span class="token punctuation">,</span>y_test<span class="token operator">=</span>model_selection<span class="token punctuation">.</span>train_test_split<span class="token punctuation">(</span>x<span class="token punctuation">,</span>y<span class="token punctuation">,</span>test_size<span class="token operator">=</span><span class="token number">0.25</span><span class="token punctuation">,</span>random_state<span class="token operator">=</span><span class="token number">1234</span><span class="token punctuation">)</span>
-sklearn_logistic<span class="token operator">=</span>linear_model<span class="token punctuation">.</span>LogisticRegression<span class="token punctuation">(</span><span class="token punctuation">)</span>
-sklearn_logistic<span class="token punctuation">.</span>fit<span class="token punctuation">(</span>x_train<span class="token punctuation">,</span>y_train<span class="token punctuation">)</span>
-<span class="token comment" spellcheck="true">#print(sklearn_logistic.intercept_,sklearn_logistic.coef_)   #coef是变量的β参数 intercept是截距</span>
-<span class="token triple-quoted-string string">'''
+y=sport.activity  #提取activity的值（必须要满足仅有0，1两种值，否则不是logistic回归）
+x_train,x_test,y_train,y_test=model_selection.train_test_split(x,y,test_size=0.25,random_state=1234)
+sklearn_logistic=linear_model.LogisticRegression()
+sklearn_logistic.fit(x_train,y_train)
+#print(sklearn_logistic.intercept_,sklearn_logistic.coef_)   #coef是变量的β参数 intercept是截距
+'''
 参数结果如下：
 [[ 0.48695898  6.87517973 -2.44872468 -0.01385936 -0.16085022  0.13389695]]
-'''</span>
-odd<span class="token operator">=</span>np<span class="token punctuation">.</span>exp<span class="token punctuation">(</span>sklearn_logistic<span class="token punctuation">.</span>coef_<span class="token punctuation">)</span>    <span class="token comment" spellcheck="true">#各个β参数的优势比</span>
-<span class="token triple-quoted-string string">'''
+'''
+odd=np.exp(sklearn_logistic.coef_)    #各个β参数的优势比
+'''
 优势比结果如下：
 [[1.62735985e+00 9.67949320e+02 8.64037088e-02 9.86236236e-01
   8.51419589e-01 1.14327500e+00]]
   说明第一项、第二项参数对概率改变影响最大，
-'''</span>
-sklearn_predict<span class="token operator">=</span>sklearn_logistic<span class="token punctuation">.</span>predict<span class="token punctuation">(</span>x_test<span class="token punctuation">)</span>
-predict_result<span class="token operator">=</span>pd<span class="token punctuation">.</span>Series<span class="token punctuation">(</span>sklearn_predict<span class="token punctuation">)</span><span class="token punctuation">.</span>value_counts<span class="token punctuation">(</span><span class="token punctuation">)</span>    <span class="token comment" spellcheck="true">#测试集的分类结果</span>
+'''
+sklearn_predict=sklearn_logistic.predict(x_test)
+predict_result=pd.Series(sklearn_predict).value_counts()    #测试集的分类结果
 
 
-<span class="token comment" spellcheck="true">########################################################################################3</span>
+########################################################################################3
 
-<span class="token comment" spellcheck="true">#多元回归（岭回归）</span>
-<span class="token keyword">import</span> numpy <span class="token keyword">as</span> np
-<span class="token keyword">import</span>  matplotlib<span class="token punctuation">.</span>pyplot <span class="token keyword">as</span> plt
-<span class="token keyword">from</span> scipy <span class="token keyword">import</span> integrate
-<span class="token keyword">import</span> statsmodels<span class="token punctuation">.</span>api <span class="token keyword">as</span> sm
-<span class="token keyword">import</span> pandas <span class="token keyword">as</span> pd
-<span class="token keyword">import</span> seaborn <span class="token keyword">as</span> sns
-<span class="token keyword">from</span> scipy<span class="token punctuation">.</span>stats <span class="token keyword">import</span> f
-<span class="token keyword">from</span> sklearn <span class="token keyword">import</span> model_selection
-<span class="token keyword">from</span> sklearn<span class="token punctuation">.</span>linear_model <span class="token keyword">import</span> Ridge<span class="token punctuation">,</span>RidgeCV
-plt<span class="token punctuation">.</span>rcParams<span class="token punctuation">[</span><span class="token string">'font.sans-serif'</span><span class="token punctuation">]</span><span class="token operator">=</span><span class="token punctuation">[</span><span class="token string">'Microsoft YaHei'</span><span class="token punctuation">]</span>
-plt<span class="token punctuation">.</span>rcParams<span class="token punctuation">[</span><span class="token string">'axes.unicode_minus'</span><span class="token punctuation">]</span><span class="token operator">=</span><span class="token boolean">False</span>
-plt<span class="token punctuation">.</span>style<span class="token punctuation">.</span>use<span class="token punctuation">(</span><span class="token string">'ggplot'</span><span class="token punctuation">)</span>
-data<span class="token operator">=</span>pd<span class="token punctuation">.</span>read_excel<span class="token punctuation">(</span>r<span class="token string">'G:\Python-Data-Aanalysis-and-Miner\data\diabetes.xlsx'</span><span class="token punctuation">)</span>
-<span class="token triple-quoted-string string">'''
+#多元回归（岭回归）
+import numpy as np
+import  matplotlib.pyplot as plt
+from scipy import integrate
+import statsmodels.api as sm
+import pandas as pd
+import seaborn as sns
+from scipy.stats import f
+from sklearn import model_selection
+from sklearn.linear_model import Ridge,RidgeCV
+plt.rcParams['font.sans-serif']=['Microsoft YaHei']
+plt.rcParams['axes.unicode_minus']=False
+plt.style.use('ggplot')
+data=pd.read_excel(r'G:\Python-Data-Aanalysis-and-Miner\data\diabetes.xlsx')
+'''
 可视化方法确定lambda值得范围
-'''</span>
-predictors<span class="token operator">=</span>data<span class="token punctuation">.</span>columns<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">:</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">]</span>
-x_train<span class="token punctuation">,</span>x_test<span class="token punctuation">,</span>y_train<span class="token punctuation">,</span>y_test<span class="token operator">=</span>model_selection<span class="token punctuation">.</span>train_test_split<span class="token punctuation">(</span>data<span class="token punctuation">[</span>predictors<span class="token punctuation">]</span><span class="token punctuation">,</span>data<span class="token punctuation">[</span><span class="token string">'Y'</span><span class="token punctuation">]</span><span class="token punctuation">,</span>test_size<span class="token operator">=</span><span class="token number">0.2</span><span class="token punctuation">,</span>random_state<span class="token operator">=</span><span class="token number">1234</span><span class="token punctuation">)</span>
-lambdas<span class="token operator">=</span>np<span class="token punctuation">.</span>logspace<span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">5</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">,</span><span class="token number">200</span><span class="token punctuation">)</span>
-<span class="token triple-quoted-string string">'''logspace是用来构建等比数列 以10^-5开始直到10^5结束，分割成200个'''</span>
-ridge_cofficients<span class="token operator">=</span><span class="token punctuation">[</span><span class="token punctuation">]</span>
-<span class="token keyword">for</span> i <span class="token keyword">in</span> lambdas<span class="token punctuation">:</span>
-    ridge<span class="token operator">=</span>Ridge<span class="token punctuation">(</span>alpha<span class="token operator">=</span>i<span class="token punctuation">,</span>normalize<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span>
-    ridge<span class="token punctuation">.</span>fit<span class="token punctuation">(</span>x_train<span class="token punctuation">,</span>y_train<span class="token punctuation">)</span>
-    ridge_cofficients<span class="token punctuation">.</span>append<span class="token punctuation">(</span>ridge<span class="token punctuation">.</span>coef_<span class="token punctuation">)</span>
-plt<span class="token punctuation">.</span>plot<span class="token punctuation">(</span>lambdas<span class="token punctuation">,</span>ridge_cofficients<span class="token punctuation">)</span>
-plt<span class="token punctuation">.</span>xscale<span class="token punctuation">(</span><span class="token string">'log'</span><span class="token punctuation">)</span>
+'''
+predictors=data.columns[2:-1]
+x_train,x_test,y_train,y_test=model_selection.train_test_split(data[predictors],data['Y'],test_size=0.2,random_state=1234)
+lambdas=np.logspace(-5,2,200)
+'''logspace是用来构建等比数列 以10^-5开始直到10^5结束，分割成200个'''
+ridge_cofficients=[]
+for i in lambdas:
+    ridge=Ridge(alpha=i,normalize=True)
+    ridge.fit(x_train,y_train)
+    ridge_cofficients.append(ridge.coef_)
+plt.plot(lambdas,ridge_cofficients)
+plt.xscale('log')
 
-<span class="token triple-quoted-string string">''''’‘’‘’‘’‘’‘’‘’‘’'''</span><span class="token triple-quoted-string string">'''''''</span><span class="token triple-quoted-string string">'''''''</span><span class="token triple-quoted-string string">'''''''</span><span class="token triple-quoted-string string">'''''''</span>'
-<span class="token triple-quoted-string string">'''''''</span><span class="token triple-quoted-string string">'''''''</span><span class="token triple-quoted-string string">''''交叉验证法确定lambda值'''</span><span class="token triple-quoted-string string">'''''''</span><span class="token triple-quoted-string string">'''
-'''</span><span class="token triple-quoted-string string">'''''''</span><span class="token triple-quoted-string string">'''''''</span><span class="token triple-quoted-string string">'''''''</span><span class="token triple-quoted-string string">'''''''</span><span class="token triple-quoted-string string">'''''''</span><span class="token triple-quoted-string string">'''''''</span><span class="token string">''</span><span class="token string">''</span><span class="token string">''</span>
+''''’‘’‘’‘’‘’‘’‘’‘’''''''''''''''''''''''''''''''''
+''''''''''''''''''交叉验证法确定lambda值'''''''''''''
+'''''''''''''''''''''''''''''''''''''''''''''''''''
 
-ridge_cv<span class="token operator">=</span>RidgeCV<span class="token punctuation">(</span>alphas<span class="token operator">=</span>lambdas<span class="token punctuation">,</span>normalize<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span>scoring<span class="token operator">=</span><span class="token string">'neg_mean_squared_error'</span><span class="token punctuation">,</span>cv<span class="token operator">=</span><span class="token number">10</span><span class="token punctuation">)</span>
-ridge_cv<span class="token punctuation">.</span>fit<span class="token punctuation">(</span>x_train<span class="token punctuation">,</span>y_train<span class="token punctuation">)</span>
-ridge_best_lambda<span class="token operator">=</span>ridge_cv<span class="token punctuation">.</span>alpha_
-<span class="token keyword">print</span><span class="token punctuation">(</span>ridge_best_lambda<span class="token punctuation">)</span>
-
-
-ridge<span class="token operator">=</span>Ridge<span class="token punctuation">(</span>alpha<span class="token operator">=</span>ridge_best_lambda<span class="token punctuation">,</span>normalize<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span>
-ridge<span class="token punctuation">.</span>fit<span class="token punctuation">(</span>x_train<span class="token punctuation">,</span>y_train<span class="token punctuation">)</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>pd<span class="token punctuation">.</span>Series<span class="token punctuation">(</span>index<span class="token operator">=</span><span class="token punctuation">[</span><span class="token string">'Intercept'</span><span class="token punctuation">]</span><span class="token operator">+</span>x_train<span class="token punctuation">.</span>columns<span class="token punctuation">.</span>tolist<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>data<span class="token operator">=</span><span class="token punctuation">[</span>ridge<span class="token punctuation">.</span>intercept_<span class="token punctuation">]</span><span class="token operator">+</span>ridge<span class="token punctuation">.</span>coef_<span class="token punctuation">.</span>tolist<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+ridge_cv=RidgeCV(alphas=lambdas,normalize=True,scoring='neg_mean_squared_error',cv=10)
+ridge_cv.fit(x_train,y_train)
+ridge_best_lambda=ridge_cv.alpha_
+print(ridge_best_lambda)
 
 
-
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+ridge=Ridge(alpha=ridge_best_lambda,normalize=True)
+ridge.fit(x_train,y_train)
+print(pd.Series(index=['Intercept']+x_train.columns.tolist(),data=[ridge.intercept_]+ridge.coef_.tolist()))
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <h2 id="4-调整模型、评估模型、改进模型"><a href="#4-调整模型、评估模型、改进模型" class="headerlink" title="4.调整模型、评估模型、改进模型"></a>4.调整模型、评估模型、改进模型</h2><p>摸鱼了🐟</p>
 <p>咕咕咕🕊</p>
 
@@ -1346,6 +1345,21 @@ $(function () {
     <script src="/libs/instantpage/instantpage.js" type="module"></script>
     
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 <script src="/live2d_models/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2d_models/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2d_models/assets/assets/miku.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7},"log":false});</script></body>
 
 </html>
