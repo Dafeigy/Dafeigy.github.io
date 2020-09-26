@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="阿花R语言光速入门笔记, 虫草花花咕咕鸡🐓">
+    <meta name="keywords" content="阿花的暴毙通信原理 笔记, 虫草花花咕咕鸡🐓">
     <meta name="description" content="这是有很多姐妹的恋爱绝缘体">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>阿花R语言光速入门笔记 | 虫草花花咕咕鸡🐓</title>
+    <title>阿花的暴毙通信原理 笔记 | 虫草花花咕咕鸡🐓</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -309,12 +309,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/0.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/1.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">阿花R语言光速入门笔记</h1>
+                    <h1 class="description center-align post-title">阿花的暴毙通信原理 笔记</h1>
                 </div>
             </div>
         </div>
@@ -443,7 +443,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2020-09-03
+                    2020-09-24
                 </div>
                 
 
@@ -464,24 +464,68 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="1-常用的数据类型："><a href="#1-常用的数据类型：" class="headerlink" title="1.常用的数据类型："></a>1.常用的数据类型：</h2><p><strong>列表、矩阵、数据框、向量。</strong></p>
-<h3 id="（一）向量"><a href="#（一）向量" class="headerlink" title="（一）向量"></a>（一）向量</h3><h3 id="相关的操作："><a href="#相关的操作：" class="headerlink" title="相关的操作："></a>相关的操作：</h3><h4 id="a-建立："><a href="#a-建立：" class="headerlink" title="a.建立："></a>a.建立：</h4><p><code>x&lt;-c(1:20)</code> </p>
-<h4 id="b-索引-："><a href="#b-索引-：" class="headerlink" title="b.索引 ："></a>b.索引 ：</h4><p><code>x[1] :访问x向量中第一个元素</code></p>
-<p><code>x[-19]:访问x向量中除了第19个外的所有元素</code></p>
-<p><code>x[c(4:15)]:访问x向量中第4-15个的元素</code></p>
-<h4 id="c-删除："><a href="#c-删除：" class="headerlink" title="c.删除："></a>c.删除：</h4><p>删除整个向量的方法：</p>
-<p><code>rm(x)</code></p>
-<p>或者采用赋值方法:</p>
-<p><code>x&lt;-x[-1,-4]</code></p>
-<h4 id="d-修改：x"><a href="#d-修改：x" class="headerlink" title="d.修改：x"></a>d.修改：x</h4><p><code>x[1]=4</code></p>
-<h3 id="二-矩阵"><a href="#二-矩阵" class="headerlink" title="(二)矩阵"></a>(二)矩阵</h3><p><code>m&lt;-matrix(x,nrow=4,ncol=5)</code></p>
-<p>这是个4*5矩阵</p>
-<h3 id="（一）数据的读取"><a href="#（一）数据的读取" class="headerlink" title="（一）数据的读取:"></a>（一）数据的读取:</h3><p><code>read.table(&#39;&#39;)</code></p>
-<p><code>read.csv(&#39;&#39;)</code></p>
-<p><code>read.xlsx(&#39;&#39;)</code></p>
-<p>其中read.xlsx()需要安装xlsx包。</p>
-<h3 id="（二）数据的写入"><a href="#（二）数据的写入" class="headerlink" title="（二）数据的写入"></a>（二）数据的写入</h3><p><code>write.table(data,file=&#39;xxx.xx&#39;)</code>用于写入文件，其中参数data是待写入的数据，file为文件名。默认写入到工作目录。</p>
-
+                <h1 id="第一章-绪论"><a href="#第一章-绪论" class="headerlink" title="第一章 绪论"></a>第一章 绪论</h1><h2 id="1-1通信系统的组成"><a href="#1-1通信系统的组成" class="headerlink" title="1.1通信系统的组成"></a>1.1通信系统的组成</h2><p>通信系统可分为<strong>模拟通信</strong>与<strong>数字通信</strong>。二者的共同的模型如下：</p>
+<p><img src="https://i.loli.net/2020/09/27/OgPclIotZCyeWzX.jpg" alt=""></p>
+<p>值得注意的是，<strong>模拟信号</strong>与<strong>数字信号</strong>有不同的处理过程。</p>
+<h3 id="1-1-1具体的模拟信号模型"><a href="#1-1-1具体的模拟信号模型" class="headerlink" title="1.1-1具体的模拟信号模型"></a><strong>1.1-1具体的模拟信号模型</strong></h3><p><img src="https://i.loli.net/2020/09/26/zgNc6vTK7X2Aikh.png" alt=""></p>
+<h3 id="1-1-2具体的数字信号模型"><a href="#1-1-2具体的数字信号模型" class="headerlink" title="1.1-2具体的数字信号模型"></a><strong>1.1-2具体的数字信号模型</strong></h3><p><img src="https://i.loli.net/2020/09/24/byIlBo4KZidTnXH.png" alt=""></p>
+<p>可以观察到：在信道两端分别是一个镜面对称的结构，两次编码中加杂一次加密，这样可以方便记忆。</p>
+<h3 id="1-1-3-数字通信与模拟通信的比较"><a href="#1-1-3-数字通信与模拟通信的比较" class="headerlink" title="1.1-3 数字通信与模拟通信的比较"></a>1.1-3 数字通信与模拟通信的比较</h3><h4 id="①抗干扰能力更强"><a href="#①抗干扰能力更强" class="headerlink" title="①抗干扰能力更强"></a>①抗干扰能力更强</h4><h4 id="②数字信号安全性更强"><a href="#②数字信号安全性更强" class="headerlink" title="②数字信号安全性更强"></a>②数字信号安全性更强</h4><h4 id="③便于集成化"><a href="#③便于集成化" class="headerlink" title="③便于集成化"></a>③便于集成化</h4><h4 id="④灵活性高"><a href="#④灵活性高" class="headerlink" title="④灵活性高"></a>④灵活性高</h4><h4 id="⑤需要更严格的同步系统"><a href="#⑤需要更严格的同步系统" class="headerlink" title="⑤需要更严格的同步系统"></a>⑤需要更严格的同步系统</h4><h2 id="1-2信息与度量"><a href="#1-2信息与度量" class="headerlink" title="1.2信息与度量"></a>1.2信息与度量</h2><p>一般把消息x所含的信息量<strong>I</strong>用消息x出现的概率<strong>P(x)</strong>来表示：</p>
+<script type="math/tex; mode=display">
+I=log_a(1/P(x))=-log_aP(x)</script><p>另一个衡量指标平均信息量亦称为<strong>信源熵H(x）</strong>的表达式：</p>
+<script type="math/tex; mode=display">
+H(x)=-\sum_{i=0}^nP(x_i)log_2P(x_i)</script><p>单位式<strong>比特/符号</strong>。（不用纠结那个符号 照搬就好了）</p>
+<h2 id="1-3衡量通信系统的指标"><a href="#1-3衡量通信系统的指标" class="headerlink" title="1.3衡量通信系统的指标"></a>1.3衡量通信系统的指标</h2><p><strong>有效性</strong>与<strong>可靠性</strong>衡量。模拟通信与数字通信的衡量指标不一样：</p>
+<p><img src="https://i.loli.net/2020/09/26/pBzWNyAGLQ751MU.jpg" alt=""></p>
+<p>传信率是指<strong>每秒传输的信息量</strong>，单位式b/s；传码率是每秒传送的码元数目，单位式波特。二者有如下关系：</p>
+<script type="math/tex; mode=display">
+R_b=R_{BN}log_2N</script><script type="math/tex; mode=display">
+R_{BN}=R_b/log_2N</script><p>其中N代表进制，在数字通信中，<strong>只有二进制的情况下传码率才等于传信率</strong>。</p>
+<h1 id="第二章-信道"><a href="#第二章-信道" class="headerlink" title="第二章 信道"></a>第二章 信道</h1><h2 id="2-1-信道的定义与分类"><a href="#2-1-信道的定义与分类" class="headerlink" title="2.1 信道的定义与分类"></a>2.1 信道的定义与分类</h2><p>狭义的信道是指媒介部分。有时根据研究的问题会把通信系统模型中的其他部分组合在一起成为新的信道。常见的有调制信道、编码信道，他们的结构如图所示：</p>
+<p><img src="https://i.loli.net/2020/09/26/zJkEI6Vhn3lWSpd.jpg" alt=""></p>
+<h2 id="2-2-信道模型"><a href="#2-2-信道模型" class="headerlink" title="2.2 信道模型"></a>2.2 信道模型</h2><h4 id="2-2-1-模拟信道"><a href="#2-2-1-模拟信道" class="headerlink" title="2.2-1 模拟信道"></a>2.2-1 模拟信道</h4><h5 id="2-2-1a-调制信道特性"><a href="#2-2-1a-调制信道特性" class="headerlink" title="2.2-1a 调制信道特性"></a>2.2-1a 调制信道特性</h5><p>1.有一对或多对的输入以及一对或多对的输出。</p>
+<p>2.绝大多数是线性的，满足叠加定理。</p>
+<p>3.信道有衰减（或增益）频率特性和相移（或延时）特性。在某些信道中衰减特性随时间变化。</p>
+<h5 id="2-2-1-b-调制信道的分类"><a href="#2-2-1-b-调制信道的分类" class="headerlink" title="2.2-1-b 调制信道的分类"></a>2.2-1-b 调制信道的分类</h5><p>1.恒参信道。恒参信道的参数不随时间变化。假设h(t)是信道的特性，则他的输出信号可以表示为：</p>
+<script type="math/tex; mode=display">
+e_o(t)=e_i(t)*h(t)+n(t)</script><p>2.变参信道。变参信道参数会随时间变化。假设h(t)是信道的特性，K(t)为乘性干扰。则他的输出信号可以表示为：</p>
+<script type="math/tex; mode=display">
+e_o(t)=f[e_i(t)]+n(t)=K(t)e_i(t)+n(t)</script><h4 id="2-2-2-编码信道（不是重点）"><a href="#2-2-2-编码信道（不是重点）" class="headerlink" title="2.2-2 编码信道（不是重点）"></a>2.2-2 编码信道（不是重点）</h4><h5 id="2-2-2-a-描述"><a href="#2-2-2-a-描述" class="headerlink" title="2.2-2-a 描述"></a>2.2-2-a 描述</h5><p>通过数字信号的转换概率描述。</p>
+<h5 id="2-2-2-b-模型"><a href="#2-2-2-b-模型" class="headerlink" title="2.2-2-b 模型"></a>2.2-2-b 模型</h5><h2 id="2-3-恒参信道"><a href="#2-3-恒参信道" class="headerlink" title="2.3 恒参信道"></a>2.3 恒参信道</h2><h4 id="2-3-1-幅度-频率特性"><a href="#2-3-1-幅度-频率特性" class="headerlink" title="2.3-1 幅度-频率特性"></a>2.3-1 幅度-频率特性</h4><p>幅频特性是指<strong>已调信号</strong>各频率分量在通过信道时带来的不同的衰减（或增益）造成的输出<strong>信号失真</strong>。</p>
+<p>理想无失真传输的信道它的传输函数满足：</p>
+<script type="math/tex; mode=display">
+H(\omega)=Ke^{-j\omega·t_d}</script><p>K 是传输系数，td是延迟时间，都与频率无关。他的频率特性是一条水平线，即：</p>
+<script type="math/tex; mode=display">
+|H(\omega)|=K</script><p>但是实际中的幅频特性是不可能这样的。信道不可能无失真传输的原因有如下两点：</p>
+<p><strong>①信道不可能有无限宽的传输频带。</strong></p>
+<p><strong>②有效的传输频带中不同频率的衰减或增益都不同。不均匀的衰减会造成各个频率分量受到不同衰减从而引起传输信号识真。但是这种识真可以通过信道均衡来改善。</strong></p>
+<h4 id="2-3-2-相位-频率特性"><a href="#2-3-2-相位-频率特性" class="headerlink" title="2.3-2 相位-频率特性"></a>2.3-2 相位-频率特性</h4><p>无失真传输中，相位和频率要呈线性关系，用公式说就是：</p>
+<script type="math/tex; mode=display">
+\varphi(\omega)=-\omega t_d</script><p>相位失真对数字信号传播影响较大，会造成码间串扰的问题。</p>
+<p>所以考虑到一般情况，用群时延-频率特性来表示相频特性：</p>
+<script type="math/tex; mode=display">
+\tau(\omega)=\frac{d\varphi(\omega)}{d\omega}</script><p>这时候理想的无失真信道的tau-w图象则是一条直线了。在非理想情况下也能根据波动情况来判断失真（增益）情况。</p>
+<p>这种失真也是一种线性失真，也可以通过均衡加以补偿。</p>
+<h2 id="2-4-变参信道"><a href="#2-4-变参信道" class="headerlink" title="2.4 变参信道"></a>2.4 变参信道</h2><h2 id="2-5-随机过程"><a href="#2-5-随机过程" class="headerlink" title="2.5 随机过程"></a>2.5 随机过程</h2><h5 id="2-5-1-统计特性"><a href="#2-5-1-统计特性" class="headerlink" title="2.5.1 统计特性"></a>2.5.1 统计特性</h5><p>一般用分布函数和概率函数来描述随机变量。</p>
+<p>常见的统计量如下：</p>
+<script type="math/tex; mode=display">
+m_x=E[X(t)]=\int_{-\infty}^{\infty}{xp(x)dx}</script><script type="math/tex; mode=display">
+\sigma_x^2=E({X^2(t)})-m_x^2</script><script type="math/tex; mode=display">
+R(\tau)=E[X(t)X(t+\tau)]</script><p>补充部分性质：</p>
+<p><img src="https://i.loli.net/2020/09/26/541YGU7ODvVCtSr.jpg" alt=""></p>
+<p>以及，<strong>功率谱所围成的面积即为平均功率。</strong></p>
+<h5 id="2-5-2-平稳随机过程"><a href="#2-5-2-平稳随机过程" class="headerlink" title="2.5.2 平稳随机过程"></a>2.5.2 平稳随机过程</h5><p>如果X(t)是一个随机过程，他的n维概率密度函数与时间起点无关，则称这个过程为随机平稳过程。</p>
+<h5 id="2-5-2-1-遍历性质："><a href="#2-5-2-1-遍历性质：" class="headerlink" title="2.5.2-1 遍历性质："></a>2.5.2-1 遍历性质：</h5><p>平稳随机过程得到数学期望可以用任一实现过程的均值来替代。这点和大数定律用样本均值估计总体期望很像。</p>
+<h5 id="2-5-2-2-随机过程通过线性系统"><a href="#2-5-2-2-随机过程通过线性系统" class="headerlink" title="2.5.2-2 随机过程通过线性系统"></a><strong>2.5.2-2 随机过程通过线性系统</strong></h5><p><img src="https://i.loli.net/2020/09/26/rcRM1B75UeSpnLZ.jpg" alt=""></p>
+<script type="math/tex; mode=display">
+S_Y(\omega)=S_X(\omega) |H(\omega)|^2</script><p>其中，S_x(\omega)、S_y(\omega)是X(t)、Y(t)的功率谱。<strong>根据维纳-辛钦定理，信号的功率谱和它的自相关函数是一对傅里叶变换</strong>，即：</p>
+<script type="math/tex; mode=display">
+\begin{cases}S(\omega)=\int_{-\infty}^ { \infty}{R(\tau)e^{-j\omega t} dt}\\ R(\tau)=\frac{1}{2\pi}\int_{-\infty}^{\infty}S(\omega)e^{-j\omega t} dt\end{cases}</script><h5 id="2-5-2-3-随机过程通过乘法器"><a href="#2-5-2-3-随机过程通过乘法器" class="headerlink" title="2.5.2-3 随机过程通过乘法器"></a>2.5.2-3 随机过程通过乘法器</h5><p>模型如下：</p>
+<p><img src="https://i.loli.net/2020/09/26/7RgLpBkWtCuxeaF.jpg" alt=""></p>
+<p>值得注意的是，乘法器所乘的是一个cos\omega的信号，而非其他信号</p>
+<p>结论如下：</p>
+<script type="math/tex; mode=display">
+S_Y(\omega)=\frac{1}{4}[S_X(\omega+\omega_0)+S_X(\omega-\omega_0)]</script><h2 id="2-6-信道容量"><a href="#2-6-信道容量" class="headerlink" title="2.6 信道容量"></a>2.6 信道容量</h2><h1 id="第三章-模拟调制"><a href="#第三章-模拟调制" class="headerlink" title="第三章 模拟调制"></a>第三章 模拟调制</h1><h2 id="3-1-幅度调制"><a href="#3-1-幅度调制" class="headerlink" title="3.1 幅度调制"></a>3.1 幅度调制</h2><h2 id="3-2-调幅系统的解调"><a href="#3-2-调幅系统的解调" class="headerlink" title="3.2 调幅系统的解调"></a>3.2 调幅系统的解调</h2><h2 id="3-3-调幅系统的抗噪声性能"><a href="#3-3-调幅系统的抗噪声性能" class="headerlink" title="3.3 调幅系统的抗噪声性能"></a>3.3 调幅系统的抗噪声性能</h2><h2 id="3-4-角度调制"><a href="#3-4-角度调制" class="headerlink" title="3.4 角度调制"></a>3.4 角度调制</h2><h2 id="3-5频分复用"><a href="#3-5频分复用" class="headerlink" title="3.5频分复用"></a>3.5频分复用</h2><h1 id="第四章-信源编码"><a href="#第四章-信源编码" class="headerlink" title="第四章 信源编码"></a>第四章 信源编码</h1><h2 id="4-1-抽样定理"><a href="#4-1-抽样定理" class="headerlink" title="4.1 抽样定理"></a>4.1 抽样定理</h2><h2 id="4-2-量化"><a href="#4-2-量化" class="headerlink" title="4.2 量化"></a>4.2 量化</h2>
             </div>
             <hr/>
 
@@ -506,7 +550,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://dafeigy.github.io/2020/09/03/R%E8%AF%AD%E8%A8%80%E9%80%9F%E6%88%90/">https://dafeigy.github.io/2020/09/03/R%E8%AF%AD%E8%A8%80%E9%80%9F%E6%88%90/</a>
+                    <a href="https://dafeigy.github.io/2020/09/24/%E9%80%9A%E4%BF%A1%E5%8E%9F%E7%90%86/">https://dafeigy.github.io/2020/09/24/%E9%80%9A%E4%BF%A1%E5%8E%9F%E7%90%86/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -712,7 +756,7 @@
         repo: '',
         owner: '',
         admin: null,
-        id: '2020-09-03T21-24-15',
+        id: '2020-09-24T17-00-32',
         distractionFreeMode: false  // Facebook-like distraction free mode
     });
 
@@ -736,7 +780,7 @@
 <script src="/libs/gitment/gitment.js"></script>
 <script>
 var gitment = new Gitment({
-    id: 'Thu Sep 03 2020 21:24:15 GMT+0800',
+    id: 'Thu Sep 24 2020 17:00:32 GMT+0800',
     owner: '',
     repo: '',
     oauth: {
@@ -763,9 +807,10 @@ gitment.render('gitment-content');
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
                 <a href="/2020/09/24/%E9%80%9A%E4%BF%A1%E5%8E%9F%E7%90%86/">
                     <div class="card-image">
@@ -788,9 +833,9 @@ gitment.render('gitment-content');
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2020-09-24
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-09-24
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -799,6 +844,7 @@ gitment.render('gitment-content');
                         </span>
                     </div>
                 </div>
+
                 
             </div>
         </div>
@@ -809,27 +855,28 @@ gitment.render('gitment-content');
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2020/08/19/%E9%98%BF%E8%8A%B1%E7%9A%84%E6%95%B0%E6%A8%A1%E6%91%B8%E9%B1%BC%E7%AC%94%E8%AE%B0/">
+                <a href="/2020/09/03/R%E8%AF%AD%E8%A8%80%E9%80%9F%E6%88%90/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/19.jpg" class="responsive-img" alt="阿花数模摸鱼笔记">
+                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="阿花R语言光速入门笔记">
                         
-                        <span class="card-title">阿花数模摸鱼笔记</span>
+                        <span class="card-title">阿花R语言光速入门笔记</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            阿花的数模摸鱼笔记语言用的是python。如果遇上大数据的话就用上R一起。R用来处理大数据真的很方便。缺点也有的：容易忘记。
-但是平常练习的数据有限所以可以结合爬虫练习形成练习闭环。
-把数据给出来吧：
-链接：https://pan.baid
+                            1.常用的数据类型：列表、矩阵、数据框、向量。
+（一）向量相关的操作：a.建立：x&lt;-c(1:20) 
+b.索引 ：x[1] :访问x向量中第一个元素
+x[-19]:访问x向量中除了第19个外的所有元素
+x[c(4:15)]:访问x向
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2020-08-19
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-09-03
                             </span>
                         <span class="publish-author">
                             
@@ -973,6 +1020,13 @@ code[class*="language-"], pre[class*="language-"] { white-space: pre !important;
 
 </main>
 
+
+<script src="https://cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+    MathJax.Hub.Config({
+        tex2jax: {inlineMath: [['$', '$'], ['\(', '\)']]}
+    });
+</script>
 
 
 
