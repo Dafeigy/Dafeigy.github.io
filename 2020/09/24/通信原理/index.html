@@ -469,6 +469,7 @@
 <p>值得注意的是，<strong>模拟信号</strong>与<strong>数字信号</strong>有不同的处理过程。</p>
 <h3 id="1-1-1具体的模拟信号模型"><a href="#1-1-1具体的模拟信号模型" class="headerlink" title="1.1-1具体的模拟信号模型"></a><strong>1.1-1具体的模拟信号模型</strong></h3><p><img src="https://i.loli.net/2020/09/26/zgNc6vTK7X2Aikh.png" alt=""></p>
 <h3 id="1-1-2具体的数字信号模型"><a href="#1-1-2具体的数字信号模型" class="headerlink" title="1.1-2具体的数字信号模型"></a><strong>1.1-2具体的数字信号模型</strong></h3><p><img src="https://i.loli.net/2020/09/24/byIlBo4KZidTnXH.png" alt=""></p>
+<p>可以观察到：在信道两端分别是一个镜面对称的结构，两次编码中加杂一次加密，这样可以方便记忆。</p>
 <h3 id="1-1-3-数字通信与模拟通信的比较"><a href="#1-1-3-数字通信与模拟通信的比较" class="headerlink" title="1.1-3 数字通信与模拟通信的比较"></a>1.1-3 数字通信与模拟通信的比较</h3><h4 id="①抗干扰能力更强"><a href="#①抗干扰能力更强" class="headerlink" title="①抗干扰能力更强"></a>①抗干扰能力更强</h4><h4 id="②数字信号安全性更强"><a href="#②数字信号安全性更强" class="headerlink" title="②数字信号安全性更强"></a>②数字信号安全性更强</h4><h4 id="③便于集成化"><a href="#③便于集成化" class="headerlink" title="③便于集成化"></a>③便于集成化</h4><h4 id="④灵活性高"><a href="#④灵活性高" class="headerlink" title="④灵活性高"></a>④灵活性高</h4><h4 id="⑤需要更严格的同步系统"><a href="#⑤需要更严格的同步系统" class="headerlink" title="⑤需要更严格的同步系统"></a>⑤需要更严格的同步系统</h4><h2 id="1-2信息与度量"><a href="#1-2信息与度量" class="headerlink" title="1.2信息与度量"></a>1.2信息与度量</h2><p>一般把消息x所含的信息量<strong>I</strong>用消息x出现的概率<strong>P(x)</strong>来表示：</p>
 <script type="math/tex; mode=display">
 I=log_a(1/P(x))=-log_aP(x)</script><p>另一个衡量指标平均信息量亦称为<strong>信源熵H(x）</strong>的表达式：</p>
@@ -482,11 +483,13 @@ R_b=R_{BN}log_2N</script><script type="math/tex; mode=display">
 R_{BN}=R_b/log_2N</script><p>其中N代表进制，在数字通信中，<strong>只有二进制的情况下传码率才等于传信率</strong>。</p>
 <h1 id="第二章-信道"><a href="#第二章-信道" class="headerlink" title="第二章 信道"></a>第二章 信道</h1><h2 id="2-1-信道的定义与分类"><a href="#2-1-信道的定义与分类" class="headerlink" title="2.1 信道的定义与分类"></a>2.1 信道的定义与分类</h2><p>狭义的信道是指媒介部分。有时根据研究的问题会把通信系统模型中的其他部分组合在一起成为新的信道。常见的有调制信道、编码信道，他们的结构如图所示：</p>
 <p><img src="https://i.loli.net/2020/09/26/zJkEI6Vhn3lWSpd.jpg" alt=""></p>
-<h2 id="2-2-信道模型"><a href="#2-2-信道模型" class="headerlink" title="2.2 信道模型"></a>2.2 信道模型</h2><h4 id="2-2-1-模拟信道"><a href="#2-2-1-模拟信道" class="headerlink" title="2.2-1 模拟信道"></a>2.2-1 模拟信道</h4><h5 id="2-2-1a-调制信道特性"><a href="#2-2-1a-调制信道特性" class="headerlink" title="2.2-1a 调制信道特性"></a>2.2-1a 调制信道特性</h5><p>1.有一对或多对的输入以及一对或多对的输出</p>
-<p>2.绝大多数是线性的，满足叠加定理</p>
+<h2 id="2-2-信道模型"><a href="#2-2-信道模型" class="headerlink" title="2.2 信道模型"></a>2.2 信道模型</h2><h4 id="2-2-1-模拟信道"><a href="#2-2-1-模拟信道" class="headerlink" title="2.2-1 模拟信道"></a>2.2-1 模拟信道</h4><h5 id="2-2-1a-调制信道特性"><a href="#2-2-1a-调制信道特性" class="headerlink" title="2.2-1a 调制信道特性"></a>2.2-1a 调制信道特性</h5><p>1.有一对或多对的输入以及一对或多对的输出。</p>
+<p>2.绝大多数是线性的，满足叠加定理。</p>
 <p>3.信道有衰减（或增益）频率特性和相移（或延时）特性。在某些信道中衰减特性随时间变化。</p>
-<h5 id="2-2-1-b-调制信道的分类"><a href="#2-2-1-b-调制信道的分类" class="headerlink" title="2.2-1-b 调制信道的分类"></a>2.2-1-b 调制信道的分类</h5><h6 id="1-恒参信道。恒参信道的参数不随时间变化。假设h-t-是信道的特性，则他的输出信号可以表示为："><a href="#1-恒参信道。恒参信道的参数不随时间变化。假设h-t-是信道的特性，则他的输出信号可以表示为：" class="headerlink" title="1.恒参信道。恒参信道的参数不随时间变化。假设h(t)是信道的特性，则他的输出信号可以表示为："></a>1.恒参信道。恒参信道的参数不随时间变化。假设h(t)是信道的特性，则他的输出信号可以表示为：</h6><script type="math/tex; mode=display">
-e_o(t)=e_i(t)*h(t)+n(t)</script><h6 id="2-变参信道。变参信道参数会随时间变化。假设h-t-是信道的特性，K-t-为乘性干扰。则他的输出信号可以表示为："><a href="#2-变参信道。变参信道参数会随时间变化。假设h-t-是信道的特性，K-t-为乘性干扰。则他的输出信号可以表示为：" class="headerlink" title="2.变参信道。变参信道参数会随时间变化。假设h(t)是信道的特性，K(t)为乘性干扰。则他的输出信号可以表示为："></a>2.变参信道。变参信道参数会随时间变化。假设h(t)是信道的特性，K(t)为乘性干扰。则他的输出信号可以表示为：</h6><script type="math/tex; mode=display">
+<h5 id="2-2-1-b-调制信道的分类"><a href="#2-2-1-b-调制信道的分类" class="headerlink" title="2.2-1-b 调制信道的分类"></a>2.2-1-b 调制信道的分类</h5><p>1.恒参信道。恒参信道的参数不随时间变化。假设h(t)是信道的特性，则他的输出信号可以表示为：</p>
+<script type="math/tex; mode=display">
+e_o(t)=e_i(t)*h(t)+n(t)</script><p>2.变参信道。变参信道参数会随时间变化。假设h(t)是信道的特性，K(t)为乘性干扰。则他的输出信号可以表示为：</p>
+<script type="math/tex; mode=display">
 e_o(t)=f[e_i(t)]+n(t)=K(t)e_i(t)+n(t)</script><h4 id="2-2-2-编码信道（不是重点）"><a href="#2-2-2-编码信道（不是重点）" class="headerlink" title="2.2-2 编码信道（不是重点）"></a>2.2-2 编码信道（不是重点）</h4><h5 id="2-2-2-a-描述"><a href="#2-2-2-a-描述" class="headerlink" title="2.2-2-a 描述"></a>2.2-2-a 描述</h5><p>通过数字信号的转换概率描述。</p>
 <h5 id="2-2-2-b-模型"><a href="#2-2-2-b-模型" class="headerlink" title="2.2-2-b 模型"></a>2.2-2-b 模型</h5><h2 id="2-3-恒参信道"><a href="#2-3-恒参信道" class="headerlink" title="2.3 恒参信道"></a>2.3 恒参信道</h2><h4 id="2-3-1-幅度-频率特性"><a href="#2-3-1-幅度-频率特性" class="headerlink" title="2.3-1 幅度-频率特性"></a>2.3-1 幅度-频率特性</h4><p>幅频特性是指<strong>已调信号</strong>各频率分量在通过信道时带来的不同的衰减（或增益）造成的输出<strong>信号失真</strong>。</p>
 <p>理想无失真传输的信道它的传输函数满足：</p>
@@ -826,7 +829,7 @@ gitment.render('gitment-content');
 值得注意的是，模拟信号与数字信号有不同的处理过程。
 1.1-1具体的模拟信号模型
 1.1-2具体的数字信号模型
-1.1-3 数字通信与模拟通信的比较
+可以观察到：在信道两端分别是一个镜面
                         
                     </div>
                     <div class="publish-info">
