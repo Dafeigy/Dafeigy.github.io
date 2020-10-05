@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="阿花数模摸鱼笔记, 涩图精灵阿花">
+    <meta name="keywords" content="单片机指令系统, 涩图精灵阿花">
     <meta name="description" content="这是有很多姐妹的恋爱绝缘体">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>阿花数模摸鱼笔记 | 涩图精灵阿花</title>
+    <title>单片机指令系统 | 涩图精灵阿花</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -309,12 +309,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/19.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/17.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">阿花数模摸鱼笔记</h1>
+                    <h1 class="description center-align post-title">单片机指令系统</h1>
                 </div>
             </div>
         </div>
@@ -443,14 +443,14 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2020-08-19
+                    2020-10-06
                 </div>
                 
 
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2020-08-19
+                    2020-10-06
                 </div>
                 
 
@@ -464,181 +464,65 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h1 id="阿花的数模摸鱼笔记"><a href="#阿花的数模摸鱼笔记" class="headerlink" title="阿花的数模摸鱼笔记"></a>阿花的数模摸鱼笔记</h1><p>语言用的是python。如果遇上大数据的话就用上R一起。R用来处理大数据真的很方便。缺点也有的：容易忘记。</p>
-<p>但是平常练习的数据有限所以可以结合爬虫练习形成练习闭环。</p>
-<p>把数据给出来吧：</p>
-<p>链接：<a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1gbXTrA8IOYP8NkzysDraMQ">https://pan.baidu.com/s/1gbXTrA8IOYP8NkzysDraMQ</a><br>提取码：Daaa</p>
-<p>好了废话不多说开始：</p>
-<h2 id="（一）库的选择"><a href="#（一）库的选择" class="headerlink" title="（一）库的选择"></a>（一）库的选择</h2><p>python用到的库有：</p>
-<pre><code>matplotlib
-seaborn
-statsmodels
-numpy
-scipy
-pandas
-sklearn
-</code></pre><p>怎么安装库不用我多说了⑧？</p>
-<p>pip install 或者pycharm file-&gt;setting-Project:xx-python intepreterl里 点击那个“+”寻找这些库等他下载就好了。</p>
-<p>前两个库主要是用来画图。</p>
-<p>statsmodels用来处理回归相关问题。</p>
-<p>numpy、pandas以及scipy数值处理。pandas其实也可以用来画图，但是效果没有seaborn和matplotlib的好。</p>
-<p>sklearn用来分割数据集、回归模型的拟合。</p>
-<h2 id="（二）基本思想"><a href="#（二）基本思想" class="headerlink" title="（二）基本思想"></a>（二）基本思想</h2><h3 id="1-首先是数据的处理。读取数据要看数据以什么文件呈现："><a href="#1-首先是数据的处理。读取数据要看数据以什么文件呈现：" class="headerlink" title="1.首先是数据的处理。读取数据要看数据以什么文件呈现："></a>1.首先是数据的处理。读取数据要看数据以什么文件呈现：</h3><p>具体代码有如下：</p>
-<pre class="line-numbers language-lang-python"><code class="language-lang-python">import pandas as pd
-#location是文件的所在目录
-pd.read_csv(location)    读取csv文件
-pd.read_table(location，sep='')    #读取txt文件,sep用于数据的分割
-pd.read_excel(location)    #读取excel文件
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>如果不是数据的分析类而是函数建模类，第一步则是定义函数或者微分方程：</p>
-<pre><code>#定义微分方程 我这里用的是美赛的一道题的微分方程 注意微分方程的规范性
-def equal(x,y):
-    l = ((1 / u) * np.exp(-1 * u * x) * ((np.exp(u * x)) - 1) * (vf + sigama * b * np.sin(angle) * vs * np.sin(angle)))
-    return a * b * vs * l * np.cos(angle) - 0.0016 * y
-#定义一个函数
-def fun(x):
-    return np.pi*x*x
-</code></pre><h2 id="2-人脑分析问题"><a href="#2-人脑分析问题" class="headerlink" title="2.人脑分析问题"></a>2.人脑分析问题</h2><p>对于数据分析的问题。要明白自己要研究什么：</p>
-<p>比如你研究利润和营业时间的关系那就关注营业时间而不是关注你的商品能不能一半放生一半拿来喂鱼。</p>
-<p>找到研究的对象后，可能要对研究的对象进行数据处理，减少程序处理数据的时间。</p>
-<p>对于“非黑即白之类”的分类问题可以把“是否”用0和1来表示；</p>
-<p>比如营业时间这种离散程度很大的指标，可以划分区间进行研究，比如以几分钟作为一个观察区间。</p>
-<h2 id="3-开始程序处理"><a href="#3-开始程序处理" class="headerlink" title="3.开始程序处理"></a>3.开始程序处理</h2><p>对于函数建模类，常用的操作无非是解方程、函数画图：</p>
-<p>这里给上一点自留的代码，可以新建保存文件直接白嫖起飞✈：</p>
-<pre class="line-numbers language-lang-python"><code class="language-lang-python">import numpy as np
-import  matplotlib.pyplot as plt
-from scipy import integrate
-import statsmodels.api as sm
-import pandas as pd
-import seaborn as sns
-from scipy.stats import f
-import numpy as np
-from sklearn import linear_model
-from sklearn import model_selection
-import  matplotlib.pyplot as plt
-from scipy import integrate
-from sklearn import model_selection
-from sklearn.linear_model import Ridge,RidgeCV
-plt.rcParams['font.sans-serif']=['Microsoft YaHei']
-plt.rcParams['axes.unicode_minus']=False
-plt.style.use('ggplot')
-#常用的数据分析函数整合
-#画图类函数至少需要两个参数（x,y）默认有先后顺序
-#微分方程画图参数只需要传递函数等式名称即可
-#x轴坐标
-x= np.arange(0, 15, 0.01)
-#已知函数
-def fun(x):
-    return np.pi*x*x
-#已知微分方程
-def equal(x,y):
-    l = ((1 / u) * np.exp(-1 * u * x) * ((np.exp(u * x)) - 1) * (vf + sigama * b * np.sin(angle) * vs * np.sin(angle)))
-    return a * b * vs * l * np.cos(angle) - 0.0016 * y
+                <h3 id="⏰-定时工作模式2"><a href="#⏰-定时工作模式2" class="headerlink" title="⏰ 定时工作模式2"></a>⏰ 定时工作模式2</h3><p>工作模式1和0都有一个问题，就是需要不断的重新赋值；<br>工作方式2有自动重新加载预设初值的操作，但代价就是计数范围减少，从2^16变成2^8。默认的情况下，使用TR0作为定时器。这种即使方式的特点是TH和TL赋予的值是相等的，不像前面的计时方式0和计时方式1一样需要分离出高八位和低五位并分别赋值。</p>
+<p>先来一个简单的例子：</p>
+<pre class="line-numbers language-lang-assembly"><code class="language-lang-assembly">MOV IE, #00H;
+MOV TMOD,#02;
+MOV TH, #0CEH;
+MOV TL,#0CEH;
+SETB TR0;
+LOOP1:
+        JBC TF0, LOOP2;
+        AJMP LOOP1;
+LOOP2:
+        CPL P1.0;
+        AJMP LOOP1;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>另另外一个例子🌰:<br>用定时器1用工作方式2进行计数，每一百次进行累加器加1操作，按查询方式进行编程。<br>所谓查询方式就是</p>
+<pre class="line-numbers language-lang-assembly"><code class="language-lang-assembly">MOV TL,#9CH;
+MOV TH,#9CH;
+MOV TMOD,#60H;
+MOV IE,#00H;           禁止中断
+LOOP1:JBC TF1,LOOP2;
+        AJMP LOOP1;
+LOOP2:INC A;
+        AJMP LOOP1;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>另一个古老的例子🌰 :<br>周长2米，一圈产生一个下脉冲，从INT0进。30H，31H，32H分别是低、中、高位置</p>
+<pre class="line-numbers language-lang-assembly"><code class="language-lang-assembly">          ORG 0000H
+0000H:  LJMP MAIN;
+           ORG 0003H;
+0003H:  AJMP INT;
+           ORG #0040H;
+MAIN:       MOV SP,#60H;
+          SETB EA;
+          SETB EX0;
+            SETB IT0;
+          MOV 30H,#00H;
+          MOV 31H,#01H;
+          MOV 32H,#02H;
+HERE:   SJMP $
+        ORG #0100H;
+INT:     push ACC;
+        push PSW;
+        MOV A,30H;
+        ADD A,#2;
+        MOV 30H,A;
+        CLR A;
+        ADDC A,31H;
+        MOV 31H, A;
+        CLR A;
+        ADDC A,32H;
+        MOV 32H,A;
+        POP PSW;
+        POP ACC;
+        RETL
+        END
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="Outer-interruption-extent"><a href="#Outer-interruption-extent" class="headerlink" title="Outer interruption extent"></a>Outer interruption extent</h3><p>八路八键 摁完要响 八个键对应八个灯 八路公用一个蜂鸣器；按下K2后要显示“2”数字，蜂鸣器响；其他都同理。对应的灯要亮。</p>
+<pre><code>
 
-#根据已知的函数解析式并画图
-def draw_pic(x,fun,xlabel='x轴坐标',ylabel='y轴坐标',title='图标标题',legend=[]):
-    try:
-        y=fun
-        plt.plot(x,y)
-        plt.title(title)
-        plt.xlabel(xlabel)
-        plt.ylabel(ylabel)
-        plt.show()
-    except:
-        print('【ERROR】\n'+'【请检查最简参数模式设置是否符合如下格式】\n'+'draw_pic(x,fun(x))')
-#根据已知的微分方程解方程并画图（无解西式）
-def draw_odient(x,equal,init=0,xlabel='x轴坐标',ylabel='y轴坐标',title='图标标题',legend=[]):
-    try:
-        y=integrate.odeint(equal,init,x)
-        plt.plot(x,y)
-        plt.title(title)
-        plt.xlabel(xlabel)
-        plt.ylabel(ylabel)
-        plt.show()
-    except:
-        print('【ERROR】\n'+'【请检查最简参数模式设置是否符合如下格式】\n'+'draw_odient(x,fun,init=xxx)')
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>如果是数据拟合啥的，要注意要先对数据分割：</p>
-<p><strong>一部分用来做训练集，一部分用来作测试集。</strong></p>
-<p>直接白给代码吧：</p>
-<pre class="line-numbers language-lang-python"><code class="language-lang-python">#logistic回归
-import numpy as np
-import pandas as pd
-from sklearn import linear_model
-from sklearn import model_selection
-sport=pd.read_csv(r'G:\Python-Data-Aanalysis-and-Miner\data\Run or Walk.csv')
-predictors=sport.columns[4:]
-x=sport.loc[:,predictors]
-#x是构造的dataframe 值得注意的是 现在的pandas已经将.ix移除 在这里替换成.loc
-
-y=sport.activity  #提取activity的值（必须要满足仅有0，1两种值，否则不是logistic回归）
-x_train,x_test,y_train,y_test=model_selection.train_test_split(x,y,test_size=0.25,random_state=1234)
-sklearn_logistic=linear_model.LogisticRegression()
-sklearn_logistic.fit(x_train,y_train)
-#print(sklearn_logistic.intercept_,sklearn_logistic.coef_)   #coef是变量的β参数 intercept是截距
-'''
-参数结果如下：
-[[ 0.48695898  6.87517973 -2.44872468 -0.01385936 -0.16085022  0.13389695]]
-'''
-odd=np.exp(sklearn_logistic.coef_)    #各个β参数的优势比
-'''
-优势比结果如下：
-[[1.62735985e+00 9.67949320e+02 8.64037088e-02 9.86236236e-01
-  8.51419589e-01 1.14327500e+00]]
-  说明第一项、第二项参数对概率改变影响最大，
-'''
-sklearn_predict=sklearn_logistic.predict(x_test)
-predict_result=pd.Series(sklearn_predict).value_counts()    #测试集的分类结果
-
-
-########################################################################################3
-
-#多元回归（岭回归）
-import numpy as np
-import  matplotlib.pyplot as plt
-from scipy import integrate
-import statsmodels.api as sm
-import pandas as pd
-import seaborn as sns
-from scipy.stats import f
-from sklearn import model_selection
-from sklearn.linear_model import Ridge,RidgeCV
-plt.rcParams['font.sans-serif']=['Microsoft YaHei']
-plt.rcParams['axes.unicode_minus']=False
-plt.style.use('ggplot')
-data=pd.read_excel(r'G:\Python-Data-Aanalysis-and-Miner\data\diabetes.xlsx')
-'''
-可视化方法确定lambda值得范围
-'''
-predictors=data.columns[2:-1]
-x_train,x_test,y_train,y_test=model_selection.train_test_split(data[predictors],data['Y'],test_size=0.2,random_state=1234)
-lambdas=np.logspace(-5,2,200)
-'''logspace是用来构建等比数列 以10^-5开始直到10^5结束，分割成200个'''
-ridge_cofficients=[]
-for i in lambdas:
-    ridge=Ridge(alpha=i,normalize=True)
-    ridge.fit(x_train,y_train)
-    ridge_cofficients.append(ridge.coef_)
-plt.plot(lambdas,ridge_cofficients)
-plt.xscale('log')
-
-''''’‘’‘’‘’‘’‘’‘’‘’''''''''''''''''''''''''''''''''
-''''''''''''''''''交叉验证法确定lambda值'''''''''''''
-'''''''''''''''''''''''''''''''''''''''''''''''''''
-
-ridge_cv=RidgeCV(alphas=lambdas,normalize=True,scoring='neg_mean_squared_error',cv=10)
-ridge_cv.fit(x_train,y_train)
-ridge_best_lambda=ridge_cv.alpha_
-print(ridge_best_lambda)
-
-
-ridge=Ridge(alpha=ridge_best_lambda,normalize=True)
-ridge.fit(x_train,y_train)
-print(pd.Series(index=['Intercept']+x_train.columns.tolist(),data=[ridge.intercept_]+ridge.coef_.tolist()))
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h2 id="4-调整模型、评估模型、改进模型"><a href="#4-调整模型、评估模型、改进模型" class="headerlink" title="4.调整模型、评估模型、改进模型"></a>4.调整模型、评估模型、改进模型</h2><p>摸鱼了🐟</p>
-<p>咕咕咕🕊</p>
-
+</code></pre>
             </div>
             <hr/>
 
@@ -663,7 +547,7 @@ print(pd.Series(index=['Intercept']+x_train.columns.tolist(),data=[ridge.interce
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://dafeigy.github.io/2020/08/19/%E9%98%BF%E8%8A%B1%E7%9A%84%E6%95%B0%E6%A8%A1%E6%91%B8%E9%B1%BC%E7%AC%94%E8%AE%B0/">https://dafeigy.github.io/2020/08/19/%E9%98%BF%E8%8A%B1%E7%9A%84%E6%95%B0%E6%A8%A1%E6%91%B8%E9%B1%BC%E7%AC%94%E8%AE%B0/</a>
+                    <a href="https://dafeigy.github.io/2020/10/06/%E5%8D%95%E7%89%87%E6%9C%BA%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F2/">https://dafeigy.github.io/2020/10/06/%E5%8D%95%E7%89%87%E6%9C%BA%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F2/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -869,7 +753,7 @@ print(pd.Series(index=['Intercept']+x_train.columns.tolist(),data=[ridge.interce
         repo: '',
         owner: '',
         admin: null,
-        id: '2020-08-19T16-52-23',
+        id: '2020-10-06T00-40-27',
         distractionFreeMode: false  // Facebook-like distraction free mode
     });
 
@@ -893,7 +777,7 @@ print(pd.Series(index=['Intercept']+x_train.columns.tolist(),data=[ridge.interce
 <script src="/libs/gitment/gitment.js"></script>
 <script>
 var gitment = new Gitment({
-    id: 'Wed Aug 19 2020 16:52:23 GMT+0800',
+    id: 'Tue Oct 06 2020 00:40:27 GMT+0800',
     owner: '',
     repo: '',
     oauth: {
@@ -920,33 +804,30 @@ gitment.render('gitment-content');
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
-                <a href="/2020/09/03/R%E8%AF%AD%E8%A8%80%E9%80%9F%E6%88%90/">
+                <a href="/2020/10/06/%E5%8D%95%E7%89%87%E6%9C%BA%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F2/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="阿花R语言光速入门笔记">
+                        <img src="/medias/featureimages/17.jpg" class="responsive-img" alt="单片机指令系统">
                         
-                        <span class="card-title">阿花R语言光速入门笔记</span>
+                        <span class="card-title">单片机指令系统</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            1.常用的数据类型：列表、矩阵、数据框、向量。
-（一）向量相关的操作：a.建立：x&lt;-c(1:20) 
-b.索引 ：x[1] :访问x向量中第一个元素
-x[-19]:访问x向量中除了第19个外的所有元素
-x[c(4:15)]:访问x向
+                            ⏰ 定时工作模式2工作模式1和0都有一个问题，就是需要不断的重新赋值；工作方式2有自动重新加载预设初值的操作，但代价就是计数范围减少，从2^16变成2^8。默认的情况下，使用TR0作为定时器。这种即使方式的特点是TH和TL赋予的值是相等的，
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2020-09-03
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-10-06
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -955,6 +836,7 @@ x[c(4:15)]:访问x向
                         </span>
                     </div>
                 </div>
+
                 
             </div>
         </div>
@@ -965,24 +847,27 @@ x[c(4:15)]:访问x向
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2020/08/01/%E7%AC%A8%E6%AF%94%E9%98%BF%E8%8A%B1%E7%9A%84Java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/">
+                <a href="/2020/10/04/%E5%8D%95%E7%89%87%E6%9C%BA%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/16.jpg" class="responsive-img" alt="笨比阿花的Java摸鱼笔记">
+                        <img src="/medias/featureimages/23.jpg" class="responsive-img" alt="单片机程序结构 笔记">
                         
-                        <span class="card-title">笨比阿花的Java摸鱼笔记</span>
+                        <span class="card-title">单片机程序结构 笔记</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            开篇就摸谁他妈没事找事干啊！都是学校逼的！任何计算机语言的学习都是循序渐进的过程。先从一开始的模仿，到明白逐个字词的意义、再到自己实践、完善，都是个不断模仿——超越的过程。万丈高楼平地起，希望能利用这个平台完善自己的代码学习。但是为什么要学
+                            单片机程序我也是服了，这年头谁他妈用汇编啊？
+赵岩奶奶也对我们太有信心了吧？
+现在好啦要他妈自学汇编语言真有你的天津自学大学👎
+1.汇编程序的一些规则汇编语言是一种应该和c++、拉丁语一起在坟墓里发烂发臭的语言💀。它的存在意义只是让你的
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2020-08-01
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-10-04
                             </span>
                         <span class="publish-author">
                             

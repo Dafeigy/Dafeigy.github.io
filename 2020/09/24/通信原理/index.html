@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="阿花的暴毙通信原理 笔记, 虫草花花咕咕鸡🐓">
+    <meta name="keywords" content="阿花的暴毙通信原理 笔记, 涩图精灵阿花">
     <meta name="description" content="这是有很多姐妹的恋爱绝缘体">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>阿花的暴毙通信原理 笔记 | 虫草花花咕咕鸡🐓</title>
+    <title>阿花的暴毙通信原理 笔记 | 涩图精灵阿花</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -42,7 +42,7 @@
                     
                     <img src="/medias/logo.png" class="logo-img" alt="LOGO">
                     
-                    <span class="logo-span">虫草花花咕咕鸡🐓</span>
+                    <span class="logo-span">涩图精灵阿花</span>
                 </a>
             </div>
             
@@ -141,7 +141,7 @@
         
         <img src="/medias/logo.png" class="logo-img circle responsive-img">
         
-        <div class="logo-name">虫草花花咕咕鸡🐓</div>
+        <div class="logo-name">涩图精灵阿花</div>
         <div class="logo-desc">
             
             这是有很多姐妹的恋爱绝缘体
@@ -450,7 +450,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2020-10-04
+                    2020-10-06
                 </div>
                 
 
@@ -631,7 +631,57 @@ B=2(\beta_{FM}+1)f_m=2(\Delta f+f_m)</script><h2 id="3-5-NBFM、WBFM（是重点
 <script type="math/tex; mode=display">
 B=Nf_m+(N-1)f_g</script><p>fg称为防护频带，是用来避免各频率之间相互干扰的。</p>
 <h1 id="第四章-信源编码"><a href="#第四章-信源编码" class="headerlink" title="第四章 信源编码"></a>第四章 信源编码</h1><h2 id="4-1-抽样定理"><a href="#4-1-抽样定理" class="headerlink" title="4.1 抽样定理"></a>4.1 抽样定理</h2><p>抽样的本质是将连续的变成离散的。在变成离散后也能保证能恢复成原来形状的一种数据处理方式。</p>
-<h2 id="4-2-量化"><a href="#4-2-量化" class="headerlink" title="4.2 量化"></a>4.2 量化</h2>
+<h2 id="4-2-量化"><a href="#4-2-量化" class="headerlink" title="4.2 量化"></a>4.2 量化</h2><h1 id="第五章"><a href="#第五章" class="headerlink" title="第五章"></a>第五章</h1><h2 id="一、数字信号的码型"><a href="#一、数字信号的码型" class="headerlink" title="一、数字信号的码型"></a>一、数字信号的码型</h2><p>数字基带信号是用数字信息的电脉冲表示，我们把数字信息的电脉冲表示形式称为码型。我们设计码型的时候需要考虑如下因素：</p>
+<p>①其实不看也行</p>
+<p>②下面那些都有</p>
+<h3 id="5-1-二元码"><a href="#5-1-二元码" class="headerlink" title="5.1 二元码"></a>5.1 二元码</h3><h4 id="5-1-1单极性不归零码"><a href="#5-1-1单极性不归零码" class="headerlink" title="5.1-1单极性不归零码"></a>5.1-1单极性不归零码</h4><p>利用正电平和零电平代表“1”和“0”。它含有直流分量，而一般有限信道低频传输特性比较差，零频附近的分量不易传送，不能提取同步信息。</p>
+<h4 id="5-1-2双极性不归零码"><a href="#5-1-2双极性不归零码" class="headerlink" title="5.1-2双极性不归零码"></a>5.1-2双极性不归零码</h4><p>采用正点评和负电平表示“1”和“0”。如上两种数字码都不包含同步信息，即当信号连续出现1或0的时候没有位同步信息。</p>
+<h4 id="5-1-3单极性归零码"><a href="#5-1-3单极性归零码" class="headerlink" title="5.1-3单极性归零码"></a>5.1-3单极性归零码</h4><p>归零与不归零的区别就在于“1”信号出现的时候，归零码的脉冲宽度是会比码元间隔小的，<strong>这时候就能提取同步信息。</strong></p>
+<h4 id="5-1-4双极性归零码"><a href="#5-1-4双极性归零码" class="headerlink" title="5.1-4双极性归零码"></a>5.1-4双极性归零码</h4><p>同上，正负电平代表“1”和“0”，脉冲宽度也小于码元间隔。<strong>一样可以提取同步信息。</strong></p>
+<h4 id="5-1-5差分码"><a href="#5-1-5差分码" class="headerlink" title="5.1-5差分码"></a>5.1-5差分码</h4><p>相邻码元之间是否有电平变化来表示“0”,”1”。可以用户自己自定义，并且能消除设备初始状态的影响。</p>
+<h4 id="5-1-6-数字双相码（曼切斯特码）"><a href="#5-1-6-数字双相码（曼切斯特码）" class="headerlink" title="5.1-6 数字双相码（曼切斯特码）"></a>5.1-6 数字双相码（曼切斯特码）</h4><p>数字双相码亦称曼切斯特码。<del>它的信号突变出现在一个脉冲周期的中间时段，并把一个周期的负正对称方波表示“0”，正负对称方波表示“1”。</del></p>
+<p>用人话说就是观察每一个码元间隔，如果发生从上到下的变化那就是1，如果是从下到上那就是0。</p>
+<p>它包含了位定时信息，无直流分量，编码过程也比较简单，<strong>缺点也很明显：带宽比原信码大一倍。</strong></p>
+<h4 id="5-1-7-传号反转码（CMI码）"><a href="#5-1-7-传号反转码（CMI码）" class="headerlink" title="5.1-7 传号反转码（CMI码）"></a>5.1-7 传号反转码（CMI码）</h4><p>有奇怪的定义规则：</p>
+<p>01固定表示为“0”码，“1”码则交替用”11“和”00“两位码来表示。</p>
+<p>这样的好处就是有一定的纠错能力，因为”10“状态是不存在的，所以不会出现3个以上的连码。</p>
+<h4 id="5-1-8-密勒码"><a href="#5-1-8-密勒码" class="headerlink" title="5.1-8 密勒码"></a>5.1-8 密勒码</h4><p><del>很几把复杂 垃圾吧倒了</del></p>
+<p>用双相码的下降沿来触发密勒码的跃变沿。（有点像施密特稳态电路那样，但其实并不是吼！）</p>
+<h3 id="5-2-三元码"><a href="#5-2-三元码" class="headerlink" title="5.2 三元码"></a>5.2 三元码</h3><p>数字双向码、CMI以及密勒吗码用两位二进制码<br>三元码有三种电平幅值，但值得注意的是，它并不是把二进制数转换为三进制，而是将三种电平来表示二进制数。</p>
+<h4 id="5-2-1-AMI码（传号交替反转码）"><a href="#5-2-1-AMI码（传号交替反转码）" class="headerlink" title="5.2-1 AMI码（传号交替反转码）"></a>5.2-1 AMI码（传号交替反转码）</h4><p>”1“传号交替地变换为传输码的”+1“和”-1“，而”0“（空号）保持不变。</p>
+<p>没有同步信号。</p>
+<h4 id="5-2-2-💀-HDB-3码（三阶高密度双极性码）重点-必考"><a href="#5-2-2-💀-HDB-3码（三阶高密度双极性码）重点-必考" class="headerlink" title="5.2-2 💀==HDB_3码（三阶高密度双极性码）重点 必考=="></a>5.2-2 💀==HDB_3码（三阶高密度双极性码）重点 必考==</h4><p>一些规则：<br>1.连续0的长度不超过3的时候按AMI码编码。</p>
+<p>2.如果连续3个0后出现第四个0那么将0改成非0脉冲（+v、-v，称为破坏脉冲）。</p>
+<p>3.破坏脉冲的正负要交替出现。</p>
+<p>4.为了方便识别，破坏脉冲应该与前面一个非0脉冲的极性相同。</p>
+<h5 id="译码方法："><a href="#译码方法：" class="headerlink" title="译码方法："></a>译码方法：</h5><p>将接受到的符号序列中找到破坏点v，将v符号及前面的3个符号译为</p>
+<h4 id="5-2-3-4B3T码"><a href="#5-2-3-4B3T码" class="headerlink" title="5.2-3 4B3T码"></a>5.2-3 4B3T码</h4><p>痕迹吧复杂 摸了</p>
+<h2 id="二、随机数字信号的信号功率谱"><a href="#二、随机数字信号的信号功率谱" class="headerlink" title="二、随机数字信号的信号功率谱"></a>二、随机数字信号的信号功率谱</h2><p>因为数字基带传输中，传输的数字基带信号基本上都是随即你好，所以要用功率谱密度的方法来进行分析。</p>
+<p>若以g_1(t)表示二进制的”1“，$g_2(t)$表示二进制的”0“，他们的宽度都为$T_s $。我们设$g_1(t)$的出现概率为$P$，$g_2(t)$出现概率为$1-P$.</p>
+<p>那么我们的S(t)可以写成如下形式：</p>
+<script type="math/tex; mode=display">
+S(t)=\Sigma_{n=-\infty}^{\infty}S_n(t)</script><p>式中:</p>
+<script type="math/tex; mode=display">
+S_n(t)=\begin{cases}g_1(t-nT_s),概率为P\\g_2(t-nT_s)，概率为1-P\end{cases}</script><h3 id="📶现在我们来分析-S-t-频率谱"><a href="#📶现在我们来分析-S-t-频率谱" class="headerlink" title="📶现在我们来分析$S(t)$频率谱"></a>📶现在我们来分析$S(t)$频率谱</h3><p>而偶们可以又将基带数字信号$S(t)$拆分为交变波$u(t)$和稳态波$v(t)$,即</p>
+<script type="math/tex; mode=display">
+S(t)=u(t)+v(t)</script><p>其中，稳态分量$v(t)$是统计平均分量，交变分量$u(t)$是变动部分。</p>
+<p><strong>==总之只要得到$u(t)$和$v(t)$的频谱，并把它们相加就可以得到S(t)的功率谱啦！==</strong></p>
+<p>而$v(t)$可以表示成如下形式：</p>
+<script type="math/tex; mode=display">
+v(t)=\Sigma_{-\infty}^{\infty}v_n(t)=\Sigma_{n=-\infty}^{\infty}[Pg_1(t-nT_s)+(1-P)g_2(t-nT_s)]</script><p><strong>它表示的意思是$g_1(t)$和$g_2(t)$的概率加权平均。</strong>（没懂也没关系 我也不明白）</p>
+<p>显然这是一个以$T_s$为周期的周期函数，它的功率谱函数是这样子的：</p>
+<script type="math/tex; mode=display">
+S_V(t)=\Sigma_{n=-\infty}^{\infty}f_s^2 ·|PG_1(f-mf_s)+(1-P)G_2(f-mf_s)|^2\delta(f-mf_s)</script><p>其中$f_s$是$\frac{1}{T_s}$，叫码元传输速率。</p>
+<p>u(t)取决于g_1(t) 和 g_2(t)的出现。<br>对u(t)进行傅立叶变换来计算他的功率谱密度：</p>
+<script type="math/tex; mode=display">
+考虑到u(t)=\Sigma_{-\infty}^{\infty}b_n[g_1(t-nT_s)+g_2(t-nT_s)]
+\\ 其中：
+\\ b_n=\begin{cases}1-P，概率为P\\P, 概率为1-P\end{cases}</script><p><strong><del>草泥马太复杂了考研再来补充吧直接上结论：</del></strong></p>
+<p>$u(t)$的功率谱如下：</p>
+<script type="math/tex; mode=display">
+S_u(t)=f_S^2P(1-P)|G_1(f)-G_2(f)|^2</script><p>所以$S(t)$的功率谱：</p>
+<script type="math/tex; mode=display">
+S_f(t)</script><h2 id="码间串扰"><a href="#码间串扰" class="headerlink" title="码间串扰"></a>码间串扰</h2>
             </div>
             <hr/>
 
@@ -1348,21 +1398,6 @@ $(function () {
     <script src="/libs/instantpage/instantpage.js" type="module"></script>
     
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-            processEscapes: true
-        }
-    });
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax();
-        for (var i = 0; i < all.length; ++i)
-            all[i].SourceElement().parentNode.className += ' has-jax';
-    });
-</script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-<script src="/live2d_models/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2d_models/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2d_models/assets/assets/miku.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7},"log":false});</script></body>
+<script src="/live2d_models/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2d_models/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2d_models/assets/assets/miku.model.json"},"display":{"position":"right","width":200,"height":400},"mobile":{"show":true},"react":{"opacity":0.7},"log":false});</script></body>
 
 </html>
