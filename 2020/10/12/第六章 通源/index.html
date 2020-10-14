@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="微机寻址相关, 涩图精灵阿花">
+    <meta name="keywords" content="涩图精灵阿花">
     <meta name="description" content="这是有很多姐妹的恋爱绝缘体">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>微机寻址相关 | 涩图精灵阿花</title>
+    <title>涩图精灵阿花</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -309,12 +309,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/20.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/0.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">微机寻址相关</h1>
+                    <h1 class="description center-align post-title"></h1>
                 </div>
             </div>
         </div>
@@ -443,7 +443,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2020-10-10
+                    2020-10-12
                 </div>
                 
 
@@ -464,65 +464,17 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h1 id="微机寻址操作的对象"><a href="#微机寻址操作的对象" class="headerlink" title="微机寻址操作的对象"></a>微机寻址操作的对象</h1><h3 id="🐷前期铺垫："><a href="#🐷前期铺垫：" class="headerlink" title="🐷前期铺垫："></a>🐷前期铺垫：</h3><ul>
-<li><p>(AX)表示取AX的内容</p>
-</li>
-<li><p>[AX]表示取AX内容作为地址</p>
-</li>
-</ul>
-<p>我把可能操作的对象都列出来了：</p>
-<p><img src="https://i.loli.net/2020/10/10/hFTlfK6onGuE1q2.png" alt=""></p>
-<p>长条的代表是16位寄存器，短条代表的是8位。</p>
-<p>❗<strong>第一条法则：数据类型要匹配</strong></p>
-<p><strong>小的数据、内容可以放进长的容器，但大的数据的不能放进短的容器。</strong>很好理解吧？数据、内容的大小指的是8位、16位。在8086里我们主要是这两种，其他如80386以上的微机可以有32位的。</p>
-<p><strong>❗第二条法则：操作命令要符合语法</strong></p>
-<p>以我们最常见的MOV指令为例，给出MOV指令的操作对象关系：</p>
-<p><img src="https://i.loli.net/2020/10/10/LCky9uerxvJ7SaR.jpg" alt=""></p>
-<p>MOV指令一共有两个操作数部分，左边的操作数叫<strong>目的操作数</strong>，右边的操作数叫做源操作数。</p>
-<p>通过这张表我们可以知道，合法的操作包含这几种情况：</p>
-<ul>
-<li>❗立即数<strong>不能</strong>传输给段寄存器</li>
-<li>❗只有通用寄存器之间才能相互传输</li>
-<li>❗立即数不能作为目的操作数（目的操作数可以是地址）</li>
-</ul>
-<h3 id="微机寻址方式"><a href="#微机寻址方式" class="headerlink" title="微机寻址方式"></a>微机寻址方式</h3><ul>
-<li>固定寻址</li>
-<li>立即数寻址</li>
-<li>寄存器寻址</li>
-<li>存储器寻址</li>
-<li>I/O端口寻址</li>
-</ul>
-<p>前三种有手就行，重点在第四种存储器寻址。</p>
-<p>存储器寻址有6种方式，常用的5种，他们的顺序是层层递进的，前面的方法都可以在后面用到。</p>
-<p><strong>我们可以用高级语言的函数与形参的思维来理解、分辨他们。</strong></p>
-<h4 id="直接寻址（1立即）"><a href="#直接寻址（1立即）" class="headerlink" title="直接寻址（1立即）"></a>直接寻址（1立即）</h4><pre class="line-numbers language-lang-assembly"><code class="language-lang-assembly">MOV AL,[2000H];   --将(DS)*16+2000H存储单元的内容传输给AL。
-<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>如果出现了操作数地址位于数据DS段外，则可以加上前缀表示<strong>段前超越</strong>：</p>
-<pre class="line-numbers language-lang-assembly"><code class="language-lang-assembly">MOV AL,ES:[2000H];  --将ES中偏移地址为2000H的字节二单元内容传输打到AL
-<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>因为间接寻址归DS管所以用的是(DS)；如果是其他寻址方式则要用对应的段。</p>
-<h4 id="寄存器间接寻址（1寄存）"><a href="#寄存器间接寻址（1寄存）" class="headerlink" title="寄存器间接寻址（1寄存）"></a>寄存器间接寻址（1寄存）</h4><p>先来看两个可能会出现混淆的代码：</p>
-<pre class="line-numbers language-lang-assembly"><code class="language-lang-assembly">MOV AX,[BP];  
-MOV [BP],AX;
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p>第一行表示将以(SS)*16+BP为地址的存储单元传输至AX中。</p>
-<p>第二行表示将AX内容传输至以(SS)*16+BP为地址的存储单元。</p>
-<p>用人话来说就是第一个是给AX赋值，第二个是代表的存储单元赋值。</p>
-<p>对比上一种方式，这种方式没把数字直白的表现出来，而是含蓄的暂存在<strong>通用寄存器中</strong>。BP作为通用寄存器，其通用性就体现在它可以作为一个中转站，为不能赋值的寄存器提供中转。</p>
-<h4 id="寄存器相对寻址-1立即，1寄存"><a href="#寄存器相对寻址-1立即，1寄存" class="headerlink" title="寄存器相对寻址(1立即，1寄存)"></a>寄存器相对寻址(1立即，1寄存)</h4><pre class="line-numbers language-lang-assembly"><code class="language-lang-assembly">MOV AX,[SI+06H];  -- 将(DS)*16+(SI)+06H作为地址的存储单元的内容赋值给AX
-MOV AX,[SI]06H;
-MOV AX,06H[SI];  --这三条其实是一样的
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-<p>对比上一条，多了一个立即数。这个立即数可以非常灵活的变动，所以这种寻址方式很适合访问数组（就是一个一元表格，有若干元素）。</p>
-<h4 id="基址变址寻址（2寄存）"><a href="#基址变址寻址（2寄存）" class="headerlink" title="基址变址寻址（2寄存）"></a>基址变址寻址（2寄存）</h4><pre class="line-numbers language-lang-assembly"><code class="language-lang-assembly">MOV AX,[BX][SI];    --将以(DS)*16+[BX]+[SI]作为地址的存储单元的内容传输给AX
-MOV AX,[BX+SI];
-MOV AX,DS:[BP][DI];    --将以(SS)*16+[BP]+[DI]作为地址的存储单元的内容传输给AX
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-<p>以上都是对的。<strong>BX、BP为一组，DI、SI为一组，要从这两组中各选一个做为参数。</strong></p>
-<h4 id="相对基址加变址寻址（2寄存1立即）"><a href="#相对基址加变址寻址（2寄存1立即）" class="headerlink" title="相对基址加变址寻址（2寄存1立即）"></a>相对基址加变址寻址（2寄存1立即）</h4><pre class="line-numbers language-lang-assembly"><code class="language-lang-assembly">MOV AX,[BX][DI]06H;        --将以(SS)*16+[BP]+[DI]+06H作为地址的存储单元的内容传输给AX
-MOV AX,[BX][DI]DATA;    --DATA是一个变量，提前赋值过了
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p><strong>发现了吗，其实我们在乎的不是寻址的方式，而是寻址的语法。</strong>我们关注的是我们的数据如何成功的从一个存储器或者寄存器流动到另一个去，实现的方式，也就是我们的寻址方式；我们关注能否成功不在于寻址方式有多花里胡哨， 而在于语法正不正去、适不适用。</p>
+                <h1 id="第六章-数字信号的载波传播"><a href="#第六章-数字信号的载波传播" class="headerlink" title="第六章 数字信号的载波传播"></a>第六章 数字信号的载波传播</h1><h2 id="一、-数字解调与原理"><a href="#一、-数字解调与原理" class="headerlink" title="一、 数字解调与原理"></a>一、 数字解调与原理</h2><h3 id="1-2ASK"><a href="#1-2ASK" class="headerlink" title="1.2ASK"></a>1.2ASK</h3><p>用二进制数字信号的“0”和“1”控制<strong>载波的通和断</strong>。<br>它的表达式如下：</p>
+<script type="math/tex; mode=display">
+S_{ASK}(t)=\begin{cases}Acos {\omega_0t},“1”\\0,“0”\end{cases}</script><p>产生方式有两种：基于成法器的模拟调制以及开关键控法‘<br>解调方式也有两种：相干解调和非相干解调。</p>
+<h3 id="2-2FSK"><a href="#2-2FSK" class="headerlink" title="2. 2FSK"></a>2. 2FSK</h3><p>用不同频率对数字信号“0”和“1”进行控制。表达式如下：</p>
+<script type="math/tex; mode=display">
+\\S_{FSK}(t)=\begin{cases}Acos \omega_1 t,“1”\\Acos\omega_2 t,“0”\end{cases}</script><p>产生方式有两种，解调方式有三种。除了ASK里面的两种，还有一种过零检测法。</p>
+<h3 id="3-2PSK-BPSK"><a href="#3-2PSK-BPSK" class="headerlink" title="3. 2PSK/BPSK"></a>3. 2PSK/BPSK</h3><p>所谓PSK就是使用载波的不同相位直接去表示数字信息。<br>2PSK对应的是DSB信号。<br>表达式如下：<br>最好的实现方式是类似DSB调制，利用一个乘法器去实现。<br>键控不推荐，实验室也不用这种方式。</p>
+<p>解调方式相干解调、非相干信号。<br>基带信号</p>
+<p>2PSK缺点：<br>恢复的相干载波产生180度的倒向时，解调出的数字基带信号将与发送的数字基带信号正好相反，解调器输出则会输出错误。这种称为倒$\pi$现象。这种现象出现是<strong>随机</strong>的。</p>
+<h3 id="4-2DPSK"><a href="#4-2DPSK" class="headerlink" title="4 2DPSK"></a>4 2DPSK</h3><p>记得上一章说的差分码吗？有相位相差$\pi$的情况和相位相差0的情况分别对应数字信号的“0”和“1”。产生方式两种：</p>
+<p>（提出建议：用这个做无线计算器）</p>
 
             </div>
             <hr/>
@@ -548,7 +500,7 @@ MOV AX,[BX][DI]DATA;    --DATA是一个变量，提前赋值过了
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://dafeigy.github.io/2020/10/10/%E5%BE%AE%E6%9C%BA%20%E5%AF%BB%E5%9D%80%E7%9B%B8%E5%85%B3/">https://dafeigy.github.io/2020/10/10/%E5%BE%AE%E6%9C%BA%20%E5%AF%BB%E5%9D%80%E7%9B%B8%E5%85%B3/</a>
+                    <a href="https://dafeigy.github.io/2020/10/12/%E7%AC%AC%E5%85%AD%E7%AB%A0%20%E9%80%9A%E6%BA%90/">https://dafeigy.github.io/2020/10/12/%E7%AC%AC%E5%85%AD%E7%AB%A0%20%E9%80%9A%E6%BA%90/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -754,7 +706,7 @@ MOV AX,[BX][DI]DATA;    --DATA是一个变量，提前赋值过了
         repo: '',
         owner: '',
         admin: null,
-        id: '2020-10-10T19-01-08',
+        id: '2020-10-12T19-25-50',
         distractionFreeMode: false  // Facebook-like distraction free mode
     });
 
@@ -778,7 +730,7 @@ MOV AX,[BX][DI]DATA;    --DATA是一个变量，提前赋值过了
 <script src="/libs/gitment/gitment.js"></script>
 <script>
 var gitment = new Gitment({
-    id: 'Sat Oct 10 2020 19:01:08 GMT+0800',
+    id: 'Mon Oct 12 2020 19:25:50 GMT+0800',
     owner: '',
     repo: '',
     oauth: {
@@ -809,7 +761,7 @@ gitment.render('gitment-content');
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2020/10/12/%E7%AC%AC%E5%85%AD%E7%AB%A0%20%E9%80%9A%E6%BA%90/">
+                <a href="/2020/10/12/%E5%8D%95%E7%89%87%E6%9C%BA2/">
                     <div class="card-image">
                         
                         
@@ -821,9 +773,7 @@ gitment.render('gitment-content');
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            第六章 数字信号的载波传播一、 数字解调与原理1.2ASK用二进制数字信号的“0”和“1”控制载波的通和断。它的表达式如下：
-
-S_{ASK}(t)=\begin{cases}Acos {\omega_0t},“1”\\0,“0”\end{
+                            单片机并行外扩展(ROM、RAM并行扩展）一、总线结构地址总线：n根线有2^n 个地址单元，单向从单片机往外传输。控制总线：双向数据总线：一个字节8位，数据总线的位数也是8位，双向。一个简单的例子就是：MOV @DPTR,A和MOV A,@
                         
                     </div>
                     <div class="publish-info">
@@ -848,24 +798,34 @@ S_{ASK}(t)=\begin{cases}Acos {\omega_0t},“1”\\0,“0”\end{
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2020/10/06/%E5%8D%95%E7%89%87%E6%9C%BA%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F2/">
+                <a href="/2020/10/10/%E5%BE%AE%E6%9C%BA%20%E5%AF%BB%E5%9D%80%E7%9B%B8%E5%85%B3/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/17.jpg" class="responsive-img" alt="单片机指令系统">
+                        <img src="/medias/featureimages/20.jpg" class="responsive-img" alt="微机寻址相关">
                         
-                        <span class="card-title">单片机指令系统</span>
+                        <span class="card-title">微机寻址相关</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            ⏰ 定时工作模式2工作模式1和0都有一个问题，就是需要不断的重新赋值；工作方式2有自动重新加载预设初值的操作，但代价就是计数范围减少，从2^16变成2^8。默认的情况下，使用TR0作为定时器。这种即使方式的特点是TH和TL赋予的值是相等的，
+                            微机寻址操作的对象🐷前期铺垫：
+(AX)表示取AX的内容
+
+[AX]表示取AX内容作为地址
+
+
+我把可能操作的对象都列出来了：
+
+长条的代表是16位寄存器，短条代表的是8位。
+❗第一条法则：数据类型要匹配
+小的数据、内容可以放进长的容器，
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2020-10-06
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-10-10
                             </span>
                         <span class="publish-author">
                             

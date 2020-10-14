@@ -450,7 +450,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2020-10-06
+                    2020-10-12
                 </div>
                 
 
@@ -662,7 +662,8 @@ B=Nf_m+(N-1)f_g</script><p>fg称为防护频带，是用来避免各频率之间
 <script type="math/tex; mode=display">
 S(t)=\Sigma_{n=-\infty}^{\infty}S_n(t)</script><p>式中:</p>
 <script type="math/tex; mode=display">
-S_n(t)=\begin{cases}g_1(t-nT_s),概率为P\\g_2(t-nT_s)，概率为1-P\end{cases}</script><h3 id="📶现在我们来分析-S-t-频率谱"><a href="#📶现在我们来分析-S-t-频率谱" class="headerlink" title="📶现在我们来分析$S(t)$频率谱"></a>📶现在我们来分析$S(t)$频率谱</h3><p>而偶们可以又将基带数字信号$S(t)$拆分为交变波$u(t)$和稳态波$v(t)$,即</p>
+S_n(t)=\begin{cases}g_1(t-nT_s),概率为P\\g_2(t-nT_s)，概率为1-P\end{cases}</script><h3 id="S-t-频率谱📶"><a href="#S-t-频率谱📶" class="headerlink" title="$S(t)$频率谱📶"></a>$S(t)$频率谱📶</h3><p>现在我们来分析.</p>
+<p>而偶们可以又将基带数字信号$S(t)$拆分为交变波$u(t)$和稳态波$v(t)$,即</p>
 <script type="math/tex; mode=display">
 S(t)=u(t)+v(t)</script><p>其中，稳态分量$v(t)$是统计平均分量，交变分量$u(t)$是变动部分。</p>
 <p><strong>==总之只要得到$u(t)$和$v(t)$的频谱，并把它们相加就可以得到S(t)的功率谱啦！==</strong></p>
@@ -671,7 +672,7 @@ S(t)=u(t)+v(t)</script><p>其中，稳态分量$v(t)$是统计平均分量，交
 v(t)=\Sigma_{-\infty}^{\infty}v_n(t)=\Sigma_{n=-\infty}^{\infty}[Pg_1(t-nT_s)+(1-P)g_2(t-nT_s)]</script><p><strong>它表示的意思是$g_1(t)$和$g_2(t)$的概率加权平均。</strong>（没懂也没关系 我也不明白）</p>
 <p>显然这是一个以$T_s$为周期的周期函数，它的功率谱函数是这样子的：</p>
 <script type="math/tex; mode=display">
-S_V(t)=\Sigma_{n=-\infty}^{\infty}f_s^2 ·|PG_1(f-mf_s)+(1-P)G_2(f-mf_s)|^2\delta(f-mf_s)</script><p>其中$f_s$是$\frac{1}{T_s}$，叫码元传输速率。</p>
+S_V(f)=\Sigma_{n=-\infty}^{\infty}f_s^2 ·|PG_1(f-mf_s)+(1-P)G_2(f-mf_s)|^2\delta(f-mf_s)</script><p>其中$f_s$是$\frac{1}{T_s}$，叫码元传输速率。</p>
 <p>u(t)取决于g_1(t) 和 g_2(t)的出现。<br>对u(t)进行傅立叶变换来计算他的功率谱密度：</p>
 <script type="math/tex; mode=display">
 考虑到u(t)=\Sigma_{-\infty}^{\infty}b_n[g_1(t-nT_s)+g_2(t-nT_s)]
@@ -681,7 +682,66 @@ S_V(t)=\Sigma_{n=-\infty}^{\infty}f_s^2 ·|PG_1(f-mf_s)+(1-P)G_2(f-mf_s)|^2\delt
 <script type="math/tex; mode=display">
 S_u(t)=f_S^2P(1-P)|G_1(f)-G_2(f)|^2</script><p>所以$S(t)$的功率谱：</p>
 <script type="math/tex; mode=display">
-S_f(t)</script><h2 id="码间串扰"><a href="#码间串扰" class="headerlink" title="码间串扰"></a>码间串扰</h2>
+S_f(f)=f_sp(1-p）|G(f)|^2+f_s\Sigma_{-\infty}^{\infty}|(1-p)G(mf_s)|^2\delta(f-mf_s)</script><p>特别的，当0，1出现概率相等的时候,就是$p=\frac{1}{2}$时：</p>
+<script type="math/tex; mode=display">
+S_f(f)=\frac{f_s}{4}|G(f)|^2+\frac{f_s}{4}\Sigma_{-\infty}^{\infty}|G(mf_s)|^2\delta(f-mf_s)</script><p>但是我觉得这个东西<del>没啥卵用</del><strong>实用价值不大</strong>。考试不应该是考察你的公式记忆，而是你对这个<strong>公式怎么来的理解</strong>。我的理解是把这个$S(t)$过程拆解成两部分，一部分适用统计学来研究，另一部部分带有一定的<del>神学色彩</del>随机性。</p>
+<h3 id="码间串扰"><a href="#码间串扰" class="headerlink" title="码间串扰"></a>码间串扰</h3><p>所谓码间串扰是<del>由于系统传输总特性不理想，导致前后<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/码元/10525003">码元</a>的波形畸变、展宽，并使前面波形出现很长的拖尾，蔓延到当前码元的抽样时刻上，从而对当前码元的判决造成干扰。</del>在信号波形的<strong>抽样点</strong>有<strong>多个非零值</strong>。码间串扰是个很烦的问题，下面开始为了实现五码间串扰的传输设计：</p>
+<h4 id="1-无码间串扰的基带传输特性（LPF为例）"><a href="#1-无码间串扰的基带传输特性（LPF为例）" class="headerlink" title="1. 无码间串扰的基带传输特性（LPF为例）"></a>1. 无码间串扰的基带传输特性（LPF为例）</h4><p>我们先将一系列的杂七杂八的滤波器、信道啊啥的balabala的简化成这样的这样形式：</p>
+<p><img src="https://i.loli.net/2020/10/12/EqdiQZMXAbFSJUo.png" alt=""></p>
+<p>我们假设$H(\omega)$具有理想低通滤波器的特性。则有</p>
+<script type="math/tex; mode=display">
+H(\omega)=\begin{cases}e^{-j\omega t_0},|\omega|\leq\frac{\pi}{T_S}\\0,|\omega|>\frac{\pi}{T_S}\end{cases}</script><p>它对应的时域是这样的：</p>
+<script type="math/tex; mode=display">
+h(t)=FT^{-1}(H(\omega))=\frac{1}{T_S}·Sa[\frac{\pi}{T_S}(t)]</script><p>给张图吧要不不好理解：</p>
+<p><img src="https://i.loli.net/2020/10/12/TiKbIAXqvwMeLWO.png" alt=""></p>
+<p>我们可以关注这个波形的特点：</p>
+<ul>
+<li>输出波形有很长的拖尾，幅度逐渐衰减，时间轴上也有很多零点（后面我们会把这些零点作为抽样点）</li>
+<li>波形的零点出现在$t=KT_S$处（K=0，1，2，…）,各个零点间隔是固定的$T_S$。</li>
+</ul>
+<p>所以我们</p>
+<h1 id="第六章-数字信号的载波传播"><a href="#第六章-数字信号的载波传播" class="headerlink" title="第六章 数字信号的载波传播"></a>第六章 数字信号的载波传播</h1><h2 id="一、-数字解调与原理"><a href="#一、-数字解调与原理" class="headerlink" title="一、 数字解调与原理"></a>一、 数字解调与原理</h2><h3 id="1-2ASK"><a href="#1-2ASK" class="headerlink" title="1.2ASK"></a>1.2ASK</h3><p>用二进制数字信号的“0”和“1”控制<strong>载波的通和断</strong>。<br>它的表达式如下：</p>
+<script type="math/tex; mode=display">
+S_{ASK}(t)=\begin{cases}Acos {\omega_0t},“1”\\0,“0”\end{cases}</script><p>产生方式有两种：基于成法器的模拟调制以及开关键控法<br>解调方式也有两种：相干解调和非相干解调。</p>
+<h3 id="2-2FSK"><a href="#2-2FSK" class="headerlink" title="2. 2FSK"></a>2. 2FSK</h3><p>用不同频率对数字信号“0”和“1”进行控制。表达式如下：</p>
+<script type="math/tex; mode=display">
+\\S_{FSK}(t)=\begin{cases}Acos \omega_1 t,“1”\\Acos\omega_2 t,“0”\end{cases}</script><p>产生方式有两种，解调方式有三种。除了ASK里面的两种，还有一种过零检测法。</p>
+<p>过零的过程还挺复杂：</p>
+<script type="math/tex; mode=display">
+S_{DSK}(t)->限幅成为方波->微分成锯齿波->全滤整流板正->脉冲展宽成小方波->低通滤波过滤直流</script><h3 id="3-2PSK-BPSK"><a href="#3-2PSK-BPSK" class="headerlink" title="3. 2PSK/BPSK"></a>3. 2PSK/BPSK</h3><p>所谓PSK就是使用载波的不同相位直接去表示数字信息。<br>2PSK对应的是DSB信号。主要有两种方式：二进制绝对调相和二进制相对调相。</p>
+<h4 id="3-1-二进制绝对调相2PSK"><a href="#3-1-二进制绝对调相2PSK" class="headerlink" title="3.1 二进制绝对调相2PSK"></a>3.1 二进制绝对调相2PSK</h4><p>表达式如下：</p>
+<script type="math/tex; mode=display">
+S_{PSK}=\begin{cases}Acos\omega_0 t,“1”\\Acos(\omega_0t+\pi),“0”\end{cases}</script><p>最好的实现方式是类似DSB调制，利用一个乘法器去实现。<br>键控<strong>不推荐</strong>，实验室也不用这种方式。</p>
+<p>解调方式相干解调、非相干信号。</p>
+<p>2PSK缺点：<br>恢复的相干载波产生180度的倒向时，解调出的数字基带信号将与发送的数字基带信号正好相反，解调器输出则会输出错误。这种称为倒$\pi$现象。这种现象出现是<strong>随机</strong>的。所以一般也不用这种方式</p>
+<h4 id="3-2-二进制相对调相DPSK"><a href="#3-2-二进制相对调相DPSK" class="headerlink" title="3.2 二进制相对调相DPSK"></a>3.2 二进制相对调相DPSK</h4><p>记得上一章说的差分码吗？有相位相差$\pi$的情况和相位相差0的情况分别对应数字信号的“0”和“1”，是<strong>用户自定义的</strong>。这就是”相对”和“绝对”的差别。</p>
+<p>产生方式一样是两种，区别是调制信号需要经过码型变换，将绝对码换成相对码。</p>
+<p>（提出建议：用这个做无线计算器）</p>
+<p>DPSK的解调用==<strong>差分相干解调</strong>==，不需要本地载波，只需要DPSK信号延迟一个码元间隔Ts，然后让他与DPSK本身相乘，这样得到的相乘结果反映了码元的相对相位关系 ，在通过LPF后可以直接进行抽样判决恢复原始数字信息。</p>
+<p><img src="https://i.loli.net/2020/10/12/xrngsWDZXcF27VM.jpg" alt=""></p>
+<p><strong>优点</strong>：不需要本地载波，不需要载波同步</p>
+<p><strong>缺点</strong>：性能差3dB</p>
+<h2 id="二、二进制数字调制信号频谱特性"><a href="#二、二进制数字调制信号频谱特性" class="headerlink" title="二、二进制数字调制信号频谱特性"></a>二、二进制数字调制信号频谱特性</h2><h3 id="6-2-1-2ASK功率谱"><a href="#6-2-1-2ASK功率谱" class="headerlink" title="6.2.1 2ASK功率谱"></a>6.2.1 2ASK功率谱</h3><p>鬼屎一样的东西最好给老子爬，直接上结论：</p>
+<script type="math/tex; mode=display">
+B_{2ASK}=2f_s=\frac{2}{T_s}</script><p>2ASK信号的带宽一般为调制信号带宽的2倍。</p>
+<p>我们在第五章是不是说过，<strong>==为了限制频带，可以采用带限信号作为基带信号，将近代信号变为余弦滚降信号再进行2ASK调制==</strong>。这样就可以压缩频带，功率谱就变成这样了：</p>
+<p><img src="G:\BLOG\hexoblog\source\pic\微信图片_20201012210253.jpg" alt=""></p>
+<p>这时候</p>
+<script type="math/tex; mode=display">
+B_{ASK}=2B=2(\alpha+1)f_S=\frac{(\alpha+1)}{T_S}</script><p>特别的，如果基带信号时升余弦特性，当$\alpha$取1时，就能得到一开始的式子了。</p>
+<p>如果基带信号为时分多路复用，已调波带宽为</p>
+<script type="math/tex; mode=display">
+B_{ASK}=\frac{2}{\tau}=2R_B</script><p>其中，$\tau$是全占空基带信号的脉冲宽度，$R_B$是传码率。</p>
+<h3 id="6-2-2-2FSK功率谱"><a href="#6-2-2-2FSK功率谱" class="headerlink" title="6.2.2 2FSK功率谱"></a>6.2.2 2FSK功率谱</h3><p>这个更加阴间，所以直接上结论：</p>
+<script type="math/tex; mode=display">
+B_{FSK}=|f_2-f_1|+2f_S
+\\或
+\\
+B_{FSK}=|f_2-f_1|+(\alpha+1)f_S</script><p>对应什么情况不用我多说了吧？</p>
+<h3 id="6-2-3-2PSK功率谱"><a href="#6-2-3-2PSK功率谱" class="headerlink" title="6.2.3 2PSK功率谱"></a>6.2.3 2PSK功率谱</h3><p>我前面有说过，<strong>==2PSK信号其实是一种DSB信号==</strong>，2ASK类似AM信号。那么，2PSK信号只比2ASK信号少了载波分量。</p>
+<p>带宽与2ASK是一样的，即：</p>
+<script type="math/tex; mode=display">
+B_{PSK}=2f_S=\frac{2}{T_S}</script>
             </div>
             <hr/>
 
