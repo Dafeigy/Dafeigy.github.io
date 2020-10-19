@@ -4,8 +4,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="单片机指令系统, 涩图精灵阿花">
-    <meta name="description" content="这是有很多姐妹的恋爱绝缘体">
+    <meta name="keywords" content="阿花想要漂亮姐姐">
+    <meta name="description" content="什么时候才能被姐姐拥抱">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>单片机指令系统 | 涩图精灵阿花</title>
+    <title>阿花想要漂亮姐姐</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -42,7 +42,7 @@
                     
                     <img src="/medias/logo.png" class="logo-img" alt="LOGO">
                     
-                    <span class="logo-span">涩图精灵阿花</span>
+                    <span class="logo-span">阿花想要漂亮姐姐</span>
                 </a>
             </div>
             
@@ -141,10 +141,10 @@
         
         <img src="/medias/logo.png" class="logo-img circle responsive-img">
         
-        <div class="logo-name">涩图精灵阿花</div>
+        <div class="logo-name">阿花想要漂亮姐姐</div>
         <div class="logo-desc">
             
-            这是有很多姐妹的恋爱绝缘体
+            什么时候才能被姐姐拥抱
             
         </div>
     </div>
@@ -309,12 +309,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/17.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/0.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">单片机指令系统</h1>
+                    <h1 class="description center-align post-title"></h1>
                 </div>
             </div>
         </div>
@@ -443,14 +443,14 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2020-10-06
+                    2020-10-19
                 </div>
                 
 
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2020-10-06
+                    2020-10-19
                 </div>
                 
 
@@ -464,65 +464,117 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h3 id="⏰-定时工作模式2"><a href="#⏰-定时工作模式2" class="headerlink" title="⏰ 定时工作模式2"></a>⏰ 定时工作模式2</h3><p>工作模式1和0都有一个问题，就是需要不断的重新赋值；<br>工作方式2有自动重新加载预设初值的操作，但代价就是计数范围减少，从2^16变成2^8。默认的情况下，使用TR0作为定时器。这种即使方式的特点是TH和TL赋予的值是相等的，不像前面的计时方式0和计时方式1一样需要分离出高八位和低五位并分别赋值。</p>
-<p>先来一个简单的例子：</p>
-<pre class="line-numbers language-lang-assembly"><code class="language-lang-assembly">MOV IE, #00H;
-MOV TMOD,#02;
-MOV TH, #0CEH;
-MOV TL,#0CEH;
-SETB TR0;
-LOOP1:
-        JBC TF0, LOOP2;
-        AJMP LOOP1;
-LOOP2:
-        CPL P1.0;
-        AJMP LOOP1;
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>另另外一个例子🌰:<br>用定时器1用工作方式2进行计数，每一百次进行累加器加1操作，按查询方式进行编程。<br>所谓查询方式就是</p>
-<pre class="line-numbers language-lang-assembly"><code class="language-lang-assembly">MOV TL,#9CH;
-MOV TH,#9CH;
-MOV TMOD,#60H;
-MOV IE,#00H;           禁止中断
-LOOP1:JBC TF1,LOOP2;
-        AJMP LOOP1;
-LOOP2:INC A;
-        AJMP LOOP1;
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>另一个古老的例子🌰 :<br>周长2米，一圈产生一个下脉冲，从INT0进。30H，31H，32H分别是低、中、高位置</p>
-<pre class="line-numbers language-lang-assembly"><code class="language-lang-assembly">          ORG 0000H
-0000H:  LJMP MAIN;
-           ORG 0003H;
-0003H:  AJMP INT;
-           ORG #0040H;
-MAIN:       MOV SP,#60H;
-          SETB EA;
-          SETB EX0;
-            SETB IT0;
-          MOV 30H,#00H;
-          MOV 31H,#01H;
-          MOV 32H,#02H;
-HERE:   SJMP $
-        ORG #0100H;
-INT:     push ACC;
-        push PSW;
-        MOV A,30H;
-        ADD A,#2;
-        MOV 30H,A;
-        CLR A;
-        ADDC A,31H;
-        MOV 31H, A;
-        CLR A;
-        ADDC A,32H;
-        MOV 32H,A;
-        POP PSW;
-        POP ACC;
-        RETL
-        END
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h3 id="Outer-interruption-extent"><a href="#Outer-interruption-extent" class="headerlink" title="Outer interruption extent"></a>Outer interruption extent</h3><p>八路八键 摁完要响 八个键对应八个灯 八路公用一个蜂鸣器；按下K2后要显示“2”数字，蜂鸣器响；其他都同理。对应的灯要亮。</p>
-<pre><code>
+                <hr>
+<h2 id="title：-传感器"><a href="#title：-传感器" class="headerlink" title="title： 传感器"></a>title： 传感器</h2><h2 id="动静态概念"><a href="#动静态概念" class="headerlink" title="动静态概念"></a>动静态概念</h2><h4 id="静态"><a href="#静态" class="headerlink" title="静态"></a>静态</h4><p>静态特性是对于静态得到输入信号，传感器的输出量和输入量之间的恶所具有的相互关系。</p>
+<ul>
+<li>测量范围$Y_{FS}$：每个传感器的测量范围，超过这个范围测量时会带来大误差甚至损坏。</li>
+<li>线性度$\delta_f$：表示实际曲线与拟合直线接近程度的性能指标。用实际曲线与拟合曲线最大偏差和满量程输出的百分比表示线性度。</li>
+<li>迟滞$\delta_H$：全量程范围校准时同一输入量的正形成输出和反行程输出的最大偏差与满量程输出值的百分比。</li>
+<li>重复性$\delta<em>k$：描述同意工作条件输入量按同一方向在全测量范围内连续多次重复不一致性。用正行程和反行程最大重复行偏差中的最大值与满量程的百分比表示。$\delta_k=\pm\frac{\Delta R</em>{max}}{Y_{FS}}$*100%</li>
+<li>灵敏度S：传感器在稳定工作时输出量变化与输入量变化的比值。</li>
+<li>分辨率$\Delta X_{max}$：衡量传感器感受测量最小变化的能力。</li>
+<li>温度稳定性$\alpha_T$：用温度系数衡量在T1、T2时输出值变化与温度变化量和最大量程乘积比值。</li>
+</ul>
+<h4 id="动态"><a href="#动态" class="headerlink" title="动态"></a>动态</h4><p>动态特性是指检测系统的输入为随时间变化的信号时，系统的输出与输入之间的关系。主要动态特性的性能指标有<strong>阶跃响应</strong>性能指标和<strong>频率响应指标</strong>。</p>
+<p>过渡过程：</p>
+<ul>
+<li>时间常数$\tau$ 输出量从0到63%所需要的时间。</li>
+<li>上升时间$t_r$从稳态的20%到90%所需要的时间。</li>
+<li>响应时间$t_s$，从输入量开始到输出进入稳定值允许的误差范围内所需要的时间.</li>
+<li>振荡次数N，输出量在稳定值上下摆动的次数，越小越好。</li>
+</ul>
+<p>动态指标：</p>
+<h2 id="温度传感器"><a href="#温度传感器" class="headerlink" title="温度传感器"></a>温度传感器</h2><h3 id="热敏电阻与温度系数"><a href="#热敏电阻与温度系数" class="headerlink" title="热敏电阻与温度系数"></a>热敏电阻与温度系数</h3><p>热敏电阻有PTC、CTR、NTC三类。</p>
+<ul>
+<li><p><strong>PTC（positive）热敏电阻</strong>。材料用$BaTiO_3$,加上稀土元素，陶瓷工艺烧制。有两种，一种==突变型==一种==缓变型==。</p>
+<p><strong>表达式：</strong>$R<em>\tau开关=R_0exp(AT)$，$R</em>\tau缓变=A+BT$。</p>
+<p><strong>温度系数</strong>$\alpha_T=\frac{A}{A+BT}x<em>100%$%和$\alpha_T=A</em>100%$%</p>
+<p>图象这样：</p>
+<p><img src="https://i.loli.net/2020/10/19/3mWeAbkDuFcriCQ.jpg" alt=""></p>
+<p><img src="https://i.loli.net/2020/10/19/cbGDotiXx9HsS8v.jpg" alt=""></p>
+</li>
+<li><p><strong>CTR（负温临界）热敏电阻。</strong>在某一温度附近电阻值发生突变的电阻。用$\phi=lg(\frac{R<em>{25}}{R</em>{min}})$表示温度下降的快慢。越大说明开关特性越好。这种电阻常用在报警、控温，<strong>有很大的负温度系数</strong>。图象这个样：</p>
+<p><img src="https://i.loli.net/2020/10/19/fEdne8BsQ7MIKTG.jpg" alt=""></p>
+</li>
+<li><p>NTC（negative）热敏电阻。采用<strong>猛钴镍铁过渡金属氧化物</strong>一定比例混合采用<strong>陶瓷工艺</strong>制备而成，有<strong>P型半导体特性</strong>。</p>
+<p>表达式$R_\tau=R_0exp(\frac{B}{T})$</p>
+<p>温度系数：$\alpha_T=-\frac{B}{T^2}$</p>
+<p>但一般我们用对数形式的图来表示：</p>
+<p><img src="https://i.loli.net/2020/10/19/7kBhqQ4GWs5yYLX.jpg" alt=""></p>
+</li>
+</ul>
+<h3 id="热电偶和热电偶的基本定律"><a href="#热电偶和热电偶的基本定律" class="headerlink" title="热电偶和热电偶的基本定律"></a>热电偶和热电偶的基本定律</h3><p>热电偶就是将<strong>两种不同的金属连接在一起</strong>，当<strong>结点温度变化时两端产生电势变化的传感器</strong>。</p>
+<p>热电偶的基本定律：</p>
+<ul>
+<li>均质导体定律。热电偶的电势与热电极直径长度和沿热电极长度方向上的温度分布无关，只和<strong>热电极材料和温度有关</strong>。</li>
+<li>标准电极定律。两种金属组成热电偶的热电势可以用他们分别和第三种金属组成热电偶的热电势之差来表示。</li>
+<li>中间导体定律。在热电偶的参考端接入第三种均质金属，只要保持插入的金属两端温度相等，就不会影响回路中热电势的大小。</li>
+<li>中间温度定律。$E<em>{AB}(T,T_0)=E</em>{AB}(T,T<em>n)+E</em>{AB}(T_n,T_0)$</li>
+</ul>
+<h3 id="热电效应"><a href="#热电效应" class="headerlink" title="热电效应"></a>热电效应</h3><p>也叫塞贝克效应。两种不同金属组成闭合回路且使两接触点温度不同，就能在回路产生电流。</p>
+<p>定义一个塞贝克电势：</p>
+<script type="math/tex; mode=display">
+E_{AB}=\int_{T_0}^{T} \alpha_{T_{AB}}dT=E_{AB}(T)-E_{AB}(T_0)</script><p>$\alpha<em>{T</em>{AB}}$叫做热电势率或贝塞克系数。</p>
+<p>热电效应又包括<strong>波尔贴效应</strong>和<strong>汤姆逊效应</strong>。</p>
+<h4 id="波尔贴效应（两种金属，一个温度）"><a href="#波尔贴效应（两种金属，一个温度）" class="headerlink" title="波尔贴效应（两种金属，一个温度）"></a>波尔贴效应（两种金属，一个温度）</h4><p>同温度两种不同金属相互接触，由于不同金属内自由电子密度不同，在接触面自由电子从密度大的扩散到密度小的，在接触面形成了自建电厂。当扩散与飘逸达到平衡时，能产生一个稳定的电动势，称为触电势，大小表示：</p>
+<script type="math/tex; mode=display">
+E_{AB}(T)=\frac{k_0 T}{q}ln\frac{n_A}{n_B
+}</script><p>k_0是玻尔兹曼常数，q是电子电量，n_A、n_B是两种金属的自由电子密度。</p>
+<h4 id="汤姆逊效应（一个金属-两种温度）"><a href="#汤姆逊效应（一个金属-两种温度）" class="headerlink" title="汤姆逊效应（一个金属 两种温度）"></a>汤姆逊效应（一个金属 两种温度）</h4><p>一个均匀导体棒的两端温度不同，导致高低温端产生了温度梯度。高温端的自由电子有更大的动能向低温端扩散，形成了内建电场。扩散和漂移平衡时就会产生以稳定电势差，称为温差殿试：</p>
+<script type="math/tex; mode=display">
+E_{A}(T,T_0)=\int_{T_0}^{T}\sigma_A dT</script><h3 id="光敏传感器"><a href="#光敏传感器" class="headerlink" title="光敏传感器"></a>光敏传感器</h3><p><strong>光生伏特效应：利用光照射半导体材料的一端可在两端测量到电位差。</strong></p>
+<p>光生伏特效应反偏应用：</p>
+<p>光电二极管是一个加了反向偏压的PN结。它的分类有如下：</p>
+<ul>
+<li><p>PIN光电二极管。</p>
+<p><img src="https://i.loli.net/2020/10/19/YfAd1LWC6xImj9R.jpg" alt=""></p>
+</li>
+<li><p>雪崩光电二极管。</p>
+<p><img src="https://i.loli.net/2020/10/19/WgeTai9slBAR8ft.jpg" alt=""></p>
+</li>
+<li><p>光电三极管。工作原理：光电二极管光电转换，三极管光电流放大。</p>
+</li>
+</ul>
+<h4 id="红外热释电概念、器件、基本原理"><a href="#红外热释电概念、器件、基本原理" class="headerlink" title="红外热释电概念、器件、基本原理"></a>红外热释电概念、器件、基本原理</h4><p>光照铁电晶体吸收后产生温度变化导致材料自发极化变化。温度因吸收红外光上升极化强度减小，释放电荷产生电流。</p>
+<p>热释电传感器结构如图：</p>
+<p><img src="https://i.loli.net/2020/10/19/FySQW2PecRu6XvV.jpg" alt=""></p>
+<p>原理：红外线强度与温度变化成正比，当受到非恒定强度的红外光照射时，产生的温度变化导致其表面电极的电荷密度发生改变，从而产生热释电<a target="_blank" rel="noopener" href="http://www.elecfans.com/tags/电流/">电流</a>。通过<a target="_blank" rel="noopener" href="https://data.hqchip.com:4006/t/yM">阻抗</a>变换，将热释电探测元微弱的电流信号转换为有用的电压信号输出。</p>
+<h4 id="双元型红外传感器概念、结构"><a href="#双元型红外传感器概念、结构" class="headerlink" title="双元型红外传感器概念、结构"></a>双元型红外传感器概念、结构</h4><p><img src="https://i.loli.net/2020/10/19/AvtzZmjyJiCBL4U.jpg" alt=""></p>
+<p>由敏感单元（按极化方向相反串联，</p>
+<p>一个用于红外检测，一个镀红外反射膜用于噪声补偿。作用：环境温度补偿、 运动方向判断）、场效应管（阻抗变换）、高阻抗变换管（释放栅极电荷）、滤光窗（用于滤除7.0~14um波长外的红外线）等组成。</p>
+<h4 id="CCD-amp-数码相机后的芯片怎么用"><a href="#CCD-amp-数码相机后的芯片怎么用" class="headerlink" title="CCD&amp;数码相机后的芯片怎么用"></a>CCD&amp;数码相机后的芯片怎么用</h4><p>CCD是一种半导体器件，能把光线转变成电荷，通过模数转换器芯片转换成数字信号，经由外部电路的控制，每个小电容能将其所带的电荷转给它相邻的电容或经压缩后由内部的闪速存储器或内置硬盘卡保存。</p>
+<p>分解三层结构：</p>
+<ul>
+<li><p>第一层微型镜头：</p>
+<p>为了扩展CCD的采光率，必须扩展单一像素的受光面积。微型镜头则是扩大感光面积，使感光面积改由微型镜片表面积决定。</p>
+</li>
+<li><p>第二层分色滤色片：一般数码相机是拜尔滤镜。每四个像素形成 一</p>
+<p>个单元，一个负责过滤红色、一个过滤蓝色，两个过滤绿色。用三片CCD和分光棱镜组成的3CCD系统能将入射光分析成红、蓝、绿三种色光，由三片CCD各自负责其中一种色光的呈像。</p>
+</li>
+<li><p>第三层感光层：</p>
+<p>负责将穿过滤色层的光源转换成电子信号，并将信号传送到影像处理芯片，影像还原。</p>
+</li>
+</ul>
+<h3 id="干涉"><a href="#干涉" class="headerlink" title="干涉"></a>干涉</h3><h4 id="广播干涉技术原理"><a href="#广播干涉技术原理" class="headerlink" title="广播干涉技术原理"></a>广播干涉技术原理</h4><p>通过被测能量场的作用，使能量场中的一段敏感单模光纤内传播的光波发生相位变，利用干涉测量技术相位变化变换为振幅变化，再通过光电探测器进行检测。</p>
+<h4 id="四种干涉结构"><a href="#四种干涉结构" class="headerlink" title="四种干涉结构"></a>四种干涉结构</h4><ul>
+<li><p>迈克尔逊干涉法</p>
+<p>激光器输出的单色光由分束器分成光强相等的两束光，其中一束射向固定反射镜，然后反射回到分束器，另一束光入射到可移动反射镜上然后反射回到分束器，两束光会合后产生干涉。</p>
+<p><img src="https://i.loli.net/2020/10/19/BqtRa3JjzlUcWnk.jpg" alt=""></p>
+</li>
+<li><p>马赫泽德干涉法</p>
+<p>激光器输出的光束先分后合，两束光由可移动反射镜的位移引起相位差，并在光探测器上产生干涉。</p>
+<p><img src="https://i.loli.net/2020/10/19/UA18l7zy9nLTw5i.jpg" alt=""></p>
+</li>
+<li><p>萨古纳克干涉法</p>
+<p>激光器输出的光由分束器分成反射和透射两部分，这两束光由反射镜的反射形成两个传播方向相反的闭合回路，然后在分束器会合后送入光探测器。</p>
+<p><img src="https://i.loli.net/2020/10/19/sr1SthcRk3TuUXm.jpg" alt=""></p>
+</li>
+<li><p>法布里-泊罗干涉法</p>
+<p>干涉仪由两块高反射、平行放置的反射镜组成。由激光输出的光束入射到干涉仪，在两个相对的反射镜表面多次往返，形成多光束干涉后，透射出去的平行光束由光探测器接收。</p>
+<p><img src="https://i.loli.net/2020/10/19/UyicVIWLOlz8js3.jpg" alt=""></p>
+</li>
+</ul>
 
-</code></pre>
             </div>
             <hr/>
 
@@ -547,7 +599,7 @@ INT:     push ACC;
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://dafeigy.github.io/2020/10/06/%E5%8D%95%E7%89%87%E6%9C%BA%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F2/">https://dafeigy.github.io/2020/10/06/%E5%8D%95%E7%89%87%E6%9C%BA%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F2/</a>
+                    <a href="https://dafeigy.github.io/2020/10/19/%E4%BC%A0%E6%84%9F%E5%99%A8/">https://dafeigy.github.io/2020/10/19/%E4%BC%A0%E6%84%9F%E5%99%A8/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -753,7 +805,7 @@ INT:     push ACC;
         repo: '',
         owner: '',
         admin: null,
-        id: '2020-10-06T00-40-27',
+        id: '2020-10-19T22-44-47',
         distractionFreeMode: false  // Facebook-like distraction free mode
     });
 
@@ -777,7 +829,7 @@ INT:     push ACC;
 <script src="/libs/gitment/gitment.js"></script>
 <script>
 var gitment = new Gitment({
-    id: 'Tue Oct 06 2020 00:40:27 GMT+0800',
+    id: 'Mon Oct 19 2020 22:44:47 GMT+0800',
     owner: '',
     repo: '',
     oauth: {
@@ -804,39 +856,34 @@ gitment.render('gitment-content');
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
-                <a href="/2020/10/10/%E5%BE%AE%E6%9C%BA%20%E5%AF%BB%E5%9D%80%E7%9B%B8%E5%85%B3/">
+                <a href="/2020/10/19/%E4%BC%A0%E6%84%9F%E5%99%A8/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/20.jpg" class="responsive-img" alt="微机寻址相关">
+                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="">
                         
-                        <span class="card-title">微机寻址相关</span>
+                        <span class="card-title"></span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            微机寻址操作的对象🐷前期铺垫：
-(AX)表示取AX的内容
+                            
+title： 传感器动静态概念静态静态特性是对于静态得到输入信号，传感器的输出量和输入量之间的恶所具有的相互关系。
 
-[AX]表示取AX内容作为地址
-
-
-我把可能操作的对象都列出来了：
-
-长条的代表是16位寄存器，短条代表的是8位。
-❗第一条法则：数据类型要匹配
-小的数据、内容可以放进长的容器，
+测量范围$Y_{FS}$：每个传感器的测量范围，超过这个范围测量时会带来大误差甚至损坏。
+线性度$\delta_f$：表
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2020-10-10
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-10-19
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -845,6 +892,7 @@ gitment.render('gitment-content');
                         </span>
                     </div>
                 </div>
+
                 
             </div>
         </div>
@@ -855,27 +903,24 @@ gitment.render('gitment-content');
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2020/10/04/%E5%8D%95%E7%89%87%E6%9C%BA%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84/">
+                <a href="/2020/10/12/%E5%8D%95%E7%89%87%E6%9C%BA2/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/23.jpg" class="responsive-img" alt="单片机程序结构 笔记">
+                        <img src="/medias/featureimages/6.jpg" class="responsive-img" alt="单片机并行外扩展(ROM、RAM并行扩展）">
                         
-                        <span class="card-title">单片机程序结构 笔记</span>
+                        <span class="card-title">单片机并行外扩展(ROM、RAM并行扩展）</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            单片机程序我也是服了，这年头谁他妈用汇编啊？
-赵岩奶奶也对我们太有信心了吧？
-现在好啦要他妈自学汇编语言真有你的天津自学大学👎
-1.汇编程序的一些规则汇编语言是一种应该和c++、拉丁语一起在坟墓里发烂发臭的语言💀。它的存在意义只是让你的
+                            单片机并行外扩展(ROM、RAM并行扩展）一、总线结构地址总线：n根线有2^n 个地址单元，单向从单片机往外传输。控制总线：双向数据总线：一个字节8位，数据总线的位数也是8位，双向。一个简单的例子就是：MOV @DPTR,A和MOV A,@
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2020-10-04
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-10-12
                             </span>
                         <span class="publish-author">
                             
