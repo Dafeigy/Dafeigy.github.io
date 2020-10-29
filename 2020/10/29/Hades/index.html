@@ -1,0 +1,2470 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="《Hades》的战斗数据挖掘, 阿花想要漂亮姐姐">
+    <meta name="description" content="什么时候才能被姐姐拥抱">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    <title>《Hades》的战斗数据挖掘 | 阿花想要漂亮姐姐</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+
+    <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+
+    <script src="/libs/jquery/jquery.min.js"></script>
+
+<meta name="generator" content="Hexo 5.0.0"><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+
+<body>
+    <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="/medias/logo.png" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span">阿花想要漂亮姐姐</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fas fa-bars"></i></a>
+<ul class="right nav-menu">
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/" class="waves-effect waves-light">
+      
+      <i class="fas fa-home" style="zoom: 0.6;"></i>
+      
+      <span>首页</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/tags" class="waves-effect waves-light">
+      
+      <i class="fas fa-tags" style="zoom: 0.6;"></i>
+      
+      <span>标签</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/categories" class="waves-effect waves-light">
+      
+      <i class="fas fa-bookmark" style="zoom: 0.6;"></i>
+      
+      <span>分类</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/archives" class="waves-effect waves-light">
+      
+      <i class="fas fa-archive" style="zoom: 0.6;"></i>
+      
+      <span>归档</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/about" class="waves-effect waves-light">
+      
+      <i class="fas fa-user-circle" style="zoom: 0.6;"></i>
+      
+      <span>关于</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/contact" class="waves-effect waves-light">
+      
+      <i class="fas fa-comments" style="zoom: 0.6;"></i>
+      
+      <span>留言板</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/About" class="waves-effect waves-light">
+      
+      <i class="fas fa-address-book" style="zoom: 0.6;"></i>
+      
+      <span>友情链接</span>
+    </a>
+    
+  </li>
+  
+  <li>
+    <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+      <i id="searchIcon" class="fas fa-search" title="搜索" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+</ul>
+
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="/medias/logo.png" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">阿花想要漂亮姐姐</div>
+        <div class="logo-desc">
+            
+            什么时候才能被姐姐拥抱
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="/" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-home"></i>
+			
+			首页
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/tags" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-tags"></i>
+			
+			标签
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-bookmark"></i>
+			
+			分类
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/archives" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-archive"></i>
+			
+			归档
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/about" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-user-circle"></i>
+			
+			关于
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/contact" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-comments"></i>
+			
+			留言板
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/About" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-address-book"></i>
+			
+			友情链接
+		</a>
+          
+        </li>
+        
+        
+        <li><div class="divider"></div></li>
+        <li>
+            <a href="/COV" class="waves-effect waves-light" target="_blank">
+                <i class="fab fa-github-square fa-fw"></i>Fork Me
+            </a>
+        </li>
+        
+    </ul>
+</div>
+
+
+        </div>
+
+        
+            <style>
+    .nav-transparent .github-corner {
+        display: none !important;
+    }
+
+    .github-corner {
+        position: absolute;
+        z-index: 10;
+        top: 0;
+        right: 0;
+        border: 0;
+        transform: scale(1.1);
+    }
+
+    .github-corner svg {
+        color: #0f9d58;
+        fill: #fff;
+        height: 64px;
+        width: 64px;
+    }
+
+    .github-corner:hover .octo-arm {
+        animation: a 0.56s ease-in-out;
+    }
+
+    .github-corner .octo-arm {
+        animation: none;
+    }
+
+    @keyframes a {
+        0%,
+        to {
+            transform: rotate(0);
+        }
+        20%,
+        60% {
+            transform: rotate(-25deg);
+        }
+        40%,
+        80% {
+            transform: rotate(10deg);
+        }
+    }
+</style>
+
+<a href="/COV" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
+   data-tooltip="Fork Me" data-position="left" data-delay="50">
+    <svg viewBox="0 0 250 250" aria-hidden="true">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+        <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+              fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+        <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+              fill="currentColor" class="octo-body"></path>
+    </svg>
+</a>
+        
+    </nav>
+
+</header>
+
+    
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/1.jpg')">
+    <div class="container" style="right: 0px;left: 0px;">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <h1 class="description center-align post-title">《Hades》的战斗数据挖掘</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        width: 345px;
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        margin: 35px 0 15px 0;
+        padding-left: 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content {
+        height: calc(100vh - 250px);
+        overflow: auto;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+
+        position: absolute;
+        right: 23.5vw;
+        display: block;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 15px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+</style>
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+            <div class="row tag-cate">
+                <div class="col s7">
+                    
+                          <div class="article-tag">
+                            <span class="chip bg-color">无标签</span>
+                          </div>
+                    
+                </div>
+                <div class="col s5 right-align">
+                    
+                </div>
+            </div>
+
+            <div class="post-info">
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
+                    2020-10-29
+                </div>
+                
+
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
+                    2020-10-29
+                </div>
+                
+
+                
+
+                
+
+                
+            </div>
+        </div>
+        <hr class="clearfix">
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <p align="center">
+    <img src="https://static.wikia.nocookie.net/hades_gamepedia_en/images/2/29/Zagreus.png/revision/latest?cb=20181210044005" alt="Hades logo" width=347 height=480 />
+</p>
+<h1 align="center">Hades Data Mining</h1> <p align="center">
+<p align="center">
+    <em>All Data comes from <a href=https://hades.gamepedia.com/>Gamepedia</a></em>
+</p>
+
+
+
+
+
+
+
+<p><a target="_blank" rel="noopener" href="https://hades.gamepedia.com/Hades_(game">Hades</a>) is a roguelike game from Supergiant Games, creators of Bastion, Transistor, and Pyre. You play as <a target="_blank" rel="noopener" href="https://hades.gamepedia.com/Zagreus">Zagreus</a>, immortal son of <a target="_blank" rel="noopener" href="https://hades.gamepedia.com/Hades">Hades</a>, on his quest to escape from the underworld, fighting through many angry lost souls along the way. Death is a mere inconvenience for Zagreus, returning to <a target="_blank" rel="noopener" href="https://hades.gamepedia.com/Zagreus&#39;s_Room">his room</a> in Hades’ palace each time to reflect in the <a target="_blank" rel="noopener" href="https://hades.gamepedia.com/Mirror_of_Night">Mirror of Night</a> and try again. Receive <a target="_blank" rel="noopener" href="https://hades.gamepedia.com/Boons">Boons</a> from the other <a target="_blank" rel="noopener" href="https://hades.gamepedia.com/Characters#Gods">gods</a> of Olympus and find treasures to aid in each escape attempt.</p>
+<p>As for game itself, it is an ideal project to practice data mining. As you see, various type of combination of boons can be made during the gaming more complicated. My goal is to figure a way to decide which boon to select in order to make a way out of Hell.</p>
+<h1 id="📣-Intro"><a href="#📣-Intro" class="headerlink" title="📣 Intro"></a>📣 Intro</h1><p>There are a few prerequisites on how Boons work that need to be clear to everyone. These are not immediately obvious or self explanatory, so please read through them before moving on.</p>
+<p>When reading a Boon, there are two things you can look out for:</p>
+<ul>
+<li>You might see numbers in parenthesis. This denotes that the number is part of a multiplier as opposed to a flat damage number. Here’s an example: 50% x 1.3 = 65%, so the damage increase will be 65%!</li>
+<li>You might see an asterisk (*) before the name. This denotes there being something of note to do with the Boon, such as an interaction between itself and another Boon.</li>
+</ul>
+<p>Boons come in six Rarities: Common, Rare, Epic, Heroic are the main four we’ll worry about. Boons do not come with a set rarity, and thus will have four different sets of numbers. We’ll be denoting these <strong>4 rarities</strong> like this throughout the guide: <strong>C</strong> for common, <strong>R</strong> for Rare, <strong>E</strong> for Epic:,<strong>H</strong> for Heroic.</p>
+<p>The fifth rarity is called <strong>Legendary</strong>, which are modifiers available to a specific Boon on each God. These Boons will be outlined and bold faced at the bottom of every God’s page, like so.</p>
+<p>Finally, the sixth rarity, <strong>Duo</strong>, are unique in that they will not appear unless you have specific Boons from two different Gods. Those will be included in their own section as opposed to Boons for the individual gods.</p>
+<p>Boon comes from Gods of Olympics. 9 Gods provides different types of boons that focus on different style of fight. Your job is to select or pray for the one that fits you the best to balance survival between damage to foes. </p>
+<h2 id="💖Aphrodite"><a href="#💖Aphrodite" class="headerlink" title="💖Aphrodite"></a><strong>💖Aphrodite</strong></h2><p><img src="https://i.loli.net/2020/10/29/8CGonzfUc4wY1jv.png" alt=""></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Boon</th>
+<th style="text-align:center">Description</th>
+<th style="text-align:center">Common</th>
+<th style="text-align:center">Rare</th>
+<th style="text-align:center">Epic</th>
+<th style="text-align:center">Heroic</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><strong>Heartbreak Strike</strong></td>
+<td style="text-align:center">Your Attack deals more damage and inflicts Weak.</td>
+<td style="text-align:center">+50%</td>
+<td style="text-align:center">1.3~1.5</td>
+<td style="text-align:center">1.8~2.0</td>
+<td style="text-align:center">2.3~2.5</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Heartbreak Flourish</strong></td>
+<td style="text-align:center">Your Special deals more damage and inflicts Weak.</td>
+<td style="text-align:center">+80%</td>
+<td style="text-align:center">1.3~1.5</td>
+<td style="text-align:center">1.8~2.0</td>
+<td style="text-align:center">2.3~2.5</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Shatter Shot</strong></td>
+<td style="text-align:center">Your Cast fires in a reduced-range spread pattern that inflicts Weak.</td>
+<td style="text-align:center">90</td>
+<td style="text-align:center">108</td>
+<td style="text-align:center">126</td>
+<td style="text-align:center">144</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Passion Dash</strong></td>
+<td style="text-align:center">Your Dash deals damage at the start and end, and inflicts Weak.</td>
+<td style="text-align:center">17~19</td>
+<td style="text-align:center">1.3~1.5</td>
+<td style="text-align:center">1.8~2.0</td>
+<td style="text-align:center">2.3~2.5</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Empty Inside</strong></td>
+<td style="text-align:center">Your Weak effects have a longer duration.</td>
+<td style="text-align:center">+5 sec</td>
+<td style="text-align:center">+7.5 sec</td>
+<td style="text-align:center">+10 sec</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Dying Lament</strong></td>
+<td style="text-align:center">When slain, foes damage other nearby foes and inflict Weak.</td>
+<td style="text-align:center">25~30</td>
+<td style="text-align:center">1.3~1.5</td>
+<td style="text-align:center">1.8~2.0</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Wave of Despair</strong></td>
+<td style="text-align:center">After you take damage, damage nearby foes and turn them Weak.</td>
+<td style="text-align:center">25~30</td>
+<td style="text-align:center">1.3~1.5</td>
+<td style="text-align:center">1.8~2.0</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Different League</strong></td>
+<td style="text-align:center">Resist some damage from nearby foes’ attacks.</td>
+<td style="text-align:center">10% less</td>
+<td style="text-align:center">12% less</td>
+<td style="text-align:center">15% less</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Sweet Surrender</strong></td>
+<td style="text-align:center">Your Weak effects also make foes more susceptible to damage.</td>
+<td style="text-align:center">+10% dmg</td>
+<td style="text-align:center">1.3-1.5</td>
+<td style="text-align:center">2.0~2.2</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Life Affirmation</strong></td>
+<td style="text-align:center">Any Life chamber rewards are worth more.</td>
+<td style="text-align:center">+50%</td>
+<td style="text-align:center">+65%</td>
+<td style="text-align:center">+80%</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Aphrodite’s Aid</strong></td>
+<td style="text-align:center">Your Call fires a seeking projectile that inflicts Charm.</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Unhealthy Fixation</strong></td>
+<td style="text-align:center">Your Weak effects also have a chance to Charm foes. Charm Chance 15%, Duration 4 Seconds.</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="🔪Ares"><a href="#🔪Ares" class="headerlink" title="🔪Ares"></a>🔪<strong>Ares</strong></h2><p><img src="https://i.loli.net/2020/10/29/KtMdboVAup5xPNO.png" alt=""></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Boon</th>
+<th style="text-align:center">Description</th>
+<th style="text-align:center">Common</th>
+<th style="text-align:center">Rare</th>
+<th style="text-align:center">Epic</th>
+<th style="text-align:center">Heroic</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><strong>Curse of Agony</strong></td>
+<td style="text-align:center">Your Attack inflicts Doom.</td>
+<td style="text-align:center">+50%</td>
+<td style="text-align:center">1.3~1.5</td>
+<td style="text-align:center">1.8~2.0</td>
+<td style="text-align:center">2.3~2.5</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Curse of Pain</strong></td>
+<td style="text-align:center">Your Special inflicts Doom.</td>
+<td style="text-align:center">+70%</td>
+<td style="text-align:center">1.3~1.5</td>
+<td style="text-align:center">1.8~2.0</td>
+<td style="text-align:center">2.3~2.5</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Slicing Shot</strong></td>
+<td style="text-align:center">Your Cast sends a Blade Rift hurling ahead.</td>
+<td style="text-align:center">10</td>
+<td style="text-align:center">11</td>
+<td style="text-align:center">13</td>
+<td style="text-align:center">14</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Blade Dash</strong></td>
+<td style="text-align:center">Your Dash creates a Blade Rift where you started.</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">1.3~1.5</td>
+<td style="text-align:center">1.8~2.0</td>
+<td style="text-align:center">2.3~2.5</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Urge to Kill</strong></td>
+<td style="text-align:center">Your Attack and Cast deal more damage.</td>
+<td style="text-align:center">+8%</td>
+<td style="text-align:center">+10%</td>
+<td style="text-align:center">+12%</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Curse of Vengeance</strong></td>
+<td style="text-align:center">After you take damage, inflict Doom on surrounding foes.</td>
+<td style="text-align:center">60</td>
+<td style="text-align:center">1.3~1.5</td>
+<td style="text-align:center">1.8~2.0</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Black Metal</strong></td>
+<td style="text-align:center">Your Blade Rift powers deal damage in a wider area.</td>
+<td style="text-align:center">+20%</td>
+<td style="text-align:center">+22%</td>
+<td style="text-align:center">+24%</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Engulfing Vortex</strong></td>
+<td style="text-align:center">Your Blade Rift effects last longer and pull foes in.</td>
+<td style="text-align:center">2 sec</td>
+<td style="text-align:center">3 sec</td>
+<td style="text-align:center">4 sec</td>
+<td style="text-align:center">5 sec</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Dire Misfortune</strong></td>
+<td style="text-align:center">Your Doom effects deal more damage when applied multiple times.</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">7</td>
+<td style="text-align:center">10</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Battle Rage</strong></td>
+<td style="text-align:center">After slaying a foe, your next Attack or Special deals more damage.</td>
+<td style="text-align:center">+100%</td>
+<td style="text-align:center">+150%</td>
+<td style="text-align:center">+200%</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Impending Doom</strong></td>
+<td style="text-align:center">Your Doom effects deal more damage, after +0.5 Sec.</td>
+<td style="text-align:center">+60%</td>
+<td style="text-align:center">+76%</td>
+<td style="text-align:center">+92%</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Ares’ Aid</strong></td>
+<td style="text-align:center">Your Call turns you into an Invulnerable, damage dealing Blade Rift for 5 Sec.</td>
+<td style="text-align:center">15</td>
+<td style="text-align:center">18</td>
+<td style="text-align:center">21</td>
+<td style="text-align:center">24</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Vicious Cycle</strong></td>
+<td style="text-align:center">Your Blade Rift effects deal 1 more damage for each consecutive hit.</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="🏹Artemis"><a href="#🏹Artemis" class="headerlink" title="🏹Artemis"></a>🏹Artemis</h2><p><img src="https://i.loli.net/2020/10/29/786Rit2lXgGajhQ.png" alt=""></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Boon</th>
+<th style="text-align:center">Description</th>
+<th style="text-align:center">Common</th>
+<th style="text-align:center">Rare</th>
+<th style="text-align:center">Epic</th>
+<th style="text-align:center">Heroic</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><strong>Deadly Strike</strong></td>
+<td style="text-align:center">Your Attack is stronger, with +15% chance to deal Critical damage.</td>
+<td style="text-align:center">20%</td>
+<td style="text-align:center">1.3~1.5</td>
+<td style="text-align:center">1.8~2.0</td>
+<td style="text-align:center">2.3~2.5</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Deadly Flourish</strong></td>
+<td style="text-align:center">Your Special is stronger, with +20% chance to deal Critical Damage.</td>
+<td style="text-align:center">+40%</td>
+<td style="text-align:center">1.3~1.5</td>
+<td style="text-align:center">1.8~2.0</td>
+<td style="text-align:center">2.3~2.5</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>True Shot</strong></td>
+<td style="text-align:center">Your Cast deals more damage and seeks the nearest foe.</td>
+<td style="text-align:center">70</td>
+<td style="text-align:center">84</td>
+<td style="text-align:center">98</td>
+<td style="text-align:center">112</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Hunter Dash</strong></td>
+<td style="text-align:center">Your Dash Attack deals more damage.</td>
+<td style="text-align:center">+50%</td>
+<td style="text-align:center">+75%</td>
+<td style="text-align:center">+100%</td>
+<td style="text-align:center">+150%</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Clean Kill</strong></td>
+<td style="text-align:center">Your Critical effects deal even more damage.</td>
+<td style="text-align:center">+15%</td>
+<td style="text-align:center">+22%</td>
+<td style="text-align:center">+30%</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Support Fire</strong></td>
+<td style="text-align:center">Your Attack, Cast and Special spawn an additional seeking shot.</td>
+<td style="text-align:center">15</td>
+<td style="text-align:center">19</td>
+<td style="text-align:center">24</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Quick Reload</strong></td>
+<td style="text-align:center">Foes drop Bloodstones stuck in them faster.</td>
+<td style="text-align:center">10</td>
+<td style="text-align:center">8</td>
+<td style="text-align:center">7</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Exit Wounds</strong></td>
+<td style="text-align:center">Your foes suffer damage when your Bloodstones stuck in them are dislodged.</td>
+<td style="text-align:center">140</td>
+<td style="text-align:center">160</td>
+<td style="text-align:center">？？</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Pressure Points</strong></td>
+<td style="text-align:center">Any Damage you deal has a chance to be Critical.</td>
+<td style="text-align:center">+3%</td>
+<td style="text-align:center">+4%</td>
+<td style="text-align:center">+5%</td>
+<td style="text-align:center">N.A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Burst Shot</strong></td>
+<td style="text-align:center">Your Cast fires a second projectile, though it has reduced damage.</td>
+<td style="text-align:center">25%</td>
+<td style="text-align:center">30%</td>
+<td style="text-align:center">35%</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Hide Breaker</strong></td>
+<td style="text-align:center">Your Critical effects deal even more damage to Armor.</td>
+<td style="text-align:center">200%</td>
+<td style="text-align:center">1.3~1.5</td>
+<td style="text-align:center">1.8~2.0</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Hunter Instinct</strong></td>
+<td style="text-align:center">Your God Gauge charges faster when you deal Critical damage.</td>
+<td style="text-align:center">25%</td>
+<td style="text-align:center">30%</td>
+<td style="text-align:center">35%</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Hunter’s Mark</strong></td>
+<td style="text-align:center">After you deal Critical damage to a foe, a foe near it is Marked.</td>
+<td style="text-align:center">+30%</td>
+<td style="text-align:center">1.3~1.5</td>
+<td style="text-align:center">1.8~2.0</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Artemis’ Aid</strong></td>
+<td style="text-align:center">Your Call fires a seeking arrow towards the nearest foe. 15 Arrows max Gauge.</td>
+<td style="text-align:center">130</td>
+<td style="text-align:center">156</td>
+<td style="text-align:center">182</td>
+<td style="text-align:center">208</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Fully Loaded</strong></td>
+<td style="text-align:center">Gain an extra 3 Bloodstones for your Cast.</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="🛡Athena"><a href="#🛡Athena" class="headerlink" title="🛡Athena"></a>🛡Athena</h2><p><img src="https://i.loli.net/2020/10/29/ka3WzhgMvdcAmDH.png" alt=""></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Boon</th>
+<th style="text-align:center">Description</th>
+<th style="text-align:center">Common</th>
+<th style="text-align:center">Rare</th>
+<th style="text-align:center">Epic</th>
+<th style="text-align:center">Heroic</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><strong>Divine Strike</strong></td>
+<td style="text-align:center">Your Attack is stronger, and can Deflect.</td>
+<td style="text-align:center">+40%</td>
+<td style="text-align:center">1.3~1.5</td>
+<td style="text-align:center">1.8~2.0</td>
+<td style="text-align:center">2.3~2.5</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Divine Flourish</strong></td>
+<td style="text-align:center">Your Special is stronger, and can Deflect.</td>
+<td style="text-align:center">+60%</td>
+<td style="text-align:center">1.3~1.5</td>
+<td style="text-align:center">1.8~2.0</td>
+<td style="text-align:center">2.3~2.5</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Phalanx Shot</strong></td>
+<td style="text-align:center">Your Cast damages foes in a small area, and can Deflect.</td>
+<td style="text-align:center">85</td>
+<td style="text-align:center">102</td>
+<td style="text-align:center">119</td>
+<td style="text-align:center">136</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Divine Dash</strong></td>
+<td style="text-align:center">Your Dash deals damage and can Deflect.</td>
+<td style="text-align:center">15</td>
+<td style="text-align:center">1.3~1.5</td>
+<td style="text-align:center">1.8~2.0</td>
+<td style="text-align:center">2.3~2.5</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Brilliant Riposte</strong></td>
+<td style="text-align:center">When you Deflect attacks, they deal more damage.</td>
+<td style="text-align:center">+20%</td>
+<td style="text-align:center">1.3~1.5</td>
+<td style="text-align:center">1.8~2.0</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Sure Footing</strong></td>
+<td style="text-align:center">Resist damage from Traps.</td>
+<td style="text-align:center">40%</td>
+<td style="text-align:center">50%</td>
+<td style="text-align:center">60%</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Bronze Skin</strong></td>
+<td style="text-align:center">Resist damage from foes’ attacks.</td>
+<td style="text-align:center">5%~10%</td>
+<td style="text-align:center">1.3~1.5</td>
+<td style="text-align:center">1.8~2.0</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Holy Shield</strong></td>
+<td style="text-align:center">After you take damage, damage nearby foes and briefly Deflect.</td>
+<td style="text-align:center">30</td>
+<td style="text-align:center">1.3~1.5</td>
+<td style="text-align:center">1.8~2.0</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Deathless Stand</strong></td>
+<td style="text-align:center">Death Defiance makes you Impervious longer. Replenish 1 charge now.</td>
+<td style="text-align:center">+2 sec</td>
+<td style="text-align:center">+2.5 sec</td>
+<td style="text-align:center">+3 sec</td>
+<td style="text-align:center">N.A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Last Stand</strong></td>
+<td style="text-align:center">Death Defiance restores more Health than usual. Replenish 1 charge now.</td>
+<td style="text-align:center">10%</td>
+<td style="text-align:center">+15%</td>
+<td style="text-align:center">+20%</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Blinding Flash</strong></td>
+<td style="text-align:center">Your attacks that Deflect also make foes Exposed for 5 Sec.</td>
+<td style="text-align:center">+50%</td>
+<td style="text-align:center">1.3~1.5</td>
+<td style="text-align:center">1.8~2.0</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Proud Bearing</strong></td>
+<td style="text-align:center">You begin each Encounter with your God Gauge partly full</td>
+<td style="text-align:center">20%</td>
+<td style="text-align:center">25%</td>
+<td style="text-align:center">30%</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Athena’s Aid</strong></td>
+<td style="text-align:center">Your Call briefly makes you Invulnerable and Deflect all attacks.</td>
+<td style="text-align:center">1 sec</td>
+<td style="text-align:center">1.2 sec</td>
+<td style="text-align:center">1.4 sec</td>
+<td style="text-align:center">1.6 sec</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Divine Protection</strong></td>
+<td style="text-align:center">You have a barrier that negates incoming damage. Cooldown 20 sec.</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="❄Demeter"><a href="#❄Demeter" class="headerlink" title="❄Demeter"></a><strong>❄Demeter</strong></h2><p><img src="https://i.loli.net/2020/10/29/7W2dZDSNG5anreJ.png" alt=""></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Boon</th>
+<th style="text-align:center">Description</th>
+<th style="text-align:center">Common</th>
+<th style="text-align:center">Rare</th>
+<th style="text-align:center">Epic</th>
+<th style="text-align:center">Heroic</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><strong>Frost Strike</strong></td>
+<td style="text-align:center">Your <strong>Attack</strong> is stronger and inflicts Chill.</td>
+<td style="text-align:center">damage: +40%</td>
+<td style="text-align:center">1.3~1.5</td>
+<td style="text-align:center">1.8~2.0</td>
+<td style="text-align:center">2.3~2.5</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Frost Flourish</strong></td>
+<td style="text-align:center">Your <strong>Special</strong> is stronger and inflicts Chill.</td>
+<td style="text-align:center">Special damage: +60%</td>
+<td style="text-align:center">1.3~1.5</td>
+<td style="text-align:center">1.8~2.0</td>
+<td style="text-align:center">2.3~2.5</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Crystal Beam</strong></td>
+<td style="text-align:center">Your <strong>Cast</strong> drops a crystal that fires a beam straight ahead for <strong>5 sec</strong>.</td>
+<td style="text-align:center">Cast Damage: 8 (every 0.2 sec)</td>
+<td style="text-align:center">Cast Damage: 9.2 (every 0.2 sec)</td>
+<td style="text-align:center">Cast Damage: 10.4 (every 0.2 sec)</td>
+<td style="text-align:center">Cast Damage: 11.6 (every 0.2 sec)</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Icy Flare</strong></td>
+<td style="text-align:center">Your <strong>Cast</strong> damages foes around you and inflicts <strong>Chill</strong>.</td>
+<td style="text-align:center">Cast Damage: 70</td>
+<td style="text-align:center">Cast Damage: 80</td>
+<td style="text-align:center">Cast Damage: 90</td>
+<td style="text-align:center">Cast Damage: 100</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Mistral Dash</strong></td>
+<td style="text-align:center">Your <strong>Dash</strong> shoots a gust ahead that inflicts <strong>Chill</strong>.</td>
+<td style="text-align:center">Gust Damage: 15</td>
+<td style="text-align:center">Gust Damage: 22.5</td>
+<td style="text-align:center">Gust Damage: 30</td>
+<td style="text-align:center">Gust Damage: 37.5</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Demeter’s Aid</strong></td>
+<td style="text-align:center">Your <strong>Call</strong> creates a winter vortex for 5 Sec., deals damage every 0.25 Sec inflicting <strong>Chill</strong>.</td>
+<td style="text-align:center">10</td>
+<td style="text-align:center">11</td>
+<td style="text-align:center">12</td>
+<td style="text-align:center">13</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Frozen Touch</strong></td>
+<td style="text-align:center">After you take damage, damage and <em>completely</em> <strong>Chill</strong> your foe.</td>
+<td style="text-align:center">Revenge Damage: 10</td>
+<td style="text-align:center">Revenge Damage: 15</td>
+<td style="text-align:center">Revenge Damage: 20</td>
+<td style="text-align:center">Revenge Damage: 25</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Rare Crop</strong></td>
+<td style="text-align:center">Your <strong>Boons</strong> become <strong>Common</strong>, then gain <strong>Rarity</strong> every <strong>3 Encounter(s)</strong>.</td>
+<td style="text-align:center">Random boons affected: 1</td>
+<td style="text-align:center">Random boons affected: 2</td>
+<td style="text-align:center">Random boons affected: 3</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Ravenous Will</strong></td>
+<td style="text-align:center">While you have no <a target="_blank" rel="noopener" href="https://hades.gamepedia.com/File:Ammo.png"><img src="https://static.wikia.nocookie.net/hades_gamepedia_en/images/1/10/Ammo.png/revision/latest/scale-to-width-down/25?cb=20181213213644" alt="Cast Ammo"></a>, take <em>10%</em> less damage and deal more.</td>
+<td style="text-align:center">+10%</td>
+<td style="text-align:center">+20%</td>
+<td style="text-align:center">+30%</td>
+<td style="text-align:center">+40%</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Nourished Soul</strong></td>
+<td style="text-align:center">Any <strong>Health</strong> effects are more potent. Restore +30% now.</td>
+<td style="text-align:center">30%</td>
+<td style="text-align:center">32.25%</td>
+<td style="text-align:center">34.5%</td>
+<td style="text-align:center">36.75%</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Snow Burst</strong></td>
+<td style="text-align:center">Whenever you <strong>Cast</strong>, damage nearby foes and inflict <strong>Chill</strong>.</td>
+<td style="text-align:center">40</td>
+<td style="text-align:center">50</td>
+<td style="text-align:center">60</td>
+<td style="text-align:center">70</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Arctic Blast</strong></td>
+<td style="text-align:center">Applying 10 stacks of <strong>Chill</strong> causes a blast, clearing the effect.</td>
+<td style="text-align:center">100</td>
+<td style="text-align:center">120</td>
+<td style="text-align:center">140</td>
+<td style="text-align:center">160</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Killing Freeze</strong></td>
+<td style="text-align:center">Applying <strong>Chill</strong> to all enemies causes them to <strong>Slow</strong> and <strong>Decay</strong>.</td>
+<td style="text-align:center">Slow 10%, Decay Damage: 20 (every 0.5 sec)</td>
+<td style="text-align:center">Slow 15%, Decay Damage: 30 (every 0.5 sec)</td>
+<td style="text-align:center">low 20%, Decay Damage: 40 (every 0.5 sec)</td>
+<td style="text-align:center">Slow 25%, Decay Damage: 50 (every 0.5 sec)</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Glacial Glare</strong></td>
+<td style="text-align:center">Your <strong>Cast</strong> fires longer and inflicts <strong>Chill</strong>.</td>
+<td style="text-align:center">2 sec</td>
+<td style="text-align:center">2.4 sec</td>
+<td style="text-align:center">2.8 sec</td>
+<td style="text-align:center">3.2 sec</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="🍷Dionysus"><a href="#🍷Dionysus" class="headerlink" title="🍷Dionysus"></a>🍷Dionysus</h2><p><img src="https://i.loli.net/2020/10/29/Vqh5a8xNzbAmGKk.png" alt=""></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Boon</th>
+<th style="text-align:center">Description</th>
+<th style="text-align:center">Common</th>
+<th style="text-align:center">Rare</th>
+<th style="text-align:center">Epic</th>
+<th style="text-align:center">Heroic</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><strong>Blight Strike</strong></td>
+<td style="text-align:center">Your Attack inflicts Poison.</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">6</td>
+<td style="text-align:center">7</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Blight Flourish</strong></td>
+<td style="text-align:center">Your Special inflicts Poison.</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">6</td>
+<td style="text-align:center">7</td>
+<td style="text-align:center">8</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Nasty Dash</strong></td>
+<td style="text-align:center">Your Dash inflicts foes near you with Poison.</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">5</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Tipsy Shot</strong></td>
+<td style="text-align:center">Your Cast lobs a projectile that bursts into Festive Fog.</td>
+<td style="text-align:center">100</td>
+<td style="text-align:center">120</td>
+<td style="text-align:center">140</td>
+<td style="text-align:center">160</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Numbing Sensation</strong></td>
+<td style="text-align:center">Your Poison effects also make foes move slower.</td>
+<td style="text-align:center">10%~15%</td>
+<td style="text-align:center">1.3~1.5</td>
+<td style="text-align:center">2.0~2.5</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Peer Pressure</strong></td>
+<td style="text-align:center">Poison-afflicted foes contaminate other nearby foes every 4 Sec.</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">1.3~1.5</td>
+<td style="text-align:center">2.0~2.5</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>High Tolerance</strong></td>
+<td style="text-align:center">Take less damage while standing in Festive Fog.</td>
+<td style="text-align:center">10%~15%</td>
+<td style="text-align:center">1.3~1.5</td>
+<td style="text-align:center">2.0~2.5</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>After Party</strong></td>
+<td style="text-align:center">If your Health is low after Encounters, restore to the threshold.</td>
+<td style="text-align:center">-20%</td>
+<td style="text-align:center">-38%</td>
+<td style="text-align:center">-45%</td>
+<td style="text-align:center">-60%</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Positive Outlook</strong></td>
+<td style="text-align:center">Take less damage while at 40% Health or below.</td>
+<td style="text-align:center">10%</td>
+<td style="text-align:center">15%</td>
+<td style="text-align:center">20%</td>
+<td style="text-align:center">N.A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Bad Influence</strong></td>
+<td style="text-align:center">Deal more damage while 3 foes are Poison-afflicted.</td>
+<td style="text-align:center">+50%</td>
+<td style="text-align:center">1.3~1.5</td>
+<td style="text-align:center">1.8~2.0</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Premium Vintage</strong></td>
+<td style="text-align:center">Gain max Health when you pick up Nectar. Receive 1 Nectar now.</td>
+<td style="text-align:center">+20</td>
+<td style="text-align:center">+25</td>
+<td style="text-align:center">+30</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Dionysus’ Aid</strong></td>
+<td style="text-align:center">Your Call inflicts Poison to foes all around you for 1.5 Sec. 12 sec max gauge.</td>
+<td style="text-align:center">10</td>
+<td style="text-align:center">12</td>
+<td style="text-align:center">14</td>
+<td style="text-align:center">16</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Black Out</strong></td>
+<td style="text-align:center">Poison-afflicted foes take double damage in Festive Fog.</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="👟Hermes"><a href="#👟Hermes" class="headerlink" title="👟Hermes"></a>👟Hermes</h2><p><img src="https://i.loli.net/2020/10/29/Kw4caEA2kQjJIsV.png" alt=""></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Boon</th>
+<th style="text-align:center">Description</th>
+<th style="text-align:center">Common</th>
+<th style="text-align:center">Rare</th>
+<th style="text-align:center">Epic</th>
+<th style="text-align:center">Heroic</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><strong>Swift Strike</strong></td>
+<td style="text-align:center">Your Attack is faster.</td>
+<td style="text-align:center">+12%</td>
+<td style="text-align:center">+21%</td>
+<td style="text-align:center">+30%</td>
+<td style="text-align:center">+40%</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Swift Flourish</strong></td>
+<td style="text-align:center">Your Special is faster.</td>
+<td style="text-align:center">+12%</td>
+<td style="text-align:center">+21%</td>
+<td style="text-align:center">+30%</td>
+<td style="text-align:center">+40%</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Rapid Cast</strong></td>
+<td style="text-align:center">Your Cast is faster and fully automatic.</td>
+<td style="text-align:center">+20%</td>
+<td style="text-align:center">+60%</td>
+<td style="text-align:center">+90%</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Drift Dash</strong></td>
+<td style="text-align:center">After you Dash, gain +100% move speed for a some time.</td>
+<td style="text-align:center">6 sec</td>
+<td style="text-align:center">7.5 sec</td>
+<td style="text-align:center">9 sec</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Passing Through</strong></td>
+<td style="text-align:center">Running into foes makes them slower for 3 Sec.</td>
+<td style="text-align:center">20%</td>
+<td style="text-align:center">25%</td>
+<td style="text-align:center">30%</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Greater Haste</strong></td>
+<td style="text-align:center">You move faster.</td>
+<td style="text-align:center">+20%</td>
+<td style="text-align:center">+30%</td>
+<td style="text-align:center">+40%</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Quick Recovery</strong></td>
+<td style="text-align:center">After you take damage, quickly Dash to recover some lost Health</td>
+<td style="text-align:center">20%</td>
+<td style="text-align:center">30%</td>
+<td style="text-align:center">40%</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Greater Evasion</strong></td>
+<td style="text-align:center">You have a chance to Dodge.</td>
+<td style="text-align:center">+15%</td>
+<td style="text-align:center">+20%</td>
+<td style="text-align:center">+25%</td>
+<td style="text-align:center">+30%</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Greatest Reflex</strong></td>
+<td style="text-align:center">You can Dash more times in a row.</td>
+<td style="text-align:center">+1 dash</td>
+<td style="text-align:center">+2 dashes</td>
+<td style="text-align:center">+3 dashes</td>
+<td style="text-align:center">N.A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Second Wind</strong></td>
+<td style="text-align:center">After using Call, gain Dodge chance and move speed for 5 Sec.</td>
+<td style="text-align:center">+30%</td>
+<td style="text-align:center">+38%</td>
+<td style="text-align:center">+48%</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Relative Speed</strong></td>
+<td style="text-align:center">Your Dash makes nearby foes 50% slower for 1 Sec.</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Greater Recall</strong></td>
+<td style="text-align:center">Your Bloodstones automatically return to you.</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="🏄‍♂️Poseidon"><a href="#🏄‍♂️Poseidon" class="headerlink" title="🏄‍♂️Poseidon"></a>🏄‍♂️Poseidon</h2><p><img src="https://i.loli.net/2020/10/29/p8q1AGL9EthrcMg.png" alt=""></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Boon</th>
+<th style="text-align:center">Description</th>
+<th style="text-align:center">Common</th>
+<th style="text-align:center">Rare</th>
+<th style="text-align:center">Epic</th>
+<th style="text-align:center">Heroic</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><strong>Tempest Strike</strong></td>
+<td style="text-align:center">Your Attack deals more damage and knocks foes away.</td>
+<td style="text-align:center">+30%</td>
+<td style="text-align:center">1.3~1.5</td>
+<td style="text-align:center">1.8~2.0</td>
+<td style="text-align:center">2.3~2.5</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Tempest Flourish</strong></td>
+<td style="text-align:center">Your Special deals more damage and knocks foes away.</td>
+<td style="text-align:center">+70%</td>
+<td style="text-align:center">1.3~1.5</td>
+<td style="text-align:center">1.8~2.0</td>
+<td style="text-align:center">2.3~2.5</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Flood Shot</strong></td>
+<td style="text-align:center">Your Cast damages foes in an area and knocks them away.</td>
+<td style="text-align:center">60</td>
+<td style="text-align:center">72</td>
+<td style="text-align:center">84</td>
+<td style="text-align:center">96</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Tidal Dash</strong></td>
+<td style="text-align:center">Your Dash damages foes in an area and knocks them away.</td>
+<td style="text-align:center">35</td>
+<td style="text-align:center">1.3~1.5</td>
+<td style="text-align:center">1.8~2.0</td>
+<td style="text-align:center">2.3~2.5</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Typhoon’s Fury</strong></td>
+<td style="text-align:center">You deal more damage when slamming foes into barriers.</td>
+<td style="text-align:center">+100%</td>
+<td style="text-align:center">1.3~1.5</td>
+<td style="text-align:center">1.8~2.0</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Breaking Wave</strong></td>
+<td style="text-align:center">Slamming foes into walls or corners creates a watery blast in the area.</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Razor Shoals</strong></td>
+<td style="text-align:center">Using knock-away effects also Rupture foes.</td>
+<td style="text-align:center">5%</td>
+<td style="text-align:center">7.5%</td>
+<td style="text-align:center">10%</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Ocean’s Bounty</strong></td>
+<td style="text-align:center">Any Darkness or Obol rewards are worth more.</td>
+<td style="text-align:center">+50%</td>
+<td style="text-align:center">+55%</td>
+<td style="text-align:center">+60%</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Boiling Point</strong></td>
+<td style="text-align:center">Your God Gauge charges faster when you take damage.</td>
+<td style="text-align:center">+40%</td>
+<td style="text-align:center">+75%</td>
+<td style="text-align:center">+100%</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Poseidon’s Aid</strong></td>
+<td style="text-align:center">Your Call makes you surge into foes while Invulnerable for 1.5 Sec.</td>
+<td style="text-align:center">150</td>
+<td style="text-align:center">180</td>
+<td style="text-align:center">210</td>
+<td style="text-align:center">240</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Second Wave</strong></td>
+<td style="text-align:center">Your knock-away effects shove foes a second time after the first.</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Sunken Treasure</strong></td>
+<td style="text-align:center">Gain an assortment of Darkness,Obol and Health</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="⚡Zeus"><a href="#⚡Zeus" class="headerlink" title="⚡Zeus"></a>⚡Zeus</h2><p><img src="https://i.loli.net/2020/10/29/CbSNeRd7um4c2qF.png" alt=""></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Boon</th>
+<th style="text-align:center">Description</th>
+<th style="text-align:center">Common</th>
+<th style="text-align:center">Rare</th>
+<th style="text-align:center">Epic</th>
+<th style="text-align:center">Heroic</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><strong>Thunder Flourish</strong></td>
+<td style="text-align:center">Your Special causes a lightning bolt to strike nearby foes.</td>
+<td style="text-align:center">30</td>
+<td style="text-align:center">37.5</td>
+<td style="text-align:center">40</td>
+<td style="text-align:center">60</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Thunder Dash</strong></td>
+<td style="text-align:center">Your Dash causes a lightning bolt to strike nearby foes.</td>
+<td style="text-align:center">10</td>
+<td style="text-align:center">1.3~1.5</td>
+<td style="text-align:center">1.8~2.0</td>
+<td style="text-align:center">2.3~2.5</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Clouded Judgment</strong></td>
+<td style="text-align:center">Your God Gauge charges faster upon dealing or taking damage.</td>
+<td style="text-align:center">+15%</td>
+<td style="text-align:center">+38%</td>
+<td style="text-align:center">+61%</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Static Discharge</strong></td>
+<td style="text-align:center">Your Lightning effects also make foes Jolted.</td>
+<td style="text-align:center">50~60</td>
+<td style="text-align:center">1.3~1.5</td>
+<td style="text-align:center">1.8~2.0</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Lightning Strike</strong></td>
+<td style="text-align:center">Your Attacks emit chain lightning upon damaging a foe.</td>
+<td style="text-align:center">10</td>
+<td style="text-align:center">12</td>
+<td style="text-align:center">15</td>
+<td style="text-align:center">18</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Zeus’ Aid</strong></td>
+<td style="text-align:center">Your Call makes lightning strike nearby foes repeatedly.</td>
+<td style="text-align:center">80</td>
+<td style="text-align:center">100</td>
+<td style="text-align:center">120</td>
+<td style="text-align:center">140</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Heaven’s Vengeance</strong></td>
+<td style="text-align:center">After taking damage, your foe is struck by lightning.</td>
+<td style="text-align:center">60~80</td>
+<td style="text-align:center">1.3~1.5</td>
+<td style="text-align:center">1.8~2.0</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Electric Shot</strong></td>
+<td style="text-align:center">Your Cast is a burst of chain-lightning that bounces between foes.</td>
+<td style="text-align:center">60</td>
+<td style="text-align:center">9075</td>
+<td style="text-align:center">90</td>
+<td style="text-align:center">105</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Storm Lightning</strong></td>
+<td style="text-align:center">Your chain-lightning effects bounce more times.</td>
+<td style="text-align:center">+2</td>
+<td style="text-align:center">+4</td>
+<td style="text-align:center">+6</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>High Voltage</strong></td>
+<td style="text-align:center">Your lightning bolt effects deal damage in a larger area.</td>
+<td style="text-align:center">+60%</td>
+<td style="text-align:center">+72%</td>
+<td style="text-align:center">+84%</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Double Strike</strong></td>
+<td style="text-align:center">Your lightning bolt effects might proc twice.</td>
+<td style="text-align:center">25%</td>
+<td style="text-align:center">30%</td>
+<td style="text-align:center">35%</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Billowing Strength</strong></td>
+<td style="text-align:center">After using a Call, you deal more damage for 5 seconds.</td>
+<td style="text-align:center">+30%</td>
+<td style="text-align:center">+37%</td>
+<td style="text-align:center">+45%</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Splitting Boon</strong></td>
+<td style="text-align:center">All your lightning effects create and additional burst.</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="🌓Chaos"><a href="#🌓Chaos" class="headerlink" title="🌓Chaos"></a>🌓Chaos</h2><p>Chaos’ Boons work differently from all others. Every boon has two parts, a Blessing and a Curse.</p>
+<p><strong>Curses</strong> are demerits that occur for a few Encounters. They do not tick down for rooms that do not have Enemies, such as Charon shops or NPC rooms. They are always temporary and will go away after the set number of encounters is cleared.</p>
+<p><strong>Blessings</strong> are permanent positive effects that are only gained after the Curse is removed, meaning you must go through the required number of Encounters to gain the benefits of the Blessing.</p>
+<p>These Blessings and Curses are in two separate categories and any Blessing can be matched with any Curse, making for a HUGE variety in match ups. As such, I will only be going over their effects and not the specific numbers behind each one for the time being.</p>
+<p><img src="https://i.loli.net/2020/10/29/NeEKq2QXrUfluT4.jpg" alt=""></p>
+<h3 id="💀Curses"><a href="#💀Curses" class="headerlink" title="💀Curses"></a>💀Curses</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Curses</th>
+<th style="text-align:center">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><strong>Pauper’s</strong></td>
+<td style="text-align:center">For the next 2–4 encounters, you cannot earn Obols.</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Slippery</strong></td>
+<td style="text-align:center">For the next 2–4 encounters, you cannot collect Cast Ammo for a while.</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Caustic</strong></td>
+<td style="text-align:center">For the next 2–4 encounters, slain foes toss an Inferno-Bomb at you.</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Enshrouded</strong></td>
+<td style="text-align:center">For the next 4–5 chambers, chamber reward previews are hidden.</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Excruciating</strong></td>
+<td style="text-align:center">For the next 2–4 encounters, you take increased damage.</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Abyssal</strong></td>
+<td style="text-align:center">For the next 2–4 encounters, you take increased damage from traps.</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Atrophic</strong></td>
+<td style="text-align:center">For the next 2–4 encounters, your Life Total is reduced.</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Slothful</strong></td>
+<td style="text-align:center">For the next 2–4 encounters, you have lose move speed.</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Roiling</strong></td>
+<td style="text-align:center">For the next 2–4 encounters, you face more foes.</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Stabbing</strong></td>
+<td style="text-align:center">For the next 2–4 encounters, each time you Dash, you take damage.</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Maimed</strong></td>
+<td style="text-align:center">For the next 2–4 encounters, each time you Attack, you take damage.</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Flayed</strong></td>
+<td style="text-align:center">For the next 2–4 encounters, each time you Special, you take damage.</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Addled</strong></td>
+<td style="text-align:center">For the next 2–4 encounters, each time you Cast, you take damage.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="🎁Blessing"><a href="#🎁Blessing" class="headerlink" title="🎁Blessing"></a>🎁Blessing</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Blessing</th>
+<th style="text-align:center">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><strong>Strike</strong></td>
+<td style="text-align:center">Afterward, your Attack deals increased damage.</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Flourish</strong></td>
+<td style="text-align:center">Afterward, your Special deals increased damage.</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Shot</strong></td>
+<td style="text-align:center">Afterward, your Cast deals increased damage.</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Lunge</strong></td>
+<td style="text-align:center">Afterward, your Dash Attack deals increased damage.</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Grasp</strong></td>
+<td style="text-align:center">Afterward, increase your maximum Bloodstones.</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Soul</strong></td>
+<td style="text-align:center">Afterward, increase your maximum Health</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Favor</strong></td>
+<td style="text-align:center">Afterward, Boons have a higher chance to be Rare or better.</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Affluence</strong></td>
+<td style="text-align:center">Afterward, any Obol you find is worth more.</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Eclipse</strong></td>
+<td style="text-align:center">Afterward, any Darkness you find is worth more.</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>Defiance</strong></td>
+<td style="text-align:center">Afterward, gain +1 Death Defiance stack.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="Duo"><a href="#Duo" class="headerlink" title="Duo"></a>Duo</h2><p>Duo Boons are a type of <a target="_blank" rel="noopener" href="https://hades.gamepedia.com/Boons">Boon</a> which combines the powers of two different gods for a unique effect. Duo Boons can only be obtained with the correct prerequisite boons and, like normal boons, are lost when <a target="_blank" rel="noopener" href="https://hades.gamepedia.com/Zagreus">Zagreus</a> dies and returns to the <a target="_blank" rel="noopener" href="https://hades.gamepedia.com/House_of_Hades">House of Hades</a>.</p>
+<p>There are currently 28 Duo Boons in <em>Hades</em>, shared between 8 different gods: <a target="_blank" rel="noopener" href="https://hades.gamepedia.com/Aphrodite">Aphrodite</a>, <a target="_blank" rel="noopener" href="https://hades.gamepedia.com/Ares">Ares</a>, <a target="_blank" rel="noopener" href="https://hades.gamepedia.com/Artemis">Artemis</a>, <a target="_blank" rel="noopener" href="https://hades.gamepedia.com/Athena">Athena</a>, <a target="_blank" rel="noopener" href="https://hades.gamepedia.com/Dionysus">Dionysus</a>, <a target="_blank" rel="noopener" href="https://hades.gamepedia.com/Demeter">Demeter</a>, <a target="_blank" rel="noopener" href="https://hades.gamepedia.com/Poseidon">Poseidon</a>, and <a target="_blank" rel="noopener" href="https://hades.gamepedia.com/Zeus">Zeus</a>. <a target="_blank" rel="noopener" href="https://hades.gamepedia.com/Hermes">Hermes</a> and <a target="_blank" rel="noopener" href="https://hades.gamepedia.com/Chaos">Chaos</a> will never offer Duo Boons. Every god that may have Duo boons shares one with each other god.Duo boons require you to have two specific Boons in order to be available from the God. They do not come with differing stats based on rarity, and the Boons can be a variety of things to meet the requirements of the Duo Boon. As such, in place of the rarity section, it will be a list of Boons that will work for unlocking the Duo Boon.</p>
+<p><strong>Curse of Longing</strong> – Aphrodite / Ares – Your Doom effects continuously strike Weak foes.<br>Aphrodite: Heartbreak Strike, Heartbreak Flourish, Shatter Shot, or Passion Dash<br>Ares: Curse of Agony or Curse of Pain</p>
+<p><strong>Deadly Reversal</strong> – Artemis / Athena – After you Deflect, briefly gain +35% chance to deal Critical damage for 2 sec.<br>Artemis: Deadly Strike, Deadly Flourish, True Shot or Hunter Dash<br>Athena: Divine Strike, Divine Flourish, or Divine Dash</p>
+<p><strong>Exclusive Access</strong> – Dionysus / Poseidon – Any Boons you find have superior effects.<br>Dionysus: Blight Strike, Blight Flourish, Tipsy Shot, or Nasty Dash<br>Poseidon: Tempest Strike, Tempest Flourish, Flood Shot, or Tidal Dash</p>
+<p><strong>Heart Rend</strong> – Aphrodite / Artemis – Your critical hits do more damage to Weak enemies.<br>Aphrodite: Heartbreak Strike, Heartbreak Flourish, Shatter Shot, or Passion Dash<br>Artemis: Artemis: Deadly Strike, Deadly Flourish, or Pressure Points.</p>
+<p><strong>Hunting Blades</strong> – Ares / Artemis – Your Cast creates a faster Blade Rift that seeks the nearest foe.<br>Ares: Slicing Shot<br>Artemis: Deadly Strike, Deadly Flourish, Hunter Dash or Artemis’ Aid</p>
+<p><strong>Lightning Rod</strong> – Artemis / Zeus – Your collectible Bloodstones strike nearby foes every 1.5 seconds.<br>Artemis: Deadly Strike, Deadly Flourish, True Shot, or Hunter Dash.<br>Zeus: Lightning Strike, Thunder Flourish, Thunder Dash, or Electric Shot</p>
+<p><strong>Lightning Phalanx</strong> – Athena / Zeus – Your Cast bounces between enemies.<br>Athena: Phalanx Shot<br>Zeus: Lightning Strike, Thunder Flourish, Thunder Dash, or Electric Shot</p>
+<p><strong>Low Tolerance</strong> – Aphrodite / Dionysus – Your Poison effects stack even more times against Weak foes.<br>Aphrodite: Heartbreak Strike, Heartbreak Flourish, Shatter Shot, or Passion Dash<br>Dionysus: Blight Strike, Blight Flourish, or Nasty Dash</p>
+<p><strong>Merciful End</strong> – Ares / Athena – Your attacks that can Deflect immediately activate Doom effects.<br>Ares: Curse of Agony or Curse of Pain<br>Athena: Divine Strike, Divine Flourish, or Divine Dash</p>
+<p><strong>Scintillating Feast</strong> – Dionysus / Zeus – Your Festive Fog effects also deal lightning damage periodically.<br>Dionysus: Tipsy Shot or High Tolerance<br>Zeus: Lightning Strike, Thunder Flourish, Electric Shot, Thunder Dash or Zeus’ Aid</p>
+<p><strong>Spent Spirit</strong> – Aphrodite / Athena – Enemy projectiles move slower.<br>Aphrodite: Heartbreak Strike, Heartbreak Flourish, Shatter Shot, or Passion Dash<br>Athena: Divine Strike, Divine Flourish, or Divine Dash</p>
+<p><strong>Sweet Nectar</strong> – Aphrodite / Poseidon – All Poms of Power you find are more effective.<br>Aphrodite: Heartbreak Strike, Heartbreak Flourish, Shatter Shot, or Passion Dash<br>Poseidon: Tempest Strike, Tempest Flourish, Flood Shot, or Tidal Dash</p>
+<p><strong>Sea Storm</strong> – Poseidon / Zeus – Your knock-away effects also cause foes to be struck by lightning.<br>Poseidon: Tempest Strike, Tempest Flourish, Flood Shot, or Tidal Dash<br>Zeus: Lightning Strike, Thunder Flourish, Electric Shot, or Thunder Dash</p>
+<p><strong>Vengeful Mood</strong> – Ares / Zeus – Your Revenge effects sometimes occur without taking damage.<br>Ares: Curse of Agony, Curse of Pain, or Curse of Vengeance.<br>Zeus: Lightning Strike, Thunder Flourish, Electric Shot, Thunder Dash, or Heaven’s Vengeance.</p>
+
+            </div>
+            <hr/>
+
+            
+
+    <div class="reprint" id="reprint-statement">
+        
+            <div class="reprint__author">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-user">
+                        文章作者:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="/about" rel="external nofollow noreferrer">Dafeigy</a>
+                </span>
+            </div>
+            <div class="reprint__type">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-link">
+                        文章链接:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="https://dafeigy.github.io/2020/10/29/Hades/">https://dafeigy.github.io/2020/10/29/Hades/</a>
+                </span>
+            </div>
+            <div class="reprint__notice">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-copyright">
+                        版权声明:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    本博客所有文章除特別声明外，均采用
+                    <a href="https://creativecommons.org/licenses/by/4.0/deed.zh" rel="external nofollow noreferrer" target="_blank">CC BY 4.0</a>
+                    许可协议。转载请注明来源
+                    <a href="/about" target="_blank">Dafeigy</a>
+                    !
+                </span>
+            </div>
+        
+    </div>
+
+    <script async defer>
+      document.addEventListener("copy", function (e) {
+        let toastHTML = '<span>复制成功，请遵循本文的转载规则</span><button class="btn-flat toast-action" onclick="navToReprintStatement()" style="font-size: smaller">查看</a>';
+        M.toast({html: toastHTML})
+      });
+
+      function navToReprintStatement() {
+        $("html, body").animate({scrollTop: $("#reprint-statement").offset().top - 80}, 800);
+      }
+    </script>
+
+
+
+            <div class="tag_share" style="display: block;">
+                <div class="post-meta__tag-list" style="display: inline-block;">
+                    
+                        <div class="article-tag">
+                            <span class="chip bg-color">无标签</span>
+                        </div>
+                    
+                </div>
+                <div class="post_share" style="zoom: 80%; width: fit-content; display: inline-block; float: right; margin: -0.15rem 0;">
+                    <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+<div id="article-share">
+
+    
+    <div class="social-share" data-sites="twitter,facebook,google,qq,qzone,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>微信扫一扫即可分享！</p>"></div>
+    <script src="/libs/share/js/social-share.min.js"></script>
+    
+
+    
+
+</div>
+
+                </div>
+            </div>
+            
+                <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.4rem;
+        line-height: 38px;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-medium waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fas fa-times"></i></a>
+            <h4 class="reward-title">谢谢老板哦~老板身体健康！</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="/medias/reward/alipay.PNG" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="/medias/reward/wechat.png" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+
+            
+        </div>
+    </div>
+
+    
+        <link rel="stylesheet" href="/libs/gitalk/gitalk.css">
+<link rel="stylesheet" href="/css/my-gitalk.css">
+
+<div class="card gitalk-card" data-aos="fade-up">
+    <div class="comment_headling" style="font-size: 20px; font-weight: 700; position: relative; padding-left: 20px; top: 15px; padding-bottom: 5px;">
+        <i class="fas fa-comments fa-fw" aria-hidden="true"></i>
+        <span>评论</span>
+    </div>
+    <div id="gitalk-container" class="card-content"></div>
+</div>
+
+<script src="/libs/gitalk/gitalk.min.js"></script>
+<script>
+    let gitalk = new Gitalk({
+        clientID: '',
+        clientSecret: '',
+        repo: '',
+        owner: '',
+        admin: null,
+        id: '2020-10-29T23-20-56',
+        distractionFreeMode: false  // Facebook-like distraction free mode
+    });
+
+    gitalk.render('gitalk-container');
+</script>
+
+    
+
+    
+        <link rel="stylesheet" href="/libs/gitment/gitment-default.css">
+<link rel="stylesheet" href="/css/gitment.css">
+
+<div class="gitment-card card" data-aos="fade-up">
+    <div class="comment_headling" style="font-size: 20px; font-weight: 700; position: relative; padding-left: 20px; top: 15px; padding-bottom: 5px;">
+        <i class="fas fa-comments fa-fw" aria-hidden="true"></i>
+        <span>评论</span>
+    </div>
+    <div id="gitment-content" class="card-content"></div>
+</div>
+
+<script src="/libs/gitment/gitment.js"></script>
+<script>
+var gitment = new Gitment({
+    id: 'Thu Oct 29 2020 23:20:56 GMT+0800',
+    owner: '',
+    repo: '',
+    oauth: {
+        client_id: '',
+        client_secret: ''
+    }
+});
+
+gitment.render('gitment-content');
+</script>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
+            <div class="card">
+                <a href="/2020/10/29/Hades/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/1.jpg" class="responsive-img" alt="《Hades》的战斗数据挖掘">
+                        
+                        <span class="card-title">《Hades》的战斗数据挖掘</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+    
+
+Hades Data Mining 
+
+    All Data comes from Gamepedia
+
+
+
+
+
+
+
+
+Hades) is a roguelike game from Supergiant Games, c
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-10-29
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            Dafeigy
+                            
+                        </span>
+                    </div>
+                </div>
+
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2020/10/29/communication/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/10.jpg" class="responsive-img" alt="八里台男子职业技术学院 通信原理 无线计算器实验">
+                        
+                        <span class="card-title">八里台男子职业技术学院 通信原理 无线计算器实验</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            八里台男子职业技术学院 通信原理 无线计算器实验🌹侯永宏 永远滴神🌹
+🌹侯永宏 永远滴神🌹
+🌹侯永宏 永远滴神🌹
+🌹侯永宏 永远滴神🌹
+🌹侯永宏 永远滴神🌹
+🌹侯永宏 永远滴神🌹
+🌹侯永宏 永远滴神🌹
+实验要求：
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-10-29
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            Dafeigy
+                            
+                        </span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+
+</div>
+
+
+
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFuction.js"></script>
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+<!-- 代码块折行 -->
+
+<style type="text/css">
+code[class*="language-"], pre[class*="language-"] { white-space: pre !important; }
+</style>
+
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget">
+            <div class="toc-title"><i class="far fa-list-alt"></i>&nbsp;&nbsp;目录</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fas fa-list-ul"></i>
+    </a>
+</div>
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            collapseDepth: Number('0'),
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h2, h3, h4').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).hide();
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).show();
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+
+    
+
+</main>
+
+
+
+
+    <footer class="page-footer bg-color">
+    
+        <link rel="stylesheet" href="/libs/aplayer/APlayer.min.css">
+<style>
+    .aplayer .aplayer-lrc p {
+        
+        display: none;
+        
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 16px !important;
+    }
+
+    .aplayer .aplayer-lrc p.aplayer-lrc-current {
+        
+        display: none;
+        
+        font-size: 15px;
+        color: #42b983;
+    }
+
+    
+    .aplayer.aplayer-fixed.aplayer-narrow .aplayer-body {
+        left: -66px !important;
+    }
+
+    .aplayer.aplayer-fixed.aplayer-narrow .aplayer-body:hover {
+        left: 0px !important;
+    }
+
+    
+</style>
+<div class="">
+    
+    <div class="row">
+        <meting-js class="col l8 offset-l2 m10 offset-m1 s12"
+                   server="netease"
+                   type="playlist"
+                   id="5053004614"
+                   fixed='true'
+                   autoplay='false'
+                   theme='#42b983'
+                   loop='all'
+                   order='random'
+                   preload='auto'
+                   volume='0.7'
+                   list-folded='true'
+        >
+        </meting-js>
+    </div>
+</div>
+
+<script src="/libs/aplayer/APlayer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js"></script>
+
+    
+    <div class="container row center-align" style="margin-bottom: 0px !important;">
+        <div class="col s12 m8 l8 copy-right">
+            Copyright&nbsp;&copy;
+            <span id="year">2019</span>
+            <a href="/about" target="_blank">Dafeigy</a>
+            |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>
+            |&nbsp;Theme&nbsp;<a href="https://github.com/Dafeigy/" class="tooltipped" target="_blank" data-tooltip="我的Github" data-position="top" data-delay="50">
+    <i class="fa fa-github"></i>
+</a>
+            <br>
+            
+            
+            
+            
+            
+            
+            <span id="busuanzi_container_site_pv">
+                |&nbsp;<i class="far fa-eye"></i>&nbsp;总访问量:&nbsp;<span id="busuanzi_value_site_pv"
+                    class="white-color"></span>&nbsp;次
+            </span>
+            
+            
+            <span id="busuanzi_container_site_uv">
+                |&nbsp;<i class="fas fa-users"></i>&nbsp;总访问人数:&nbsp;<span id="busuanzi_value_site_uv"
+                    class="white-color"></span>&nbsp;人
+            </span>
+            
+            <br>
+            
+            <br>
+            
+        </div>
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/Dafeigy" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fab fa-github"></i>
+    </a>
+
+
+
+    <a href="mailto:1070642765@qq.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fas fa-envelope-open"></i>
+    </a>
+
+
+
+
+
+
+
+    <a href="tencent://AddContact/?fromId=50&fromSubId=1&subcmd=all&uin=1070642765" class="tooltipped" target="_blank" data-tooltip="QQ联系我: 1070642765" data-position="top" data-delay="50">
+        <i class="fab fa-qq"></i>
+    </a>
+
+
+
+    <a href="https://weibo.com/eddiepeng" class="tooltipped" target="_blank" data-tooltip="关注我的微博: https://weibo.com/eddiepeng" data-position="top" data-delay="50">
+        <i class="fab fa-weibo"></i>
+    </a>
+
+
+
+
+
+    <a href="/atom.xml" class="tooltipped" target="_blank" data-tooltip="RSS 订阅" data-position="top" data-delay="50">
+        <i class="fas fa-rss"></i>
+    </a>
+
+</div>
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+
+    <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fas fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script src="/js/search.js"></script>
+<script type="text/javascript">
+$(function () {
+    searchFunc("/search.xml", 'searchInput', 'searchResult');
+});
+</script>
+
+    <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+</div>
+
+
+    <script src="/libs/materialize/materialize.min.js"></script>
+    <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+    <script src="/libs/aos/aos.js"></script>
+    <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+    <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+    <script src="/js/matery.js"></script>
+    <script type="text/javascript">
+    var OriginTitile=document.title,st;
+    document.addEventListener("visibilitychange",function(){
+        document.hidden?(document.title="死鬼快回来ヽ(●-`Д´-)ノ",clearTimeout(st)):(document.title="❤么么爱你❤",st=setTimeout(function(){document.title=OriginTitile},3e3))
+    })
+	</script>
+
+
+	<!--动态线条背景-->
+	<script type="text/javascript"
+	color="122 103 238" opacity='0.7' zIndex="-2" count="200" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js">
+	</script>
+
+
+    <!-- Baidu Analytics -->
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    <script src="/libs/others/clicklove.js" async="async"></script>
+    
+    
+    <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <script src="/libs/instantpage/instantpage.js" type="module"></script>
+    
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="/live2d_models/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2d_models/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2d_models/assets/assets/miku.model.json"},"display":{"position":"right","width":200,"height":400},"mobile":{"show":true},"react":{"opacity":0.7},"log":false});</script></body>
+
+</html>

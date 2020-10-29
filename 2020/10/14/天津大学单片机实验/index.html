@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="微机寻址相关, 阿花想要漂亮姐姐">
+    <meta name="keywords" content="单片机实验, 阿花想要漂亮姐姐">
     <meta name="description" content="什么时候才能被姐姐拥抱">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>微机寻址相关 | 阿花想要漂亮姐姐</title>
+    <title>单片机实验 | 阿花想要漂亮姐姐</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -309,12 +309,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/20.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/10.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">微机寻址相关</h1>
+                    <h1 class="description center-align post-title">单片机实验</h1>
                 </div>
             </div>
         </div>
@@ -443,14 +443,14 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2020-10-10
+                    2020-10-14
                 </div>
                 
 
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2020-10-12
+                    2020-10-23
                 </div>
                 
 
@@ -464,65 +464,240 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h1 id="微机寻址操作的对象"><a href="#微机寻址操作的对象" class="headerlink" title="微机寻址操作的对象"></a>微机寻址操作的对象</h1><h3 id="🐷前期铺垫："><a href="#🐷前期铺垫：" class="headerlink" title="🐷前期铺垫："></a>🐷前期铺垫：</h3><ul>
-<li><p>(AX)表示取AX的内容</p>
-</li>
-<li><p>[AX]表示取AX内容作为地址</p>
-</li>
-</ul>
-<p>我把可能操作的对象都列出来了：</p>
-<p><img src="https://i.loli.net/2020/10/10/hFTlfK6onGuE1q2.png" alt=""></p>
-<p>长条的代表是16位寄存器，短条代表的是8位。</p>
-<p>❗<strong>第一条法则：数据类型要匹配</strong></p>
-<p><strong>小的数据、内容可以放进长的容器，但大的数据的不能放进短的容器。</strong>很好理解吧？数据、内容的大小指的是8位、16位。在8086里我们主要是这两种，其他如80386以上的微机可以有32位的。</p>
-<p><strong>❗第二条法则：操作命令要符合语法</strong></p>
-<p>以我们最常见的MOV指令为例，给出MOV指令的操作对象关系：</p>
-<p><img src="https://i.loli.net/2020/10/10/LCky9uerxvJ7SaR.jpg" alt=""></p>
-<p>MOV指令一共有两个操作数部分，左边的操作数叫<strong>目的操作数</strong>，右边的操作数叫做源操作数。</p>
-<p>通过这张表我们可以知道，合法的操作包含这几种情况：</p>
-<ul>
-<li>❗立即数<strong>不能</strong>传输给段寄存器</li>
-<li>❗只有通用寄存器之间才能相互传输</li>
-<li>❗立即数不能作为目的操作数（目的操作数可以是地址）</li>
-</ul>
-<h3 id="微机寻址方式"><a href="#微机寻址方式" class="headerlink" title="微机寻址方式"></a>微机寻址方式</h3><ul>
-<li>固定寻址</li>
-<li>立即数寻址</li>
-<li>寄存器寻址</li>
-<li>存储器寻址</li>
-<li>I/O端口寻址</li>
-</ul>
-<p>前三种有手就行，重点在第四种存储器寻址。</p>
-<p>存储器寻址有6种方式，常用的5种，他们的顺序是层层递进的，前面的方法都可以在后面用到。</p>
-<p><strong>我们可以用高级语言的函数与形参的思维来理解、分辨他们。</strong></p>
-<h4 id="直接寻址（1立即）"><a href="#直接寻址（1立即）" class="headerlink" title="直接寻址（1立即）"></a>直接寻址（1立即）</h4><pre class="line-numbers language-lang-assembly"><code class="language-lang-assembly">MOV AL,[2000H];   --将(DS)*16+2000H存储单元的内容传输给AL。
-<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>如果出现了操作数地址位于数据DS段外，则可以加上前缀表示<strong>段前超越</strong>：</p>
-<pre class="line-numbers language-lang-assembly"><code class="language-lang-assembly">MOV AL,ES:[2000H];  --将ES中偏移地址为2000H的字节二单元内容传输打到AL
-<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>因为间接寻址归DS管所以用的是(DS)；如果是其他寻址方式则要用对应的段。</p>
-<h4 id="寄存器间接寻址（1寄存）"><a href="#寄存器间接寻址（1寄存）" class="headerlink" title="寄存器间接寻址（1寄存）"></a>寄存器间接寻址（1寄存）</h4><p>先来看两个可能会出现混淆的代码：</p>
-<pre class="line-numbers language-lang-assembly"><code class="language-lang-assembly">MOV AX,[BP];  
-MOV [BP],AX;
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p>第一行表示将以(SS)*16+BP为地址的存储单元传输至AX中。</p>
-<p>第二行表示将AX内容传输至以(SS)*16+BP为地址的存储单元。</p>
-<p>用人话来说就是第一个是给AX赋值，第二个是代表的存储单元赋值。</p>
-<p>对比上一种方式，这种方式没把数字直白的表现出来，而是含蓄的暂存在<strong>通用寄存器中</strong>。BP作为通用寄存器，其通用性就体现在它可以作为一个中转站，为不能赋值的寄存器提供中转。</p>
-<h4 id="寄存器相对寻址-1立即，1寄存"><a href="#寄存器相对寻址-1立即，1寄存" class="headerlink" title="寄存器相对寻址(1立即，1寄存)"></a>寄存器相对寻址(1立即，1寄存)</h4><pre class="line-numbers language-lang-assembly"><code class="language-lang-assembly">MOV AX,[SI+06H];  -- 将(DS)*16+(SI)+06H作为地址的存储单元的内容赋值给AX
-MOV AX,[SI]06H;
-MOV AX,06H[SI];  --这三条其实是一样的
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-<p>对比上一条，多了一个立即数。这个立即数可以非常灵活的变动，所以这种寻址方式很适合访问数组（就是一个一元表格，有若干元素）。</p>
-<h4 id="基址变址寻址（2寄存）"><a href="#基址变址寻址（2寄存）" class="headerlink" title="基址变址寻址（2寄存）"></a>基址变址寻址（2寄存）</h4><pre class="line-numbers language-lang-assembly"><code class="language-lang-assembly">MOV AX,[BX][SI];    --将以(DS)*16+[BX]+[SI]作为地址的存储单元的内容传输给AX
-MOV AX,[BX+SI];
-MOV AX,DS:[BP][DI];    --将以(SS)*16+[BP]+[DI]作为地址的存储单元的内容传输给AX
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-<p>以上都是对的。<strong>BX、BP为一组，DI、SI为一组，要从这两组中各选一个做为参数。</strong></p>
-<h4 id="相对基址加变址寻址（2寄存1立即）"><a href="#相对基址加变址寻址（2寄存1立即）" class="headerlink" title="相对基址加变址寻址（2寄存1立即）"></a>相对基址加变址寻址（2寄存1立即）</h4><pre class="line-numbers language-lang-assembly"><code class="language-lang-assembly">MOV AX,[BX][DI]06H;        --将以(SS)*16+[BP]+[DI]+06H作为地址的存储单元的内容传输给AX
-MOV AX,[BX][DI]DATA;    --DATA是一个变量，提前赋值过了
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p><strong>发现了吗，其实我们在乎的不是寻址的方式，而是寻址的语法。</strong>我们关注的是我们的数据如何成功的从一个存储器或者寄存器流动到另一个去，实现的方式，也就是我们的寻址方式；我们关注能否成功不在于寻址方式有多花里胡哨， 而在于语法正不正去、适不适用。</p>
+                <h1 id="单片机实验电路图"><a href="#单片机实验电路图" class="headerlink" title="单片机实验电路图"></a>单片机实验电路图</h1><p><img src="https://i.loli.net/2020/10/20/851qYZ92zOsPRcQ.jpg" alt=""></p>
+<h2 id="0-素材"><a href="#0-素材" class="headerlink" title="0. 素材"></a>0. 素材</h2><pre class="line-numbers language-lang-assembly"><code class="language-lang-assembly">delay:mov R7,#0C7H
+LOOP1:mov R6,#0FAH
+LOOP2:mov R4,#0AH
+LOOP3:DJNZ R4,LOOP3
+    DJNZ R6,LOOP2
+    DJNZ R7, LOOP1
+    RET
+  END
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h2 id="🚣‍♀️实验一-I-O实验"><a href="#🚣‍♀️实验一-I-O实验" class="headerlink" title="🚣‍♀️实验一 I/O实验"></a>🚣‍♀️实验一 I/O实验</h2><p>流水灯的任务罢了</p>
+<pre class="line-numbers language-lang-assembly"><code class="language-lang-assembly">  ORG 0000H
+
+  JMP main
+
+  ORG 0003H
+
+
+  main:
+
+  SETB IT0
+
+  SETB EX0
+
+  SETB EA
+
+  MOV A,#11111110B
+
+  s: RL A
+
+  MOV P0,A
+
+  LCALL delay
+
+  JMP s
+
+delay:mov R7,#0C7H
+LOOP1:mov R6,#0FAH
+LOOP2:mov R4,#0AH
+LOOP3:DJNZ R4,LOOP3
+    DJNZ R6,LOOP2
+    DJNZ R7, LOOP1
+    RET
+  END
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>输出在P2，循环有点魔幻，改变R4，R6，R7的值改变显示延长时间。</p>
+<h2 id="🚗实验二-交通灯（未完成）"><a href="#🚗实验二-交通灯（未完成）" class="headerlink" title="🚗实验二 交通灯（未完成）"></a>🚗实验二 交通灯（未完成）</h2><pre class="line-numbers language-lang-assembly"><code class="language-lang-assembly">ORG   0000H
+LJMP main
+ORG 0003H
+main:
+MOV R7,#07H; shanshuocishu
+MOV R2,#10H; time 1
+MOV R3,#0A9H; time2
+MOV A,#21H; yihong
+MOV B,#12H; huangdeng
+
+MOV P2,A;yihong
+LCALL delay
+DJNZ R7,shine_1
+MOV R7,#07;
+MOV P2,B;yihuang
+LCALL delay
+MOV R2,#10H
+MOV A,#0CH
+MOV P2,A;erhong
+LCALL delay
+DJNZ R7,shine_2
+MOV R7,#07H
+MOV P2,B;erhuang
+LCALL delay
+jmp main
+
+delay:mov R5,#0C7H
+LOOP2:mov R4,#0AH
+LOOP3:DJNZ R4,LOOP3
+    DJNZ R5,LOOP2
+    RET
+
+shine_1:
+CLR P2.0
+LCALL delay
+SETB P2.0
+RET
+
+shine_2:
+CLR P2.3;
+LCALL delay
+SETB P2.3
+RET
+
+END
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h2 id="🔞实验三-中断实验"><a href="#🔞实验三-中断实验" class="headerlink" title="🔞实验三 中断实验"></a>🔞实验三 中断实验</h2><pre class="line-numbers language-lang-assembly"><code class="language-lang-assembly">ORG   0000H
+LJMP main
+ORG 0003H
+LJMP INT0_
+main:MOV A,#55H
+    SETB IT0 ;
+    SETB EX0 ;
+    SETB EA ;    
+    SJMP $ 
+INT0_:
+    MOV P0,A
+    CPL A
+    RETI
+END
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h2 id="⏰实验四-定时实验"><a href="#⏰实验四-定时实验" class="headerlink" title="⏰实验四 定时实验"></a>⏰实验四 定时实验</h2><pre class="line-numbers language-lang-assembly"><code class="language-lang-assembly">ORG     0000H        ;程序从此地址开始运行
+    LJMP     MAIN        ;跳转到 MAIN 程序处
+    ORG     000BH        ;设置中断入口
+    LJMP    SUBT
+    ORG     0100H
+MAIN:
+    MOV     sp,#40H
+    SETB    EA
+    SETB    ET0
+    SETB    P1.0
+    MOV     R3,#20          ;设置50ms循环20次即为1s
+    MOV     TMOD,#01H      ;工作方式1
+    MOV     DPTR,#15536      ;设置初值
+    MOV     TH0,DPH      
+    MOV     TL0,DPL
+    SETB    TR0               ;启动定时
+Here:
+    SJMP    $
+SUBT:                        
+    DJNZ    R3,NEXT
+    CPL     P1.0
+    MOV     R3,#20
+NEXT:
+    MOV     TH0,DPH      
+    MOV     TL0,DPL
+    RETI
+    END
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h2 id="⏱实验五-计数器实验"><a href="#⏱实验五-计数器实验" class="headerlink" title="⏱实验五 计数器实验"></a>⏱实验五 计数器实验</h2><pre class="line-numbers language-lang-assembly"><code class="language-lang-assembly">ORG     0000H        ;程序从此地址开始运行
+    LJMP     MAIN        ;跳转到 MAIN 程序处
+    ORG     0100H
+MAIN:
+    MOV     sp,#40H
+    SETB    EA
+    SETB    ET0
+    MOV     TMOD,#04H      ;工作方式1
+    MOV     TH0,#00H      
+    MOV     TL0,#00H
+    SETB     TR0               ;启动定时
+LOOP:
+    MOV     P0,TL0           ;注意！！！这里写的是p1，但是自己protues里面用的是p0
+    AJMP     LOOP
+    END
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h2 id="💻实验八-七段译码"><a href="#💻实验八-七段译码" class="headerlink" title="💻实验八 七段译码"></a>💻实验八 七段译码</h2><pre class="line-numbers language-lang-assembly"><code class="language-lang-assembly">ORG     0000H        ;程序从此地址开始运行
+    LJMP     MAIN        ;跳转到 MAIN 程序处
+
+    ORG     003BH       ;延时10ms子程序
+DELAY10MS:
+    PUSH    psw
+    MOV     R6,#20
+LOOP1:
+    MOV       R7,#0FAH
+LOOP2:
+    DJNZ    R7,LOOP2
+    DJNZ    R6,LOOP1
+    POP     psw
+    RET
+
+    ORG     0100H        ;MAIN 从030H处开始
+MAIN:    
+      MOV     R3,#25
+    MOV     R4,#00H
+    MOV     R5,#10
+    MOV     DPTR,#table
+LOOP:
+    MOV     A,#08H          ;位码
+    MOV     P2,A
+    MOV     A,R4          ;段码
+    MOVC    A,@A+DPTR
+    MOV     P0,A
+    LCALL   DELAY10MS
+
+    INC     R4
+    MOV     A,#04H          ;位码
+    MOV     P2,A
+    MOV     A,R4          ;段码
+    MOVC    A,@A+DPTR
+    MOV     P0,A
+    LCALL   DELAY10MS
+
+    INC     R4
+    MOV     A,#02H          ;位码
+    MOV     P2,A
+    MOV     A,R4          ;段码
+    MOVC    A,@A+DPTR
+    MOV     P0,A
+    LCALL   DELAY10MS
+
+    INC     R4
+    MOV     A,#01H          ;位码
+    MOV     P2,A
+    MOV     A,R4          ;段码
+    MOVC    A,@A+DPTR
+    MOV     P0,A
+    LCALL   DELAY10MS
+    DEC     R4
+    DEC     R4
+    DEC     R4
+
+    DJNZ    R3,NEXT
+    MOV     R3,#25
+    INC     R4
+
+    DJNZ    R5,NEXT
+    MOV     R5,#10
+    MOV     R4,#00H    
+NEXT:
+       AJMP    LOOP
+
+
+table:
+    DB     0C0H
+    DB     0F9H
+    DB     0A4H
+    DB     0B0H
+    DB     99H
+    DB     92H
+    DB     82H
+    DB     0F8H
+    DB     80H
+    DB     90H
+    DB     0C0H
+    DB     0F9H
+    DB     0A4H
+    END
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
             </div>
             <hr/>
@@ -548,7 +723,7 @@ MOV AX,[BX][DI]DATA;    --DATA是一个变量，提前赋值过了
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://dafeigy.github.io/2020/10/10/%E5%BE%AE%E6%9C%BA%20%E5%AF%BB%E5%9D%80%E7%9B%B8%E5%85%B3/">https://dafeigy.github.io/2020/10/10/%E5%BE%AE%E6%9C%BA%20%E5%AF%BB%E5%9D%80%E7%9B%B8%E5%85%B3/</a>
+                    <a href="https://dafeigy.github.io/2020/10/14/%E5%A4%A9%E6%B4%A5%E5%A4%A7%E5%AD%A6%E5%8D%95%E7%89%87%E6%9C%BA%E5%AE%9E%E9%AA%8C/">https://dafeigy.github.io/2020/10/14/%E5%A4%A9%E6%B4%A5%E5%A4%A7%E5%AD%A6%E5%8D%95%E7%89%87%E6%9C%BA%E5%AE%9E%E9%AA%8C/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -754,7 +929,7 @@ MOV AX,[BX][DI]DATA;    --DATA是一个变量，提前赋值过了
         repo: '',
         owner: '',
         admin: null,
-        id: '2020-10-10T19-01-08',
+        id: '2020-10-14T19-21-07',
         distractionFreeMode: false  // Facebook-like distraction free mode
     });
 
@@ -778,7 +953,7 @@ MOV AX,[BX][DI]DATA;    --DATA是一个变量，提前赋值过了
 <script src="/libs/gitment/gitment.js"></script>
 <script>
 var gitment = new Gitment({
-    id: 'Sat Oct 10 2020 19:01:08 GMT+0800',
+    id: 'Wed Oct 14 2020 19:21:07 GMT+0800',
     owner: '',
     repo: '',
     oauth: {
@@ -809,26 +984,28 @@ gitment.render('gitment-content');
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2020/10/12/%E7%AC%AC%E5%85%AD%E7%AB%A0%20%E9%80%9A%E6%BA%90/">
+                <a href="/2020/10/19/%E4%BC%A0%E6%84%9F%E5%99%A8/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="">
+                        <img src="/medias/featureimages/9.jpg" class="responsive-img" alt="传感器">
                         
-                        <span class="card-title"></span>
+                        <span class="card-title">传感器</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            第六章 数字信号的载波传播一、 数字解调与原理1.2ASK用二进制数字信号的“0”和“1”控制载波的通和断。它的表达式如下：
+                            天津大学传感器原理选修 考点
+动静态概念静态静态特性是对于静态得到输入信号，传感器的输出量和输入量之间的所具有的相互关系。
 
-S_{ASK}(t)=\begin{cases}Acos {\omega_0t},“1”\\0,“0”\end{
+测量范围$Y_{FS}$：每个传感器的测量范围，超过这个范围测量时会带来大误差甚至损坏。
+线性度$\delta_f
                         
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2020-10-12
+                            <i class="far fa-clock fa-fw icon-date"></i>2020-10-19
                         </span>
                         <span class="publish-author">
                             
@@ -848,27 +1025,24 @@ S_{ASK}(t)=\begin{cases}Acos {\omega_0t},“1”\\0,“0”\end{
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2020/10/04/%E5%8D%95%E7%89%87%E6%9C%BA%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84/">
+                <a href="/2020/10/12/%E5%8D%95%E7%89%87%E6%9C%BA%E5%B9%B6%E8%A1%8C%E5%A4%96%E6%89%A9%E5%B1%95(ROM%E3%80%81RAM%E5%B9%B6%E8%A1%8C%E6%89%A9%E5%B1%95%EF%BC%89/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/23.jpg" class="responsive-img" alt="单片机程序结构 笔记">
+                        <img src="/medias/featureimages/6.jpg" class="responsive-img" alt="单片机并行外扩展(ROM、RAM并行扩展）">
                         
-                        <span class="card-title">单片机程序结构 笔记</span>
+                        <span class="card-title">单片机并行外扩展(ROM、RAM并行扩展）</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            单片机程序我也是服了，这年头谁他妈用汇编啊？
-赵岩奶奶也对我们太有信心了吧？
-现在好啦要他妈自学汇编语言真有你的天津自学大学👎
-1.汇编程序的一些规则汇编语言是一种应该和c++、拉丁语一起在坟墓里发烂发臭的语言💀。它的存在意义只是让你的
+                            单片机并行外扩展(ROM、RAM并行扩展）一、总线结构地址总线：n根线有2^n 个地址单元，单向从单片机往外传输。控制总线：双向数据总线：一个字节8位，数据总线的位数也是8位，双向。一个简单的例子就是：MOV @DPTR,A和MOV A,@
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2020-10-04
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-10-12
                             </span>
                         <span class="publish-author">
                             

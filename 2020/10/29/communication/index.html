@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="单片机并行外扩展(ROM、RAM并行扩展）, 阿花想要漂亮姐姐">
+    <meta name="keywords" content="八里台男子职业技术学院 通信原理 无线计算器实验, 阿花想要漂亮姐姐">
     <meta name="description" content="什么时候才能被姐姐拥抱">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>单片机并行外扩展(ROM、RAM并行扩展） | 阿花想要漂亮姐姐</title>
+    <title>八里台男子职业技术学院 通信原理 无线计算器实验 | 阿花想要漂亮姐姐</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -309,12 +309,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/6.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/10.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">单片机并行外扩展(ROM、RAM并行扩展）</h1>
+                    <h1 class="description center-align post-title">八里台男子职业技术学院 通信原理 无线计算器实验</h1>
                 </div>
             </div>
         </div>
@@ -443,14 +443,14 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2020-10-12
+                    2020-10-29
                 </div>
                 
 
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2020-10-19
+                    2020-10-29
                 </div>
                 
 
@@ -464,101 +464,126 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h1 id="单片机并行外扩展-ROM、RAM并行扩展）"><a href="#单片机并行外扩展-ROM、RAM并行扩展）" class="headerlink" title="单片机并行外扩展(ROM、RAM并行扩展）"></a>单片机并行外扩展(ROM、RAM并行扩展）</h1><h2 id="一、总线结构"><a href="#一、总线结构" class="headerlink" title="一、总线结构"></a>一、总线结构</h2><p>地址总线：n根线有2^n 个地址单元，单向从单片机往外传输。<br>控制总线：双向<br>数据总线：一个字节8位，数据总线的位数也是8位，双向。<br>一个简单的例子就是：<code>MOV @DPTR,A</code>和<code>MOV A,@DPTR</code></p>
-<h2 id="二、ROM扩展"><a href="#二、ROM扩展" class="headerlink" title="二、ROM扩展"></a>二、ROM扩展</h2><p>PSEN</p>
-<h2 id="三、RAM扩展"><a href="#三、RAM扩展" class="headerlink" title="三、RAM扩展"></a>三、RAM扩展</h2><p>WR、RD</p>
-<h2 id="Keli-uvision"><a href="#Keli-uvision" class="headerlink" title="Keli uvision"></a>Keli uvision</h2><h2 id="数码显示程序思路参考"><a href="#数码显示程序思路参考" class="headerlink" title="数码显示程序思路参考"></a>数码显示程序思路参考</h2><pre><code>MOV R0,#40H; 取相关数段,为@R0做准备,40H,41H,42H,43H
-                ;  -&gt;C1,C2,C3,C4四个管子
-MOV R2,#01H;
-MOV DPTR,#table;
-LOOP: MOV A,R2;
-        MOV P2,A;
-        MOV A,@R0
-        MOVC A,@A+DPTR
-        MOV P0,A
-        LCALL,DELAY
-DELAY:
-        ...
-        ;延迟2ms
-        ;指针移动
-table : DB C0H,F9H,...;数码管码段
-</code></pre><h2 id="编址技术"><a href="#编址技术" class="headerlink" title="编址技术"></a>编址技术</h2><p>ROM扩展需要知道扩展位置在哪，否则就按顺序走（ORG巴拉巴拉）</p>
-<h3 id="1-线选"><a href="#1-线选" class="headerlink" title="1.线选"></a>1.线选</h3><p>RAM扩展图，扩展可读写程序存储器,以6116为例：</p>
-<div class="table-container">
-<table>
-<thead>
-<tr>
-<th>P2.7</th>
-<th>P2.6</th>
-<th>P2.5</th>
-<th>P2.4</th>
-<th>P2.3</th>
-<th>P2.2</th>
-<th>P2.1</th>
-<th>P2.0</th>
-<th>P0</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>00H</td>
-</tr>
-<tr>
-<td>1</td>
-<td>0</td>
-<td>0</td>
-<td>1</td>
-<td>1</td>
-<td>1</td>
-<td>1</td>
-<td>1</td>
-<td>FFH</td>
-</tr>
-<tr>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>00H</td>
-</tr>
-<tr>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>F</td>
-<td>F</td>
-<td>F</td>
-<td>F</td>
-<td>00H</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>可以看到地址范围不连续。</p>
-<h2 id="2-译码器"><a href="#2-译码器" class="headerlink" title="2. 译码器"></a>2. 译码器</h2><p> 接上条<br>表格扩展</p>
-<p>编程思路：</p>
-<ul>
-<li>0~F 16十六个数传输给内部RAM</li>
-<li>内部RAM-&gt;A-&gt;外部RAM</li>
-<li>读外部RAM-&gt;求和</li>
-<li>16进制-&gt;10进制</li>
-<li>在四位数码管上显示</li>
-</ul>
-<p>作业：花两个6264扩展 用译码器的方法画选址 </p>
-<p>一个RAM 和 一个ROM片选是独立。<br>NPN三极管 9013<br>PNP三极管 9012</p>
+                <h1 id="八里台男子职业技术学院-通信原理-无线计算器实验"><a href="#八里台男子职业技术学院-通信原理-无线计算器实验" class="headerlink" title="八里台男子职业技术学院 通信原理 无线计算器实验"></a>八里台男子职业技术学院 通信原理 无线计算器实验</h1><p>🌹侯永宏 永远滴神🌹</p>
+<p>🌹侯永宏 永远滴神🌹</p>
+<p>🌹侯永宏 永远滴神🌹</p>
+<p>🌹侯永宏 永远滴神🌹</p>
+<p>🌹侯永宏 永远滴神🌹</p>
+<p>🌹侯永宏 永远滴神🌹</p>
+<p>🌹侯永宏 永远滴神🌹</p>
+<h3 id="实验要求："><a href="#实验要求：" class="headerlink" title="实验要求："></a>实验要求：</h3><p>综合应用所学知识,设计无线数字传输系统，加深对通信原理所涉及内容的理解。（？）</p>
+<p>利用声音波段作为载波，设计一个基于两台电脑和两个耳麦的无线数据传输系统。在电脑A上输入一系列</p>
+<p>命令，对其作编码调制后，通过耳麦传送到电脑B, 电脑B执行命令后将结果返回到电脑A。</p>
+<h3 id="实验平台："><a href="#实验平台：" class="headerlink" title="实验平台："></a>实验平台：</h3><ol>
+<li>两台普通个人电脑；</li>
+<li>2个低质量耳麦，分别连接到一台电脑上</li>
+<li>应用软件：Matlab</li>
+</ol>
+<h3 id="技术指标"><a href="#技术指标" class="headerlink" title="技术指标"></a>技术指标</h3><ol>
+<li><p>在“发送电脑”上输入一个整数四则运算式（+、-、*、/），运算式中数字为0~10000的整数。输入完成后，这个算式通过耳麦被传输到“接收电脑”上，“接收电脑”对算式进行处理后将正确的结果同样通过耳麦返回到“发送电脑”上，“发送电脑”对此接收后显示结果。</p>
+</li>
+<li><p>在算式输入完毕后1秒钟内要将结果显示出来。如果在传输过程中出现错误要能自动进行重传。重传N次，最长的等待时间就为N秒。</p>
+</li>
+<li>两个耳麦的距离为10cm.传输时，声卡上所有的音量（录、放）都将调为最大值。</li>
+<li>使用Matlab时用M文件编写，每台电脑上只允许运行一个Matlab进程。</li>
+<li>各小组负责短距离无线计算器的开发，所要求的产品是由一系列实现无线计算服务的MATLAB函数组成。最终的产品应提供一批m-文件，这些m-文件能在一台标准电脑上作为发射机或接收机运行。</li>
+</ol>
+<h3 id="实验原理"><a href="#实验原理" class="headerlink" title="实验原理"></a>实验原理</h3><p><img src="G:\BLOG\hexoblog\source\pic\wireless calculator.jpg" alt=""></p>
+<p>网上找的原理图。（但我觉得用2FSK更好）</p>
+<p>发射部分主要完成两个工作：</p>
+<p><strong>编码和发射。</strong>我是把加减乘除分别用0000、0001、0010、0011来表示，剩余的0~9则是用0101~1101表示。</p>
+<pre class="line-numbers language-lang-matlab"><code class="language-lang-matlab">operater=[
+0 0 0 0;
+0 0 0 1;
+0 0 1 0;
+0 0 1 1;];
+
+BCD=[
+0 1 0 0;
+0 1 0 1;
+0 1 1 0;
+0 1 1 1;
+1 0 0 0;
+1 0 0 1;
+1 0 1 0;
+1 0 1 1;
+1 1 0 0;
+1 1 0 1; 
+];
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>然后就是输入算式，并对算式定位操作数、操作方式以及编码：</p>
+<pre class="line-numbers language-lang-matlab"><code class="language-lang-matlab">equal=input('输入算式？','s');
+len=length(equal);
+i=1;
+while (equal(i)~='+' && equal(i)~='-' && equal(i)~='*' && equal(i)~='/' )
+    i=i+1;
+end
+n=i;% location of operater
+num1=str2double(equal(1:n-1));
+num2=str2double(equal(n+1:len));
+operatenum=equal(n);
+if operatenum =='+'
+    k=1;
+end
+if operatenum =='-'
+    k=2;
+end
+if operatenum =='*'
+    k=3;
+end
+if operatenum =='/'
+    k=4;
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%编码整合%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+emit_temp0=[BCD((num1+1),:),operater(k,:),BCD((num2+1),:)];
+disp(emit_temp0);
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>上面的<code>emit_temp0</code>就是最初始的编码。但考虑到实际传播时的噪声问题，以及检验、纠错的后续拓展性，需要补充巴克码、检验码等。</p>
+<pre class="line-numbers language-lang-matlab"><code class="language-lang-matlab">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%增加标示码%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+emit_temp=[ones(1,14),[1 1 1 1 1 0 0 1 1 0 1 0 1],emit_temp0,[0 0 0 0 0],[1 1 1 1 1 0 0 1 1 0 1 0 1]];
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+disp('最终发射编码：'+emit_temp);
+final_temp=[];
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%编码扩宽100倍%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+for index=1:length(emit_temp)
+            if emit_temp(index)
+                final_temp=[final_temp ones(1,100)];
+            else
+                final_temp=[final_temp zeros(1,100)];
+            end
+end
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>然后针对两个载波频率我选用的是1000Hz和2000Hz，同时进行拓宽操作。</p>
+<pre class="line-numbers language-lang-matlab"><code class="language-lang-matlab">f2=1000;%1000HZ对应1
+f1=2000;%2000Hz对应0
+fs=8000;%抽样8000Hz
+t2=1/fs:1/fs:1/f2;
+t1=1/fs:1/fs:1/f1;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%扩宽%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+carrier1Data_temp=sin(2*pi*f2*t2);
+carrier1Data=repmat(carrier1Data_temp,1,10);
+
+carrier2Data_temp=sin(2*pi*f1*t1);
+carrier2Data=repmat(carrier2Data_temp,1,20);
+
+modulatedData=[];
+
+for index=1:100:length(final_temp)
+    if final_temp(index)==1
+        modulatedData=[modulatedData carrier1Data];
+    else
+        modulatedData=[modulatedData carrier2Data];
+    end
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%最终的发射信号保存音频%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+audiowrite('emit.wav',modulatedData,fs);
+sound(modulatedData,fs);
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>接收端部分叠加了噪声：</p>
 
             </div>
             <hr/>
@@ -584,7 +609,7 @@ table : DB C0H,F9H,...;数码管码段
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://dafeigy.github.io/2020/10/12/%E5%8D%95%E7%89%87%E6%9C%BA2/">https://dafeigy.github.io/2020/10/12/%E5%8D%95%E7%89%87%E6%9C%BA2/</a>
+                    <a href="https://dafeigy.github.io/2020/10/29/communication/">https://dafeigy.github.io/2020/10/29/communication/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -790,7 +815,7 @@ table : DB C0H,F9H,...;数码管码段
         repo: '',
         owner: '',
         admin: null,
-        id: '2020-10-12T19-26-00',
+        id: '2020-10-29T10-05-30',
         distractionFreeMode: false  // Facebook-like distraction free mode
     });
 
@@ -814,7 +839,7 @@ table : DB C0H,F9H,...;数码管码段
 <script src="/libs/gitment/gitment.js"></script>
 <script>
 var gitment = new Gitment({
-    id: 'Mon Oct 12 2020 19:26:00 GMT+0800',
+    id: 'Thu Oct 29 2020 10:05:30 GMT+0800',
     owner: '',
     repo: '',
     oauth: {
@@ -845,27 +870,38 @@ gitment.render('gitment-content');
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2020/10/19/%E4%BC%A0%E6%84%9F%E5%99%A8/">
+                <a href="/2020/10/29/Hades/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/9.jpg" class="responsive-img" alt="传感器">
+                        <img src="/medias/featureimages/1.jpg" class="responsive-img" alt="《Hades》的战斗数据挖掘">
                         
-                        <span class="card-title">传感器</span>
+                        <span class="card-title">《Hades》的战斗数据挖掘</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            动静态概念静态静态特性是对于静态得到输入信号，传感器的输出量和输入量之间的恶所具有的相互关系。
+                            
+    
 
-测量范围$Y_{FS}$：每个传感器的测量范围，超过这个范围测量时会带来大误差甚至损坏。
-线性度$\delta_f$：表示实际曲线与拟合直线接
+Hades Data Mining 
+
+    All Data comes from Gamepedia
+
+
+
+
+
+
+
+
+Hades) is a roguelike game from Supergiant Games, c
                         
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2020-10-19
+                            <i class="far fa-clock fa-fw icon-date"></i>2020-10-29
                         </span>
                         <span class="publish-author">
                             
@@ -885,26 +921,28 @@ gitment.render('gitment-content');
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2020/10/12/%E7%AC%AC%E5%85%AD%E7%AB%A0%20%E9%80%9A%E6%BA%90/">
+                <a href="/2020/10/19/%E4%BC%A0%E6%84%9F%E5%99%A8/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/0.jpg" class="responsive-img" alt="">
+                        <img src="/medias/featureimages/9.jpg" class="responsive-img" alt="传感器">
                         
-                        <span class="card-title"></span>
+                        <span class="card-title">传感器</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            第六章 数字信号的载波传播一、 数字解调与原理1.2ASK用二进制数字信号的“0”和“1”控制载波的通和断。它的表达式如下：
+                            天津大学传感器原理选修 考点
+动静态概念静态静态特性是对于静态得到输入信号，传感器的输出量和输入量之间的所具有的相互关系。
 
-S_{ASK}(t)=\begin{cases}Acos {\omega_0t},“1”\\0,“0”\end{
+测量范围$Y_{FS}$：每个传感器的测量范围，超过这个范围测量时会带来大误差甚至损坏。
+线性度$\delta_f
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2020-10-12
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-10-19
                             </span>
                         <span class="publish-author">
                             
