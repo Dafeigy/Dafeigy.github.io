@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="FPGA 笔记, 阿花想要漂亮姐姐">
+    <meta name="keywords" content="阿花想要漂亮姐姐">
     <meta name="description" content="什么时候才能被姐姐拥抱">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>FPGA 笔记 | 阿花想要漂亮姐姐</title>
+    <title>阿花想要漂亮姐姐</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -309,12 +309,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/8.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/0.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">FPGA 笔记</h1>
+                    <h1 class="description center-align post-title"></h1>
                 </div>
             </div>
         </div>
@@ -443,14 +443,14 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2020-12-15
+                    2020-12-19
                 </div>
                 
 
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-check fa-fw"></i>更新日期:&nbsp;&nbsp;
-                    2020-12-15
+                    2020-12-19
                 </div>
                 
 
@@ -464,232 +464,8 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h1 id="FPGA"><a href="#FPGA" class="headerlink" title="FPGA"></a>FPGA</h1><p>VHDL是一门很吊的语言。从书上得到的信息来看，这个软件我们自己都还没有摸清楚？但它强大的设计电路功能让人眼前一亮。</p>
-<p>个人觉得VHDL这门语言与以往所学的语言大相径庭，但也有共同之处，你甚至能在里面看到很多汇编的影子。学一门语言我是打算按程序结构入手，逐渐递进，最后到完整的程序设定。</p>
-<h2 id="VHDL程序结构"><a href="#VHDL程序结构" class="headerlink" title="VHDL程序结构"></a>VHDL程序结构</h2><p>每一种语言都需要固定的格式规范，在C系列中就是标志的Using namespace std，Java里面的Public class void main，Python严格的缩进制度…这些规范成就了每一门语言的功能与针对性。同样的，作为一种电路设计语言，VHDL的程序分成如下五个部分：</p>
-<ul>
-<li><p><strong>设计库-Library</strong></p>
-<pre><code>    存放已编译的实体、结构体、包集合和配置
-</code></pre><p>​        Storage the entity,Architecture,Package and configuration that have been complied</p>
-</li>
-<li><p>包集合-Package</p>
-<pre><code>    存放共享的数据类型、常数和子程序等
-</code></pre><p>​        Storage the constant,shared data type and sub program</p>
-</li>
-<li><p><strong>实体-Entity：</strong></p>
-<pre><code>    描述所设计系统的外部接口信号
-</code></pre><p>​        Describe the outer signal the system you design</p>
-</li>
-<li><p><strong>结构体-Architecture</strong></p>
-<pre><code>    描述系统内部的结构与行为
-</code></pre><p>​        Describe inner structure and behavior of the system</p>
-</li>
-<li><p>配置-Configuration</p>
-<pre><code>    从库中选取所需单元组成设计的不同结构体
-</code></pre><p>​        Select the units u need to construct different Architecture</p>
-</li>
-</ul>
-<h2 id="Entity"><a href="#Entity" class="headerlink" title="Entity"></a>Entity</h2><ul>
-<li>语法形式：</li>
-</ul>
-<pre class="line-numbers language-lang-vhdl"><code class="language-lang-vhdl">entity 实体名is
-        [generic (类属参数说明) ;] --这行其实我们实际应用很少有，哦对VHDL是--作为注释
-        [port (端口说明) ;]
-    end [entity] [实体名]；
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-<p>端口里面也有分类：</p>
-<ul>
-<li>In （输入）</li>
-<li>Out（输出）</li>
-<li>Inout （双向）</li>
-<li>Buffer （输出，但这个输出可以在内部再次利用）</li>
-<li>linkage（无指定方向）</li>
-</ul>
-<blockquote>
-<p><strong>In</strong> 信号只能被引用,不能被赋值；不可以出现在&lt;= 或 : = 的左边</p>
-<p>In signal can only be quoted but no equalize. It can’t be shown on the left of “&lt;=” or”:=”</p>
-<p><strong>out</strong> 信号只能被赋值,不能被引用；不可以出现在&lt;= 或 : = 的右边</p>
-<p>Out signal can only be equalized bu no be quoted. It can’t be shown on the right of “&lt;=” or “:=”</p>
-<p><strong>buffer</strong> 信号可以被引用,也可以被赋值；可以出现在&lt;= 或 : = 的两边</p>
-<p>Buffer signal can also be quoted and equalized. Both side can it put of “&lt;=” or “:=”</p>
-</blockquote>
-<h2 id="Architecture"><a href="#Architecture" class="headerlink" title="Architecture"></a>Architecture</h2><ul>
-<li>语法形式：</li>
-</ul>
-<pre class="line-numbers language-lang-vhdl"><code class="language-lang-vhdl">architecture 结构体名of 实体名is
-    [说明语句] 内部信号、常数、元件、数据类型、函数等
-begin
-    [并行处理语句和block、process、function、procedure]
-end [architecture][结构体名]
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<ul>
-<li>结构体描述一个设计的结构或行为，把一个设计的输入和输出之间的关系建立起来<br> 一个实体可以有多个结构体，分别代表该实体的不同实现方案，各个结构体的地位是同等的。但很可惜的是，我们遇到的程序基本上是单个结构体的。</li>
-</ul>
-<p>而Architecture种也有子结构：</p>
-<h3 id="BLOCK-块"><a href="#BLOCK-块" class="headerlink" title="BLOCK  块"></a>BLOCK  块</h3><p>BLOCK是一种在Architecture中的子结构。你肯定很好奇这有什么用，我们可以来看这样一个例子：</p>
-<p>好家伙，你发现这玩意完全就可以替代掉Architecture，那为什么还要大费周折高出已给Block呢？</p>
-<p>因为Block的出现，是为了<del>改善并行语句和结构的可读性</del><strong>分块转换变量为局部变量，从而保护某些信号。</strong></p>
-<ul>
-<li>并发执行，与描述顺序无关。</li>
-<li>语法形式 ：</li>
-</ul>
-<pre class="line-numbers language-lang-vhdl"><code class="language-lang-vhdl">块名称：BLOCK
-          [接口说明；]
-          [说明部分；]
-         BEGIN
-           并行处理语句；
-         END  BLOCK 块名称；
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>所有在Block里面定义、说明的信号，在Block外面来看是无法访问的。</p>
-<h3 id="Process-进程"><a href="#Process-进程" class="headerlink" title="Process 进程"></a>Process 进程</h3><p>Process存在的意义又是什么呢？Process其实完成了我们接触过的大部分顺序结构的工作：顺序执行程序指令。你可能会很惊讶，我们习以为常的顺序编程为什么在VHDL中被“特殊化“了，我个人的理解是对于一个电路来讲，它存在的意义是执行给定的指令，而执行效率最高的方式无疑是多任务多开的并行模式，所以不出意外我们都希望它是并行执行程序。一个Process对敏感信号保持持续扫描状态，一旦某一个敏感信号满足条件马上激活进程，完成对应的指令。</p>
-<p>但请注意，对于某些比较烦人的单变量输出变化的要求，不得已我们才能使用顺序结构的语句来描述器件行为。虽然Process是顺序执行的，但在一个结构体中，可以有多个Process并行运算，你懂我意思吗？举个例子，你在鹏翔公寓的洗漱房，每天早上你拖着你懒惰的身子来到一个水龙头前，旁边也有一样不愿早起的懒狗。你的洗漱顺序是先刷牙再洗脸，但你旁边那个小帅可能是先刷牙然后刮个胡子，最后再洗脸。你们的”进程“是不同的，但水龙头流出来的水是独立的，你们互不影响。</p>
-<ul>
-<li>顺序执行，与描述顺序有关。</li>
-<li>语法形式 </li>
-</ul>
-<pre class="line-numbers language-lang-vhdl"><code class="language-lang-vhdl">进程名称：PROCESS（敏感信号表）[IS]
-          [接口说明；]
-          [说明部分；]
-         BEGIN
-           顺序处理语句；
-         END  PROCESS 进程名称；
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>敏感信号其实未必列在信号表内，它可以是<code>WAIT UNTIL clock</code>一类的说明语句来激活进程。</p>
-<h3 id="Subprogram-子程序"><a href="#Subprogram-子程序" class="headerlink" title="Subprogram 子程序"></a>Subprogram 子程序</h3><p>subprogram也分为两种：Procedure和Function。</p>
-<ul>
-<li>使用<strong>顺序语句</strong>。</li>
-<li>目的：完成各种不同的定义和算法描述。</li>
-<li>特点：完成重复性的计算工作，通常放置在包集合当中，被不同的实体所调用。可重载的特性，即允许有多个重名的子程序存在（具有不同的参数类型或者返回值类型）。</li>
-</ul>
-<p>我知道肯定也会有人问，他妈的都一样是顺序结构，为什么Process还不够用？还来个Procedure？<del>当我们英语很好分得清吗？</del></p>
-<p>Procedure和Function的出现是为了多次利用。对于Process而言，他的返回值虽然没有明说，但我们动用一下小脑袋晃晃里面的水就不难发现：</p>
-<p>Process的状态只有两个：等待执行和执行中。如此的局限性，自然不能对多个对象进行多次重复的操作，所以Function和Procedure就诞生了，这里我们可以看到i作为高级语言应有的尊严：至少他是有面向对象的意识了！不像汇编那么落智了！</p>
-<h4 id="Function-函数："><a href="#Function-函数：" class="headerlink" title="Function 函数："></a>Function 函数：</h4><p>Function有一种微缩Entity+Architecture的思想在里面，他需要函数段和函数体两部分来构成。像不像C++？</p>
-<ul>
-<li>语法形式 </li>
-</ul>
-<pre class="line-numbers language-lang-vhdl"><code class="language-lang-vhdl">FUNCTION 函数名（参数表） 
-    RETURN 数据类型 ；
-    语法形式 
-FUNCTION 函数名（参数表） 
-    RETURN 数据类型 IS
-          [定义语句]
-    BEGIN
-           顺序处理语句；
-            RETURN 返回值
-END  函数名称；
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<ul>
-<li><p>用于对函数体的说明，放置在包集合的说明部分，对应于包集合内的函数体。不是必需的，在结构体中定义函数时，不需要函数首的说明。</p>
-</li>
-<li><p>重载。重载就是参数不同的同名函数的应用，值得注意的是四则运算（+-*/）的重载需要加双引号。</p>
-</li>
-</ul>
-<h4 id="Procedure-过程："><a href="#Procedure-过程：" class="headerlink" title="Procedure 过程："></a>Procedure 过程：</h4><p>Procedure和Function一样由首+体构成。但很好玩的一点就是，在进程（Process）或<strong>结构体（Architecture）中不必定义过程首</strong>，而程序包中则必须定义。</p>
-<ul>
-<li>语法形式 </li>
-</ul>
-<pre class="line-numbers language-lang-vhdl"><code class="language-lang-vhdl">PROCEDURE 过程名（参数表） IS
-          [定义语句]
-        BEGIN
-           顺序处理语句；
-         END  过程名称；
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<ul>
-<li>Procedure和函数一样可以重载。</li>
-</ul>
-<p>Procedure 和Function的联系、区别在于：</p>
-<ul>
-<li>函数可以有输入参数/也可以没有输入参数，必须有一个返回值（return）。</li>
-<li>过程必须有参数，这些参数必须有数据类型（输入/输出/双向），对于输入类型默认为常量，对于输出/双向类型默认为变量，无return。</li>
-<li>函数调用可作为表达式的一部分，过程则直接调用。</li>
-</ul>
-<h2 id="Package"><a href="#Package" class="headerlink" title="Package"></a>Package</h2><p>请留意我的分级，我把Package放到Architecture和Entity规划到<strong>同一类级别</strong>。</p>
-<p>我个人对Package的理解是面向对象编程中的”类“。这个类里面可以定义很多骚操作/骚函数。</p>
-<ul>
-<li>罗列VHDL语言中所要用到的信号定义、常数定义、数据类型、元件描述、函数定义以及过程定义等内容。</li>
-<li><p>包集合的使用</p>
-<pre><code>语法形式：
-  USE [库名].[包集合名].[项目名]
-</code></pre><p>如：</p>
-<pre><code> LIBRARY IEEE
-USE IEEE.STD_LOGIC_1164.ALL
-</code></pre></li>
-<li><p>语法形式：</p>
-</li>
-</ul>
-<pre class="line-numbers language-lang-vhdl"><code class="language-lang-vhdl">    PACKAGE [包集合名] IS
-     [说明语句]
-   END [包集合名] 
-    PACKAGE BODY [包集合名] IS
-     [说明语句]
-   END [包集合名]
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<pre class="line-numbers language-lang-vhdl"><code class="language-lang-vhdl">Package abc is
-    function str_to_int(S : string) return integer;
-End abc
-
-Package body abc is
-   function str_to_int(S : string) return integer is
-   begin
-   ………..
-   end str_to_int; 
-End abc
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>到这里，你已经对VHDL这门语言有一定的初步了解了。你现在应该能做到：</p>
-<ul>
-<li>拿到程序后，知道程序的执行顺序</li>
-<li>拿到程序后，分辨出各个变量类型</li>
-<li><del>拿到程序后，不至于无话可说</del></li>
-</ul>
-<h2 id="VHDL操作对象类型"><a href="#VHDL操作对象类型" class="headerlink" title="VHDL操作对象类型"></a>VHDL操作对象类型</h2><p>很有趣的一点就是，VHDL中的操作对象类型很少，只有三种：Constant，Variable和Signal。</p>
-<p>但类型少并不是它有趣的理由，有趣的理由在于，作为一门对类型极度严格要求的语言，在这三种类型衍生出来的数据类型却五花八门：</p>
-<p>数组，整数……很多很多。这从另一个维度说明了VHDL的大道至简的哲学思想。</p>
-<ul>
-<li>常数(constant):是一个固定的值，常数说明就是对某一常数名赋予一个固定的值，常量只能在说明时被赋值。<pre><code>语法形式:constant 常数名：数据类型：=表达式;
-  例: constant VCC ：real ：= 5.0;
-</code></pre></li>
-<li>变量(variable):只能在process、function和procedure结构中使用，是一个局部量。<pre><code>语法形式:variable 变量名:数据类型 约束条件:=表达式;
-  例:variable x,y ： integer;
-      variable count ： integer range 0 to 255 ：= 10;
-</code></pre></li>
-<li>信号(signal):电路内部硬件连接的抽象。信号可以在architecture、package、entitiy中声明。是一个<strong>全局量</strong>。<pre><code>语法形式:signal 信号名:数据类型 约束条件:=表达式;
-  例:signal clk ：std_logic ：= ‘1’;
-</code></pre></li>
-</ul>
-<p>信号和变量，一个针对全局，一个是局部。但二者的使用，又有什么不同呢？</p>
-<ul>
-<li>(1) 信号赋值是有一定延迟的 ，在进程中，信号的代入是在 <pre><code> 进程结束或者WAIT语句时进行。 而变量赋值没有延迟。
-</code></pre></li>
-<li>(2) 对于进程语句来说，进程只对信号敏感 ，不对变量敏感。</li>
-<li>(3) 信号在某一时刻除了具有当前值外 ，还具有一定的历史<pre><code> 信息 ( 保存在预定义属性中 ) ，可以形成波形 。而变量
- 在某一时刻仅包含一个值。
-</code></pre></li>
-<li>(4) 信号可以是<strong>多个进程的全局信号</strong> ，实现在多个进程之间<pre><code> 传递信息; 而变量只在定义它的过程、函数和进程中可见。
-</code></pre></li>
-<li>(5) 信号是硬件中连线的抽象描述，其功能是保存变化的数<pre><code> 据值和连接子元件。变量在硬件中没有类似的对应关系，
- 主要应用于高层次的建模中。
-</code></pre></li>
-<li>(6) <strong>信号赋值和变量赋值</strong>的格式如下所示 :<pre><code>          信号 &lt; =表达式 ;
-    变量 ：=表达式 ;
-</code></pre></li>
-</ul>
-<h2 id="VHDL预定义数据类型"><a href="#VHDL预定义数据类型" class="headerlink" title="VHDL预定义数据类型"></a>VHDL预定义数据类型</h2><ul>
-<li><p>布尔数据类型(只有FALSE和TRUE两种取值)</p>
-</li>
-<li><p>BIT数据类型(BIT_VECTOR数据类型‘0’、‘1’取值)</p>
-</li>
-<li><p>字符数据类型（字符串数据类型‘A’）</p>
-</li>
-<li><p>整数数据类型（自然数和正整数数据类型，注意他的取值范围在-2147483647~+2147483647）</p>
-<p>表示进制的时候加上#，比如16#D#表示十六进制整数，2#11001100#二进制整数，10E4十进制整数</p>
-</li>
-<li><p>实数数据类型（仅能在仿真器使用）</p>
-</li>
-<li><p>时间数据类型（唯一的物理量纲，不能在仿真器中使用）</p>
-</li>
-</ul>
-
+                <script type="math/tex; mode=display">
+x^n</script>
             </div>
             <hr/>
 
@@ -714,7 +490,7 @@ End abc
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://dafeigy.github.io/2020/12/15/FPGA/">https://dafeigy.github.io/2020/12/15/FPGA/</a>
+                    <a href="https://dafeigy.github.io/2020/12/19/test/">https://dafeigy.github.io/2020/12/19/test/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -920,7 +696,7 @@ End abc
         repo: '',
         owner: '',
         admin: null,
-        id: '2020-12-15T17-27-29',
+        id: '2020-12-19T17-35-20',
         distractionFreeMode: false  // Facebook-like distraction free mode
     });
 
@@ -944,7 +720,7 @@ End abc
 <script src="/libs/gitment/gitment.js"></script>
 <script>
 var gitment = new Gitment({
-    id: 'Tue Dec 15 2020 17:27:29 GMT+0800',
+    id: 'Sat Dec 19 2020 17:35:20 GMT+0800',
     owner: '',
     repo: '',
     oauth: {
@@ -971,9 +747,10 @@ gitment.render('gitment-content');
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
                 <a href="/2020/12/19/test/">
                     <div class="card-image">
@@ -992,9 +769,9 @@ x^n
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2020-12-19
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-12-19
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -1003,6 +780,7 @@ x^n
                         </span>
                     </div>
                 </div>
+
                 
             </div>
         </div>
@@ -1013,19 +791,20 @@ x^n
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2020/12/15/DSP/">
+                <a href="/2020/12/15/FPGA/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/15.jpg" class="responsive-img" alt="数字信号处理 笔记&amp;总结">
+                        <img src="/medias/featureimages/8.jpg" class="responsive-img" alt="FPGA 笔记">
                         
-                        <span class="card-title">数字信号处理 笔记&amp;总结</span>
+                        <span class="card-title">FPGA 笔记</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            Digital Signal Processing 数字信号处理 笔记&amp;总结第一章 时域离散信号与时域离散系统信号是可以分成模拟、数字以及时域离散三种的。模拟就是输入和输出都是连续的，数字就是输入输出都是离散的，而最特殊的就是输入离
+                            FPGAVHDL是一门很吊的语言。从书上得到的信息来看，这个软件我们自己都还没有摸清楚？但它强大的设计电路功能让人眼前一亮。
+个人觉得VHDL这门语言与以往所学的语言大相径庭，但也有共同之处，你甚至能在里面看到很多汇编的影子。学一门语言我是
                         
                     </div>
                     <div class="publish-info">
@@ -1174,13 +953,6 @@ code[class*="language-"], pre[class*="language-"] { white-space: pre !important;
 
 </main>
 
-
-<script src="https://cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-<script>
-    MathJax.Hub.Config({
-        tex2jax: {inlineMath: [['$', '$'], ['\(', '\)']]}
-    });
-</script>
 
 
 
