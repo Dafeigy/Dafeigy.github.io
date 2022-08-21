@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":5},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="本文主要用于记录常见的通信专业的专业术语，并尝试记录其简易的意义与功能，配合博客的本地搜索功能以达到查阅的目的。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="通信名词解释">
+<meta property="og:url" content="http://example.com/2020/01/01/%E9%80%9A%E4%BF%A1%20%E5%90%8D%E8%AF%8D%E8%A7%A3%E9%87%8A/index.html">
+<meta property="og:site_name" content="阿花的Blog">
+<meta property="og:description" content="本文主要用于记录常见的通信专业的专业术语，并尝试记录其简易的意义与功能，配合博客的本地搜索功能以达到查阅的目的。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/07/11/IYReFBAspcuwLdU.jpg">
+<meta property="og:image" content="https://s2.loli.net/2022/07/11/nxOfzviYrGQlWD6.jpg">
+<meta property="article:published_time" content="2019-12-31T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-08-20T15:46:30.828Z">
+<meta property="article:author" content="阿花想养萨摩耶">
+<meta property="article:tag" content="通信技术">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2022/07/11/IYReFBAspcuwLdU.jpg">
+
+<link rel="canonical" href="http://example.com/2020/01/01/%E9%80%9A%E4%BF%A1%20%E5%90%8D%E8%AF%8D%E8%A7%A3%E9%87%8A/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>通信名词解释 | 阿花的Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">阿花的Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/01/01/%E9%80%9A%E4%BF%A1%20%E5%90%8D%E8%AF%8D%E8%A7%A3%E9%87%8A/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          通信名词解释
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-01-01 00:00:00" itemprop="dateCreated datePublished" datetime="2020-01-01T00:00:00+08:00">2020-01-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-20 23:46:30" itemprop="dateModified" datetime="2022-08-20T23:46:30+08:00">2022-08-20</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>本文主要用于记录常见的通信专业的专业术语，并尝试记录其简易的意义与功能，配合博客的本地搜索功能以达到查阅的目的。<span id="more"></span></p>
+<h2 id="LTE"><a href="#LTE" class="headerlink" title="LTE"></a>LTE</h2><p>LTE即(Long Term Evolution)长期演化，它其实是一种网络制式（如CDMA、GSM这些）它是3G的演进，但<strong>并非人们普遍误解的4G技术</strong>，而是3G与4G技术之间的一个<strong>过渡</strong>，是3.9G的全球标准,它改进并增强了3G的空中接入技术，采用OFDM和MIMO作为其无线网络演进的唯一标准。在20MHz频谱带宽下能够提供下行326Mbit/s与上行86Mbit/s的峰值速率。改善了小区边缘用户的性能，提高小区容量和降低系统延迟。严格意义上，其实LTE一开始的定位仅仅是3G的加强版，但是随着后期的发展，大大超出当初设计者的预期。本来只能称做3.9G，但是由于不断的在继续改善升级，所以后续版本已经成为了真正的4G。</p>
+<h2 id="OFDM"><a href="#OFDM" class="headerlink" title="OFDM"></a>OFDM</h2><p>OFDM即Orthogonal Frequency Division Multiplexing，正交频分复用，属于多载波调制的一种。OFDM技术是多载波传输方案的实现方式之一，通过<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/频分复用/7626706">频分复用</a>实现高速串行数据的<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/并行传输/5431953">并行传输</a>, 它具有较好的抗多径衰落的能力，能够支持多用户接入，它的调制和解调是分别基于IFFT和FFT来实现的，是实现复杂度最低、应用最广的一种多载波传输方案。</p>
+<h2 id="MIMO"><a href="#MIMO" class="headerlink" title="MIMO"></a>MIMO</h2><p>Multiple-In Multiple-Out多进多出，使用多根天线在发送端和接受端构建多个像互不干扰的物理无线信道，同时在收发双方的物理层之间，构建多个并行的<strong>逻辑</strong>无线信道。MIMO系统的一个明显特点就是具有极高的频谱利用效率，在对现有频谱资源充分利用的基础上通过利用空间资源来获取可靠性与有效性两方面增益，<strong>其代价是增加了发送端与接收端的处理复杂度。</strong>详细介绍可见<a target="_blank" rel="noopener" href="https://blog.csdn.net/HiWangWenBing/article/details/110871535">这篇文章</a>。</p>
+<h2 id="NR"><a href="#NR" class="headerlink" title="NR"></a>NR</h2><p>手机和基站之间的接口，因为是基站和手机之间通过电磁波在空气中传播的，因此就叫做“空口”。由此可见，空口这套东西专用于基站子系统内部，跟核心网的没有直接联系。</p>
+<p><img src="https://s2.loli.net/2022/07/11/IYReFBAspcuwLdU.jpg" alt=""></p>
+<p>5G使用了新空口，即基站跟核心网这两个子系统的独立性增强了。因此，5G是非常灵活的，可以独立组网，也可以跟4G一起非独立组网。在独立组网时，5G基站连接的是5G核心网；非独立组网时，5G基站和4G基站可以连接4G核心网，也可以连接5G核心网。下图是一张非独立组网选项3和选项7的架构图。其中，4G基站和5G基站都连接到了同一套核心网，共同组成了5G非独立组网体系。</p>
+<p><img src="https://s2.loli.net/2022/07/11/nxOfzviYrGQlWD6.jpg" alt=""></p>
+<p>这样一来，不论连接的核心网是4G的EPC还是5G的5GC，同一部手机拥有两路空口连接，跟4G基站之间的链路就是“旧空口”，跟5G基站之间的连接就是所谓的“新空口”了。5G新空口是基于4G空口技术设计的，也使用了OFDM的调制方式，在帧结构上修正了4G的一些不合理之处，增加了对大连接和低时延的支持，因此更加灵活，频谱效率也更高了。</p>
+<h2 id="NG"><a href="#NG" class="headerlink" title="NG"></a>NG</h2><p><strong>简单的解释就是无线接入网和5G核心网之间的接口。</strong>NG接口是一个逻辑接口，规范了NG接口，NG-RAN节点与不同制造商提供的AMF的互连；同时，分离NG接口无线网络功能和传输网络功能，以便于引入未来的技术。从任何一个NG-RAN节点向5GC可能存在多个NG-C逻辑接口。然后，通过NAS节点选择功能确定NG-C接口的选择。从任何一个NG-RAN节点向5GC可能存在多个NG-U逻辑接口。NG-U接口的选择在5GC内完成，并由AMF发信号通知NG-RAN节点。NG接口分为NG-C接口（NG-RAN和5GC之间的控制面接口）和NG-U接口（NG-RAN和5GC之间的用户面接口）。</p>
+<h2 id="BTS"><a href="#BTS" class="headerlink" title="BTS"></a>BTS</h2><p>Base Transceiver Station，可以简单粗暴理解为专属于2G技术的基站。</p>
+<h2 id="BSC"><a href="#BSC" class="headerlink" title="BSC"></a>BSC</h2><p>Base Station Controller：基站控制器，是基站收发台和移动交换中心之间的连接点，也为基站收发台（BTS）和移动交换中心（MSC）之间交换信息提供接口。</p>
+<h2 id="MSC"><a href="#MSC" class="headerlink" title="MSC"></a>MSC</h2><p>Mobile Switch Center，移动交换中心，是在电话和数据系统之间提供呼叫转换服务和呼叫控制的设备。</p>
+<h2 id="VLR"><a href="#VLR" class="headerlink" title="VLR"></a>VLR</h2><p>Visitor Location Register，访问地址寄存器。是一个动态的数据库，在网络中VLR都是与MSCS合设，协助MSCS记录当前覆盖区域内的所有移动用户的相关信息。</p>
+<h2 id="HLR"><a href="#HLR" class="headerlink" title="HLR"></a>HLR</h2><p>Home Location Register，归属地址寄存器。是一个静态数据库，是移动网络中存储永久用户信息的主数据库，包括地址、帐户状态和偏好，是GSM系统的一个集成构件，由用户的网络运营商维护。</p>
+<h2 id="AUC"><a href="#AUC" class="headerlink" title="AUC"></a>AUC</h2><p>Authentication Center，鉴权中心，是用于产生为确定移动用户身份和对呼叫身份保密所需鉴权、加密的三参数（随机号码 RAND 、符合响应 SRES 和密钥 Kc ）的功能实体。</p>
+<h2 id="EIR"><a href="#EIR" class="headerlink" title="EIR"></a>EIR</h2><p>Equipment Identity Register，设备标识寄存器。简单理解为存储终端设备的标识符。</p>
+<h2 id="ISDN"><a href="#ISDN" class="headerlink" title="ISDN"></a>ISDN</h2><p>Integrated Services Digital Network，综合业务数字网。是一个数字电话网络国际标准，是一种典型的电路交换网络系统。在ITU的建议中，ISDN是一种在数字电话网IDN的基础上发展起来的通信网络，ISDN能够支持多种业务，包括电话业务和非电话业务。</p>
+<h2 id="PSTN"><a href="#PSTN" class="headerlink" title="PSTN"></a>PSTN</h2><p> Public Switched Telephone Network，公共交换电话网络，一种常用旧式电话系统。即我们日常生活中常用的电话网。</p>
+<h2 id="PLMN"><a href="#PLMN" class="headerlink" title="PLMN"></a>PLMN</h2><p>Public Land Mobile Network，公共陆地移动网。由政府或它所批准的经营者，为公众提供陆地移动通信业务目的而建立和经营的网络。该网路通常与公众交换电话网（PSTN）互连，形成整个地区或国家规模的通信网。</p>
+<h2 id="MME"><a href="#MME" class="headerlink" title="MME"></a>MME</h2><p>Mobility Management Entity，移动管理实体。它负责空闲模式的UE (User Equipment)的定位，传呼过程，包括中继，简单的说MME是负责信令处理部分。</p>
+<h2 id="SGW"><a href="#SGW" class="headerlink" title="SGW"></a>SGW</h2><p>Serving Gateway，服务网关。SGW（Serving GateWay，服务网关）是<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/移动通信网络/22287927">移动通信网络</a>EPC中的重要网元。EPC网络实际上是原3G核心网PS域的演进版本，而SGW的功能和作用与原3G核心网SGSN网元的用户面相当，即在新的EPC网络中，控制面功能和媒体面功能分离更加彻底。</p>
+<h2 id="PGW"><a href="#PGW" class="headerlink" title="PGW"></a>PGW</h2><p>PDN Gateway，PDN网关。类似于GGSN网元的功能，为EPC网络的边界网关，提供用户的会话管理和承载控制、数据转发、IP地址分配以及非3GPP用户接入等功能。它是3GPP接入和非3GPP接入公用数据网络PDN的锚点。所谓3GPP接入，是指3GPP标准家族出来的无线接入技术，比如我国中国移动和中国联通的手机，就是3GPP接入技术；所谓非3GPP接入，就是3GPP标准家族以外的无线接入技术，典型的比如中国电信的CDMA接入技术以及流行的WiFi接入技术等。就是说，在EPC网络中，移动终端如果是非3GPP接入，它可以不经过MME网元和SGW网元，但一定会经过PGW网元，才能接入到PDN。</p>
+<h2 id="SGSN"><a href="#SGSN" class="headerlink" title="SGSN"></a>SGSN</h2><p>Serving GPRS Support Node，服务GPRS支持节点。SGSN与GGSN 配合，共同完成移动通信网络分组业务（PS，Packet Service）功能。其地位和作用类似于移动通信网络电路域（CS，Circuit Switch）中的MSC/VLR。当用户处于GPRS Attach（GPRS附着）状态时，SGSN 中存储了同分组相关的用户信息和位置信息。</p>
+<h2 id="GGSN"><a href="#GGSN" class="headerlink" title="GGSN"></a>GGSN</h2><p>Gateway GPRS Support Node，网关GPRS支持节点。SGSN与GGSN 配合，共同完成移动通信网络分组业务（PS，Packet Service）功能。主要是起网关作用，它可以和多种不同的数据网络连接，如ISDN、PSPDN和LAN等，可以把GSM网中的GPRS分组数据包进行协议转换，从而可以把这些分组数据包传送到远端的TCP/IP或X.25网络。</p>
+<h2 id="ATCA"><a href="#ATCA" class="headerlink" title="ATCA"></a>ATCA</h2><p>Advanced Telecom Computing Architecture，先进电信计算架构，可以理解为是为下一代融合通信及数据网络应用提供的一个高性价比的，基于模块化结构的、兼容的、并可扩展的硬件构架。</p>
+<h2 id="ETCA"><a href="#ETCA" class="headerlink" title="ETCA"></a>ETCA</h2><p>Enhanced ATCA，增强型ATCA，可以理解为ATCA的强化版。</p>
+<h2 id="SBA"><a href="#SBA" class="headerlink" title="SBA"></a>SBA</h2><p>Service Based Architecture，即基于服务的架构。SBA架构，基于云原生构架设计，借鉴了IT领域的“微服务”理念。把原来具有多个功能的整体，分拆为多个具有独自功能的个体。每个个体，实现自己的微服务。</p>
+<h2 id="NFV"><a href="#NFV" class="headerlink" title="NFV"></a>NFV</h2><p>Network Functions Virtualization，利用<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/虚拟化技术/276750">虚拟化技术</a>，将<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/网络节点/9338583">网络节点</a>阶层的功能，分割成几个功能区块，分别以软件方式实现，不再局限于<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/硬件/479446">硬件</a>架构。</p>
+<h2 id="IMS"><a href="#IMS" class="headerlink" title="IMS"></a>IMS</h2><p>IP Multimedia Subsystem，是一种全新的多媒体业务形式，它能够满足的<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/终端客户">终端客户</a>更新颖、更多样化多媒体业务的需求。IMS被认为是下一代网络的核心技术，也是解决移动与固网融合，引入语音、数据、视频三重融合等差异化业务的重要方式。但是，全球IMS网络多数处于初级阶段，应用方式也处于业界探讨当中。</p>
+<h2 id="EPC"><a href="#EPC" class="headerlink" title="EPC"></a>EPC</h2><p>Evolved Packet Core，特点为仅有分组域而无电路域、基于全IP结构、控制与承载分离且网络结构扁平化，其中主要包含MME、SGW、PGW、PCRF等网元。其中SGW和PGW常常合设并被称为SAE-GW。</p>
+<h2 id="HSS"><a href="#HSS" class="headerlink" title="HSS"></a>HSS</h2><p>Home Subscriber Server，是IMS（IP Multimedia Subsystem，<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/IP多媒体子系统/2841593">IP多媒体子系统</a>）中控制层的重要组成部分，支持用于处理调用/会话的IMS网络实体的主要用户数据库。它包含用户配置文件，执行用户的身份验证和授权，并可提供有关用户物理位置的信息。</p>
+<h2 id="NRF"><a href="#NRF" class="headerlink" title="NRF"></a>NRF</h2><p>Network Repository Function，网络存储库功能，负责对网络功能服务注册登记、状态监测等，实现网络功能服务自动化管理、选择和可扩展，并允许每个网络功能发现其它网络功能提供的服务。</p>
+<h2 id="PCF"><a href="#PCF" class="headerlink" title="PCF"></a>PCF</h2><p>Policy Control function，策略控制功能，支持统一的策略框架去管理网络行为，提供策略规则给网络实体去实施执行，访问统一数据仓库（UDR）的订阅信息。</p>
+<h2 id="UDM"><a href="#UDM" class="headerlink" title="UDM"></a>UDM</h2><p>Unified Data Management，统一数据管理，负责用户标识、签约数据、鉴权数据的管理、用户的服务网元注册管理（比如当前为终端提供业务的AMF、SMF等，如当用户切换了访问的AMF时，UDM还会向旧的AMF发起注销消息，要求旧的AMF删除用户相关信息）。</p>
+<h2 id="UDR"><a href="#UDR" class="headerlink" title="UDR"></a>UDR</h2><p>Unified Data Repository，统一数据仓库功能，用于UDM存储订阅数据或读取订阅数据以及PCF存储策略数据或者读取策略数据。</p>
+<h2 id="SMF"><a href="#SMF" class="headerlink" title="SMF"></a>SMF</h2><p>Service Management Function，业务管理功能。</p>
+<h2 id="AF"><a href="#AF" class="headerlink" title="AF"></a>AF</h2><p>Application Function， 应用功能。AF类似于一个应用服务器，其与其他5G核心网控制面NF交互，并提供业务服务。AF可以针对不同的应用服务而存在，可以由运营商或可信的第三方拥有。</p>
+<h2 id="AUSF"><a href="#AUSF" class="headerlink" title="AUSF"></a>AUSF</h2><p>Authentication Server Function，鉴权服务功能 ，AUSF用于接收AMF（access and mobility management function，AMF）对UE进行身份验证的请求，通过向UDM请求密钥，再将UDM下发的密钥转发给AMF进行鉴权处理。</p>
+<h2 id="AMF"><a href="#AMF" class="headerlink" title="AMF"></a>AMF</h2><p>Access and Mobility management Function，接入和移动管理功能。AMF负责UE身份验证、鉴权、注册、移动性管理和连接管理等功能。与4G EPC相比，AMF的功能类似于MME。</p>
+<h2 id="R-AN"><a href="#R-AN" class="headerlink" title="(R)AN"></a>(R)AN</h2><p>Radio Access Network，无线接入网是指固定用户全部或部分以无线的方式接入到交换机,通常无线接入网所接入的交换机是指PSTN的交换机,但也可以是ISDN的交换机。</p>
+<h2 id="UPF"><a href="#UPF" class="headerlink" title="UPF"></a>UPF</h2><p>User Plane Function，用户平面功能，数据从基站到网络的路由转发是它的主要功能，是核心网里唯一的处理数据的模块，剩下的模块都是处理信令的，也就是做网络控制的。5G核心网是彻底的控制面与用户面分离，就是用户面模块仅仅处理数据，控制面模块仅仅负责实现网络管控。</p>
+<h2 id="UE"><a href="#UE" class="headerlink" title="UE"></a>UE</h2><p>User Equipment，用户设备（UE）是指在一台无线网络中的设备，其能够使用户通过无线通信网络通信。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E9%80%9A%E4%BF%A1%E6%8A%80%E6%9C%AF/" rel="tag"><i class="fa fa-tag"></i> 通信技术</a>
+          </div>
+          <script type="text/javascript">
+            var tagsall=document.getElementsByClassName("post-tags")
+            for (var i = tagsall.length - 1; i >= 0; i--){
+                var tags=tagsall[i].getElementsByTagName("a");
+                for (var j = tags.length - 1; j >= 0; j--) {
+                    var golden_ratio = 0.618033988749895;
+                    var s = 0.5;
+                    var v = 0.999;
+                    var h = golden_ratio + Math.random()*0.8 - 0.5;
+                    var h_i = parseInt(h * 6);
+                    var f = h * 6 - h_i;
+                    var p = v * (1 - s);
+                    var q = v * (1 - f * s);
+                    var t = v * (1 - (1 - f) * s);
+                    var r, g, b;
+                    switch (h_i) {
+                        case 0:
+                            r = v;
+                            g = t;
+                            b = p;
+                            break;
+                        case 1:
+                            r = q;
+                            g = v;
+                            b = p;
+                            break;
+                        case 2:
+                            r = p;
+                            g = v;
+                            b = t;
+                            break;
+                        case 3 :
+                            r = p;
+                            g = q;
+                            b = v;
+                            break;
+                        case 4:
+                            r = t;
+                            g = p;
+                            b = v;
+                            break;
+                        case 5:
+                            r = v;
+                            g = p;
+                            b = q;
+                            break;
+                        default:
+                            r = 1;
+                            g = 1;
+                            b = 1;
+                      }
+                    tags[j].style.background = "rgba("+parseInt(r*255)+","+parseInt(g*255)+","+parseInt(b*255)+","+0.5+")";
+                }
+            }                        
+            </script>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2022/07/29/BlockChain/" rel="next" title="区块链技术的基本原理以及简单应用">
+      区块链技术的基本原理以及简单应用 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#LTE"><span class="nav-number">1.</span> <span class="nav-text">LTE</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OFDM"><span class="nav-number">2.</span> <span class="nav-text">OFDM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MIMO"><span class="nav-number">3.</span> <span class="nav-text">MIMO</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NR"><span class="nav-number">4.</span> <span class="nav-text">NR</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NG"><span class="nav-number">5.</span> <span class="nav-text">NG</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BTS"><span class="nav-number">6.</span> <span class="nav-text">BTS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BSC"><span class="nav-number">7.</span> <span class="nav-text">BSC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MSC"><span class="nav-number">8.</span> <span class="nav-text">MSC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#VLR"><span class="nav-number">9.</span> <span class="nav-text">VLR</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HLR"><span class="nav-number">10.</span> <span class="nav-text">HLR</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AUC"><span class="nav-number">11.</span> <span class="nav-text">AUC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#EIR"><span class="nav-number">12.</span> <span class="nav-text">EIR</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ISDN"><span class="nav-number">13.</span> <span class="nav-text">ISDN</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PSTN"><span class="nav-number">14.</span> <span class="nav-text">PSTN</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PLMN"><span class="nav-number">15.</span> <span class="nav-text">PLMN</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MME"><span class="nav-number">16.</span> <span class="nav-text">MME</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SGW"><span class="nav-number">17.</span> <span class="nav-text">SGW</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PGW"><span class="nav-number">18.</span> <span class="nav-text">PGW</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SGSN"><span class="nav-number">19.</span> <span class="nav-text">SGSN</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GGSN"><span class="nav-number">20.</span> <span class="nav-text">GGSN</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ATCA"><span class="nav-number">21.</span> <span class="nav-text">ATCA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ETCA"><span class="nav-number">22.</span> <span class="nav-text">ETCA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SBA"><span class="nav-number">23.</span> <span class="nav-text">SBA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NFV"><span class="nav-number">24.</span> <span class="nav-text">NFV</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IMS"><span class="nav-number">25.</span> <span class="nav-text">IMS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#EPC"><span class="nav-number">26.</span> <span class="nav-text">EPC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HSS"><span class="nav-number">27.</span> <span class="nav-text">HSS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NRF"><span class="nav-number">28.</span> <span class="nav-text">NRF</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PCF"><span class="nav-number">29.</span> <span class="nav-text">PCF</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UDM"><span class="nav-number">30.</span> <span class="nav-text">UDM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UDR"><span class="nav-number">31.</span> <span class="nav-text">UDR</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SMF"><span class="nav-number">32.</span> <span class="nav-text">SMF</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AF"><span class="nav-number">33.</span> <span class="nav-text">AF</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AUSF"><span class="nav-number">34.</span> <span class="nav-text">AUSF</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AMF"><span class="nav-number">35.</span> <span class="nav-text">AMF</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#R-AN"><span class="nav-number">36.</span> <span class="nav-text">(R)AN</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UPF"><span class="nav-number">37.</span> <span class="nav-text">UPF</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UE"><span class="nav-number">38.</span> <span class="nav-text">UE</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="阿花想养萨摩耶"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">阿花想养萨摩耶</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dafeigy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dafeigy" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1070642765@qq.com" title="E-Mail → mailto:1070642765@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/2659883291" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;2659883291" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+  </div>
+
+
+
+  <div class="links-of-recent-posts motion-element">
+    <div class="links-of-recent-posts-title">
+      <i class="fa fa-history fa-fw"></i>
+      最近文章
+    </div>
+    <ul class="links-of-recent-posts-list">
+        <li class="links-of-recent-posts-item">
+          <a href="/2022/08/21/%E8%A7%A3%E5%86%B3Picgo%E4%B8%8A%E4%BC%A0%E5%9B%BE%E7%89%87/" title="2022&#x2F;08&#x2F;21&#x2F;解决Picgo上传图片&#x2F;">关于SMMS更换国内域名导致Picgo不能上传图片的解决方法</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2022/08/20/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%952022-8-20/" title="2022&#x2F;08&#x2F;20&#x2F;学习记录2022-8-20&#x2F;">【学习记录】2022-8-20-？</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2022/08/04/Pytorch%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%BF%87%E7%A8%8B/" title="2022&#x2F;08&#x2F;04&#x2F;Pytorch训练模型的基本过程&#x2F;">Pytorch训练神经网络的一般过程</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2022/08/03/%E5%9B%BE%E5%83%8F%E5%8D%B7%E7%A7%AF/" title="2022&#x2F;08&#x2F;03&#x2F;图像卷积&#x2F;">从一维卷积到二维卷积：浅析图像卷积</a>
+        </li>
+    </ul>
+  </div>
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">阿花</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>

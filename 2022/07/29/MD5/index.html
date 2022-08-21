@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":5},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="MD5信息摘要算法（英语：MD5 Message-Digest Algorithm），一种被广泛使用的密码散列函数，可以产生出一个128位（16字节）的散列值（hash value），用于确保信息传输完整一致。MD5由美国密码学家罗纳德·李维斯特（Ronald Linn Rivest）设计，于1992年公开，用以取代MD4算法。这套算法的程序在 RFC 1321 标准中被加以规范。1996年后该算">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MD5加密算法的Python实现流程">
+<meta property="og:url" content="http://example.com/2022/07/29/MD5/index.html">
+<meta property="og:site_name" content="阿花的Blog">
+<meta property="og:description" content="MD5信息摘要算法（英语：MD5 Message-Digest Algorithm），一种被广泛使用的密码散列函数，可以产生出一个128位（16字节）的散列值（hash value），用于确保信息传输完整一致。MD5由美国密码学家罗纳德·李维斯特（Ronald Linn Rivest）设计，于1992年公开，用以取代MD4算法。这套算法的程序在 RFC 1321 标准中被加以规范。1996年后该算">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-07-29T09:46:38.291Z">
+<meta property="article:modified_time" content="2022-05-26T02:48:36.000Z">
+<meta property="article:author" content="阿花想养萨摩耶">
+<meta property="article:tag" content="数字签名">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="MD5">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2022/07/29/MD5/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>MD5加密算法的Python实现流程 | 阿花的Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">阿花的Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/07/29/MD5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MD5加密算法的Python实现流程
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-07-29 17:46:38" itemprop="dateCreated datePublished" datetime="2022-07-29T17:46:38+08:00">2022-07-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-05-26 10:48:36" itemprop="dateModified" datetime="2022-05-26T10:48:36+08:00">2022-05-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%80%9A%E4%BF%A1%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">通信技术</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%80%9A%E4%BF%A1%E6%8A%80%E6%9C%AF/%E5%8A%A0%E5%AF%86%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">加密技术</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>MD5信息摘要算法</strong>（英语：MD5 Message-Digest Algorithm），一种被广泛使用的<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/密码散列函数/14937715">密码散列函数</a>，可以产生出一个128位（16<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/字节/1096318">字节</a>）的散列值（hash value），用于确保信息传输完整一致。MD5由美国密码学家<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/罗纳德·李维斯特/700199">罗纳德·李维斯特</a>（Ronald Linn Rivest）设计，于1992年公开，用以取代<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/MD4/8090275">MD4</a>算法。这套算法的程序在 RFC 1321 标准中被加以规范。1996年后该算法被证实存在弱点，可以被加以破解，对于需要高度安全性的数据，专家一般建议改用其他算法，如<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/SHA-2/22718180">SHA-2</a>。2004年，证实MD5算法无法防止碰撞（collision），因此不适用于安全性认证，如<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/SSL/320778">SSL</a>公开密钥认证或是<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/数字签名/212550">数字签名</a>等用途。</p>
+<span id="more"></span>
+<p>首先先要对MD5使用的初始数据进行初始化：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">A=<span class="number">0x67452301</span></span><br><span class="line"></span><br><span class="line">B=<span class="number">0xEFCDAB89</span></span><br><span class="line"></span><br><span class="line">C=<span class="number">0x98BADCFE</span></span><br><span class="line"></span><br><span class="line">D=<span class="number">0x10325476</span></span><br><span class="line">T = [<span class="number">0xD76AA478</span>,<span class="number">0xE8C7B756</span>,<span class="number">0x242070DB</span>,<span class="number">0xC1BDCEEE</span>,<span class="number">0xF57C0FAF</span>,<span class="number">0x4787C62A</span>,<span class="number">0xA8304613</span>,<span class="number">0xFD469501</span>,</span><br><span class="line">    <span class="number">0x698098D8</span>,<span class="number">0x8B44F7AF</span>,<span class="number">0xFFFF5BB1</span>,<span class="number">0x895CD7BE</span>,<span class="number">0x6B901122</span>,<span class="number">0xFD987193</span>,<span class="number">0xA679438E</span>,<span class="number">0x49B40821</span>,</span><br><span class="line">    <span class="number">0xF61E2562</span>,<span class="number">0xC040B340</span>,<span class="number">0x265E5A51</span>,<span class="number">0xE9B6C7AA</span>,<span class="number">0xD62F105D</span>,<span class="number">0x02441453</span>,<span class="number">0xD8A1E681</span>,<span class="number">0xE7D3FBC8</span>,</span><br><span class="line">    <span class="number">0x21E1CDE6</span>,<span class="number">0xC33707D6</span>,<span class="number">0xF4D50D87</span>,<span class="number">0x455A14ED</span>,<span class="number">0xA9E3E905</span>,<span class="number">0xFCEFA3F8</span>,<span class="number">0x676F02D9</span>,<span class="number">0x8D2A4C8A</span>,</span><br><span class="line">    <span class="number">0xFFFA3942</span>,<span class="number">0x8771F681</span>,<span class="number">0x6D9D6122</span>,<span class="number">0xFDE5380C</span>,<span class="number">0xA4BEEA44</span>,<span class="number">0x4BDECFA9</span>,<span class="number">0xF6BB4B60</span>,<span class="number">0xBEBFBC70</span>,</span><br><span class="line">    <span class="number">0x289B7EC6</span>,<span class="number">0xEAA127FA</span>,<span class="number">0xD4EF3085</span>,<span class="number">0x04881D05</span>,<span class="number">0xD9D4D039</span>,<span class="number">0xE6DB99E5</span>,<span class="number">0x1FA27CF8</span>,<span class="number">0xC4AC5665</span>,</span><br><span class="line">    <span class="number">0xF4292244</span>,<span class="number">0x432AFF97</span>,<span class="number">0xAB9423A7</span>,<span class="number">0xFC93A039</span>,<span class="number">0x655B59C3</span>,<span class="number">0x8F0CCC92</span>,<span class="number">0xFFEFF47D</span>,<span class="number">0x85845DD1</span>,</span><br><span class="line">    <span class="number">0x6FA87E4F</span>,<span class="number">0xFE2CE6E0</span>,<span class="number">0xA3014314</span>,<span class="number">0x4E0811A1</span>,<span class="number">0xF7537E82</span>,<span class="number">0xBD3AF235</span>,<span class="number">0x2AD7D2BB</span>,<span class="number">0xEB86D391</span>]</span><br><span class="line"></span><br><span class="line">s = [<span class="number">7</span>,<span class="number">12</span>,<span class="number">17</span>,<span class="number">22</span>,<span class="number">7</span>,<span class="number">12</span>,<span class="number">17</span>,<span class="number">22</span>,<span class="number">7</span>,<span class="number">12</span>,<span class="number">17</span>,<span class="number">22</span>,<span class="number">7</span>,<span class="number">12</span>,<span class="number">17</span>,<span class="number">22</span>,</span><br><span class="line">    <span class="number">5</span>,<span class="number">9</span>,<span class="number">14</span>,<span class="number">20</span>,<span class="number">5</span>,<span class="number">9</span>,<span class="number">14</span>,<span class="number">20</span>,<span class="number">5</span>,<span class="number">9</span>,<span class="number">14</span>,<span class="number">20</span>,<span class="number">5</span>,<span class="number">9</span>,<span class="number">14</span>,<span class="number">20</span>,</span><br><span class="line">    <span class="number">4</span>,<span class="number">11</span>,<span class="number">16</span>,<span class="number">23</span>,<span class="number">4</span>,<span class="number">11</span>,<span class="number">16</span>,<span class="number">23</span>,<span class="number">4</span>,<span class="number">11</span>,<span class="number">16</span>,<span class="number">23</span>,<span class="number">4</span>,<span class="number">11</span>,<span class="number">16</span>,<span class="number">23</span>,</span><br><span class="line">    <span class="number">6</span>,<span class="number">10</span>,<span class="number">15</span>,<span class="number">21</span>,<span class="number">6</span>,<span class="number">10</span>,<span class="number">15</span>,<span class="number">21</span>,<span class="number">6</span>,<span class="number">10</span>,<span class="number">15</span>,<span class="number">21</span>,<span class="number">6</span>,<span class="number">10</span>,<span class="number">15</span>,<span class="number">21</span>]</span><br><span class="line"></span><br><span class="line">m = [<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>,<span class="number">10</span>,<span class="number">11</span>,<span class="number">12</span>,<span class="number">13</span>,<span class="number">14</span>,<span class="number">15</span>,</span><br><span class="line">    <span class="number">1</span>,<span class="number">6</span>,<span class="number">11</span>,<span class="number">0</span>,<span class="number">5</span>,<span class="number">10</span>,<span class="number">15</span>,<span class="number">4</span>,<span class="number">9</span>,<span class="number">14</span>,<span class="number">3</span>,<span class="number">8</span>,<span class="number">13</span>,<span class="number">2</span>,<span class="number">7</span>,<span class="number">12</span>,</span><br><span class="line">    <span class="number">5</span>,<span class="number">8</span>,<span class="number">11</span>,<span class="number">14</span>,<span class="number">1</span>,<span class="number">4</span>,<span class="number">7</span>,<span class="number">10</span>,<span class="number">13</span>,<span class="number">0</span>,<span class="number">3</span>,<span class="number">6</span>,<span class="number">9</span>,<span class="number">12</span>,<span class="number">15</span>,<span class="number">2</span>,</span><br><span class="line">    <span class="number">0</span>,<span class="number">7</span>,<span class="number">14</span>,<span class="number">5</span>,<span class="number">12</span>,<span class="number">3</span>,<span class="number">10</span>,<span class="number">1</span>,<span class="number">8</span>,<span class="number">15</span>,<span class="number">6</span>,<span class="number">13</span>,<span class="number">4</span>,<span class="number">11</span>,<span class="number">2</span>,<span class="number">9</span>]</span><br></pre></td></tr></table></figure>
+<h2 id="实现思路"><a href="#实现思路" class="headerlink" title="实现思路"></a>实现思路</h2><p>MD5加密需要经过输入转换、填充、四轮循环操作、置换以及最后的拼接等步骤。其中为了方便循环操作中的值的读取与置换，可以定义一个<code>MD5</code>类，并赋予此类一些初始的属性与函数简化后续的函数操作。现将类定义如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">md5</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, message</span>):</span><br><span class="line">        self.message = message</span><br><span class="line">        self.A = A</span><br><span class="line">        self.B = B</span><br><span class="line">        self.C = C</span><br><span class="line">        self.D = D</span><br><span class="line">        self.init_A = A</span><br><span class="line">        self.init_B = B</span><br><span class="line">        self.init_C = C</span><br><span class="line">        self.init_D = D</span><br><span class="line">        self.temptext=<span class="string">&#x27;&#x27;</span></span><br><span class="line">        self.s=s</span><br><span class="line">        self.m=m</span><br><span class="line">        self.T=T</span><br></pre></td></tr></table></figure>
+<p>对于一个MD5对象，其拥有如下几个主要属性：</p>
+<ul>
+<li>message：  输入的明文</li>
+<li>A,B,C,D：  四轮循环中的操作对象</li>
+<li>temptext： 暂存的结果，用于缓冲与临时存放</li>
+<li>s,m,T:    均为MD5加密时用到的操作参数，以列表的形式存储</li>
+</ul>
+<h2 id="填充"><a href="#填充" class="headerlink" title="填充"></a>填充</h2><ul>
+<li>将输入的明文转换成ASCII码，并按照规则进行填充。填充规则如下：</li>
+<li>当转换的ASCII码的长度的二进制长度不为$512*n+448$的整数倍时，先在末尾补一个“1”；</li>
+<li>当此时的长度依然不为$512<em>n+448$时，继续在末尾补“0”直至长度为$512</em>n+448$</li>
+<li>将输入密文的长度转换成64位的二进制数，若输入字符串的长度大于$2^{64}$，则取最后的64位。</li>
+<li>将得到的64位进行小端排序，即按8bit/组进行倒序排列</li>
+<li>将小端排序得到的结果拼接在步骤3得到的字符后，完成填充</li>
+</ul>
+<p>完成此项工作需要一个函数将输入的十进制字符串转换城标准长度的二进制数，代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">decToBin</span>(<span class="params">num</span>):  <span class="comment"># 十进制转标准4位二或8位进制字符串函数 注意此为专用函数不要用于其他程序中</span></span><br><span class="line">    arry = []</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        arry.append(<span class="built_in">str</span>(num % <span class="number">2</span>))</span><br><span class="line">        num = num // <span class="number">2</span></span><br><span class="line">        <span class="keyword">if</span> num == <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">while</span> <span class="built_in">len</span>(arry)%<span class="number">4</span>!=<span class="number">0</span>:</span><br><span class="line">        arry.append(<span class="string">&#x27;0&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;&quot;</span>.join(arry[::-<span class="number">1</span>])  <span class="comment"># 列表切片倒叙排列后再用join拼接</span></span><br></pre></td></tr></table></figure>
+<p>下面进行填充的操作。将填充的方法归属于MD5对象专用，以防意外调用：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">fill</span>(<span class="params">self</span>):</span><br><span class="line">    bininput = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    raw_input=self.message</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(raw_input)):</span><br><span class="line">        c = decToBin(<span class="built_in">ord</span>(raw_input[i]))</span><br><span class="line">        bininput += c</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">len</span>(bininput) % <span class="number">512</span> != <span class="number">448</span>):</span><br><span class="line">        <span class="keyword">if</span> ((<span class="built_in">len</span>(bininput) + <span class="number">1</span>) % <span class="number">512</span> != <span class="number">448</span>):</span><br><span class="line">            bininput += <span class="string">&#x27;1&#x27;</span>  <span class="comment"># 补1</span></span><br><span class="line">        <span class="keyword">while</span> (<span class="built_in">len</span>(bininput) % <span class="number">512</span> != <span class="number">448</span>):</span><br><span class="line">            bininput += <span class="string">&#x27;0&#x27;</span>  <span class="comment"># 其余位补0直到满足长度为512*n+448</span></span><br><span class="line">    length = <span class="built_in">len</span>(raw_input) * <span class="number">8</span>  <span class="comment"># ASCII码位数</span></span><br><span class="line">    <span class="keyword">if</span> length &lt;= <span class="number">255</span>:</span><br><span class="line">        length = decToBin(length)  <span class="comment"># 二进制转换，此时length保留位数为8</span></span><br><span class="line">        <span class="keyword">while</span> <span class="built_in">len</span>(length) &lt; <span class="number">8</span>:</span><br><span class="line">            length = <span class="string">&#x27;0&#x27;</span> + length</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        temp = decToBin(length)</span><br><span class="line">        <span class="keyword">while</span> <span class="built_in">len</span>(length) &lt; <span class="number">16</span>:</span><br><span class="line">            length = <span class="string">&#x27;0&#x27;</span> + length</span><br><span class="line">        length = length[<span class="number">8</span>:<span class="number">12</span>] + length[<span class="number">12</span>:<span class="number">16</span>] + length[<span class="number">0</span>:<span class="number">4</span>] + length[<span class="number">4</span>:<span class="number">8</span>]</span><br><span class="line">    bininput += length</span><br><span class="line">    <span class="keyword">while</span> <span class="built_in">len</span>(bininput) % <span class="number">512</span> != <span class="number">0</span>:</span><br><span class="line">        bininput += <span class="string">&#x27;0&#x27;</span></span><br><span class="line">    self.temptext=bininput</span><br></pre></td></tr></table></figure>
+<h2 id="4轮循环"><a href="#4轮循环" class="headerlink" title="4轮循环"></a>4轮循环</h2><h3 id="分解消息子块"><a href="#分解消息子块" class="headerlink" title="分解消息子块"></a>分解消息子块</h3><p>下面将得到的临时变量进行分组。将其分解成$16*32$的矩阵，并将其存放于<code>Mlist</code>中。后续将配合MD5类中的m矩阵进行操作。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">Cycolyce</span>(<span class="params">self</span>):</span><br><span class="line">    Mlist=[]<span class="comment">#分16组</span></span><br><span class="line">    bininput=self.temptext</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="number">512</span>,<span class="number">32</span>):<span class="comment">#16</span></span><br><span class="line">        sym=<span class="string">&#x27;&#x27;</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="built_in">len</span>(bininput[i:i+<span class="number">32</span>]),<span class="number">4</span>):</span><br><span class="line">            temp=<span class="built_in">hex</span>(<span class="built_in">int</span>((bininput[i:i+<span class="number">32</span>][j:j+<span class="number">4</span>]),<span class="number">2</span>))<span class="comment">#取十六进制</span></span><br><span class="line">            sym+=temp[<span class="number">2</span>]<span class="comment">#只取字母 忽略前面的0x 为下面的小端排序做准备</span></span><br><span class="line"></span><br><span class="line">        sym_tmp=<span class="string">&#x27;&#x27;</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">8</span>,<span class="number">0</span>,-<span class="number">2</span>):<span class="comment">#小端排序</span></span><br><span class="line">            temp=sym[j-<span class="number">2</span>:j]</span><br><span class="line">            sym_tmp+=temp</span><br><span class="line"></span><br><span class="line">        fn_sym=<span class="string">&#x27;&#x27;</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(sym_tmp)):</span><br><span class="line">            fn_sym+=decToBin(<span class="built_in">int</span>(sym_tmp[j], <span class="number">16</span>))<span class="comment">#再次转换成二进制</span></span><br><span class="line">        Mlist.append(fn_sym)</span><br></pre></td></tr></table></figure>
+<h3 id="四轮循环的操作"><a href="#四轮循环的操作" class="headerlink" title="四轮循环的操作"></a>四轮循环的操作</h3><p>我们需要定义如下四个函数：</p>
+<script type="math/tex; mode=display">
+F(x,y,z)=(x\land y)\lor (\overline x \land z)\\
+G(x,y,z)=(x\land z)\lor (y \lor \overline z)\\
+H(x,y,z)=x\oplus y \oplus z\\
+I(x,y,z)=y\oplus(x\lor \overline z)</script><p>以及定义四个操作：</p>
+<script type="math/tex; mode=display">
+FF(a,b,c,d,Mj,s,Ti)=(F(b,c,d)+a+mj+Ti)<<s\\
+GG(a,b,c,d,Mj,s,Ti)=(G(b,c,d)+a+mj+Ti)<<s\\
+HH(a,b,c,d,Mj,s,Ti)=(H(b,c,d)+a+mj+Ti)<<s\\
+II(a,b,c,d,Mj,s,Ti)=(I(b,c,d)+a+mj+Ti)<<s\\</script><p>其中，$&lt;&lt;$是循环左移，$\oplus$是异或操作。在程序实现中，将四个函数定义在MD5类外，四个操作定义在MD5类以内。如此操作有两个原因：</p>
+<ul>
+<li>定义在外部的函数可以根据需求进行更改，对于封装后的类调用而言更具操作性</li>
+<li>定义在类内部的操作是MD5的专用函数，必须专类专用</li>
+<li>二者分离有助于设置断点、检查中间结果进行调试分析</li>
+</ul>
+<p>定义完函数以及相关操作后，我们将进行如下操作：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="number">16</span>, <span class="number">4</span>):</span><br><span class="line">    self.FF(Mlist[m[j]], s[j], T[j])</span><br><span class="line">    self.FF(Mlist[m[j+<span class="number">1</span>]], s[j+<span class="number">1</span>], T[j+<span class="number">1</span>])</span><br><span class="line">    self.FF(Mlist[m[j+<span class="number">2</span>]], s[j+<span class="number">2</span>], T[j+<span class="number">2</span>])</span><br><span class="line">    self.FF(Mlist[m[j+<span class="number">3</span>]], s[j+<span class="number">3</span>], T[j+<span class="number">3</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="number">16</span>, <span class="number">4</span>):</span><br><span class="line">    self.GG(Mlist[m[<span class="number">16</span>+j]], s[<span class="number">16</span>+j], T[<span class="number">16</span>+j])</span><br><span class="line">    self.GG(Mlist[m[<span class="number">16</span>+j+<span class="number">1</span>]], s[<span class="number">16</span>+j+<span class="number">1</span>], T[<span class="number">16</span>+j+<span class="number">1</span>])</span><br><span class="line">    self.GG(Mlist[m[<span class="number">16</span>+j+<span class="number">2</span>]], s[<span class="number">16</span>+j+<span class="number">2</span>], T[<span class="number">16</span>+j+<span class="number">2</span>])</span><br><span class="line">    self.GG(Mlist[m[<span class="number">16</span>+j+<span class="number">3</span>]], s[<span class="number">16</span>+j+<span class="number">3</span>], T[<span class="number">16</span>+j+<span class="number">3</span>])</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="number">16</span>, <span class="number">4</span>):</span><br><span class="line">    self.HH(Mlist[m[<span class="number">32</span>+j]], s[<span class="number">32</span>+j], T[<span class="number">32</span>+j])</span><br><span class="line">    self.HH(Mlist[m[<span class="number">32</span>+j+<span class="number">1</span>]], s[<span class="number">32</span>+j+<span class="number">1</span>], T[<span class="number">32</span>+j+<span class="number">1</span>])</span><br><span class="line">    self.HH(Mlist[m[<span class="number">32</span>+j+<span class="number">2</span>]], s[<span class="number">32</span>+j+<span class="number">2</span>], T[<span class="number">32</span>+j+<span class="number">2</span>])</span><br><span class="line">    self.HH(Mlist[m[<span class="number">32</span>+j+<span class="number">3</span>]], s[<span class="number">32</span>+j+<span class="number">3</span>], T[<span class="number">32</span>+j+<span class="number">3</span>])</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="number">16</span>, <span class="number">4</span>):</span><br><span class="line">    self.II(Mlist[m[<span class="number">48</span>+j]], s[<span class="number">48</span>+j], T[<span class="number">48</span>+j])</span><br><span class="line">    self.II(Mlist[m[<span class="number">48</span>+j+<span class="number">1</span>]], s[<span class="number">48</span>+j+<span class="number">1</span>], T[<span class="number">48</span>+j+<span class="number">1</span>])</span><br><span class="line">    self.II(Mlist[m[<span class="number">48</span>+j+<span class="number">2</span>]], s[<span class="number">48</span>+j+<span class="number">2</span>], T[<span class="number">48</span>+j+<span class="number">2</span>])</span><br><span class="line">    self.II(Mlist[m[<span class="number">48</span>+j+<span class="number">3</span>]], s[<span class="number">48</span>+j+<span class="number">3</span>], T[<span class="number">48</span>+j+<span class="number">3</span>])</span><br></pre></td></tr></table></figure>
+<h2 id="初值相加与拼接输出"><a href="#初值相加与拼接输出" class="headerlink" title="初值相加与拼接输出"></a>初值相加与拼接输出</h2><p>完成四轮循环后，需要将此时的ABCD与初始的ABCD相加，并进行小端排序。将小端排序后的结果拼接即可得到MD5加密的结果。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">self.A = (self.A+self.init_A)%<span class="built_in">pow</span>(<span class="number">2</span>, <span class="number">32</span>)</span><br><span class="line">        <span class="built_in">print</span>(self.A)</span><br><span class="line">        self.B = (self.B+self.init_B)%<span class="built_in">pow</span>(<span class="number">2</span>, <span class="number">32</span>)</span><br><span class="line">        <span class="built_in">print</span>(self.B)</span><br><span class="line">        self.C = (self.C+self.init_C)%<span class="built_in">pow</span>(<span class="number">2</span>, <span class="number">32</span>)</span><br><span class="line">        <span class="built_in">print</span>(self.C)</span><br><span class="line">        self.D = (self.D+self.init_D)%<span class="built_in">pow</span>(<span class="number">2</span>, <span class="number">32</span>)</span><br><span class="line">        <span class="built_in">print</span>(self.D)</span><br><span class="line"></span><br><span class="line">        answer = <span class="string">&quot;&quot;</span></span><br><span class="line">        <span class="keyword">for</span> each <span class="keyword">in</span> [self.A, self.B, self.C, self.D]:</span><br><span class="line">            each = <span class="built_in">hex</span>(each)[<span class="number">2</span>:]</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">8</span>, <span class="number">0</span>, -<span class="number">2</span>):</span><br><span class="line">                answer += <span class="built_in">str</span>(each[i - <span class="number">2</span>:i])</span><br><span class="line">        <span class="keyword">return</span> answer</span><br></pre></td></tr></table></figure>
+<p>我们可以运行一下检验成果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">MD=md5(<span class="string">&#x27;abc&#x27;</span>)</span><br><span class="line">MD.fill()</span><br><span class="line">result=MD.Cycolyce()</span><br><span class="line"><span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D/" rel="tag"><i class="fa fa-tag"></i> 数字签名</a>
+              <a href="/tags/Python/" rel="tag"><i class="fa fa-tag"></i> Python</a>
+              <a href="/tags/MD5/" rel="tag"><i class="fa fa-tag"></i> MD5</a>
+          </div>
+          <script type="text/javascript">
+            var tagsall=document.getElementsByClassName("post-tags")
+            for (var i = tagsall.length - 1; i >= 0; i--){
+                var tags=tagsall[i].getElementsByTagName("a");
+                for (var j = tags.length - 1; j >= 0; j--) {
+                    var golden_ratio = 0.618033988749895;
+                    var s = 0.5;
+                    var v = 0.999;
+                    var h = golden_ratio + Math.random()*0.8 - 0.5;
+                    var h_i = parseInt(h * 6);
+                    var f = h * 6 - h_i;
+                    var p = v * (1 - s);
+                    var q = v * (1 - f * s);
+                    var t = v * (1 - (1 - f) * s);
+                    var r, g, b;
+                    switch (h_i) {
+                        case 0:
+                            r = v;
+                            g = t;
+                            b = p;
+                            break;
+                        case 1:
+                            r = q;
+                            g = v;
+                            b = p;
+                            break;
+                        case 2:
+                            r = p;
+                            g = v;
+                            b = t;
+                            break;
+                        case 3 :
+                            r = p;
+                            g = q;
+                            b = v;
+                            break;
+                        case 4:
+                            r = t;
+                            g = p;
+                            b = v;
+                            break;
+                        case 5:
+                            r = v;
+                            g = p;
+                            b = q;
+                            break;
+                        default:
+                            r = 1;
+                            g = 1;
+                            b = 1;
+                      }
+                    tags[j].style.background = "rgba("+parseInt(r*255)+","+parseInt(g*255)+","+parseInt(b*255)+","+0.5+")";
+                }
+            }                        
+            </script>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/07/29/G1831/" rel="prev" title="Polar码编码及SC译码Matlab仿真">
+      <i class="fa fa-chevron-left"></i> Polar码编码及SC译码Matlab仿真
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/07/29/Paper%20Translation/" rel="next" title="【文献翻译】使用深度强化学习游玩雅达利游戏">
+      【文献翻译】使用深度强化学习游玩雅达利游戏 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF"><span class="nav-number">1.</span> <span class="nav-text">实现思路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A1%AB%E5%85%85"><span class="nav-number">2.</span> <span class="nav-text">填充</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4%E8%BD%AE%E5%BE%AA%E7%8E%AF"><span class="nav-number">3.</span> <span class="nav-text">4轮循环</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E8%A7%A3%E6%B6%88%E6%81%AF%E5%AD%90%E5%9D%97"><span class="nav-number">3.1.</span> <span class="nav-text">分解消息子块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E8%BD%AE%E5%BE%AA%E7%8E%AF%E7%9A%84%E6%93%8D%E4%BD%9C"><span class="nav-number">3.2.</span> <span class="nav-text">四轮循环的操作</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9D%E5%80%BC%E7%9B%B8%E5%8A%A0%E4%B8%8E%E6%8B%BC%E6%8E%A5%E8%BE%93%E5%87%BA"><span class="nav-number">4.</span> <span class="nav-text">初值相加与拼接输出</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="阿花想养萨摩耶"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">阿花想养萨摩耶</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dafeigy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dafeigy" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1070642765@qq.com" title="E-Mail → mailto:1070642765@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/2659883291" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;2659883291" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+  </div>
+
+
+
+  <div class="links-of-recent-posts motion-element">
+    <div class="links-of-recent-posts-title">
+      <i class="fa fa-history fa-fw"></i>
+      最近文章
+    </div>
+    <ul class="links-of-recent-posts-list">
+        <li class="links-of-recent-posts-item">
+          <a href="/2022/08/21/%E8%A7%A3%E5%86%B3Picgo%E4%B8%8A%E4%BC%A0%E5%9B%BE%E7%89%87/" title="2022&#x2F;08&#x2F;21&#x2F;解决Picgo上传图片&#x2F;">关于SMMS更换国内域名导致Picgo不能上传图片的解决方法</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2022/08/20/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%952022-8-20/" title="2022&#x2F;08&#x2F;20&#x2F;学习记录2022-8-20&#x2F;">【学习记录】2022-8-20-？</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2022/08/04/Pytorch%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%BF%87%E7%A8%8B/" title="2022&#x2F;08&#x2F;04&#x2F;Pytorch训练模型的基本过程&#x2F;">Pytorch训练神经网络的一般过程</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2022/08/03/%E5%9B%BE%E5%83%8F%E5%8D%B7%E7%A7%AF/" title="2022&#x2F;08&#x2F;03&#x2F;图像卷积&#x2F;">从一维卷积到二维卷积：浅析图像卷积</a>
+        </li>
+    </ul>
+  </div>
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">阿花</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>
