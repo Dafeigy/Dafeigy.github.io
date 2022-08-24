@@ -1,6 +1,200 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Polar码编码及SC译码Matlab仿真</title>
+    <url>/2022/07/29/G1831/</url>
+    <content><![CDATA[<p>2016年11月18日，在美国内华达州里诺召开的3GPP RAN1 #87次会议，确定Polar Code作为5G eMBB（增强移动宽带）场景下控制信道编码方案。极化码具有确定性的构造方法，并且是已知的唯一一种能够被严格证明“达到”信道容量的信道编码方法，因此我们将其作为研究对象，研究其编码/译码的实现。</p>
+<p><img src="https://s2.loli.net/2022/05/27/t4Gi5PnegJYhRkv.png" alt=""></p>
+<span id="more"></span>
+<h1 id="研究讨论"><a href="#研究讨论" class="headerlink" title="研究讨论"></a>研究讨论</h1><h3 id="研究现状"><a href="#研究现状" class="headerlink" title="研究现状"></a>研究现状</h3><p>在针对时延扩展较长的信道时，频域选择性严重衰落，会出现残留冗余造成带宽浪费，通过采用以信源状态转移关系为基础构建信源信道联合译码网格图，综合信源转移概率和信道转移概率计算统一的序列后验概率的方式，可以实现了信源译码和信道译码的一体化联合优化，进而在不降低通信速率的情况下提高传输可靠性，基本实现无误码通信。不仅如此，在对6G$^{[1]}$的展望中，消除冗余的Polar码仍具有较LDPC码更优的BER性能，对于高阶调制的Polar码和多核Polar码设计也处于研究阶段，但纠错性能有一定的局限性，因此，具有较高纠错性能的多核Polar码的设计仍在发展中，也许成功的研究会应用于6G的信道编码技术。不过本次我们的仿真旨在理解Polar Code的基础原理，因此采用最基础的原始理论进行编写。</p>
+<h3 id="研究意义"><a href="#研究意义" class="headerlink" title="研究意义"></a>研究意义</h3><p>作为一种新兴的码种，极化码在推出之时就获得学术界的广泛关注。它是第一个能达到香农极限的编码方式，因此在推动通信系统的性能发展中有不可限量的应用前途。作为通信系的学生，尝试研读、复现论文成果一来能锻炼科研的理解能力、实践能力，同时也能从中汲取到通信这一学科的前沿知识，能获得较高的实用价值。极化码的编码、译码是极化码的核心部分，也是小组成员拟研究的方向。</p>
+<h3 id="研究计划"><a href="#研究计划" class="headerlink" title="研究计划"></a>研究计划</h3><ul>
+<li>研读极化码的原始论文《Channel polarization: A method for constructing capacity-achieving codes for symmetric binary-input memoryless channels》，掌握信道极化的思想以及编码/译码思路；</li>
+<li>在Matlab中搭建仿真平台，完成极化码编码、译码实现；</li>
+<li>对比其他编码方式以及译码方式，对极化码实用性进行评估，并针对仿真结果，对编码译码方式进行考量并做出评价。</li>
+</ul>
+<h2 id="实现过程"><a href="#实现过程" class="headerlink" title="实现过程"></a>实现过程</h2><h3 id="编码部分"><a href="#编码部分" class="headerlink" title="编码部分"></a>编码部分</h3><h4 id="编码原理"><a href="#编码原理" class="headerlink" title="编码原理"></a>编码原理</h4><p>Polar Code是通过引入信道极化概念而构建的。</p>
+<p>信道极化分为两个阶段，分别是信道联合和信道分裂。通过信道的联合与分裂，各个子信道的对称容量将呈现两级分化的趋势：随着码长（即联合信道数）N的增加，一部分子信道的容量趋于1，而其余子信道的容量趋于0。Polar Code正是利用这一信道极化的现象，在容量趋于1的K个子信道上传输消息比特，在其余子信道上传输冻结比特（即收发双方已知的固定比特，通常设置为全零）。由此构成的编码即为Polar Code，码率为$K/N$。</p>
+<p>可以看出，编码问题的关键在于生成矩阵和信息位、冻结位的判决选取。最终的编码输出结果，可以简化为矩阵运算：</p>
+<script type="math/tex; mode=display">
+u^N=c_{i}^N·G_N</script><p>其中，$u^N$代表编码结果，$c_{i}^N$代表了输入数据，$G_N$为生成矩阵，$N$代表输入码长，且该值规定为2的正整数幂。</p>
+<h4 id="生成矩阵的产生"><a href="#生成矩阵的产生" class="headerlink" title="生成矩阵的产生"></a>生成矩阵的产生</h4><p>首先先引入<strong>克罗内克积($\otimes$)</strong>运算：</p>
+<p> 如果<em>A</em>是一个<em>m</em>×<em>n</em>的矩阵，而<em>B</em>是一个<em>p</em>×<em>q</em>的矩阵，则它们的克罗内克积则是一个<em>mp</em>×<em>nq</em>的分块矩阵，记为：</p>
+<script type="math/tex; mode=display">
+\mathrm{A} \otimes \mathrm{B}=\left[\begin{array}{ccc}
+a_{11} B & \cdots & a_{1 n} B \\
+\vdots & \ddots & \vdots \\
+a_{1 n} B & \cdots & a_{n n} B
+\end{array}\right]</script><p>以下举A，B为二阶矩阵时运算克罗内克积为例：</p>
+<script type="math/tex; mode=display">
+\left[\begin{array}{ll}
+a_{11} & a_{12} \\
+a_{21} & a_{22}
+\end{array}\right] \otimes\left[\begin{array}{ll}
+b_{11} & b_{12} \\
+b_{21} & b_{22}
+\end{array}\right]=\left[\begin{array}{llll}
+a_{11} b_{11} & a_{11} b_{12} & a_{12} b_{11} & a_{12} b_{12} \\
+a_{11} b_{21} & a_{11} b_{22} & a_{12} b_{21} & a_{12} b_{22} \\
+a_{21} b_{11} & a_{21} b_{12} & a_{22} b_{11} & a_{22} b_{12} \\
+a_{21} b_{21} & a_{21} b_{22} & a_{22} b_{21} & a_{22} b_{22}
+\end{array}\right]</script><p>下图为文献$^{[1]}$中的编码示意图：</p>
+<p><img src="https://i.loli.net/2021/09/03/sohiuSG6P1JtvKw.png" alt="image-20210903221730402" style="zoom: 80%;" /></p>
+<p>该过程可以简化为如下流程：</p>
+<p>首先输入的码字经过了向量元素的重排操作，即通过图中的$R_N$矩阵相乘运算，然后将翻转后的码字经过信道进行联合、分裂。</p>
+<p>同时，也可以将整个生成矩阵的产生过程可以简化为如下运算：</p>
+<script type="math/tex; mode=display">
+G_{N}=B_{N} F^{\otimes n}</script><p>下面对该表达式进行说明：</p>
+<ul>
+<li><p>$B_N$为元素经过扩展重排后的结果，定义为：</p>
+<script type="math/tex; mode=display">
+B_{N}=R_{N}\left(I_{2} \otimes B_{N / 2}\right)</script><p>其中：</p>
+<ul>
+<li><p>$I_2$为二阶单位矩阵。从定义式可以看出，$B_N$的生成为一递归过程，给定递归初值为$B_2=I_2$。</p>
+</li>
+<li><p>$R_N$为置换矩阵，即将输入序列完成奇序元素和偶序元素的分离。用符号表示为：</p>
+<script type="math/tex; mode=display">
+\left(u_{1}, u_{2}, u_{3}, u_{4}, \cdots, u_{N}\right) \times R_{N}=u_{1}, u_{3}, u_{5}, \cdots, u_{N-1}, u_{2}, u_{4}, u_{6}, \cdots, u_{N}</script></li>
+</ul>
+<p>经过上述操作后，$B_N$完成了比特反序重排。即将每个原序列的十进制序号$i \in\{1,2,3,…,N\}$先减一得到$i-1$，再将$i-1$按二进制表示，随后将该二进制的高低位进行倒叙排列，将得到的一串二进制重新转化为十进制数$j-1$，然后将第$j$位对应的数变成原来的第$i$位数。以元素$u_7$举例如下：</p>
+<script type="math/tex; mode=display">
+u_{7} \stackrel{7-1}{\longrightarrow} u_{6} \stackrel{\text { 十进制转二进制 }}{\longrightarrow} 110 \stackrel{\text { reverse }}{\longrightarrow} 011 \stackrel{\text { 二进制转十进制 }}{\longrightarrow} 3 \stackrel{3 * 1}{\rightarrow} 4 \rightarrow u_7^*=u_{4}</script><p>其他元素可依次依照此流程重新排序，这里不再赘述。</p>
+</li>
+<li><p>$F^{\otimes n}$为F的n次克罗内克积,即对矩阵$F$进行n次克罗内克积运算。文献$^{[1]}$中给出的$F$矩阵定义为：</p>
+</li>
+</ul>
+<script type="math/tex; mode=display">
+F=\left[\begin{array}{ll}
+1 & 0 \\
+1 & 1
+\end{array}\right]</script><h4 id="信息位与冻结位的选取"><a href="#信息位与冻结位的选取" class="headerlink" title="信息位与冻结位的选取"></a>信息位与冻结位的选取</h4><p>信道极化过程中，有一部分信道的信道容量$I(W)$可以到达1，另一部分则趋近于0。引入文献$^{[1]}$的巴氏参数$Z(W)$来衡量信道容量的趋向性：</p>
+<script type="math/tex; mode=display">
+Z\left(W_{N}^{(i)}\right)=\sum_{y_{1}^{N} \in Y^{N}} \sum_{u_{1}^{i-1} \in X^{i-1}} \sqrt{W_{N}^{(i)}\left(y_{1}^{N}, u_{1}^{i-1} \mid 0\right) W_{N}^{(i)}\left(y_{1}^{N}, u_{1}^{i-1} \mid 1\right)}</script><p>式中的$W_N^{i}(y,u|x)$表示第i个信道的条件转移概率。</p>
+<p>对于一个给定信道，巴氏参数越大说明该信道越不可靠。因此我们只需计算出联合、分裂后信道的巴氏参数，并对它们进行排序，然后根据码率选择巴氏参数较小的信道作为信息位，剩余信道作为冻结位。</p>
+<h4 id="编码输出"><a href="#编码输出" class="headerlink" title="编码输出"></a>编码输出</h4><p>得到巴氏参数的序列后，将该序列从小到大进行排列，前一半作为信息位，后一半为冻结位。即将原始的输入$u$重新排序为$c_i$。最后将排序后的信息$c_i$与生成矩阵相乘：</p>
+<script type="math/tex; mode=display">
+u^N=c_{i}^N·G_N</script><h3 id="信道部分"><a href="#信道部分" class="headerlink" title="信道部分"></a>信道部分</h3><p>我们在常见的高斯加性白噪声信道中进行模拟。将编码结果经过BPSK调制，即将$\{0,1\}$符号映射为$\{1,-1\}$，随后用不同信噪比的高斯加性白噪声与调制结果叠加。</p>
+<h3 id="译码部分"><a href="#译码部分" class="headerlink" title="译码部分"></a>译码部分</h3><h4 id="译码原理"><a href="#译码原理" class="headerlink" title="译码原理"></a>译码原理</h4><p>由之前提到的编码可以看出极化码的构造就是一个信道选择的过程，而极化信道的选择实际上就是按照最优SC译码性能为标准的。因此对极化码而言，最合适的译码算法应当是基于SC译码的，只有这类译码算法才能充分利用极化码的结构，并且同时保证在码长足够长时容量可达。</p>
+<p>SC译码全称为successive cancellation decoder即连续消除译码，采用蝶形算法，通过递归的方式来进行串行解码。而根据蝶形算法的特性，从右向左进行计算，因此在解码时我们首先要确定最右端所判决得到的近似值。</p>
+<h4 id="近似判决"><a href="#近似判决" class="headerlink" title="近似判决"></a>近似判决</h4><p>先对信息位和冻结位进行判决：</p>
+<script type="math/tex; mode=display">
+\hat{\mathrm{u}}_{1}^{(\mathrm{i})}\left\{\begin{array}{c}
+\mathrm{h}_{\mathrm{i}}\left(\mathrm{y}_{\mathrm{N}}^{(\mathrm{i})}, \hat{\mathrm{u}}_{1}^{(\mathrm{i}-1)}\right), \text { if } \mathrm{i} \in \mathrm{A} \\
+\mathrm{u}_{\mathrm{i}}, \text { if } \mathrm{i} \in \mathrm{A}^{\mathrm{c}}
+\end{array}\right.</script><p>其中$\mathrm{i} \in \mathrm{A}^{\mathrm{c}}$表明该比特为冻结比特，$\mathrm{i} \in \mathrm{A}$表明该比特为承载信息的比特。</p>
+<p>随后是对信息位进行判决：</p>
+<script type="math/tex; mode=display">
+\widehat{\mathrm{h}}_{1}^{(\mathrm{i})}\left\{\begin{array}{l}
+0, \text { if } \mathrm{L}_{\mathrm{N}}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{i})}, \hat{\mathrm{u}}_{1}^{(\mathrm{i}-1)}\right) \geq 0 \\
+1, \text { if if } \mathrm{L}_{\mathrm{N}}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{i})}, \hat{\mathrm{u}}_{1}^{(\mathrm{i}-1)}\right)<0
+\end{array}\right.</script><p>其中$\mathrm{L}_{\mathrm{N}}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{i})}, \widehat{\mathrm{u}}_{1}^{(\mathrm{i}-1)}\right)$为对数似然比（Log-Likelihood Ratio）：</p>
+<script type="math/tex; mode=display">
+\mathrm{L}_{\mathrm{N}}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{i})}, \widehat{\mathrm{u}}_{1}^{(\mathrm{i}-1)}\right) \triangleq \ln \left(\frac{\mathrm{W}_{\mathrm{N}}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{i})}, \widehat{\mathrm{u}}_{1}^{(\mathrm{i}-1)} \mid 0\right)}{\mathrm{W}_{\mathrm{N}}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{i})}, \hat{\mathrm{u}}_{1}^{(\mathrm{i}-1)} \mid 1\right)}\right)</script><p>该式说明LLR的值为在接收端得到$\left(\mathrm{y}_{1}^{(\mathrm{i})}, \widehat{\mathrm{u}}_{1}^{(\mathrm{i}-1)}\right)$发送端原本的发送”0”和”1”的比值取对数，当该对数值大于等于0时，说明原本发送”0”的概率要大，因此我们可以将其判决为接收端收到的应该为”0”，反之则为”1”。</p>
+<h4 id="递归求解"><a href="#递归求解" class="headerlink" title="递归求解"></a>递归求解</h4><p>给定递归求解的公式：</p>
+<script type="math/tex; mode=display">
+\begin{gathered}
+\mathrm{L}_{\mathrm{N}}^{(2 \mathrm{i}-1)}\left(\mathrm{y}_{1}^{(\mathrm{N})}, \widehat{\mathrm{u}}_{1}^{(2 \mathrm{i}-2)}\right)=\mathrm{f}\left(\mathrm{L}_{\mathrm{N} / 2}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{N} / 2)}, \widehat{\mathrm{u}}_{1,0}^{(2 \mathrm{i}-2)} \oplus \hat{\mathrm{u}}_{1, \mathrm{e}}^{(2 \mathrm{i}-2)}\right), \mathrm{L}_{\mathrm{N} / 2}^{(\mathrm{i})}\left(\mathrm{y}_{\mathrm{N} / 2+1}^{(\mathrm{N}}, \hat{\mathrm{u}}_{1, \mathrm{e}}^{(2 \mathrm{i}-2)}\right)\right. \\
+\mathrm{L}_{\mathrm{N}}^{(2 \mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{N})}, \hat{\mathrm{u}}_{1}^{(2 \mathrm{i}-1)}\right)=\mathrm{g}\left(\mathrm{L}_{\mathrm{N} / 2}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{N} / 2)}, \hat{\mathrm{u}}_{1,0}^{(2 \mathrm{i}-2)} \oplus \hat{\mathrm{u}}_{1, \mathrm{e}}^{(2 \mathrm{i}-2)}\right), \mathrm{L}_{\mathrm{N} / 2}^{(\mathrm{i})}\left(\mathrm{y}_{\mathrm{N} / 2+1}^{(\mathrm{N}} \hat{\mathrm{u}}_{1, \mathrm{e}}^{(2 \mathrm{i}-2)}\right), \hat{\mathrm{u}}_{2 \mathrm{i}-1}\right).
+\end{gathered}</script><p>其中：</p>
+<script type="math/tex; mode=display">
+\begin{gathered}
+f(a, b)=\ln \left(\frac{1+e^{a+b}}{e^{a}+e^{b}}\right) \\
+g\left(a, b, u_{s}\right)=(-1)^{u_{s}} a+b
+\end{gathered}</script><p>上述递归的的终止条件为$N=1$,即递归到达了最左端的$W$端。此时：</p>
+<script type="math/tex; mode=display">
+\mathrm{L}_{1}^{1}\left(\mathrm{y}_{\mathrm{j}}\right)=\ln \frac{\mathrm{W}\left(\mathrm{y}_{\mathrm{j}} \mid 0\right)}{\mathrm{W}\left(\mathrm{y}_{\mathrm{j}} \mid 1\right)}</script><p>由于我们在高斯信道下进行仿真，因此：</p>
+<script type="math/tex; mode=display">
+\mathrm{W}(\mathrm{y} \mid \mathrm{x})=\frac{1}{\sqrt{2 \pi} \sigma} \exp \left(-\frac{(\mathrm{y}-\mathrm{x})^{2}}{2 \sigma^{2}}\right)</script><p>给定递归出口：</p>
+<script type="math/tex; mode=display">
+\mathrm{L}_{1}^{1}\left(\mathrm{y}_{\mathrm{j}}\right)=\frac{2 \mathrm{y}}{\sigma^{2}}</script><h4 id="译码结果"><a href="#译码结果" class="headerlink" title="译码结果"></a>译码结果</h4><p>循环求出最后一列所有节点的似然值，然后倒推计算之前各个节点的似然值，重复该过程直到最右端即可完成译码。</p>
+<h2 id="实现结果"><a href="#实现结果" class="headerlink" title="实现结果"></a>实现结果</h2><h3 id="结果评估"><a href="#结果评估" class="headerlink" title="结果评估"></a>结果评估</h3><p>我们在信噪比为5-20dB的情况下进行不同码长的极化码编码译码仿真，并统计了误码率，结果如下所示：</p>
+<p><img src="https://i.loli.net/2021/09/06/OkXdnBWDjHc1oRS.jpg" style="zoom:50%;" /></p>
+<center>码长为8时SNR-BER</center>
+
+<p><img src="https://i.loli.net/2021/09/09/rbHnPJFvyMx7a1f.jpg" style="zoom:50%;" /></p>
+<center>码长为16时SNR-BER</center>
+
+<p>信噪比提高时时，误码率也在减小。码长增大时，抗噪性能越好。</p>
+<h3 id="改进以及探究"><a href="#改进以及探究" class="headerlink" title="改进以及探究"></a>改进以及探究</h3><h4 id="巴氏参数的递归求解"><a href="#巴氏参数的递归求解" class="headerlink" title="巴氏参数的递归求解"></a>巴氏参数的递归求解</h4><p>在文献$^{[1]}$中，给定的巴氏参数计算方法较为复杂。且考虑条件转移概率和信道特性后，我们可以将该过程用递归过程实现：</p>
+<script type="math/tex; mode=display">
+\begin{gathered}
+\mathrm{Z}\left(\mathrm{W}_{\mathrm{N}}^{(2 \mathrm{j}-1)}\right)=2 \mathrm{Z}\left(\mathrm{W}_{\mathrm{N} / 2}^{(\mathrm{j})}\right)-\mathrm{Z}\left(\mathrm{W}_{\mathrm{N} / 2}^{(\mathrm{j})}\right)^{2} \\
+\mathrm{Z}\left(\mathrm{W}_{\mathrm{N}}^{(2 \mathrm{j})}\right)=\mathrm{Z}\left(\mathrm{W}_{\mathrm{N} / 2}^{(\mathrm{j})}\right)^{2}
+\end{gathered}</script><h4 id="近似LLR硬件实现优化"><a href="#近似LLR硬件实现优化" class="headerlink" title="近似LLR硬件实现优化"></a>近似LLR硬件实现优化</h4><p>文献$^{[2]}$中指出，同时含有指数运算以及对数运算的过程不利于硬件实现，因此我们做出如下近似：</p>
+<p>$$<br>f(a, b)=\ln \left(\frac{1+e^{a+b}}{e^{a}+e^{b}}\right)\thickapprox sgn(a·b)·\min\</p>
+]]></content>
+      <categories>
+        <category>通信技术</category>
+      </categories>
+      <tags>
+        <tag>5G通信</tag>
+        <tag>极化码</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MD5加密算法的Python实现流程</title>
+    <url>/2022/07/29/MD5/</url>
+    <content><![CDATA[<p><strong>MD5信息摘要算法</strong>（英语：MD5 Message-Digest Algorithm），一种被广泛使用的<a href="https://baike.baidu.com/item/密码散列函数/14937715">密码散列函数</a>，可以产生出一个128位（16<a href="https://baike.baidu.com/item/字节/1096318">字节</a>）的散列值（hash value），用于确保信息传输完整一致。MD5由美国密码学家<a href="https://baike.baidu.com/item/罗纳德·李维斯特/700199">罗纳德·李维斯特</a>（Ronald Linn Rivest）设计，于1992年公开，用以取代<a href="https://baike.baidu.com/item/MD4/8090275">MD4</a>算法。这套算法的程序在 RFC 1321 标准中被加以规范。1996年后该算法被证实存在弱点，可以被加以破解，对于需要高度安全性的数据，专家一般建议改用其他算法，如<a href="https://baike.baidu.com/item/SHA-2/22718180">SHA-2</a>。2004年，证实MD5算法无法防止碰撞（collision），因此不适用于安全性认证，如<a href="https://baike.baidu.com/item/SSL/320778">SSL</a>公开密钥认证或是<a href="https://baike.baidu.com/item/数字签名/212550">数字签名</a>等用途。</p>
+<span id="more"></span>
+<p>首先先要对MD5使用的初始数据进行初始化：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">A=<span class="number">0x67452301</span></span><br><span class="line"></span><br><span class="line">B=<span class="number">0xEFCDAB89</span></span><br><span class="line"></span><br><span class="line">C=<span class="number">0x98BADCFE</span></span><br><span class="line"></span><br><span class="line">D=<span class="number">0x10325476</span></span><br><span class="line">T = [<span class="number">0xD76AA478</span>,<span class="number">0xE8C7B756</span>,<span class="number">0x242070DB</span>,<span class="number">0xC1BDCEEE</span>,<span class="number">0xF57C0FAF</span>,<span class="number">0x4787C62A</span>,<span class="number">0xA8304613</span>,<span class="number">0xFD469501</span>,</span><br><span class="line">    <span class="number">0x698098D8</span>,<span class="number">0x8B44F7AF</span>,<span class="number">0xFFFF5BB1</span>,<span class="number">0x895CD7BE</span>,<span class="number">0x6B901122</span>,<span class="number">0xFD987193</span>,<span class="number">0xA679438E</span>,<span class="number">0x49B40821</span>,</span><br><span class="line">    <span class="number">0xF61E2562</span>,<span class="number">0xC040B340</span>,<span class="number">0x265E5A51</span>,<span class="number">0xE9B6C7AA</span>,<span class="number">0xD62F105D</span>,<span class="number">0x02441453</span>,<span class="number">0xD8A1E681</span>,<span class="number">0xE7D3FBC8</span>,</span><br><span class="line">    <span class="number">0x21E1CDE6</span>,<span class="number">0xC33707D6</span>,<span class="number">0xF4D50D87</span>,<span class="number">0x455A14ED</span>,<span class="number">0xA9E3E905</span>,<span class="number">0xFCEFA3F8</span>,<span class="number">0x676F02D9</span>,<span class="number">0x8D2A4C8A</span>,</span><br><span class="line">    <span class="number">0xFFFA3942</span>,<span class="number">0x8771F681</span>,<span class="number">0x6D9D6122</span>,<span class="number">0xFDE5380C</span>,<span class="number">0xA4BEEA44</span>,<span class="number">0x4BDECFA9</span>,<span class="number">0xF6BB4B60</span>,<span class="number">0xBEBFBC70</span>,</span><br><span class="line">    <span class="number">0x289B7EC6</span>,<span class="number">0xEAA127FA</span>,<span class="number">0xD4EF3085</span>,<span class="number">0x04881D05</span>,<span class="number">0xD9D4D039</span>,<span class="number">0xE6DB99E5</span>,<span class="number">0x1FA27CF8</span>,<span class="number">0xC4AC5665</span>,</span><br><span class="line">    <span class="number">0xF4292244</span>,<span class="number">0x432AFF97</span>,<span class="number">0xAB9423A7</span>,<span class="number">0xFC93A039</span>,<span class="number">0x655B59C3</span>,<span class="number">0x8F0CCC92</span>,<span class="number">0xFFEFF47D</span>,<span class="number">0x85845DD1</span>,</span><br><span class="line">    <span class="number">0x6FA87E4F</span>,<span class="number">0xFE2CE6E0</span>,<span class="number">0xA3014314</span>,<span class="number">0x4E0811A1</span>,<span class="number">0xF7537E82</span>,<span class="number">0xBD3AF235</span>,<span class="number">0x2AD7D2BB</span>,<span class="number">0xEB86D391</span>]</span><br><span class="line"></span><br><span class="line">s = [<span class="number">7</span>,<span class="number">12</span>,<span class="number">17</span>,<span class="number">22</span>,<span class="number">7</span>,<span class="number">12</span>,<span class="number">17</span>,<span class="number">22</span>,<span class="number">7</span>,<span class="number">12</span>,<span class="number">17</span>,<span class="number">22</span>,<span class="number">7</span>,<span class="number">12</span>,<span class="number">17</span>,<span class="number">22</span>,</span><br><span class="line">    <span class="number">5</span>,<span class="number">9</span>,<span class="number">14</span>,<span class="number">20</span>,<span class="number">5</span>,<span class="number">9</span>,<span class="number">14</span>,<span class="number">20</span>,<span class="number">5</span>,<span class="number">9</span>,<span class="number">14</span>,<span class="number">20</span>,<span class="number">5</span>,<span class="number">9</span>,<span class="number">14</span>,<span class="number">20</span>,</span><br><span class="line">    <span class="number">4</span>,<span class="number">11</span>,<span class="number">16</span>,<span class="number">23</span>,<span class="number">4</span>,<span class="number">11</span>,<span class="number">16</span>,<span class="number">23</span>,<span class="number">4</span>,<span class="number">11</span>,<span class="number">16</span>,<span class="number">23</span>,<span class="number">4</span>,<span class="number">11</span>,<span class="number">16</span>,<span class="number">23</span>,</span><br><span class="line">    <span class="number">6</span>,<span class="number">10</span>,<span class="number">15</span>,<span class="number">21</span>,<span class="number">6</span>,<span class="number">10</span>,<span class="number">15</span>,<span class="number">21</span>,<span class="number">6</span>,<span class="number">10</span>,<span class="number">15</span>,<span class="number">21</span>,<span class="number">6</span>,<span class="number">10</span>,<span class="number">15</span>,<span class="number">21</span>]</span><br><span class="line"></span><br><span class="line">m = [<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>,<span class="number">10</span>,<span class="number">11</span>,<span class="number">12</span>,<span class="number">13</span>,<span class="number">14</span>,<span class="number">15</span>,</span><br><span class="line">    <span class="number">1</span>,<span class="number">6</span>,<span class="number">11</span>,<span class="number">0</span>,<span class="number">5</span>,<span class="number">10</span>,<span class="number">15</span>,<span class="number">4</span>,<span class="number">9</span>,<span class="number">14</span>,<span class="number">3</span>,<span class="number">8</span>,<span class="number">13</span>,<span class="number">2</span>,<span class="number">7</span>,<span class="number">12</span>,</span><br><span class="line">    <span class="number">5</span>,<span class="number">8</span>,<span class="number">11</span>,<span class="number">14</span>,<span class="number">1</span>,<span class="number">4</span>,<span class="number">7</span>,<span class="number">10</span>,<span class="number">13</span>,<span class="number">0</span>,<span class="number">3</span>,<span class="number">6</span>,<span class="number">9</span>,<span class="number">12</span>,<span class="number">15</span>,<span class="number">2</span>,</span><br><span class="line">    <span class="number">0</span>,<span class="number">7</span>,<span class="number">14</span>,<span class="number">5</span>,<span class="number">12</span>,<span class="number">3</span>,<span class="number">10</span>,<span class="number">1</span>,<span class="number">8</span>,<span class="number">15</span>,<span class="number">6</span>,<span class="number">13</span>,<span class="number">4</span>,<span class="number">11</span>,<span class="number">2</span>,<span class="number">9</span>]</span><br></pre></td></tr></table></figure>
+<h2 id="实现思路"><a href="#实现思路" class="headerlink" title="实现思路"></a>实现思路</h2><p>MD5加密需要经过输入转换、填充、四轮循环操作、置换以及最后的拼接等步骤。其中为了方便循环操作中的值的读取与置换，可以定义一个<code>MD5</code>类，并赋予此类一些初始的属性与函数简化后续的函数操作。现将类定义如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">md5</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, message</span>):</span><br><span class="line">        self.message = message</span><br><span class="line">        self.A = A</span><br><span class="line">        self.B = B</span><br><span class="line">        self.C = C</span><br><span class="line">        self.D = D</span><br><span class="line">        self.init_A = A</span><br><span class="line">        self.init_B = B</span><br><span class="line">        self.init_C = C</span><br><span class="line">        self.init_D = D</span><br><span class="line">        self.temptext=<span class="string">&#x27;&#x27;</span></span><br><span class="line">        self.s=s</span><br><span class="line">        self.m=m</span><br><span class="line">        self.T=T</span><br></pre></td></tr></table></figure>
+<p>对于一个MD5对象，其拥有如下几个主要属性：</p>
+<ul>
+<li>message：  输入的明文</li>
+<li>A,B,C,D：  四轮循环中的操作对象</li>
+<li>temptext： 暂存的结果，用于缓冲与临时存放</li>
+<li>s,m,T:    均为MD5加密时用到的操作参数，以列表的形式存储</li>
+</ul>
+<h2 id="填充"><a href="#填充" class="headerlink" title="填充"></a>填充</h2><ul>
+<li>将输入的明文转换成ASCII码，并按照规则进行填充。填充规则如下：</li>
+<li>当转换的ASCII码的长度的二进制长度不为$512*n+448$的整数倍时，先在末尾补一个“1”；</li>
+<li>当此时的长度依然不为$512<em>n+448$时，继续在末尾补“0”直至长度为$512</em>n+448$</li>
+<li>将输入密文的长度转换成64位的二进制数，若输入字符串的长度大于$2^{64}$，则取最后的64位。</li>
+<li>将得到的64位进行小端排序，即按8bit/组进行倒序排列</li>
+<li>将小端排序得到的结果拼接在步骤3得到的字符后，完成填充</li>
+</ul>
+<p>完成此项工作需要一个函数将输入的十进制字符串转换城标准长度的二进制数，代码如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">decToBin</span>(<span class="params">num</span>):  <span class="comment"># 十进制转标准4位二或8位进制字符串函数 注意此为专用函数不要用于其他程序中</span></span><br><span class="line">    arry = []</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        arry.append(<span class="built_in">str</span>(num % <span class="number">2</span>))</span><br><span class="line">        num = num // <span class="number">2</span></span><br><span class="line">        <span class="keyword">if</span> num == <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">while</span> <span class="built_in">len</span>(arry)%<span class="number">4</span>!=<span class="number">0</span>:</span><br><span class="line">        arry.append(<span class="string">&#x27;0&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;&quot;</span>.join(arry[::-<span class="number">1</span>])  <span class="comment"># 列表切片倒叙排列后再用join拼接</span></span><br></pre></td></tr></table></figure>
+<p>下面进行填充的操作。将填充的方法归属于MD5对象专用，以防意外调用：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">fill</span>(<span class="params">self</span>):</span><br><span class="line">    bininput = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    raw_input=self.message</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(raw_input)):</span><br><span class="line">        c = decToBin(<span class="built_in">ord</span>(raw_input[i]))</span><br><span class="line">        bininput += c</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">len</span>(bininput) % <span class="number">512</span> != <span class="number">448</span>):</span><br><span class="line">        <span class="keyword">if</span> ((<span class="built_in">len</span>(bininput) + <span class="number">1</span>) % <span class="number">512</span> != <span class="number">448</span>):</span><br><span class="line">            bininput += <span class="string">&#x27;1&#x27;</span>  <span class="comment"># 补1</span></span><br><span class="line">        <span class="keyword">while</span> (<span class="built_in">len</span>(bininput) % <span class="number">512</span> != <span class="number">448</span>):</span><br><span class="line">            bininput += <span class="string">&#x27;0&#x27;</span>  <span class="comment"># 其余位补0直到满足长度为512*n+448</span></span><br><span class="line">    length = <span class="built_in">len</span>(raw_input) * <span class="number">8</span>  <span class="comment"># ASCII码位数</span></span><br><span class="line">    <span class="keyword">if</span> length &lt;= <span class="number">255</span>:</span><br><span class="line">        length = decToBin(length)  <span class="comment"># 二进制转换，此时length保留位数为8</span></span><br><span class="line">        <span class="keyword">while</span> <span class="built_in">len</span>(length) &lt; <span class="number">8</span>:</span><br><span class="line">            length = <span class="string">&#x27;0&#x27;</span> + length</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        temp = decToBin(length)</span><br><span class="line">        <span class="keyword">while</span> <span class="built_in">len</span>(length) &lt; <span class="number">16</span>:</span><br><span class="line">            length = <span class="string">&#x27;0&#x27;</span> + length</span><br><span class="line">        length = length[<span class="number">8</span>:<span class="number">12</span>] + length[<span class="number">12</span>:<span class="number">16</span>] + length[<span class="number">0</span>:<span class="number">4</span>] + length[<span class="number">4</span>:<span class="number">8</span>]</span><br><span class="line">    bininput += length</span><br><span class="line">    <span class="keyword">while</span> <span class="built_in">len</span>(bininput) % <span class="number">512</span> != <span class="number">0</span>:</span><br><span class="line">        bininput += <span class="string">&#x27;0&#x27;</span></span><br><span class="line">    self.temptext=bininput</span><br></pre></td></tr></table></figure>
+<h2 id="4轮循环"><a href="#4轮循环" class="headerlink" title="4轮循环"></a>4轮循环</h2><h3 id="分解消息子块"><a href="#分解消息子块" class="headerlink" title="分解消息子块"></a>分解消息子块</h3><p>下面将得到的临时变量进行分组。将其分解成$16*32$的矩阵，并将其存放于<code>Mlist</code>中。后续将配合MD5类中的m矩阵进行操作。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">Cycolyce</span>(<span class="params">self</span>):</span><br><span class="line">    Mlist=[]<span class="comment">#分16组</span></span><br><span class="line">    bininput=self.temptext</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="number">512</span>,<span class="number">32</span>):<span class="comment">#16</span></span><br><span class="line">        sym=<span class="string">&#x27;&#x27;</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="built_in">len</span>(bininput[i:i+<span class="number">32</span>]),<span class="number">4</span>):</span><br><span class="line">            temp=<span class="built_in">hex</span>(<span class="built_in">int</span>((bininput[i:i+<span class="number">32</span>][j:j+<span class="number">4</span>]),<span class="number">2</span>))<span class="comment">#取十六进制</span></span><br><span class="line">            sym+=temp[<span class="number">2</span>]<span class="comment">#只取字母 忽略前面的0x 为下面的小端排序做准备</span></span><br><span class="line"></span><br><span class="line">        sym_tmp=<span class="string">&#x27;&#x27;</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">8</span>,<span class="number">0</span>,-<span class="number">2</span>):<span class="comment">#小端排序</span></span><br><span class="line">            temp=sym[j-<span class="number">2</span>:j]</span><br><span class="line">            sym_tmp+=temp</span><br><span class="line"></span><br><span class="line">        fn_sym=<span class="string">&#x27;&#x27;</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(sym_tmp)):</span><br><span class="line">            fn_sym+=decToBin(<span class="built_in">int</span>(sym_tmp[j], <span class="number">16</span>))<span class="comment">#再次转换成二进制</span></span><br><span class="line">        Mlist.append(fn_sym)</span><br></pre></td></tr></table></figure>
+<h3 id="四轮循环的操作"><a href="#四轮循环的操作" class="headerlink" title="四轮循环的操作"></a>四轮循环的操作</h3><p>我们需要定义如下四个函数：</p>
+<script type="math/tex; mode=display">
+F(x,y,z)=(x\land y)\lor (\overline x \land z)\\
+G(x,y,z)=(x\land z)\lor (y \lor \overline z)\\
+H(x,y,z)=x\oplus y \oplus z\\
+I(x,y,z)=y\oplus(x\lor \overline z)</script><p>以及定义四个操作：</p>
+<script type="math/tex; mode=display">
+FF(a,b,c,d,Mj,s,Ti)=(F(b,c,d)+a+mj+Ti)<<s\\
+GG(a,b,c,d,Mj,s,Ti)=(G(b,c,d)+a+mj+Ti)<<s\\
+HH(a,b,c,d,Mj,s,Ti)=(H(b,c,d)+a+mj+Ti)<<s\\
+II(a,b,c,d,Mj,s,Ti)=(I(b,c,d)+a+mj+Ti)<<s\\</script><p>其中，$&lt;&lt;$是循环左移，$\oplus$是异或操作。在程序实现中，将四个函数定义在MD5类外，四个操作定义在MD5类以内。如此操作有两个原因：</p>
+<ul>
+<li>定义在外部的函数可以根据需求进行更改，对于封装后的类调用而言更具操作性</li>
+<li>定义在类内部的操作是MD5的专用函数，必须专类专用</li>
+<li>二者分离有助于设置断点、检查中间结果进行调试分析</li>
+</ul>
+<p>定义完函数以及相关操作后，我们将进行如下操作：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="number">16</span>, <span class="number">4</span>):</span><br><span class="line">    self.FF(Mlist[m[j]], s[j], T[j])</span><br><span class="line">    self.FF(Mlist[m[j+<span class="number">1</span>]], s[j+<span class="number">1</span>], T[j+<span class="number">1</span>])</span><br><span class="line">    self.FF(Mlist[m[j+<span class="number">2</span>]], s[j+<span class="number">2</span>], T[j+<span class="number">2</span>])</span><br><span class="line">    self.FF(Mlist[m[j+<span class="number">3</span>]], s[j+<span class="number">3</span>], T[j+<span class="number">3</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="number">16</span>, <span class="number">4</span>):</span><br><span class="line">    self.GG(Mlist[m[<span class="number">16</span>+j]], s[<span class="number">16</span>+j], T[<span class="number">16</span>+j])</span><br><span class="line">    self.GG(Mlist[m[<span class="number">16</span>+j+<span class="number">1</span>]], s[<span class="number">16</span>+j+<span class="number">1</span>], T[<span class="number">16</span>+j+<span class="number">1</span>])</span><br><span class="line">    self.GG(Mlist[m[<span class="number">16</span>+j+<span class="number">2</span>]], s[<span class="number">16</span>+j+<span class="number">2</span>], T[<span class="number">16</span>+j+<span class="number">2</span>])</span><br><span class="line">    self.GG(Mlist[m[<span class="number">16</span>+j+<span class="number">3</span>]], s[<span class="number">16</span>+j+<span class="number">3</span>], T[<span class="number">16</span>+j+<span class="number">3</span>])</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="number">16</span>, <span class="number">4</span>):</span><br><span class="line">    self.HH(Mlist[m[<span class="number">32</span>+j]], s[<span class="number">32</span>+j], T[<span class="number">32</span>+j])</span><br><span class="line">    self.HH(Mlist[m[<span class="number">32</span>+j+<span class="number">1</span>]], s[<span class="number">32</span>+j+<span class="number">1</span>], T[<span class="number">32</span>+j+<span class="number">1</span>])</span><br><span class="line">    self.HH(Mlist[m[<span class="number">32</span>+j+<span class="number">2</span>]], s[<span class="number">32</span>+j+<span class="number">2</span>], T[<span class="number">32</span>+j+<span class="number">2</span>])</span><br><span class="line">    self.HH(Mlist[m[<span class="number">32</span>+j+<span class="number">3</span>]], s[<span class="number">32</span>+j+<span class="number">3</span>], T[<span class="number">32</span>+j+<span class="number">3</span>])</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="number">16</span>, <span class="number">4</span>):</span><br><span class="line">    self.II(Mlist[m[<span class="number">48</span>+j]], s[<span class="number">48</span>+j], T[<span class="number">48</span>+j])</span><br><span class="line">    self.II(Mlist[m[<span class="number">48</span>+j+<span class="number">1</span>]], s[<span class="number">48</span>+j+<span class="number">1</span>], T[<span class="number">48</span>+j+<span class="number">1</span>])</span><br><span class="line">    self.II(Mlist[m[<span class="number">48</span>+j+<span class="number">2</span>]], s[<span class="number">48</span>+j+<span class="number">2</span>], T[<span class="number">48</span>+j+<span class="number">2</span>])</span><br><span class="line">    self.II(Mlist[m[<span class="number">48</span>+j+<span class="number">3</span>]], s[<span class="number">48</span>+j+<span class="number">3</span>], T[<span class="number">48</span>+j+<span class="number">3</span>])</span><br></pre></td></tr></table></figure>
+<h2 id="初值相加与拼接输出"><a href="#初值相加与拼接输出" class="headerlink" title="初值相加与拼接输出"></a>初值相加与拼接输出</h2><p>完成四轮循环后，需要将此时的ABCD与初始的ABCD相加，并进行小端排序。将小端排序后的结果拼接即可得到MD5加密的结果。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">self.A = (self.A+self.init_A)%<span class="built_in">pow</span>(<span class="number">2</span>, <span class="number">32</span>)</span><br><span class="line">        <span class="built_in">print</span>(self.A)</span><br><span class="line">        self.B = (self.B+self.init_B)%<span class="built_in">pow</span>(<span class="number">2</span>, <span class="number">32</span>)</span><br><span class="line">        <span class="built_in">print</span>(self.B)</span><br><span class="line">        self.C = (self.C+self.init_C)%<span class="built_in">pow</span>(<span class="number">2</span>, <span class="number">32</span>)</span><br><span class="line">        <span class="built_in">print</span>(self.C)</span><br><span class="line">        self.D = (self.D+self.init_D)%<span class="built_in">pow</span>(<span class="number">2</span>, <span class="number">32</span>)</span><br><span class="line">        <span class="built_in">print</span>(self.D)</span><br><span class="line"></span><br><span class="line">        answer = <span class="string">&quot;&quot;</span></span><br><span class="line">        <span class="keyword">for</span> each <span class="keyword">in</span> [self.A, self.B, self.C, self.D]:</span><br><span class="line">            each = <span class="built_in">hex</span>(each)[<span class="number">2</span>:]</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">8</span>, <span class="number">0</span>, -<span class="number">2</span>):</span><br><span class="line">                answer += <span class="built_in">str</span>(each[i - <span class="number">2</span>:i])</span><br><span class="line">        <span class="keyword">return</span> answer</span><br></pre></td></tr></table></figure>
+<p>我们可以运行一下检验成果：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">MD=md5(<span class="string">&#x27;abc&#x27;</span>)</span><br><span class="line">MD.fill()</span><br><span class="line">result=MD.Cycolyce()</span><br><span class="line"><span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>通信技术</category>
+        <category>加密技术</category>
+      </categories>
+      <tags>
+        <tag>Python</tag>
+        <tag>数字签名</tag>
+        <tag>MD5</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Street Fighter vs. DQN Fighter</title>
     <url>/2022/07/29/DQN%E8%87%AA%E6%88%91%E5%AE%9E%E8%B7%B5/</url>
     <content><![CDATA[<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>I would like to apply an improved DQN to the Game Street Fighter V, an action game published by CAPCOM in 2016. This project was inspired by LinYi and I try to use DQN without HPE(Human Pose Estimation) due to the limitation of my hardware.</p>
@@ -44,6 +238,102 @@
         <tag>强化学习</tag>
         <tag>街头霸王</tag>
         <tag>DQN</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>【文献翻译】使用深度强化学习游玩雅达利游戏</title>
+    <url>/2022/07/29/Paper%20Translation/</url>
+    <content><![CDATA[<center><h1>摘要</center>
+
+<blockquote>
+<p>我们提出首个直接通过传感器高维输入并成功地学习到策略控制的深度学习模型。这个模型的是一个卷积神经网络的结构，它使用Q-learning的变种进行训练，使用远摄关的图片作为输入，输出是预测未来收益的价值。我们将我们的方法运用至Arcade Learning环境中的雅达利2600的七个游戏里，在没有调整算法的结构的条件下，我们发现它在其中六个游戏中取得比之前方法更好的表现，它在其中三个游戏中取得了超越人类专家的表现。</p>
+</blockquote>
+<span id="more"></span>
+<h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>直接从像视觉和语音等高维传感输入信息来学习控制智体一直以来都是强化学习(RL)的一个挑战。大部分成功的RL在这些领域的操作应用都需要依赖人工干预的线性价的值函数或策略函数进行特征提取整合。显然，这些RL算法的表现严重依赖于所选取的特征的质量。</p>
+<p>最近深度学习的优势是它能够从原生的传感器数据中提取深层次的特征，并在计算机视觉任务[11,22,16]和语言识别任务[6,7]中取得突破性进展。这些方法使用了一系列的神经网络结构，包括卷积神经网络、多层感知机，受限玻尔兹曼机器和循环神经网络，他们都在监督和无监督学习中得到了应用,这样一来似乎很自然地会思考相似的技术是否能对RL的传感器数据有所帮助。</p>
+<p>然而强化学习在从深度学习的观点来看有几个挑战。首先大部分成功的深度学习案例都需要大量的人工标注的训练数据。从另一个方面来说，RL的算法必须要能从量化的奖罚信号中进行学习，而这些奖罚信号通常都是充满噪声、延迟和离散的。执行动作后的以及随之而来的奖罚可能需要等待非常久的时间，在这一点上和有监督学习中的输入与输出的直接关联相比就显得艰难非常。另一个问题是绝大多数的深度学习算法都是基于样本数据之间是独立的这一假设的，但是在强化学习中通常就是状态与状态之间紧密相连，关系复杂。并且，在RL中数据概率分布会随着算法学习到新的行为而随之改变，这对深度学习基于固定概率的条件来说无疑是个的问题。</p>
+<p>本文提出了一种可以克服这些挑战以学习到成功的控制策略的卷积神经网络，而它仅需要使用复杂的RL环境中的原生视频数据。这个网络使用了一种Q-learning 的变种算法[26]进行训练，使用随机梯度下降法进行网络参数的更新。为了避免相关数据和概率不变的问题，我们使用了一种经验回放机制[13]，他能够随机地从经验池中抽取这些学习的经验，因此这能平缓训练时对先前学习到的动作分布概率。</p>
+<p><img src="https://s2.loli.net/2022/05/26/6w8c9R5T7DOHEBm.gif" alt="img" style="zoom:150%;" /></p>
+<p><small>图1  雅达利2600五种游戏的屏幕截图：（从左至右）Pong, Breakout, Space Invaders, Seaquest, Beam Rider</small></p>
+<p>我们将我们的方法应用于在Arcade Learning Environment(ALE)[3]中一系列的雅达利2600游戏中。雅达利2600是一个充满挑战性的RL测试平台，它为智体提供了高纬度的视觉输入信息(210*160大小的RGB彩色图像，屏幕刷新率为60Hz)以及为人类设计的苦难但多样有趣的挑战任务。我们的目标是去创建一个单独的神经网络作为智体使它能够成功的学习玩尽可能多的游戏。这个网路并不会被提供任何游戏相关的信息或者人为给定的视觉特征，并且也不能直接读取游戏环境的内存数据，它只能从视觉信息、奖罚西欧马屁、游戏结束信号以及一个可选则的动作空间进行学习，就和人类玩家一样。更进一步，网络结构和所有的超参数将在训练过程中保持不变。目前网络已经在7个中的6个游戏中超越之前的所有强化学习算法的性能，并且在三个游戏中甚至还取得了超越人类专家游玩的水平。图片[1]展示了五个用于训练的游戏截图。</p>
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>我们将问题转换为如下场景：智体在环境$\cal \varepsilon$即雅达利2600模拟器中，在每一个时间步中智体从一系列的合法动作集合$\cal A=\{1,…,K\}$中，选取一个动作$a_t$。这个选择的动作将会被传递至模拟器中并更改了游戏的底层交互数据和游戏得分，一般来说$\sf \varepsilon$是随机的。这些底层的交互数据对智体而言不可见，对它而言它只能从模拟器中观测到一张图片$x_t\in X^d$，这张图片其实一个原生的像素值的向量，描绘了当前的模拟器画面。除此之外，智体还会接收到一个奖罚信号$r_t$，代表了游戏的分的变化。注意一般来说游戏分数取决于之前的动作决策序列和观测；关于动作决策的评价反馈可能在决策做出之后的许多时间步之后才得到。</p>
+<p>由于智体只能观测到当前屏幕的图片信息，我们的任务只能观测到片面的信息，比如说对于整个游戏当前的状态而言，仅用一张图片$x_t$是很难表述的。因此我们需要考虑动作序列和观测的序列$s_t=x_1,x_2,…,x_{t-1},x_t$，我们将基于这些序列学习游戏的策略。我们认为所有的在模拟器中迭代的序列将在有限的时间步中终止。这种规范化使得我么你的问题变成一个庞大但有限的马尔可夫决策过程（MDP），在这种情况中每一个序列是一个独立的状态。最终，我们可以在马尔科夫链中使用标准的强化学习算法，仅简单地使用完整的状态序列$s_t$作为每一个时间的表征。</p>
+<p>​        智体学习的目标是通过选择一个能在未来带来最大化回报的动作，并将这个动作与模拟器交互。我们基于“未来的回报将会随着每一个时间步以一个折扣因子$\gamma$的倍率进行衰减”这一标准的设想，定义未来$t$时刻未来折扣汇报$R_t = \sum_{t’=t}^{T}\gamma^{t’-t}r_{t’}$，其中$T$是终止时的时间步。我们定义一个最优动作-价值函数$Q^{*}$，它表示为在观测一些序列$s$后根据任一策略采取一些动作$a$所期望得到的最大回报值，定义如下：$Q^{*}(s,a)=\max_\pi\Bbb E[R_t|s_t=s,a_t=a,\pi]$，其中$\pi$是一个策略，表述了一个状态到动作的映射的关系（或者状态到动作的概率分布映射）。</p>
+<p>​        最优的动作价值函数遵循一个非常的性质，即贝尔曼方程。它基于如下的设想：如果某一状态的最优的动作价值$Q^{*}$在下一个时间步中成为了所有可行动作的参考，那么最优的策略就是选择动作价值最高的动作$a’$以获取最大化的期望值$r+\gamma Q^{*}(s’,a;)$，</p>
+<script type="math/tex; mode=display">
+Q^{*}(s,a)=\Bbb E_{s'\sim\varepsilon}[r+\gamma \max_{a'}Q^{\*}(s',a')|_{s,a}]</script><p>​        许多强化学习算法的背后逻辑就是找到用于衡量动作价值函数的方法，通过使用贝尔曼方程作为迭代更新，更新的动作价值为$Q_{i+1}(s,a)=\Bbb E[r+\gamma \max_{a’}Q_i(s’,a’)|s,a]$。这种动作价值的迭代算法会依最优的动作价值函数收敛，即当$i\rightarrow\infty$时$Q_i\rightarrow Q^{*}$[23]。在实践中，这种方法是非常不切实际的，因为动作价值函数是会依据每一个状态序列进行独立的估计且不具备泛化能力。因此，我们很自然地会想到用一个近似的函数取拟合动作价值函数，$Q(s,a;\theta)\approx Q^{*}(s,a)$。在强化学习领域常会使用一个线性的函数进行拟合，但是有时一个非线性的函数也会被用于拟合，比如说神经网络。我们参考使用了一个权重为$\theta$的神经网络作为价值评估网络——Q网络。Q网络可以通过最小化变化的每一迭代$i$过程中损失函数序列值$L_i(\theta_i)$来训练：</p>
+<script type="math/tex; mode=display">
+L_i(\theta_i)=\Bbb E_{s,a\sim \rho(·)}[(y_i-Q(s,a;\theta_i))^2]</script><p>​        其中$y_i=\Bbb E_{s’\sim\varepsilon}[r+\gamma \max_{a’}Q(s’,a;\theta_{i-1})-Q(s,a;\theta_i)|_{s,a}]$是迭代$i$过程中的目标值，$\rho(s,a)$是一个基于所有状态$s$和动作$a$的概率分布，我们称之为行为分布。在前一步的迭代过程中的网络参数$\theta_{i-1}$会在优化损失函数值$L_i(\theta_i)$时被冻结（即不是所有时候都是冻结的），注意到目标值是基于神经网络的参数权重的，这和我们在有监督学习中的目标值有所区别，在监督学习中这个值在学习时一般都是固定住的。我们使用如下的梯度进行损失函数的微分：</p>
+<script type="math/tex; mode=display">
+\nabla_{\theta_i}L_i(\theta_i)= \Bbb E_{s,a\sim\rho(·);s'\sim\varepsilon}[(r+\gamma\max_{a'}Q(s',a';\theta_{i-1})-Q(s,a;\theta_i))\nabla_{\theta_i}Q(s,a;\theta_i)]</script><p>​        比起按上述公式的梯度计算完整的期望值，我们通常使用随机梯度下降方法进行计算以优化损失。如果权重在每一个时间步根据行为分布$\rho$、模拟器环境$\varepsilon$的单个样本替换期望继续宁更新，那么我们就得到了熟悉的Q-learning算法了[26]。</p>
+<p>​        注意到这是个model-free的算法，即它通过直接使用模拟器的环境$\varepsilon$抽样解决强化学习的问题，但不需要针对这个模拟器的环境$\varepsilon$进行建模和估计。同时它也是off-policy的，也就是说它会学习一个贪心的策略 $a=max_aQ(s,a;\theta)$同时也会以一定恰当的概率分布对状态空间进行探索。在实践中，我们一般使用贪心$\epsilon$策略，即使用$1-\epsilon$的概率使用决策的动作输出，以概率$\epsilon$选择一个随机的动作。</p>
+<h2 id="相关工作"><a href="#相关工作" class="headerlink" title="相关工作"></a>相关工作</h2><p>​        也许强化学习中的最广为人知的成功故事是IBM 的 Gerald Tesauro 开发的一个玩西洋双陆棋戏的程序——TD-gammom ，也即一个通过强化学习自学如何下棋的神经网络，并获得了超越人类水平的成绩[24]。TD-gammom使用了一个model-free的和Q-learning近似的强化学习算法，使用一个多个的隐藏层的网络用于感知特征以拟合价值函数。</p>
+<p>​        然而早期在尝试复现TD-gammom的时候，包括尝试在棋类游戏中使用相同的算法时，围棋和跳棋的效果就不如人意了。这就引来了一阵关于TD-gammom的方法是一个只能在双陆棋得到应用的成功特例的说法，也许是因为投骰子的随机性对状态空间的探索提供了帮助并且也使得它的价值函数尤其平缓顺滑[19]。</p>
+<p>更进一步说，model-free的强化学习算法比如Q-learning使用了非线性函数进行动作价值函数的拟合[25]，也许off-policy的学习方式确实会导致Q网络的发散的情况[1]。这些争议与讨论带来的就是强化学习的主要理论工作转移到了线性函数的拟合以获取更好的收敛性和收敛的保障[25]。</p>
+<p>​        最近，深度学习和强化学习的结合的趋势再次复苏。深度神经网络已经被应用于评估环境$\varepsilon$，受限玻尔兹曼机也被用于拟合价值函数[21]或者行为决策[9]。除此之外，最近梯度时分差分的方法的提出为Q-learning的发散问题带来了部分条件下的解决的方案。这些方法被证明当使用一个固定的用非线性函数拟合的策略可以保证模型的收敛[14]，或者可以使用一个受限的Q-learning的变种方法[15]用线性函数学习拟合一个控制策略，然而这些方法都没扩展至非线性的控制问题上。</p>
+<p>​        也许之前和我们方法最接近的方法就是使用神经拟合Q-learning（NFQ）[20]，它使用公式2的损失函数进行优化，并且使用RPROP算法进行Q网络的参数更新。然而，它在每一个迭代计算的基于使用依据数据集大小的代价进行批量更新，因此我们认为随机梯度更新在每一个迭代过程中的大规模数据集中计算的代价将会是一个非常小的常数。NFQ同样被成功应用于简单的真实世界控制任务，而且也是使用简单的树蕨输入，首先通过自动笔爱你吗其去歇息低维度的任务表征，然后将NFQ应用于该表征中进行控制[12]。与之对比，我们的方法是一个端到端的强化学习过程，直接以视觉作为输入，结果也显示这种方法一样能通过动作价值函数的评价直接学习到特征。Q-learning在之前也被应用于结合了经验回放机制和简单的神经网络[13]中，但其输入也是基于低维度的状态而不是原始的视觉信息输入。</p>
+<p>​        使用雅达利2600模拟器作为强化学习平台是参考了Marc G Bellemare[3]等的论文，他们将线性函数拟合和普通视觉信息输入应用在强化学习算法中。然后，实验的结果在后续使用更多特征和tug-of-war散列法随机映射至低维空间中的方法的改进后得到提升[2]。HyperNEAT进化架构[8]也被应用于Atari平台，用来（分别针对每款不同的游戏）形成一个表示游戏策略的神经网络。 当用模拟器的重置机制来与确定性序列做反复对抗训练时，我们发现这些策略可以利用几款Atari游戏中的设计缺陷。</p>
+<h2 id="深度强化学习"><a href="#深度强化学习" class="headerlink" title="深度强化学习"></a>深度强化学习</h2><p>​        计算机视觉和语音识别领域最近取得的一些突破，靠的就是可以在大型训练集上高效地训练深度神经网络。 其中最成功的方法是通过使用基于随机梯度下降的轻量级更新，直接用原始输入进行训练。向深度神经网络输入足够多的数据，这样常常可以学习到比人工生成的特征更好的表征[11]。 这些成功案例为我们的强化学习方法提供了启发。我们的目标是将强化学习算法与深度神经网络对接起来，这里所说的神经网络可以直接学习RGB图像，并通过使用随机梯度更新来有效地处理训练数据。</p>
+<p>​        Tesauro的TD-Gammon架构为这种方法提供了一个起点。该架构利用算法与环境的直接交互（或通过自玩，西洋双陆棋）产生的策略性经验样本$(s_t,a_t,r_t,s_{t+1},a_{t+1})$，对价值函数估计网络的参数进行更新。由于该算法在20年前能超越了水平最高的人类西洋双陆棋玩家，所以我们想知道，二十年的硬件改进以及现代深度神经网络架构和可扩展RL算法是否能让强化学习实现重大进展。</p>
+<p>​        不同于TD-Gammon和类似的在线方法，我们使用了一种叫做“经验回放”[13]的方法：将智体在每个时间步长$e_t=(s_t,a_t,r_t,s_{t+1})$上的经验储存在数据集$\cal D=e_1,…,e_N,$中，将许多episode的经验汇集至经验池中。在算法进行内部循环时，我们将Q-learning算法更新或小批量更新应用于经验样本$\cal e\sim\cal D$，这些样本是从经验池中随机抽取的。 执行经验回放后，智体根据$\epsilon$贪心策略选择动作决策。由于用任意长度的历史表征作为神经网络的输入较难实现，所以我们的Q函数使用的是函数$\phi$生成的固定长度的历史表征。 算法1给出了完整的算法流程，我们将之称为深度Q-learning算法。</p>
+<p><img src="https://s2.loli.net/2022/05/26/AoOKdq4CNsDGiPu.png" alt="image-20220526094753105"></p>
+<p>​        </p>
+<p>这种方法和标准的online Q-learning相比有几个优点[23]。受限，每一步的经验都可能会在许多网络权重更新中起作用，数据的有效性大幅增加。其次由于样本之间存在很强的相关性，直接学习连续样本效率很低；随机化样本会破坏这些相关性，减少更新的方差。第三，当学习策略时，当前的参数确定用于训练参数的下一数据样本。举个例子，如果最大化动作是向左移动，训练样本将由左侧的样本主导;如果最大化动作切换到右边，训练数据分布也会切换到右边。很容易看出，这样可能会产生不必要的反馈循环，并且参数也可能会被困在局部最小值，甚至发生严重的发散[25]。通过使用经验回放，在先前状态下的行为分布就会得到变得均匀，这样学习过程就会变得平缓化，并参数也不会出现振荡或发散。需要指出，当使用经验池抽取经验进行学习时off-policy的方法的学习非常有必要（因为我们当前的参数和产生经验使用的参数不同），这就启发了我们使用Q-learning。</p>
+<p>​        在实践中，我们的算法仅在经验池中存储最后N个经验元组，并且在执行更新时均匀地从D中随机采样。 这种方法在某些方面有一定局限，因为存储缓冲器并不区分重要的经验；而且由于存储容量N有限，存储缓冲器总是用最新的转移重写记忆。同样，均匀采样使得回放记忆中的所有转移具有相等的重要性。 更复杂的抽样策略可能会强调可以提供最多信息的转换，类似于优先扫除[17] 。</p>
+<h3 id="预处理和模型结构"><a href="#预处理和模型结构" class="headerlink" title="预处理和模型结构"></a>预处理和模型结构</h3><p>​    直接使用原始的Atari框架（128色的210×160像素图像）可能在计算上要求很高，所以我们应用了一个基本的预处理步骤来减少输入维数。进行预处理时，首先将原始帧的RGB图像表示转换成灰度图像，并将其下采样成110×84图像。通过从图像上裁剪一个可以大致捕获到游戏区域的的84×84画面，获得最终的输入表征。 然后进行最后的裁剪，因为我们使用的是Alex等提出的的2D卷积GPU实现[11]，需要方形的输入图像。在该论文的实验中，算法1的函数$\phi$将该预处理过程应用于历史记忆的最后4帧，并将它们叠加以生成Q函数的输入。</p>
+<p>​    用神经网络参数化Q函数的方法有许多种。 由于Q函数可以将历史动作对映射到其Q值的标量估计上，所以先前的一些的方法可以将历史和动作作为神经网络的输入[20,12]。 这类架构的主要缺点是需要单独进行一次前向传递来计算每个动作的Q值，这样会导致计算成本与动作数呈正比。 在我们使用的架构中，其中每个可能的动作都对应一个单独的输出单元，神经网络的输入只有状态表征。 输出则对应于输入状态的单个动作的预测Q值。 这类架构的主要优点是只需进行一遍前进传递，就可以计算某一给定状态下所有可能动作的Q值。 </p>
+<p>​    下面我们将描述七个Atari游戏所使用的架构。 神经网络的输入是由$\phi$产生的84×84×4图像。 第一个隐藏层用16个步长（stride）为4的8×8卷积核与输入图像进行卷积， 并使用非线性的激活函数ReLU函数[10,18]。 第二个隐层用32个步长为2的4×4卷积核进行卷积，应用同样的非线性激活函数ReLU函数。最后一个隐层为完全连接层，由256个激活函数单元组成。输出层是一个线性的完全连接层，每个有效的动作对应一个输出。在我们研究的游戏中，有效动作的数量在4到18之间变化。我们把用该方法训练的卷积网络称为深度Q网络（DQN）。</p>
+<h2 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h2><p>​        截至目前，我们用7款流行的ATARI游戏进行了试验——Beam Rider、Breakout、Enduro、Pong、Q*bert、Seaquest和Space Invader。在这7款游戏中，我们使用相同的网络架构、学习算法和超参数设置，以证明我们的方法还是能够在不获取特定游戏信息的条件下成功应用于多种游戏中。当在真实且未改动的游戏中对智体进行评估时，我们在训练期间只对游戏的奖励机制作出了一个改变。由于各游戏的得分范围大不相同，我们将所有正奖励都设定为1，将所有负奖励设定为-1，无变化情况设为0奖励。这样的奖励设置可以限制误差范围，便于在多种游戏中使用同一学习率。同时，该奖励机制还会影响智体的表现，因为它无法区分不同大小的奖励。</p>
+<p>​        在这些试验中，我们使用的是mini batch大小为32的RMSProp算法。训练中的行为策略为：ϵ-greedy的ϵ在前100万帧从1 线性下降到0.1，然后保持在0.1不变。我们共训练了100万帧，并使用了最近100万帧的回放记忆。</p>
+<p>​        在按照前文中的方法玩Atari游戏时，我们还使用了一种简单的跳帧技巧[3]。更确切地说，智体在每隔k帧而不是在每一帧观察并选择动作，在跳过的帧中则重复它的最后一个动作。由于模拟器向前运行一步需要的计算量少于智体选择一个动作的计算量，这种方法可以使智体在不大幅增加运行时间的情况下将游戏次数增加约k倍。除了Space Invader这款游戏，我们在其他游戏中都将k设为4，如果在这款游戏中将k设为4，就会看不见激光，因为跳过的帧与激光闪烁的时长相重叠。将k设定为3就可以看到激光，k值的改变就是不同游戏间的唯一超参数差异。</p>
+<h3 id="训练和稳定性"><a href="#训练和稳定性" class="headerlink" title="训练和稳定性"></a>训练和稳定性</h3><p>​        在监督学习中，通过使用训练集和验证集评估模型，我们可以轻易地追踪模型在训练期间的性能。但是在强化学习中，在训练期间准确评估智体的性能可能会十分困难。如Marc G Bellemare所述[3]，我们的评估指标是在若干游戏中智体在某一episode或游戏中得到的总奖励的平均值。而且我们在训练中周期性地计算该指标。总奖励均值指标往往很嘈杂，因为权重的小小改变可能会导致策略访问的状态的分布发生很大的变化。图2中最左侧的两个线图显示了总奖励均值在游戏Seapuest和Breakout的训练期间是如何变化的。这两个总奖励均值线图确实很嘈杂，给人的印象是学习算法的运行不稳定。</p>
+<p><img src="https://s2.loli.net/2022/05/26/uqRvEcmjGKDf9h5.png" alt="image-20220526095121441"></p>
+<p><small>图2：  左边两图分别展示了训练时Breakout和Seaquest每回合的平均奖励值。数据是使用$\varepsilon=0.05$的$\varepsilon -greedy$策略在运行10000步计算得到的。右图的两图则分别展示了Breakout和Seaquest部分状态下的平均最大的动作价值。大约每三十分钟每一个回合约有50000条抽样数据用于更新</small></p>
+<p><img src="https://s2.loli.net/2022/05/26/Qr4Mp86NOykVTxL.png" alt="image-20220526100408551"></p>
+<p><small>图3  最左端的图表展示了Seaquest的30帧数据预测的价值函数。三张屏幕截图分别对应图表中的A，B，C三个时刻。</small></p>
+<p>​        右侧的两个线图则较为稳定，指标是指策略的预估动作分值函数Q，该函数的作用是预测在任何给定状态下智体遵循其策略所能获得的惩罚后的奖励。我们在训练开始前运行某一随机策略，收集固定数量的状态，并追踪这些状态的最大预测Q值的均值。从图2最右侧的两个线图可以看出，预测平均Q值的增加趋势要比智体获得的总奖励的均值平缓得多，其余5个游戏的平均Q值的增长曲线也很平缓。除了预测Q值在训练期间有较为平缓的增长，我们在试验中未发现任何发散问题。这表明，除了缺乏理论上的收敛保证，我们的方法能够使用强化学习信合和随机梯度下滑以稳定的方式训练大型神经网络。</p>
+<h3 id="可视化和价值函数"><a href="#可视化和价值函数" class="headerlink" title="可视化和价值函数"></a>可视化和价值函数</h3><p>​        图3给出了游戏Seaquest中学到的价值函数的可视化形式。从图中可以看出，当屏幕左侧出现敌人后预测值出现跳跃（点A）。然后代理想敌人发射鱼雷，当鱼雷快要集中敌人时预测值达到最高点（点B）。最后当敌人消失后预测值差不多恢复到原始值（点C）。图3表明我们的方法能够在较为复杂一系列的事件中学习价值函数的变化方式。</p>
+<h3 id="主要的评估"><a href="#主要的评估" class="headerlink" title="主要的评估"></a>主要的评估</h3><p>​        我们将我们的结果与Marc中提出的方法进行了比较。该方法被称为“Sarsa”，Sarsa算法借助为Atari任务人工设计的多个特征集来学习线性策略，我们在[3,,4]中给出了表现最佳的特征集的得分[3]。Contingency算法的基本思路和Sarsa法相同，但是该方法可以通过学习智体控制范围内的屏幕区域的表征，来增强特征集[4]。需要指出，这两种方法都通过背景差分法吸纳了大量关于计算机视觉问题的知识，并将128种颜色中的每种颜色都作为一个单独的通道。由于许多Atari游戏中每种类型的目标所用的颜色通常都各不相同，将每种颜色作为一个单独的通道，这种做法类似于生成一个单独的二元映射，对每种目标类型进行编码。相比之下，我们的代理只接收原始RGB屏幕截图输入，并且必须学习自行检测目标。</p>
+<p>​        除了给出学习代理（learned agents）的得分，我们还给出了人类专业游戏玩家的得分，以及一种均匀地随机选择动作的策略。人类玩家的表现将表示为玩了两小时游戏后得到的奖励中值。需要指出，我们给出的人类玩家的得分要比Bellemare等人[3]论文中给出的得分高得多。至于学习方法，我们遵循的是Bellemare等人的论文==[3,5]==中使用的评估策略，并且我们还通过将$\epsilon$设定为0.05运行 ε 贪心策略来获得固定步数的平均得分。表1的前5行给出了所有游戏的各游戏平均得分。在这7款游戏中，我们的方法（标记为DQN）虽然没有吸纳任何关于输入的先验知识，结果还是大幅超越了其他学习方法.。</p>
+<p>​        我们同样将文献[8]中的策略搜索方法囊括进表格的后三行进行比较，并做出了两组使用该方法的结果。HNeat Best 的得分反映了通过使用人工标注的目标检测法现实游戏物体位置和类型.HNeat Pixel的得分反映的是使用特定的8种颜色通道代表雅达利游戏模拟器的特定物体类型。这两种方法依赖于确定的状态序列且不存在随机的扰动，因此与其他方法对比时对比的是单个会和下的最佳表现。相反的，我们的算法是在贪心$\epsilon$策略下进行评估的，因此必须对所有可能的情况进行归一化。然而，我们发现在所有展示的游戏中，除了Space Invaders这款游戏不单是我们算法的最优表现还是我们的平均表现都能达到一个相对较好的效果。</p>
+<p><img src="https://s2.loli.net/2022/05/26/aZeD57p8KGwxCWk.png" alt="image-20220526100647570"></p>
+<p><small>表1  上端的表格对比了使用贪心值为0.0.5的$\varepsilon-greedy$的不同学习方式平均总奖励。下端的表格展示了HNeat和DQN在单个回合中最佳表现分数。HNeat做出确定性策略与DQN使用$\varepsilon-greedy$的效果相同。</small></p>
+<p>​        最终我们发现我们的方法在Breakout，Enduro和Pong这三款游戏中达到了超越人类专家水平的水准，并且在Beam Rider种取得了与人类水平相近的成绩。Q*bert，Seaquest，Space Invaders这三款游戏我们依然与人类专家水平相比有较大的差距，但它充满了挑战性，因为他们需要网络找到一个从更长远的时间层面上考察的策略。</p>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>​        本文介绍了一种新的强化学习的深度学习模型，并通过在雅达利2600游戏中证明了其对困难游戏的控制能力，而它仅需要原始的像素信息作为输入。我们同时也展示了一种结合了随机批量更新和经验回放机制Q-learning的变种算法来降低训练强化学习中的深度神经网络难度。我们的方法在七个测试的游戏中的六个取得SOTA成果，并且没有调整过超参数和网络模型结构。</p>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><p>[1] Leemon Baird. Residual algorithms: Reinforcement learning with function approximation. In <em>Proceedings of the 12th International Conference on Machine Learning (ICML 1995)</em>, pages 30–37. Morgan Kaufmann, 1995.</p>
+<p>[2] Marc Bellemare, Joel Veness, and Michael Bowling. Sketch-based linear value function ap- proximation. In <em>Advances in Neural Information Processing Systems 25</em>, pages 2222–2230, 2012.</p>
+<p>[3] Marc G Bellemare, Yavar Naddaf, Joel Veness, and Michael Bowling. The arcade learning environment: An evaluation platform for general agents. <em>Journal of Artificial Intelligence</em> <em>Research</em>, 47:253–279, 2013.</p>
+<p>[4] Marc G Bellemare, Joel Veness, and Michael Bowling. Investigating contingency awareness using atari 2600 games. In <em>AAAI</em>, 2012.</p>
+<p>[5] Marc G. Bellemare, Joel Veness, and Michael Bowling. Bayesian learning of recursively fac- tored environments. In <em>Proceedings of the Thirtieth International Conference on Machine</em> <em>Learning</em> <em>(ICML</em> <em>2013)</em>, pages 1211–1219, 2013.</p>
+<p>[6] George E. Dahl, Dong Yu, Li Deng, and Alex Acero. Context-dependent pre-trained deep neural networks for large-vocabulary speech recognition. <em>Audio, Speech, and Language Pro-</em> <em>cessing,</em> <em>IEEE</em> <em>Transactions</em> <em>on</em>, 20(1):30 –42, January 2012.</p>
+<p>[7] Alex Graves, Abdel-rahman Mohamed, and Geoffrey E. Hinton. Speech recognition with deep recurrent neural networks. In <em>Proc.</em> <em>ICASSP</em>, 2013.</p>
+<p>[8] Matthew Hausknecht, Risto Miikkulainen, and Peter Stone. A neuro-evolution approach to general atari game playing. 2013.</p>
+<p>[9] Nicolas Heess, David Silver, and Yee Whye Teh. Actor-critic reinforcement learning with energy-based policies. In <em>European</em> <em>Workshop</em> <em>on</em> <em>Reinforcement</em> <em>Learning</em>, page 43, 2012.</p>
+<p>[10] Kevin Jarrett, Koray Kavukcuoglu, MarcAurelio Ranzato, and Yann LeCun. What is the best multi-stage architecture for object recognition? In <em>Proc. International Conference on Com-</em> <em>puter</em> <em>Vision</em> <em>and</em> <em>Pattern</em> <em>Recognition</em> <em>(CVPR</em> <em>2009)</em>, pages 2146–2153. IEEE, 2009.</p>
+<p>[11] Alex Krizhevsky, Ilya Sutskever, and Geoff Hinton. Imagenet classification with deep con- volutional neural networks. In <em>Advances in Neural Information Processing Systems 25</em>, pages 1106–1114, 2012.</p>
+<p>[12] Sascha Lange and Martin Riedmiller. Deep auto-encoder neural networks in reinforcement learning. In <em>Neural Networks (IJCNN), The 2010 International Joint Conference on</em>, pages 1–8. IEEE, 2010.</p>
+<p>[13] Long-Ji Lin. Reinforcement learning for robots using neural networks. Technical report, DTIC Document, 1993.</p>
+<p>[14] Hamid Maei, Csaba Szepesvari, Shalabh Bhatnagar, Doina Precup, David Silver, and Rich Sutton. Convergent Temporal-Difference Learning with Arbitrary Smooth Function Approxi- mation. In <em>Advances</em> <em>in</em> <em>Neural</em> <em>Information</em> <em>Processing</em> <em>Systems</em> <em>22</em>, pages 1204–1212, 2009.</p>
+<p>[15] Hamid Maei, Csaba Szepesva´ri, Shalabh Bhatnagar, and Richard S. Sutton. Toward off-policy learning control with function approximation. In <em>Proceedings of the 27th International Con-</em> <em>ference</em> <em>on</em> <em>Machine</em> <em>Learning</em> <em>(ICML</em> <em>2010)</em>, pages 719–726, 2010.</p>
+<p>[16] Volodymyr Mnih. <em>Machine Learning for Aerial Image Labeling</em>. PhD thesis, University of Toronto, 2013.</p>
+<p>[17] Andrew Moore and Chris Atkeson. Prioritized sweeping: Reinforcement learning with less data and less real time. <em>Machine</em> <em>Learning</em>, 13:103–130, 1993.</p>
+<p>[18] Vinod Nair and Geoffrey E Hinton. Rectified linear units improve restricted boltzmann ma- chines. In <em>Proceedings of the 27th International Conference on Machine Learning (ICML</em> <em>2010)</em>, pages 807–814, 2010.</p>
+<p>[19] Jordan B. Pollack and Alan D. Blair. Why did td-gammon work. In <em>Advances in Neural</em> <em>Information</em> <em>Processing</em> <em>Systems</em> <em>9</em>, pages 10–16, 1996.</p>
+<p>[20] Martin Riedmiller. Neural fitted q iteration–first experiences with a data efficient neural re- inforcement learning method. In <em>Machine Learning: ECML 2005</em>, pages 317–328. Springer, 2005.</p>
+<p>[21] Brian Sallans and Geoffrey E. Hinton. Reinforcement learning with factored states and actions.</p>
+<p><em>Journal</em> <em>of</em> <em>Machine</em> <em>Learning</em> <em>Research</em>, 5:1063–1088, 2004.</p>
+<p>[22] Pierre Sermanet, Koray Kavukcuoglu, Soumith Chintala, and Yann LeCun. Pedestrian de- tection with unsupervised multi-stage feature learning. In <em>Proc. International Conference on</em> <em>Computer</em> <em>Vision</em> <em>and</em> <em>Pattern</em> <em>Recognition</em> <em>(CVPR</em> <em>2013)</em>. IEEE, 2013.</p>
+<p>[23] Richard Sutton and Andrew Barto. <em>Reinforcement Learning:</em> <em>An Introduction</em>. MIT Press, 1998.</p>
+<p>[24] Gerald Tesauro. Temporal difference learning and td-gammon. <em>Communications of the ACM</em>, 38(3):58–68, 1995.</p>
+<p>[25] John N Tsitsiklis and Benjamin Van Roy. An analysis of temporal-difference learning with function approximation. <em>Automatic</em> <em>Control,</em> <em>IEEE</em> <em>Transactions</em> <em>on</em>, 42(5):674–690, 1997.</p>
+<p>[26] Christopher JCH Watkins and Peter Dayan. Q-learning. <em>Machine learning</em>, 8(3-4):279–292, 1992.</p>
+]]></content>
+      <categories>
+        <category>强化学习</category>
+      </categories>
+      <tags>
+        <tag>强化学习</tag>
+        <tag>文献翻译</tag>
       </tags>
   </entry>
   <entry>
@@ -238,203 +528,9 @@ P(z)={\sum_{k!}^{\lambda^ke^{-\lambda}}·
         <category>加密技术</category>
       </categories>
       <tags>
+        <tag>数字签名</tag>
         <tag>区块链</tag>
         <tag>通信</tag>
-        <tag>数字签名</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Polar码编码及SC译码Matlab仿真</title>
-    <url>/2022/07/29/G1831/</url>
-    <content><![CDATA[<p>2016年11月18日，在美国内华达州里诺召开的3GPP RAN1 #87次会议，确定Polar Code作为5G eMBB（增强移动宽带）场景下控制信道编码方案。极化码具有确定性的构造方法，并且是已知的唯一一种能够被严格证明“达到”信道容量的信道编码方法，因此我们将其作为研究对象，研究其编码/译码的实现。</p>
-<p><img src="https://s2.loli.net/2022/05/27/t4Gi5PnegJYhRkv.png" alt=""></p>
-<span id="more"></span>
-<h1 id="研究讨论"><a href="#研究讨论" class="headerlink" title="研究讨论"></a>研究讨论</h1><h3 id="研究现状"><a href="#研究现状" class="headerlink" title="研究现状"></a>研究现状</h3><p>在针对时延扩展较长的信道时，频域选择性严重衰落，会出现残留冗余造成带宽浪费，通过采用以信源状态转移关系为基础构建信源信道联合译码网格图，综合信源转移概率和信道转移概率计算统一的序列后验概率的方式，可以实现了信源译码和信道译码的一体化联合优化，进而在不降低通信速率的情况下提高传输可靠性，基本实现无误码通信。不仅如此，在对6G$^{[1]}$的展望中，消除冗余的Polar码仍具有较LDPC码更优的BER性能，对于高阶调制的Polar码和多核Polar码设计也处于研究阶段，但纠错性能有一定的局限性，因此，具有较高纠错性能的多核Polar码的设计仍在发展中，也许成功的研究会应用于6G的信道编码技术。不过本次我们的仿真旨在理解Polar Code的基础原理，因此采用最基础的原始理论进行编写。</p>
-<h3 id="研究意义"><a href="#研究意义" class="headerlink" title="研究意义"></a>研究意义</h3><p>作为一种新兴的码种，极化码在推出之时就获得学术界的广泛关注。它是第一个能达到香农极限的编码方式，因此在推动通信系统的性能发展中有不可限量的应用前途。作为通信系的学生，尝试研读、复现论文成果一来能锻炼科研的理解能力、实践能力，同时也能从中汲取到通信这一学科的前沿知识，能获得较高的实用价值。极化码的编码、译码是极化码的核心部分，也是小组成员拟研究的方向。</p>
-<h3 id="研究计划"><a href="#研究计划" class="headerlink" title="研究计划"></a>研究计划</h3><ul>
-<li>研读极化码的原始论文《Channel polarization: A method for constructing capacity-achieving codes for symmetric binary-input memoryless channels》，掌握信道极化的思想以及编码/译码思路；</li>
-<li>在Matlab中搭建仿真平台，完成极化码编码、译码实现；</li>
-<li>对比其他编码方式以及译码方式，对极化码实用性进行评估，并针对仿真结果，对编码译码方式进行考量并做出评价。</li>
-</ul>
-<h2 id="实现过程"><a href="#实现过程" class="headerlink" title="实现过程"></a>实现过程</h2><h3 id="编码部分"><a href="#编码部分" class="headerlink" title="编码部分"></a>编码部分</h3><h4 id="编码原理"><a href="#编码原理" class="headerlink" title="编码原理"></a>编码原理</h4><p>Polar Code是通过引入信道极化概念而构建的。</p>
-<p>信道极化分为两个阶段，分别是信道联合和信道分裂。通过信道的联合与分裂，各个子信道的对称容量将呈现两级分化的趋势：随着码长（即联合信道数）N的增加，一部分子信道的容量趋于1，而其余子信道的容量趋于0。Polar Code正是利用这一信道极化的现象，在容量趋于1的K个子信道上传输消息比特，在其余子信道上传输冻结比特（即收发双方已知的固定比特，通常设置为全零）。由此构成的编码即为Polar Code，码率为$K/N$。</p>
-<p>可以看出，编码问题的关键在于生成矩阵和信息位、冻结位的判决选取。最终的编码输出结果，可以简化为矩阵运算：</p>
-<script type="math/tex; mode=display">
-u^N=c_{i}^N·G_N</script><p>其中，$u^N$代表编码结果，$c_{i}^N$代表了输入数据，$G_N$为生成矩阵，$N$代表输入码长，且该值规定为2的正整数幂。</p>
-<h4 id="生成矩阵的产生"><a href="#生成矩阵的产生" class="headerlink" title="生成矩阵的产生"></a>生成矩阵的产生</h4><p>首先先引入<strong>克罗内克积($\otimes$)</strong>运算：</p>
-<p> 如果<em>A</em>是一个<em>m</em>×<em>n</em>的矩阵，而<em>B</em>是一个<em>p</em>×<em>q</em>的矩阵，则它们的克罗内克积则是一个<em>mp</em>×<em>nq</em>的分块矩阵，记为：</p>
-<script type="math/tex; mode=display">
-\mathrm{A} \otimes \mathrm{B}=\left[\begin{array}{ccc}
-a_{11} B & \cdots & a_{1 n} B \\
-\vdots & \ddots & \vdots \\
-a_{1 n} B & \cdots & a_{n n} B
-\end{array}\right]</script><p>以下举A，B为二阶矩阵时运算克罗内克积为例：</p>
-<script type="math/tex; mode=display">
-\left[\begin{array}{ll}
-a_{11} & a_{12} \\
-a_{21} & a_{22}
-\end{array}\right] \otimes\left[\begin{array}{ll}
-b_{11} & b_{12} \\
-b_{21} & b_{22}
-\end{array}\right]=\left[\begin{array}{llll}
-a_{11} b_{11} & a_{11} b_{12} & a_{12} b_{11} & a_{12} b_{12} \\
-a_{11} b_{21} & a_{11} b_{22} & a_{12} b_{21} & a_{12} b_{22} \\
-a_{21} b_{11} & a_{21} b_{12} & a_{22} b_{11} & a_{22} b_{12} \\
-a_{21} b_{21} & a_{21} b_{22} & a_{22} b_{21} & a_{22} b_{22}
-\end{array}\right]</script><p>下图为文献$^{[1]}$中的编码示意图：</p>
-<p><img src="https://i.loli.net/2021/09/03/sohiuSG6P1JtvKw.png" alt="image-20210903221730402" style="zoom: 80%;" /></p>
-<p>该过程可以简化为如下流程：</p>
-<p>首先输入的码字经过了向量元素的重排操作，即通过图中的$R_N$矩阵相乘运算，然后将翻转后的码字经过信道进行联合、分裂。</p>
-<p>同时，也可以将整个生成矩阵的产生过程可以简化为如下运算：</p>
-<script type="math/tex; mode=display">
-G_{N}=B_{N} F^{\otimes n}</script><p>下面对该表达式进行说明：</p>
-<ul>
-<li><p>$B_N$为元素经过扩展重排后的结果，定义为：</p>
-<script type="math/tex; mode=display">
-B_{N}=R_{N}\left(I_{2} \otimes B_{N / 2}\right)</script><p>其中：</p>
-<ul>
-<li><p>$I_2$为二阶单位矩阵。从定义式可以看出，$B_N$的生成为一递归过程，给定递归初值为$B_2=I_2$。</p>
-</li>
-<li><p>$R_N$为置换矩阵，即将输入序列完成奇序元素和偶序元素的分离。用符号表示为：</p>
-<script type="math/tex; mode=display">
-\left(u_{1}, u_{2}, u_{3}, u_{4}, \cdots, u_{N}\right) \times R_{N}=u_{1}, u_{3}, u_{5}, \cdots, u_{N-1}, u_{2}, u_{4}, u_{6}, \cdots, u_{N}</script></li>
-</ul>
-<p>经过上述操作后，$B_N$完成了比特反序重排。即将每个原序列的十进制序号$i \in\{1,2,3,…,N\}$先减一得到$i-1$，再将$i-1$按二进制表示，随后将该二进制的高低位进行倒叙排列，将得到的一串二进制重新转化为十进制数$j-1$，然后将第$j$位对应的数变成原来的第$i$位数。以元素$u_7$举例如下：</p>
-<script type="math/tex; mode=display">
-u_{7} \stackrel{7-1}{\longrightarrow} u_{6} \stackrel{\text { 十进制转二进制 }}{\longrightarrow} 110 \stackrel{\text { reverse }}{\longrightarrow} 011 \stackrel{\text { 二进制转十进制 }}{\longrightarrow} 3 \stackrel{3 * 1}{\rightarrow} 4 \rightarrow u_7^*=u_{4}</script><p>其他元素可依次依照此流程重新排序，这里不再赘述。</p>
-</li>
-<li><p>$F^{\otimes n}$为F的n次克罗内克积,即对矩阵$F$进行n次克罗内克积运算。文献$^{[1]}$中给出的$F$矩阵定义为：</p>
-</li>
-</ul>
-<script type="math/tex; mode=display">
-F=\left[\begin{array}{ll}
-1 & 0 \\
-1 & 1
-\end{array}\right]</script><h4 id="信息位与冻结位的选取"><a href="#信息位与冻结位的选取" class="headerlink" title="信息位与冻结位的选取"></a>信息位与冻结位的选取</h4><p>信道极化过程中，有一部分信道的信道容量$I(W)$可以到达1，另一部分则趋近于0。引入文献$^{[1]}$的巴氏参数$Z(W)$来衡量信道容量的趋向性：</p>
-<script type="math/tex; mode=display">
-Z\left(W_{N}^{(i)}\right)=\sum_{y_{1}^{N} \in Y^{N}} \sum_{u_{1}^{i-1} \in X^{i-1}} \sqrt{W_{N}^{(i)}\left(y_{1}^{N}, u_{1}^{i-1} \mid 0\right) W_{N}^{(i)}\left(y_{1}^{N}, u_{1}^{i-1} \mid 1\right)}</script><p>式中的$W_N^{i}(y,u|x)$表示第i个信道的条件转移概率。</p>
-<p>对于一个给定信道，巴氏参数越大说明该信道越不可靠。因此我们只需计算出联合、分裂后信道的巴氏参数，并对它们进行排序，然后根据码率选择巴氏参数较小的信道作为信息位，剩余信道作为冻结位。</p>
-<h4 id="编码输出"><a href="#编码输出" class="headerlink" title="编码输出"></a>编码输出</h4><p>得到巴氏参数的序列后，将该序列从小到大进行排列，前一半作为信息位，后一半为冻结位。即将原始的输入$u$重新排序为$c_i$。最后将排序后的信息$c_i$与生成矩阵相乘：</p>
-<script type="math/tex; mode=display">
-u^N=c_{i}^N·G_N</script><h3 id="信道部分"><a href="#信道部分" class="headerlink" title="信道部分"></a>信道部分</h3><p>我们在常见的高斯加性白噪声信道中进行模拟。将编码结果经过BPSK调制，即将$\{0,1\}$符号映射为$\{1,-1\}$，随后用不同信噪比的高斯加性白噪声与调制结果叠加。</p>
-<h3 id="译码部分"><a href="#译码部分" class="headerlink" title="译码部分"></a>译码部分</h3><h4 id="译码原理"><a href="#译码原理" class="headerlink" title="译码原理"></a>译码原理</h4><p>由之前提到的编码可以看出极化码的构造就是一个信道选择的过程，而极化信道的选择实际上就是按照最优SC译码性能为标准的。因此对极化码而言，最合适的译码算法应当是基于SC译码的，只有这类译码算法才能充分利用极化码的结构，并且同时保证在码长足够长时容量可达。</p>
-<p>SC译码全称为successive cancellation decoder即连续消除译码，采用蝶形算法，通过递归的方式来进行串行解码。而根据蝶形算法的特性，从右向左进行计算，因此在解码时我们首先要确定最右端所判决得到的近似值。</p>
-<h4 id="近似判决"><a href="#近似判决" class="headerlink" title="近似判决"></a>近似判决</h4><p>先对信息位和冻结位进行判决：</p>
-<script type="math/tex; mode=display">
-\hat{\mathrm{u}}_{1}^{(\mathrm{i})}\left\{\begin{array}{c}
-\mathrm{h}_{\mathrm{i}}\left(\mathrm{y}_{\mathrm{N}}^{(\mathrm{i})}, \hat{\mathrm{u}}_{1}^{(\mathrm{i}-1)}\right), \text { if } \mathrm{i} \in \mathrm{A} \\
-\mathrm{u}_{\mathrm{i}}, \text { if } \mathrm{i} \in \mathrm{A}^{\mathrm{c}}
-\end{array}\right.</script><p>其中$\mathrm{i} \in \mathrm{A}^{\mathrm{c}}$表明该比特为冻结比特，$\mathrm{i} \in \mathrm{A}$表明该比特为承载信息的比特。</p>
-<p>随后是对信息位进行判决：</p>
-<script type="math/tex; mode=display">
-\widehat{\mathrm{h}}_{1}^{(\mathrm{i})}\left\{\begin{array}{l}
-0, \text { if } \mathrm{L}_{\mathrm{N}}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{i})}, \hat{\mathrm{u}}_{1}^{(\mathrm{i}-1)}\right) \geq 0 \\
-1, \text { if if } \mathrm{L}_{\mathrm{N}}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{i})}, \hat{\mathrm{u}}_{1}^{(\mathrm{i}-1)}\right)<0
-\end{array}\right.</script><p>其中$\mathrm{L}_{\mathrm{N}}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{i})}, \widehat{\mathrm{u}}_{1}^{(\mathrm{i}-1)}\right)$为对数似然比（Log-Likelihood Ratio）：</p>
-<script type="math/tex; mode=display">
-\mathrm{L}_{\mathrm{N}}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{i})}, \widehat{\mathrm{u}}_{1}^{(\mathrm{i}-1)}\right) \triangleq \ln \left(\frac{\mathrm{W}_{\mathrm{N}}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{i})}, \widehat{\mathrm{u}}_{1}^{(\mathrm{i}-1)} \mid 0\right)}{\mathrm{W}_{\mathrm{N}}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{i})}, \hat{\mathrm{u}}_{1}^{(\mathrm{i}-1)} \mid 1\right)}\right)</script><p>该式说明LLR的值为在接收端得到$\left(\mathrm{y}_{1}^{(\mathrm{i})}, \widehat{\mathrm{u}}_{1}^{(\mathrm{i}-1)}\right)$发送端原本的发送”0”和”1”的比值取对数，当该对数值大于等于0时，说明原本发送”0”的概率要大，因此我们可以将其判决为接收端收到的应该为”0”，反之则为”1”。</p>
-<h4 id="递归求解"><a href="#递归求解" class="headerlink" title="递归求解"></a>递归求解</h4><p>给定递归求解的公式：</p>
-<script type="math/tex; mode=display">
-\begin{gathered}
-\mathrm{L}_{\mathrm{N}}^{(2 \mathrm{i}-1)}\left(\mathrm{y}_{1}^{(\mathrm{N})}, \widehat{\mathrm{u}}_{1}^{(2 \mathrm{i}-2)}\right)=\mathrm{f}\left(\mathrm{L}_{\mathrm{N} / 2}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{N} / 2)}, \widehat{\mathrm{u}}_{1,0}^{(2 \mathrm{i}-2)} \oplus \hat{\mathrm{u}}_{1, \mathrm{e}}^{(2 \mathrm{i}-2)}\right), \mathrm{L}_{\mathrm{N} / 2}^{(\mathrm{i})}\left(\mathrm{y}_{\mathrm{N} / 2+1}^{(\mathrm{N}}, \hat{\mathrm{u}}_{1, \mathrm{e}}^{(2 \mathrm{i}-2)}\right)\right. \\
-\mathrm{L}_{\mathrm{N}}^{(2 \mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{N})}, \hat{\mathrm{u}}_{1}^{(2 \mathrm{i}-1)}\right)=\mathrm{g}\left(\mathrm{L}_{\mathrm{N} / 2}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{N} / 2)}, \hat{\mathrm{u}}_{1,0}^{(2 \mathrm{i}-2)} \oplus \hat{\mathrm{u}}_{1, \mathrm{e}}^{(2 \mathrm{i}-2)}\right), \mathrm{L}_{\mathrm{N} / 2}^{(\mathrm{i})}\left(\mathrm{y}_{\mathrm{N} / 2+1}^{(\mathrm{N}} \hat{\mathrm{u}}_{1, \mathrm{e}}^{(2 \mathrm{i}-2)}\right), \hat{\mathrm{u}}_{2 \mathrm{i}-1}\right).
-\end{gathered}</script><p>其中：</p>
-<script type="math/tex; mode=display">
-\begin{gathered}
-f(a, b)=\ln \left(\frac{1+e^{a+b}}{e^{a}+e^{b}}\right) \\
-g\left(a, b, u_{s}\right)=(-1)^{u_{s}} a+b
-\end{gathered}</script><p>上述递归的的终止条件为$N=1$,即递归到达了最左端的$W$端。此时：</p>
-<script type="math/tex; mode=display">
-\mathrm{L}_{1}^{1}\left(\mathrm{y}_{\mathrm{j}}\right)=\ln \frac{\mathrm{W}\left(\mathrm{y}_{\mathrm{j}} \mid 0\right)}{\mathrm{W}\left(\mathrm{y}_{\mathrm{j}} \mid 1\right)}</script><p>由于我们在高斯信道下进行仿真，因此：</p>
-<script type="math/tex; mode=display">
-\mathrm{W}(\mathrm{y} \mid \mathrm{x})=\frac{1}{\sqrt{2 \pi} \sigma} \exp \left(-\frac{(\mathrm{y}-\mathrm{x})^{2}}{2 \sigma^{2}}\right)</script><p>给定递归出口：</p>
-<script type="math/tex; mode=display">
-\mathrm{L}_{1}^{1}\left(\mathrm{y}_{\mathrm{j}}\right)=\frac{2 \mathrm{y}}{\sigma^{2}}</script><h4 id="译码结果"><a href="#译码结果" class="headerlink" title="译码结果"></a>译码结果</h4><p>循环求出最后一列所有节点的似然值，然后倒推计算之前各个节点的似然值，重复该过程直到最右端即可完成译码。</p>
-<h2 id="实现结果"><a href="#实现结果" class="headerlink" title="实现结果"></a>实现结果</h2><h3 id="结果评估"><a href="#结果评估" class="headerlink" title="结果评估"></a>结果评估</h3><p>我们在信噪比为5-20dB的情况下进行不同码长的极化码编码译码仿真，并统计了误码率，结果如下所示：</p>
-<p><img src="https://i.loli.net/2021/09/06/OkXdnBWDjHc1oRS.jpg" style="zoom:50%;" /></p>
-<center>码长为8时SNR-BER</center>
-
-<p><img src="https://i.loli.net/2021/09/09/rbHnPJFvyMx7a1f.jpg" style="zoom:50%;" /></p>
-<center>码长为16时SNR-BER</center>
-
-<p>信噪比提高时时，误码率也在减小。码长增大时，抗噪性能越好。</p>
-<h3 id="改进以及探究"><a href="#改进以及探究" class="headerlink" title="改进以及探究"></a>改进以及探究</h3><h4 id="巴氏参数的递归求解"><a href="#巴氏参数的递归求解" class="headerlink" title="巴氏参数的递归求解"></a>巴氏参数的递归求解</h4><p>在文献$^{[1]}$中，给定的巴氏参数计算方法较为复杂。且考虑条件转移概率和信道特性后，我们可以将该过程用递归过程实现：</p>
-<script type="math/tex; mode=display">
-\begin{gathered}
-\mathrm{Z}\left(\mathrm{W}_{\mathrm{N}}^{(2 \mathrm{j}-1)}\right)=2 \mathrm{Z}\left(\mathrm{W}_{\mathrm{N} / 2}^{(\mathrm{j})}\right)-\mathrm{Z}\left(\mathrm{W}_{\mathrm{N} / 2}^{(\mathrm{j})}\right)^{2} \\
-\mathrm{Z}\left(\mathrm{W}_{\mathrm{N}}^{(2 \mathrm{j})}\right)=\mathrm{Z}\left(\mathrm{W}_{\mathrm{N} / 2}^{(\mathrm{j})}\right)^{2}
-\end{gathered}</script><h4 id="近似LLR硬件实现优化"><a href="#近似LLR硬件实现优化" class="headerlink" title="近似LLR硬件实现优化"></a>近似LLR硬件实现优化</h4><p>文献$^{[2]}$中指出，同时含有指数运算以及对数运算的过程不利于硬件实现，因此我们做出如下近似：</p>
-<p>$$<br>f(a, b)=\ln \left(\frac{1+e^{a+b}}{e^{a}+e^{b}}\right)\thickapprox sgn(a·b)·\min\</p>
-]]></content>
-      <categories>
-        <category>通信技术</category>
-      </categories>
-      <tags>
-        <tag>5G通信</tag>
-        <tag>极化码</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>MD5加密算法的Python实现流程</title>
-    <url>/2022/07/29/MD5/</url>
-    <content><![CDATA[<p><strong>MD5信息摘要算法</strong>（英语：MD5 Message-Digest Algorithm），一种被广泛使用的<a href="https://baike.baidu.com/item/密码散列函数/14937715">密码散列函数</a>，可以产生出一个128位（16<a href="https://baike.baidu.com/item/字节/1096318">字节</a>）的散列值（hash value），用于确保信息传输完整一致。MD5由美国密码学家<a href="https://baike.baidu.com/item/罗纳德·李维斯特/700199">罗纳德·李维斯特</a>（Ronald Linn Rivest）设计，于1992年公开，用以取代<a href="https://baike.baidu.com/item/MD4/8090275">MD4</a>算法。这套算法的程序在 RFC 1321 标准中被加以规范。1996年后该算法被证实存在弱点，可以被加以破解，对于需要高度安全性的数据，专家一般建议改用其他算法，如<a href="https://baike.baidu.com/item/SHA-2/22718180">SHA-2</a>。2004年，证实MD5算法无法防止碰撞（collision），因此不适用于安全性认证，如<a href="https://baike.baidu.com/item/SSL/320778">SSL</a>公开密钥认证或是<a href="https://baike.baidu.com/item/数字签名/212550">数字签名</a>等用途。</p>
-<span id="more"></span>
-<p>首先先要对MD5使用的初始数据进行初始化：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">A=<span class="number">0x67452301</span></span><br><span class="line"></span><br><span class="line">B=<span class="number">0xEFCDAB89</span></span><br><span class="line"></span><br><span class="line">C=<span class="number">0x98BADCFE</span></span><br><span class="line"></span><br><span class="line">D=<span class="number">0x10325476</span></span><br><span class="line">T = [<span class="number">0xD76AA478</span>,<span class="number">0xE8C7B756</span>,<span class="number">0x242070DB</span>,<span class="number">0xC1BDCEEE</span>,<span class="number">0xF57C0FAF</span>,<span class="number">0x4787C62A</span>,<span class="number">0xA8304613</span>,<span class="number">0xFD469501</span>,</span><br><span class="line">    <span class="number">0x698098D8</span>,<span class="number">0x8B44F7AF</span>,<span class="number">0xFFFF5BB1</span>,<span class="number">0x895CD7BE</span>,<span class="number">0x6B901122</span>,<span class="number">0xFD987193</span>,<span class="number">0xA679438E</span>,<span class="number">0x49B40821</span>,</span><br><span class="line">    <span class="number">0xF61E2562</span>,<span class="number">0xC040B340</span>,<span class="number">0x265E5A51</span>,<span class="number">0xE9B6C7AA</span>,<span class="number">0xD62F105D</span>,<span class="number">0x02441453</span>,<span class="number">0xD8A1E681</span>,<span class="number">0xE7D3FBC8</span>,</span><br><span class="line">    <span class="number">0x21E1CDE6</span>,<span class="number">0xC33707D6</span>,<span class="number">0xF4D50D87</span>,<span class="number">0x455A14ED</span>,<span class="number">0xA9E3E905</span>,<span class="number">0xFCEFA3F8</span>,<span class="number">0x676F02D9</span>,<span class="number">0x8D2A4C8A</span>,</span><br><span class="line">    <span class="number">0xFFFA3942</span>,<span class="number">0x8771F681</span>,<span class="number">0x6D9D6122</span>,<span class="number">0xFDE5380C</span>,<span class="number">0xA4BEEA44</span>,<span class="number">0x4BDECFA9</span>,<span class="number">0xF6BB4B60</span>,<span class="number">0xBEBFBC70</span>,</span><br><span class="line">    <span class="number">0x289B7EC6</span>,<span class="number">0xEAA127FA</span>,<span class="number">0xD4EF3085</span>,<span class="number">0x04881D05</span>,<span class="number">0xD9D4D039</span>,<span class="number">0xE6DB99E5</span>,<span class="number">0x1FA27CF8</span>,<span class="number">0xC4AC5665</span>,</span><br><span class="line">    <span class="number">0xF4292244</span>,<span class="number">0x432AFF97</span>,<span class="number">0xAB9423A7</span>,<span class="number">0xFC93A039</span>,<span class="number">0x655B59C3</span>,<span class="number">0x8F0CCC92</span>,<span class="number">0xFFEFF47D</span>,<span class="number">0x85845DD1</span>,</span><br><span class="line">    <span class="number">0x6FA87E4F</span>,<span class="number">0xFE2CE6E0</span>,<span class="number">0xA3014314</span>,<span class="number">0x4E0811A1</span>,<span class="number">0xF7537E82</span>,<span class="number">0xBD3AF235</span>,<span class="number">0x2AD7D2BB</span>,<span class="number">0xEB86D391</span>]</span><br><span class="line"></span><br><span class="line">s = [<span class="number">7</span>,<span class="number">12</span>,<span class="number">17</span>,<span class="number">22</span>,<span class="number">7</span>,<span class="number">12</span>,<span class="number">17</span>,<span class="number">22</span>,<span class="number">7</span>,<span class="number">12</span>,<span class="number">17</span>,<span class="number">22</span>,<span class="number">7</span>,<span class="number">12</span>,<span class="number">17</span>,<span class="number">22</span>,</span><br><span class="line">    <span class="number">5</span>,<span class="number">9</span>,<span class="number">14</span>,<span class="number">20</span>,<span class="number">5</span>,<span class="number">9</span>,<span class="number">14</span>,<span class="number">20</span>,<span class="number">5</span>,<span class="number">9</span>,<span class="number">14</span>,<span class="number">20</span>,<span class="number">5</span>,<span class="number">9</span>,<span class="number">14</span>,<span class="number">20</span>,</span><br><span class="line">    <span class="number">4</span>,<span class="number">11</span>,<span class="number">16</span>,<span class="number">23</span>,<span class="number">4</span>,<span class="number">11</span>,<span class="number">16</span>,<span class="number">23</span>,<span class="number">4</span>,<span class="number">11</span>,<span class="number">16</span>,<span class="number">23</span>,<span class="number">4</span>,<span class="number">11</span>,<span class="number">16</span>,<span class="number">23</span>,</span><br><span class="line">    <span class="number">6</span>,<span class="number">10</span>,<span class="number">15</span>,<span class="number">21</span>,<span class="number">6</span>,<span class="number">10</span>,<span class="number">15</span>,<span class="number">21</span>,<span class="number">6</span>,<span class="number">10</span>,<span class="number">15</span>,<span class="number">21</span>,<span class="number">6</span>,<span class="number">10</span>,<span class="number">15</span>,<span class="number">21</span>]</span><br><span class="line"></span><br><span class="line">m = [<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>,<span class="number">10</span>,<span class="number">11</span>,<span class="number">12</span>,<span class="number">13</span>,<span class="number">14</span>,<span class="number">15</span>,</span><br><span class="line">    <span class="number">1</span>,<span class="number">6</span>,<span class="number">11</span>,<span class="number">0</span>,<span class="number">5</span>,<span class="number">10</span>,<span class="number">15</span>,<span class="number">4</span>,<span class="number">9</span>,<span class="number">14</span>,<span class="number">3</span>,<span class="number">8</span>,<span class="number">13</span>,<span class="number">2</span>,<span class="number">7</span>,<span class="number">12</span>,</span><br><span class="line">    <span class="number">5</span>,<span class="number">8</span>,<span class="number">11</span>,<span class="number">14</span>,<span class="number">1</span>,<span class="number">4</span>,<span class="number">7</span>,<span class="number">10</span>,<span class="number">13</span>,<span class="number">0</span>,<span class="number">3</span>,<span class="number">6</span>,<span class="number">9</span>,<span class="number">12</span>,<span class="number">15</span>,<span class="number">2</span>,</span><br><span class="line">    <span class="number">0</span>,<span class="number">7</span>,<span class="number">14</span>,<span class="number">5</span>,<span class="number">12</span>,<span class="number">3</span>,<span class="number">10</span>,<span class="number">1</span>,<span class="number">8</span>,<span class="number">15</span>,<span class="number">6</span>,<span class="number">13</span>,<span class="number">4</span>,<span class="number">11</span>,<span class="number">2</span>,<span class="number">9</span>]</span><br></pre></td></tr></table></figure>
-<h2 id="实现思路"><a href="#实现思路" class="headerlink" title="实现思路"></a>实现思路</h2><p>MD5加密需要经过输入转换、填充、四轮循环操作、置换以及最后的拼接等步骤。其中为了方便循环操作中的值的读取与置换，可以定义一个<code>MD5</code>类，并赋予此类一些初始的属性与函数简化后续的函数操作。现将类定义如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">md5</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, message</span>):</span><br><span class="line">        self.message = message</span><br><span class="line">        self.A = A</span><br><span class="line">        self.B = B</span><br><span class="line">        self.C = C</span><br><span class="line">        self.D = D</span><br><span class="line">        self.init_A = A</span><br><span class="line">        self.init_B = B</span><br><span class="line">        self.init_C = C</span><br><span class="line">        self.init_D = D</span><br><span class="line">        self.temptext=<span class="string">&#x27;&#x27;</span></span><br><span class="line">        self.s=s</span><br><span class="line">        self.m=m</span><br><span class="line">        self.T=T</span><br></pre></td></tr></table></figure>
-<p>对于一个MD5对象，其拥有如下几个主要属性：</p>
-<ul>
-<li>message：  输入的明文</li>
-<li>A,B,C,D：  四轮循环中的操作对象</li>
-<li>temptext： 暂存的结果，用于缓冲与临时存放</li>
-<li>s,m,T:    均为MD5加密时用到的操作参数，以列表的形式存储</li>
-</ul>
-<h2 id="填充"><a href="#填充" class="headerlink" title="填充"></a>填充</h2><ul>
-<li>将输入的明文转换成ASCII码，并按照规则进行填充。填充规则如下：</li>
-<li>当转换的ASCII码的长度的二进制长度不为$512*n+448$的整数倍时，先在末尾补一个“1”；</li>
-<li>当此时的长度依然不为$512<em>n+448$时，继续在末尾补“0”直至长度为$512</em>n+448$</li>
-<li>将输入密文的长度转换成64位的二进制数，若输入字符串的长度大于$2^{64}$，则取最后的64位。</li>
-<li>将得到的64位进行小端排序，即按8bit/组进行倒序排列</li>
-<li>将小端排序得到的结果拼接在步骤3得到的字符后，完成填充</li>
-</ul>
-<p>完成此项工作需要一个函数将输入的十进制字符串转换城标准长度的二进制数，代码如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">decToBin</span>(<span class="params">num</span>):  <span class="comment"># 十进制转标准4位二或8位进制字符串函数 注意此为专用函数不要用于其他程序中</span></span><br><span class="line">    arry = []</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        arry.append(<span class="built_in">str</span>(num % <span class="number">2</span>))</span><br><span class="line">        num = num // <span class="number">2</span></span><br><span class="line">        <span class="keyword">if</span> num == <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">while</span> <span class="built_in">len</span>(arry)%<span class="number">4</span>!=<span class="number">0</span>:</span><br><span class="line">        arry.append(<span class="string">&#x27;0&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;&quot;</span>.join(arry[::-<span class="number">1</span>])  <span class="comment"># 列表切片倒叙排列后再用join拼接</span></span><br></pre></td></tr></table></figure>
-<p>下面进行填充的操作。将填充的方法归属于MD5对象专用，以防意外调用：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">fill</span>(<span class="params">self</span>):</span><br><span class="line">    bininput = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    raw_input=self.message</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(raw_input)):</span><br><span class="line">        c = decToBin(<span class="built_in">ord</span>(raw_input[i]))</span><br><span class="line">        bininput += c</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">len</span>(bininput) % <span class="number">512</span> != <span class="number">448</span>):</span><br><span class="line">        <span class="keyword">if</span> ((<span class="built_in">len</span>(bininput) + <span class="number">1</span>) % <span class="number">512</span> != <span class="number">448</span>):</span><br><span class="line">            bininput += <span class="string">&#x27;1&#x27;</span>  <span class="comment"># 补1</span></span><br><span class="line">        <span class="keyword">while</span> (<span class="built_in">len</span>(bininput) % <span class="number">512</span> != <span class="number">448</span>):</span><br><span class="line">            bininput += <span class="string">&#x27;0&#x27;</span>  <span class="comment"># 其余位补0直到满足长度为512*n+448</span></span><br><span class="line">    length = <span class="built_in">len</span>(raw_input) * <span class="number">8</span>  <span class="comment"># ASCII码位数</span></span><br><span class="line">    <span class="keyword">if</span> length &lt;= <span class="number">255</span>:</span><br><span class="line">        length = decToBin(length)  <span class="comment"># 二进制转换，此时length保留位数为8</span></span><br><span class="line">        <span class="keyword">while</span> <span class="built_in">len</span>(length) &lt; <span class="number">8</span>:</span><br><span class="line">            length = <span class="string">&#x27;0&#x27;</span> + length</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        temp = decToBin(length)</span><br><span class="line">        <span class="keyword">while</span> <span class="built_in">len</span>(length) &lt; <span class="number">16</span>:</span><br><span class="line">            length = <span class="string">&#x27;0&#x27;</span> + length</span><br><span class="line">        length = length[<span class="number">8</span>:<span class="number">12</span>] + length[<span class="number">12</span>:<span class="number">16</span>] + length[<span class="number">0</span>:<span class="number">4</span>] + length[<span class="number">4</span>:<span class="number">8</span>]</span><br><span class="line">    bininput += length</span><br><span class="line">    <span class="keyword">while</span> <span class="built_in">len</span>(bininput) % <span class="number">512</span> != <span class="number">0</span>:</span><br><span class="line">        bininput += <span class="string">&#x27;0&#x27;</span></span><br><span class="line">    self.temptext=bininput</span><br></pre></td></tr></table></figure>
-<h2 id="4轮循环"><a href="#4轮循环" class="headerlink" title="4轮循环"></a>4轮循环</h2><h3 id="分解消息子块"><a href="#分解消息子块" class="headerlink" title="分解消息子块"></a>分解消息子块</h3><p>下面将得到的临时变量进行分组。将其分解成$16*32$的矩阵，并将其存放于<code>Mlist</code>中。后续将配合MD5类中的m矩阵进行操作。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">Cycolyce</span>(<span class="params">self</span>):</span><br><span class="line">    Mlist=[]<span class="comment">#分16组</span></span><br><span class="line">    bininput=self.temptext</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="number">512</span>,<span class="number">32</span>):<span class="comment">#16</span></span><br><span class="line">        sym=<span class="string">&#x27;&#x27;</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="built_in">len</span>(bininput[i:i+<span class="number">32</span>]),<span class="number">4</span>):</span><br><span class="line">            temp=<span class="built_in">hex</span>(<span class="built_in">int</span>((bininput[i:i+<span class="number">32</span>][j:j+<span class="number">4</span>]),<span class="number">2</span>))<span class="comment">#取十六进制</span></span><br><span class="line">            sym+=temp[<span class="number">2</span>]<span class="comment">#只取字母 忽略前面的0x 为下面的小端排序做准备</span></span><br><span class="line"></span><br><span class="line">        sym_tmp=<span class="string">&#x27;&#x27;</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">8</span>,<span class="number">0</span>,-<span class="number">2</span>):<span class="comment">#小端排序</span></span><br><span class="line">            temp=sym[j-<span class="number">2</span>:j]</span><br><span class="line">            sym_tmp+=temp</span><br><span class="line"></span><br><span class="line">        fn_sym=<span class="string">&#x27;&#x27;</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(sym_tmp)):</span><br><span class="line">            fn_sym+=decToBin(<span class="built_in">int</span>(sym_tmp[j], <span class="number">16</span>))<span class="comment">#再次转换成二进制</span></span><br><span class="line">        Mlist.append(fn_sym)</span><br></pre></td></tr></table></figure>
-<h3 id="四轮循环的操作"><a href="#四轮循环的操作" class="headerlink" title="四轮循环的操作"></a>四轮循环的操作</h3><p>我们需要定义如下四个函数：</p>
-<script type="math/tex; mode=display">
-F(x,y,z)=(x\land y)\lor (\overline x \land z)\\
-G(x,y,z)=(x\land z)\lor (y \lor \overline z)\\
-H(x,y,z)=x\oplus y \oplus z\\
-I(x,y,z)=y\oplus(x\lor \overline z)</script><p>以及定义四个操作：</p>
-<script type="math/tex; mode=display">
-FF(a,b,c,d,Mj,s,Ti)=(F(b,c,d)+a+mj+Ti)<<s\\
-GG(a,b,c,d,Mj,s,Ti)=(G(b,c,d)+a+mj+Ti)<<s\\
-HH(a,b,c,d,Mj,s,Ti)=(H(b,c,d)+a+mj+Ti)<<s\\
-II(a,b,c,d,Mj,s,Ti)=(I(b,c,d)+a+mj+Ti)<<s\\</script><p>其中，$&lt;&lt;$是循环左移，$\oplus$是异或操作。在程序实现中，将四个函数定义在MD5类外，四个操作定义在MD5类以内。如此操作有两个原因：</p>
-<ul>
-<li>定义在外部的函数可以根据需求进行更改，对于封装后的类调用而言更具操作性</li>
-<li>定义在类内部的操作是MD5的专用函数，必须专类专用</li>
-<li>二者分离有助于设置断点、检查中间结果进行调试分析</li>
-</ul>
-<p>定义完函数以及相关操作后，我们将进行如下操作：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="number">16</span>, <span class="number">4</span>):</span><br><span class="line">    self.FF(Mlist[m[j]], s[j], T[j])</span><br><span class="line">    self.FF(Mlist[m[j+<span class="number">1</span>]], s[j+<span class="number">1</span>], T[j+<span class="number">1</span>])</span><br><span class="line">    self.FF(Mlist[m[j+<span class="number">2</span>]], s[j+<span class="number">2</span>], T[j+<span class="number">2</span>])</span><br><span class="line">    self.FF(Mlist[m[j+<span class="number">3</span>]], s[j+<span class="number">3</span>], T[j+<span class="number">3</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="number">16</span>, <span class="number">4</span>):</span><br><span class="line">    self.GG(Mlist[m[<span class="number">16</span>+j]], s[<span class="number">16</span>+j], T[<span class="number">16</span>+j])</span><br><span class="line">    self.GG(Mlist[m[<span class="number">16</span>+j+<span class="number">1</span>]], s[<span class="number">16</span>+j+<span class="number">1</span>], T[<span class="number">16</span>+j+<span class="number">1</span>])</span><br><span class="line">    self.GG(Mlist[m[<span class="number">16</span>+j+<span class="number">2</span>]], s[<span class="number">16</span>+j+<span class="number">2</span>], T[<span class="number">16</span>+j+<span class="number">2</span>])</span><br><span class="line">    self.GG(Mlist[m[<span class="number">16</span>+j+<span class="number">3</span>]], s[<span class="number">16</span>+j+<span class="number">3</span>], T[<span class="number">16</span>+j+<span class="number">3</span>])</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="number">16</span>, <span class="number">4</span>):</span><br><span class="line">    self.HH(Mlist[m[<span class="number">32</span>+j]], s[<span class="number">32</span>+j], T[<span class="number">32</span>+j])</span><br><span class="line">    self.HH(Mlist[m[<span class="number">32</span>+j+<span class="number">1</span>]], s[<span class="number">32</span>+j+<span class="number">1</span>], T[<span class="number">32</span>+j+<span class="number">1</span>])</span><br><span class="line">    self.HH(Mlist[m[<span class="number">32</span>+j+<span class="number">2</span>]], s[<span class="number">32</span>+j+<span class="number">2</span>], T[<span class="number">32</span>+j+<span class="number">2</span>])</span><br><span class="line">    self.HH(Mlist[m[<span class="number">32</span>+j+<span class="number">3</span>]], s[<span class="number">32</span>+j+<span class="number">3</span>], T[<span class="number">32</span>+j+<span class="number">3</span>])</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="number">16</span>, <span class="number">4</span>):</span><br><span class="line">    self.II(Mlist[m[<span class="number">48</span>+j]], s[<span class="number">48</span>+j], T[<span class="number">48</span>+j])</span><br><span class="line">    self.II(Mlist[m[<span class="number">48</span>+j+<span class="number">1</span>]], s[<span class="number">48</span>+j+<span class="number">1</span>], T[<span class="number">48</span>+j+<span class="number">1</span>])</span><br><span class="line">    self.II(Mlist[m[<span class="number">48</span>+j+<span class="number">2</span>]], s[<span class="number">48</span>+j+<span class="number">2</span>], T[<span class="number">48</span>+j+<span class="number">2</span>])</span><br><span class="line">    self.II(Mlist[m[<span class="number">48</span>+j+<span class="number">3</span>]], s[<span class="number">48</span>+j+<span class="number">3</span>], T[<span class="number">48</span>+j+<span class="number">3</span>])</span><br></pre></td></tr></table></figure>
-<h2 id="初值相加与拼接输出"><a href="#初值相加与拼接输出" class="headerlink" title="初值相加与拼接输出"></a>初值相加与拼接输出</h2><p>完成四轮循环后，需要将此时的ABCD与初始的ABCD相加，并进行小端排序。将小端排序后的结果拼接即可得到MD5加密的结果。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">self.A = (self.A+self.init_A)%<span class="built_in">pow</span>(<span class="number">2</span>, <span class="number">32</span>)</span><br><span class="line">        <span class="built_in">print</span>(self.A)</span><br><span class="line">        self.B = (self.B+self.init_B)%<span class="built_in">pow</span>(<span class="number">2</span>, <span class="number">32</span>)</span><br><span class="line">        <span class="built_in">print</span>(self.B)</span><br><span class="line">        self.C = (self.C+self.init_C)%<span class="built_in">pow</span>(<span class="number">2</span>, <span class="number">32</span>)</span><br><span class="line">        <span class="built_in">print</span>(self.C)</span><br><span class="line">        self.D = (self.D+self.init_D)%<span class="built_in">pow</span>(<span class="number">2</span>, <span class="number">32</span>)</span><br><span class="line">        <span class="built_in">print</span>(self.D)</span><br><span class="line"></span><br><span class="line">        answer = <span class="string">&quot;&quot;</span></span><br><span class="line">        <span class="keyword">for</span> each <span class="keyword">in</span> [self.A, self.B, self.C, self.D]:</span><br><span class="line">            each = <span class="built_in">hex</span>(each)[<span class="number">2</span>:]</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">8</span>, <span class="number">0</span>, -<span class="number">2</span>):</span><br><span class="line">                answer += <span class="built_in">str</span>(each[i - <span class="number">2</span>:i])</span><br><span class="line">        <span class="keyword">return</span> answer</span><br></pre></td></tr></table></figure>
-<p>我们可以运行一下检验成果：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">MD=md5(<span class="string">&#x27;abc&#x27;</span>)</span><br><span class="line">MD.fill()</span><br><span class="line">result=MD.Cycolyce()</span><br><span class="line"><span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>通信技术</category>
-        <category>加密技术</category>
-      </categories>
-      <tags>
-        <tag>数字签名</tag>
-        <tag>Python</tag>
-        <tag>MD5</tag>
       </tags>
   </entry>
   <entry>
@@ -506,57 +602,6 @@ II(a,b,c,d,Mj,s,Ti)=(I(b,c,d)+a+mj+Ti)<<s\\</script><p>其中，$&lt;&lt;$是循
       </categories>
       <tags>
         <tag>栅格地图</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>从一维卷积到二维卷积：浅析图像卷积</title>
-    <url>/2022/08/03/%E5%9B%BE%E5%83%8F%E5%8D%B7%E7%A7%AF/</url>
-    <content><![CDATA[<h2 id="什么是卷积"><a href="#什么是卷积" class="headerlink" title="什么是卷积"></a>什么是卷积</h2><p>首先先给出一维情况的卷积的定义。</p>
-<script type="math/tex; mode=display">
-f(x)*g(x)=\int_{-\infty}^{\infty}f(x)g(\tau-x)d\tau</script><p>这个式子很难从直观层面进行理解，因为它包含了乘积、翻转、积分三个部分的内容。如果你是信通学子，那么你肯定会知道两个函数的卷积结果可以看作是他们对应的傅里叶变换在频域的乘积的反变换，也就是说把一个函数作为输入信号，另一个函数作为描述系统的一个方程，当这个系统接收到输入信号后会做出响应，这个响应$y(t)$就是输入信号$x(t)$与系统函数$h(t)$卷积的结果：</p>
-<script type="math/tex; mode=display">
-y(t)=x(t)*h(t)=\mathcal F^{-1}[X(jw)H(jw)]</script><p>但很明显不是所有人都学过信号与系统，所以我想了个更<del>好</del>恶心的例子进行描述。<span id="more"></span></p>
-<h3 id="一个恶心的例子"><a href="#一个恶心的例子" class="headerlink" title="一个恶心的例子"></a>一个<del>恶心</del>的例子</h3><p>试想这样一个场景：一个热门旅游景点的厕所。我们知道厕所需要连连不断地接待客人（？），因此厕所的囤粪速度可以用函数$F(x)$表示，如图1。</p>
-<p><img src="https://s2.loli.net/2022/08/03/7FHNVEs1uM5RCIB.png" alt="image-20220724172639005" style="zoom:50%;" /></p>
-<center><small>图1粪便囤积变化率曲线</small></center>
-
-<p>但是厕所连通的化粪池它的处理能力有限，它对排泄物的处理效率如图2所示，我们用函数$H(x)$来表示。</p>
-<p><img src="https://s2.loli.net/2022/08/03/BtJzpROGo3rTNYF.png" alt="image-20220724172618665" style="zoom:50%;" /></p>
-<center><small>图2 化粪池分解效率</small></center>
-
-<p>下面我们的问题就是需要讨论，<strong>化粪池在某个时候还有多少粪便啦！</strong></p>
-<h3 id="怎么计算？"><a href="#怎么计算？" class="headerlink" title="怎么计算？"></a>怎么计算？</h3><p>每一个粪便都是独立的个体，它们都会随着化粪池分解而减少。如果不考虑粪便的分解的话，那么粪便总量可以这样表示：</p>
-<script type="math/tex; mode=display">
-n =\int_{-\infty}^{\infty}F(x)dx</script><p>但是我们的粪便不是无线增加的，因此，需要考虑分解的情况。现在假设在$t$时刻时进行统计，经过时间间隔$\tau$后统计存在的粪便总量为：</p>
-<script type="math/tex; mode=display">
-n' = F(t)·H(\tau)</script><p>也就是说在$t+\tau$时刻，不考虑其他情况下的粪便输入，此时一共有$n’$这么多的粪便。这里则是对应了卷积操作中的乘积部分。我们换一种写法，令$T=t+\tau$，则在$T$时刻不考虑其他粪便的增加的情况下，粪便量可以记为:</p>
-<script type="math/tex; mode=display">
-n'=F(t)·H(T-t)</script><p>$H(t)$函数的变量出现了x轴反转的情况，我们离卷积的定义也越来越近啦！下一步就是积分的问题了。积分其实也很好理解，因为上面这些式子都是只考虑了单个时刻不考虑其他时刻的输入信息，因此如果要考虑其他时刻的输入的话，则是把其他时刻的粪便量进行一个叠加（离散域就是使用$\sum$求和，连续域就是使用$\int$积分）。因此$t$时刻的粪便总量可以表示为：</p>
-<script type="math/tex; mode=display">
-Y(t)=\int_{-\infty}^{t}F(t)H(\tau-t)d\tau</script><p>是不是这样就很好理解了？</p>
-<h3 id="图像的卷积是什么？"><a href="#图像的卷积是什么？" class="headerlink" title="图像的卷积是什么？"></a>图像的卷积是什么？</h3><p>卷积的本质在刚刚已经说了，就是反转、乘积、求和。到了二维也是这样子的：\</p>
-<script type="math/tex; mode=display">
-Y(x,y)=F(x,y)*H(x,y)=\sum_{n_1=-\infty}^{\infty}\sum_{n_2=-\infty}^{\infty}F(n_1,n_2)·H(x-n_1,y-n_2)</script><p>好！下面我们给出图像卷积的一个步骤：</p>
-<p><img src="https://img-blog.csdnimg.cn/20200308112430934.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L25hcnVoaW5h,size_16,color_FFFFFF,t_70" alt=""></p>
-<p>其中这个<code>Convolution Kernel</code>叫做卷积核，<code>Source Pixel</code>就是我们的图像。在这张图里红色通道对应的地方就是卷积处理的第一个像素，计算的公式在右上角，输入是1，输出是8。随着卷积核往下一个像素移动，优惠计算出新的像素值，直到按设定的规则遍历完图像。</p>
-<p><img src="https://pic3.zhimg.com/v2-8a6695c2e086525ac5a61610348739b2_b.gif" alt=""></p>
-<p>唯一需要指出的是，在这里体现了乘积和加和，那么反转是在哪里体现的呢？其实是图中卷积核已经是翻转了180°了，也就是说原本的卷积核它的“4”是在”-4“的位置的。所以这就是图像卷积的操作，是不是很好理解捏？</p>
-<h2 id="为什么是卷积"><a href="#为什么是卷积" class="headerlink" title="为什么是卷积"></a>为什么是卷积</h2><p>上结论：卷积的本质是提取图像中的特征。许多常用的图像处理方法都可以用卷积的方式表示，因此选择卷积。</p>
-<h2 id="Pytorch的图像卷积"><a href="#Pytorch的图像卷积" class="headerlink" title="Pytorch的图像卷积"></a>Pytorch的图像卷积</h2><p><img src="https://img-blog.csdnimg.cn/20201121195053531.gif" alt=""></p>
-<p>终于来到这里了。我们先看看pytorch卷积层继承的父类<code>_ConvNd</code>:</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">_ConvNd</span>(<span class="title class_ inherited__">Module</span>):</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self,</span></span><br><span class="line"><span class="params">                 in_channels: <span class="built_in">int</span>,</span></span><br><span class="line"><span class="params">                 out_channels: <span class="built_in">int</span>,</span></span><br><span class="line"><span class="params">                 kernel_size: <span class="type">Tuple</span>[<span class="built_in">int</span>, ...],</span></span><br><span class="line"><span class="params">                 stride: <span class="type">Tuple</span>[<span class="built_in">int</span>, ...],</span></span><br><span class="line"><span class="params">                 padding: <span class="type">Tuple</span>[<span class="built_in">int</span>, ...],</span></span><br><span class="line"><span class="params">                 dilation: <span class="type">Tuple</span>[<span class="built_in">int</span>, ...],</span></span><br><span class="line"><span class="params">                 transposed: <span class="built_in">bool</span>,</span></span><br><span class="line"><span class="params">                 output_padding: <span class="type">Tuple</span>[<span class="built_in">int</span>, ...],</span></span><br><span class="line"><span class="params">                 groups: <span class="built_in">int</span>,</span></span><br><span class="line"><span class="params">                 bias: <span class="built_in">bool</span>,</span></span><br><span class="line"><span class="params">                 padding_mode: <span class="built_in">str</span>,</span></span><br><span class="line"><span class="params">                 device=<span class="literal">None</span>,</span></span><br><span class="line"><span class="params">                 dtype=<span class="literal">None</span></span>) -&gt; <span class="literal">None</span>:</span><br></pre></td></tr></table></figure>
-<p>主要关注<code>in_channels</code>,<code>out_channels</code>,<code>kernel_size</code>,<code>stride</code>,<code>padding</code>这几个参数。</p>
-<h3 id="in-channels"><a href="#in-channels" class="headerlink" title="in_channels"></a>in_channels</h3><p><code>in_channels</code>的输入是按<code>(N,C,H,W)</code>排列的，<code>N</code>是mini-batch大小，<code>C</code>是通道数channel，<code>H</code>和<code>W</code>分别是输入的高和宽，<strong>这和<code>Tensorflow</code>的不太一样。</strong></p>
-<h3 id="out-channels"><a href="#out-channels" class="headerlink" title="out_channels"></a>out_channels</h3><p>在定义好了<code>in_channels</code>后，<code>out_channels</code>只需要关注输出通道数<code>K</code>即可。</p>
-<h3 id="kernel-size"><a href="#kernel-size" class="headerlink" title="kernel_size"></a>kernel_size</h3><p>卷积核大小，如果设为一个整数的话那么卷积核就是一个正方形的，否则就按长款的顺序输入一个<code>tuple</code>作为卷积核形状。</p>
-<h3 id="stride"><a href="#stride" class="headerlink" title="stride"></a>stride</h3><p>步长。也就是卷积核移动的距离，可以是一个整数也可以是一个<code>tuple</code>，类似<code>kernel_size</code>。</p>
-<h3 id="padding"><a href="#padding" class="headerlink" title="padding"></a>padding</h3><p>补丁，就是只要使用了大小大于1的卷积核去做卷积的话，输出图像的大小是比原本的图像大小要小的，因此为了保证维度的大小一致，会引入padding填充原图像的边缘位置，该值表示的是沿原图边缘进行该值大小的延拓。</p>
-]]></content>
-      <categories>
-        <category>学习记录</category>
-      </categories>
-      <tags>
-        <tag>计算机视觉</tag>
       </tags>
   </entry>
   <entry>
@@ -639,102 +684,6 @@ Y(x,y)=F(x,y)*H(x,y)=\sum_{n_1=-\infty}^{\infty}\sum_{n_2=-\infty}^{\infty}F(n_1
       </tags>
   </entry>
   <entry>
-    <title>【文献翻译】使用深度强化学习游玩雅达利游戏</title>
-    <url>/2022/07/29/Paper%20Translation/</url>
-    <content><![CDATA[<center><h1>摘要</center>
-
-<blockquote>
-<p>我们提出首个直接通过传感器高维输入并成功地学习到策略控制的深度学习模型。这个模型的是一个卷积神经网络的结构，它使用Q-learning的变种进行训练，使用远摄关的图片作为输入，输出是预测未来收益的价值。我们将我们的方法运用至Arcade Learning环境中的雅达利2600的七个游戏里，在没有调整算法的结构的条件下，我们发现它在其中六个游戏中取得比之前方法更好的表现，它在其中三个游戏中取得了超越人类专家的表现。</p>
-</blockquote>
-<span id="more"></span>
-<h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>直接从像视觉和语音等高维传感输入信息来学习控制智体一直以来都是强化学习(RL)的一个挑战。大部分成功的RL在这些领域的操作应用都需要依赖人工干预的线性价的值函数或策略函数进行特征提取整合。显然，这些RL算法的表现严重依赖于所选取的特征的质量。</p>
-<p>最近深度学习的优势是它能够从原生的传感器数据中提取深层次的特征，并在计算机视觉任务[11,22,16]和语言识别任务[6,7]中取得突破性进展。这些方法使用了一系列的神经网络结构，包括卷积神经网络、多层感知机，受限玻尔兹曼机器和循环神经网络，他们都在监督和无监督学习中得到了应用,这样一来似乎很自然地会思考相似的技术是否能对RL的传感器数据有所帮助。</p>
-<p>然而强化学习在从深度学习的观点来看有几个挑战。首先大部分成功的深度学习案例都需要大量的人工标注的训练数据。从另一个方面来说，RL的算法必须要能从量化的奖罚信号中进行学习，而这些奖罚信号通常都是充满噪声、延迟和离散的。执行动作后的以及随之而来的奖罚可能需要等待非常久的时间，在这一点上和有监督学习中的输入与输出的直接关联相比就显得艰难非常。另一个问题是绝大多数的深度学习算法都是基于样本数据之间是独立的这一假设的，但是在强化学习中通常就是状态与状态之间紧密相连，关系复杂。并且，在RL中数据概率分布会随着算法学习到新的行为而随之改变，这对深度学习基于固定概率的条件来说无疑是个的问题。</p>
-<p>本文提出了一种可以克服这些挑战以学习到成功的控制策略的卷积神经网络，而它仅需要使用复杂的RL环境中的原生视频数据。这个网络使用了一种Q-learning 的变种算法[26]进行训练，使用随机梯度下降法进行网络参数的更新。为了避免相关数据和概率不变的问题，我们使用了一种经验回放机制[13]，他能够随机地从经验池中抽取这些学习的经验，因此这能平缓训练时对先前学习到的动作分布概率。</p>
-<p><img src="https://s2.loli.net/2022/05/26/6w8c9R5T7DOHEBm.gif" alt="img" style="zoom:150%;" /></p>
-<p><small>图1  雅达利2600五种游戏的屏幕截图：（从左至右）Pong, Breakout, Space Invaders, Seaquest, Beam Rider</small></p>
-<p>我们将我们的方法应用于在Arcade Learning Environment(ALE)[3]中一系列的雅达利2600游戏中。雅达利2600是一个充满挑战性的RL测试平台，它为智体提供了高纬度的视觉输入信息(210*160大小的RGB彩色图像，屏幕刷新率为60Hz)以及为人类设计的苦难但多样有趣的挑战任务。我们的目标是去创建一个单独的神经网络作为智体使它能够成功的学习玩尽可能多的游戏。这个网路并不会被提供任何游戏相关的信息或者人为给定的视觉特征，并且也不能直接读取游戏环境的内存数据，它只能从视觉信息、奖罚西欧马屁、游戏结束信号以及一个可选则的动作空间进行学习，就和人类玩家一样。更进一步，网络结构和所有的超参数将在训练过程中保持不变。目前网络已经在7个中的6个游戏中超越之前的所有强化学习算法的性能，并且在三个游戏中甚至还取得了超越人类专家游玩的水平。图片[1]展示了五个用于训练的游戏截图。</p>
-<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>我们将问题转换为如下场景：智体在环境$\cal \varepsilon$即雅达利2600模拟器中，在每一个时间步中智体从一系列的合法动作集合$\cal A=\{1,…,K\}$中，选取一个动作$a_t$。这个选择的动作将会被传递至模拟器中并更改了游戏的底层交互数据和游戏得分，一般来说$\sf \varepsilon$是随机的。这些底层的交互数据对智体而言不可见，对它而言它只能从模拟器中观测到一张图片$x_t\in X^d$，这张图片其实一个原生的像素值的向量，描绘了当前的模拟器画面。除此之外，智体还会接收到一个奖罚信号$r_t$，代表了游戏的分的变化。注意一般来说游戏分数取决于之前的动作决策序列和观测；关于动作决策的评价反馈可能在决策做出之后的许多时间步之后才得到。</p>
-<p>由于智体只能观测到当前屏幕的图片信息，我们的任务只能观测到片面的信息，比如说对于整个游戏当前的状态而言，仅用一张图片$x_t$是很难表述的。因此我们需要考虑动作序列和观测的序列$s_t=x_1,x_2,…,x_{t-1},x_t$，我们将基于这些序列学习游戏的策略。我们认为所有的在模拟器中迭代的序列将在有限的时间步中终止。这种规范化使得我么你的问题变成一个庞大但有限的马尔可夫决策过程（MDP），在这种情况中每一个序列是一个独立的状态。最终，我们可以在马尔科夫链中使用标准的强化学习算法，仅简单地使用完整的状态序列$s_t$作为每一个时间的表征。</p>
-<p>​        智体学习的目标是通过选择一个能在未来带来最大化回报的动作，并将这个动作与模拟器交互。我们基于“未来的回报将会随着每一个时间步以一个折扣因子$\gamma$的倍率进行衰减”这一标准的设想，定义未来$t$时刻未来折扣汇报$R_t = \sum_{t’=t}^{T}\gamma^{t’-t}r_{t’}$，其中$T$是终止时的时间步。我们定义一个最优动作-价值函数$Q^{*}$，它表示为在观测一些序列$s$后根据任一策略采取一些动作$a$所期望得到的最大回报值，定义如下：$Q^{*}(s,a)=\max_\pi\Bbb E[R_t|s_t=s,a_t=a,\pi]$，其中$\pi$是一个策略，表述了一个状态到动作的映射的关系（或者状态到动作的概率分布映射）。</p>
-<p>​        最优的动作价值函数遵循一个非常的性质，即贝尔曼方程。它基于如下的设想：如果某一状态的最优的动作价值$Q^{*}$在下一个时间步中成为了所有可行动作的参考，那么最优的策略就是选择动作价值最高的动作$a’$以获取最大化的期望值$r+\gamma Q^{*}(s’,a;)$，</p>
-<script type="math/tex; mode=display">
-Q^{*}(s,a)=\Bbb E_{s'\sim\varepsilon}[r+\gamma \max_{a'}Q^{\*}(s',a')|_{s,a}]</script><p>​        许多强化学习算法的背后逻辑就是找到用于衡量动作价值函数的方法，通过使用贝尔曼方程作为迭代更新，更新的动作价值为$Q_{i+1}(s,a)=\Bbb E[r+\gamma \max_{a’}Q_i(s’,a’)|s,a]$。这种动作价值的迭代算法会依最优的动作价值函数收敛，即当$i\rightarrow\infty$时$Q_i\rightarrow Q^{*}$[23]。在实践中，这种方法是非常不切实际的，因为动作价值函数是会依据每一个状态序列进行独立的估计且不具备泛化能力。因此，我们很自然地会想到用一个近似的函数取拟合动作价值函数，$Q(s,a;\theta)\approx Q^{*}(s,a)$。在强化学习领域常会使用一个线性的函数进行拟合，但是有时一个非线性的函数也会被用于拟合，比如说神经网络。我们参考使用了一个权重为$\theta$的神经网络作为价值评估网络——Q网络。Q网络可以通过最小化变化的每一迭代$i$过程中损失函数序列值$L_i(\theta_i)$来训练：</p>
-<script type="math/tex; mode=display">
-L_i(\theta_i)=\Bbb E_{s,a\sim \rho(·)}[(y_i-Q(s,a;\theta_i))^2]</script><p>​        其中$y_i=\Bbb E_{s’\sim\varepsilon}[r+\gamma \max_{a’}Q(s’,a;\theta_{i-1})-Q(s,a;\theta_i)|_{s,a}]$是迭代$i$过程中的目标值，$\rho(s,a)$是一个基于所有状态$s$和动作$a$的概率分布，我们称之为行为分布。在前一步的迭代过程中的网络参数$\theta_{i-1}$会在优化损失函数值$L_i(\theta_i)$时被冻结（即不是所有时候都是冻结的），注意到目标值是基于神经网络的参数权重的，这和我们在有监督学习中的目标值有所区别，在监督学习中这个值在学习时一般都是固定住的。我们使用如下的梯度进行损失函数的微分：</p>
-<script type="math/tex; mode=display">
-\nabla_{\theta_i}L_i(\theta_i)= \Bbb E_{s,a\sim\rho(·);s'\sim\varepsilon}[(r+\gamma\max_{a'}Q(s',a';\theta_{i-1})-Q(s,a;\theta_i))\nabla_{\theta_i}Q(s,a;\theta_i)]</script><p>​        比起按上述公式的梯度计算完整的期望值，我们通常使用随机梯度下降方法进行计算以优化损失。如果权重在每一个时间步根据行为分布$\rho$、模拟器环境$\varepsilon$的单个样本替换期望继续宁更新，那么我们就得到了熟悉的Q-learning算法了[26]。</p>
-<p>​        注意到这是个model-free的算法，即它通过直接使用模拟器的环境$\varepsilon$抽样解决强化学习的问题，但不需要针对这个模拟器的环境$\varepsilon$进行建模和估计。同时它也是off-policy的，也就是说它会学习一个贪心的策略 $a=max_aQ(s,a;\theta)$同时也会以一定恰当的概率分布对状态空间进行探索。在实践中，我们一般使用贪心$\epsilon$策略，即使用$1-\epsilon$的概率使用决策的动作输出，以概率$\epsilon$选择一个随机的动作。</p>
-<h2 id="相关工作"><a href="#相关工作" class="headerlink" title="相关工作"></a>相关工作</h2><p>​        也许强化学习中的最广为人知的成功故事是IBM 的 Gerald Tesauro 开发的一个玩西洋双陆棋戏的程序——TD-gammom ，也即一个通过强化学习自学如何下棋的神经网络，并获得了超越人类水平的成绩[24]。TD-gammom使用了一个model-free的和Q-learning近似的强化学习算法，使用一个多个的隐藏层的网络用于感知特征以拟合价值函数。</p>
-<p>​        然而早期在尝试复现TD-gammom的时候，包括尝试在棋类游戏中使用相同的算法时，围棋和跳棋的效果就不如人意了。这就引来了一阵关于TD-gammom的方法是一个只能在双陆棋得到应用的成功特例的说法，也许是因为投骰子的随机性对状态空间的探索提供了帮助并且也使得它的价值函数尤其平缓顺滑[19]。</p>
-<p>更进一步说，model-free的强化学习算法比如Q-learning使用了非线性函数进行动作价值函数的拟合[25]，也许off-policy的学习方式确实会导致Q网络的发散的情况[1]。这些争议与讨论带来的就是强化学习的主要理论工作转移到了线性函数的拟合以获取更好的收敛性和收敛的保障[25]。</p>
-<p>​        最近，深度学习和强化学习的结合的趋势再次复苏。深度神经网络已经被应用于评估环境$\varepsilon$，受限玻尔兹曼机也被用于拟合价值函数[21]或者行为决策[9]。除此之外，最近梯度时分差分的方法的提出为Q-learning的发散问题带来了部分条件下的解决的方案。这些方法被证明当使用一个固定的用非线性函数拟合的策略可以保证模型的收敛[14]，或者可以使用一个受限的Q-learning的变种方法[15]用线性函数学习拟合一个控制策略，然而这些方法都没扩展至非线性的控制问题上。</p>
-<p>​        也许之前和我们方法最接近的方法就是使用神经拟合Q-learning（NFQ）[20]，它使用公式2的损失函数进行优化，并且使用RPROP算法进行Q网络的参数更新。然而，它在每一个迭代计算的基于使用依据数据集大小的代价进行批量更新，因此我们认为随机梯度更新在每一个迭代过程中的大规模数据集中计算的代价将会是一个非常小的常数。NFQ同样被成功应用于简单的真实世界控制任务，而且也是使用简单的树蕨输入，首先通过自动笔爱你吗其去歇息低维度的任务表征，然后将NFQ应用于该表征中进行控制[12]。与之对比，我们的方法是一个端到端的强化学习过程，直接以视觉作为输入，结果也显示这种方法一样能通过动作价值函数的评价直接学习到特征。Q-learning在之前也被应用于结合了经验回放机制和简单的神经网络[13]中，但其输入也是基于低维度的状态而不是原始的视觉信息输入。</p>
-<p>​        使用雅达利2600模拟器作为强化学习平台是参考了Marc G Bellemare[3]等的论文，他们将线性函数拟合和普通视觉信息输入应用在强化学习算法中。然后，实验的结果在后续使用更多特征和tug-of-war散列法随机映射至低维空间中的方法的改进后得到提升[2]。HyperNEAT进化架构[8]也被应用于Atari平台，用来（分别针对每款不同的游戏）形成一个表示游戏策略的神经网络。 当用模拟器的重置机制来与确定性序列做反复对抗训练时，我们发现这些策略可以利用几款Atari游戏中的设计缺陷。</p>
-<h2 id="深度强化学习"><a href="#深度强化学习" class="headerlink" title="深度强化学习"></a>深度强化学习</h2><p>​        计算机视觉和语音识别领域最近取得的一些突破，靠的就是可以在大型训练集上高效地训练深度神经网络。 其中最成功的方法是通过使用基于随机梯度下降的轻量级更新，直接用原始输入进行训练。向深度神经网络输入足够多的数据，这样常常可以学习到比人工生成的特征更好的表征[11]。 这些成功案例为我们的强化学习方法提供了启发。我们的目标是将强化学习算法与深度神经网络对接起来，这里所说的神经网络可以直接学习RGB图像，并通过使用随机梯度更新来有效地处理训练数据。</p>
-<p>​        Tesauro的TD-Gammon架构为这种方法提供了一个起点。该架构利用算法与环境的直接交互（或通过自玩，西洋双陆棋）产生的策略性经验样本$(s_t,a_t,r_t,s_{t+1},a_{t+1})$，对价值函数估计网络的参数进行更新。由于该算法在20年前能超越了水平最高的人类西洋双陆棋玩家，所以我们想知道，二十年的硬件改进以及现代深度神经网络架构和可扩展RL算法是否能让强化学习实现重大进展。</p>
-<p>​        不同于TD-Gammon和类似的在线方法，我们使用了一种叫做“经验回放”[13]的方法：将智体在每个时间步长$e_t=(s_t,a_t,r_t,s_{t+1})$上的经验储存在数据集$\cal D=e_1,…,e_N,$中，将许多episode的经验汇集至经验池中。在算法进行内部循环时，我们将Q-learning算法更新或小批量更新应用于经验样本$\cal e\sim\cal D$，这些样本是从经验池中随机抽取的。 执行经验回放后，智体根据$\epsilon$贪心策略选择动作决策。由于用任意长度的历史表征作为神经网络的输入较难实现，所以我们的Q函数使用的是函数$\phi$生成的固定长度的历史表征。 算法1给出了完整的算法流程，我们将之称为深度Q-learning算法。</p>
-<p><img src="https://s2.loli.net/2022/05/26/AoOKdq4CNsDGiPu.png" alt="image-20220526094753105"></p>
-<p>​        </p>
-<p>这种方法和标准的online Q-learning相比有几个优点[23]。受限，每一步的经验都可能会在许多网络权重更新中起作用，数据的有效性大幅增加。其次由于样本之间存在很强的相关性，直接学习连续样本效率很低；随机化样本会破坏这些相关性，减少更新的方差。第三，当学习策略时，当前的参数确定用于训练参数的下一数据样本。举个例子，如果最大化动作是向左移动，训练样本将由左侧的样本主导;如果最大化动作切换到右边，训练数据分布也会切换到右边。很容易看出，这样可能会产生不必要的反馈循环，并且参数也可能会被困在局部最小值，甚至发生严重的发散[25]。通过使用经验回放，在先前状态下的行为分布就会得到变得均匀，这样学习过程就会变得平缓化，并参数也不会出现振荡或发散。需要指出，当使用经验池抽取经验进行学习时off-policy的方法的学习非常有必要（因为我们当前的参数和产生经验使用的参数不同），这就启发了我们使用Q-learning。</p>
-<p>​        在实践中，我们的算法仅在经验池中存储最后N个经验元组，并且在执行更新时均匀地从D中随机采样。 这种方法在某些方面有一定局限，因为存储缓冲器并不区分重要的经验；而且由于存储容量N有限，存储缓冲器总是用最新的转移重写记忆。同样，均匀采样使得回放记忆中的所有转移具有相等的重要性。 更复杂的抽样策略可能会强调可以提供最多信息的转换，类似于优先扫除[17] 。</p>
-<h3 id="预处理和模型结构"><a href="#预处理和模型结构" class="headerlink" title="预处理和模型结构"></a>预处理和模型结构</h3><p>​    直接使用原始的Atari框架（128色的210×160像素图像）可能在计算上要求很高，所以我们应用了一个基本的预处理步骤来减少输入维数。进行预处理时，首先将原始帧的RGB图像表示转换成灰度图像，并将其下采样成110×84图像。通过从图像上裁剪一个可以大致捕获到游戏区域的的84×84画面，获得最终的输入表征。 然后进行最后的裁剪，因为我们使用的是Alex等提出的的2D卷积GPU实现[11]，需要方形的输入图像。在该论文的实验中，算法1的函数$\phi$将该预处理过程应用于历史记忆的最后4帧，并将它们叠加以生成Q函数的输入。</p>
-<p>​    用神经网络参数化Q函数的方法有许多种。 由于Q函数可以将历史动作对映射到其Q值的标量估计上，所以先前的一些的方法可以将历史和动作作为神经网络的输入[20,12]。 这类架构的主要缺点是需要单独进行一次前向传递来计算每个动作的Q值，这样会导致计算成本与动作数呈正比。 在我们使用的架构中，其中每个可能的动作都对应一个单独的输出单元，神经网络的输入只有状态表征。 输出则对应于输入状态的单个动作的预测Q值。 这类架构的主要优点是只需进行一遍前进传递，就可以计算某一给定状态下所有可能动作的Q值。 </p>
-<p>​    下面我们将描述七个Atari游戏所使用的架构。 神经网络的输入是由$\phi$产生的84×84×4图像。 第一个隐藏层用16个步长（stride）为4的8×8卷积核与输入图像进行卷积， 并使用非线性的激活函数ReLU函数[10,18]。 第二个隐层用32个步长为2的4×4卷积核进行卷积，应用同样的非线性激活函数ReLU函数。最后一个隐层为完全连接层，由256个激活函数单元组成。输出层是一个线性的完全连接层，每个有效的动作对应一个输出。在我们研究的游戏中，有效动作的数量在4到18之间变化。我们把用该方法训练的卷积网络称为深度Q网络（DQN）。</p>
-<h2 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h2><p>​        截至目前，我们用7款流行的ATARI游戏进行了试验——Beam Rider、Breakout、Enduro、Pong、Q*bert、Seaquest和Space Invader。在这7款游戏中，我们使用相同的网络架构、学习算法和超参数设置，以证明我们的方法还是能够在不获取特定游戏信息的条件下成功应用于多种游戏中。当在真实且未改动的游戏中对智体进行评估时，我们在训练期间只对游戏的奖励机制作出了一个改变。由于各游戏的得分范围大不相同，我们将所有正奖励都设定为1，将所有负奖励设定为-1，无变化情况设为0奖励。这样的奖励设置可以限制误差范围，便于在多种游戏中使用同一学习率。同时，该奖励机制还会影响智体的表现，因为它无法区分不同大小的奖励。</p>
-<p>​        在这些试验中，我们使用的是mini batch大小为32的RMSProp算法。训练中的行为策略为：ϵ-greedy的ϵ在前100万帧从1 线性下降到0.1，然后保持在0.1不变。我们共训练了100万帧，并使用了最近100万帧的回放记忆。</p>
-<p>​        在按照前文中的方法玩Atari游戏时，我们还使用了一种简单的跳帧技巧[3]。更确切地说，智体在每隔k帧而不是在每一帧观察并选择动作，在跳过的帧中则重复它的最后一个动作。由于模拟器向前运行一步需要的计算量少于智体选择一个动作的计算量，这种方法可以使智体在不大幅增加运行时间的情况下将游戏次数增加约k倍。除了Space Invader这款游戏，我们在其他游戏中都将k设为4，如果在这款游戏中将k设为4，就会看不见激光，因为跳过的帧与激光闪烁的时长相重叠。将k设定为3就可以看到激光，k值的改变就是不同游戏间的唯一超参数差异。</p>
-<h3 id="训练和稳定性"><a href="#训练和稳定性" class="headerlink" title="训练和稳定性"></a>训练和稳定性</h3><p>​        在监督学习中，通过使用训练集和验证集评估模型，我们可以轻易地追踪模型在训练期间的性能。但是在强化学习中，在训练期间准确评估智体的性能可能会十分困难。如Marc G Bellemare所述[3]，我们的评估指标是在若干游戏中智体在某一episode或游戏中得到的总奖励的平均值。而且我们在训练中周期性地计算该指标。总奖励均值指标往往很嘈杂，因为权重的小小改变可能会导致策略访问的状态的分布发生很大的变化。图2中最左侧的两个线图显示了总奖励均值在游戏Seapuest和Breakout的训练期间是如何变化的。这两个总奖励均值线图确实很嘈杂，给人的印象是学习算法的运行不稳定。</p>
-<p><img src="https://s2.loli.net/2022/05/26/uqRvEcmjGKDf9h5.png" alt="image-20220526095121441"></p>
-<p><small>图2：  左边两图分别展示了训练时Breakout和Seaquest每回合的平均奖励值。数据是使用$\varepsilon=0.05$的$\varepsilon -greedy$策略在运行10000步计算得到的。右图的两图则分别展示了Breakout和Seaquest部分状态下的平均最大的动作价值。大约每三十分钟每一个回合约有50000条抽样数据用于更新</small></p>
-<p><img src="https://s2.loli.net/2022/05/26/Qr4Mp86NOykVTxL.png" alt="image-20220526100408551"></p>
-<p><small>图3  最左端的图表展示了Seaquest的30帧数据预测的价值函数。三张屏幕截图分别对应图表中的A，B，C三个时刻。</small></p>
-<p>​        右侧的两个线图则较为稳定，指标是指策略的预估动作分值函数Q，该函数的作用是预测在任何给定状态下智体遵循其策略所能获得的惩罚后的奖励。我们在训练开始前运行某一随机策略，收集固定数量的状态，并追踪这些状态的最大预测Q值的均值。从图2最右侧的两个线图可以看出，预测平均Q值的增加趋势要比智体获得的总奖励的均值平缓得多，其余5个游戏的平均Q值的增长曲线也很平缓。除了预测Q值在训练期间有较为平缓的增长，我们在试验中未发现任何发散问题。这表明，除了缺乏理论上的收敛保证，我们的方法能够使用强化学习信合和随机梯度下滑以稳定的方式训练大型神经网络。</p>
-<h3 id="可视化和价值函数"><a href="#可视化和价值函数" class="headerlink" title="可视化和价值函数"></a>可视化和价值函数</h3><p>​        图3给出了游戏Seaquest中学到的价值函数的可视化形式。从图中可以看出，当屏幕左侧出现敌人后预测值出现跳跃（点A）。然后代理想敌人发射鱼雷，当鱼雷快要集中敌人时预测值达到最高点（点B）。最后当敌人消失后预测值差不多恢复到原始值（点C）。图3表明我们的方法能够在较为复杂一系列的事件中学习价值函数的变化方式。</p>
-<h3 id="主要的评估"><a href="#主要的评估" class="headerlink" title="主要的评估"></a>主要的评估</h3><p>​        我们将我们的结果与Marc中提出的方法进行了比较。该方法被称为“Sarsa”，Sarsa算法借助为Atari任务人工设计的多个特征集来学习线性策略，我们在[3,,4]中给出了表现最佳的特征集的得分[3]。Contingency算法的基本思路和Sarsa法相同，但是该方法可以通过学习智体控制范围内的屏幕区域的表征，来增强特征集[4]。需要指出，这两种方法都通过背景差分法吸纳了大量关于计算机视觉问题的知识，并将128种颜色中的每种颜色都作为一个单独的通道。由于许多Atari游戏中每种类型的目标所用的颜色通常都各不相同，将每种颜色作为一个单独的通道，这种做法类似于生成一个单独的二元映射，对每种目标类型进行编码。相比之下，我们的代理只接收原始RGB屏幕截图输入，并且必须学习自行检测目标。</p>
-<p>​        除了给出学习代理（learned agents）的得分，我们还给出了人类专业游戏玩家的得分，以及一种均匀地随机选择动作的策略。人类玩家的表现将表示为玩了两小时游戏后得到的奖励中值。需要指出，我们给出的人类玩家的得分要比Bellemare等人[3]论文中给出的得分高得多。至于学习方法，我们遵循的是Bellemare等人的论文==[3,5]==中使用的评估策略，并且我们还通过将$\epsilon$设定为0.05运行 ε 贪心策略来获得固定步数的平均得分。表1的前5行给出了所有游戏的各游戏平均得分。在这7款游戏中，我们的方法（标记为DQN）虽然没有吸纳任何关于输入的先验知识，结果还是大幅超越了其他学习方法.。</p>
-<p>​        我们同样将文献[8]中的策略搜索方法囊括进表格的后三行进行比较，并做出了两组使用该方法的结果。HNeat Best 的得分反映了通过使用人工标注的目标检测法现实游戏物体位置和类型.HNeat Pixel的得分反映的是使用特定的8种颜色通道代表雅达利游戏模拟器的特定物体类型。这两种方法依赖于确定的状态序列且不存在随机的扰动，因此与其他方法对比时对比的是单个会和下的最佳表现。相反的，我们的算法是在贪心$\epsilon$策略下进行评估的，因此必须对所有可能的情况进行归一化。然而，我们发现在所有展示的游戏中，除了Space Invaders这款游戏不单是我们算法的最优表现还是我们的平均表现都能达到一个相对较好的效果。</p>
-<p><img src="https://s2.loli.net/2022/05/26/aZeD57p8KGwxCWk.png" alt="image-20220526100647570"></p>
-<p><small>表1  上端的表格对比了使用贪心值为0.0.5的$\varepsilon-greedy$的不同学习方式平均总奖励。下端的表格展示了HNeat和DQN在单个回合中最佳表现分数。HNeat做出确定性策略与DQN使用$\varepsilon-greedy$的效果相同。</small></p>
-<p>​        最终我们发现我们的方法在Breakout，Enduro和Pong这三款游戏中达到了超越人类专家水平的水准，并且在Beam Rider种取得了与人类水平相近的成绩。Q*bert，Seaquest，Space Invaders这三款游戏我们依然与人类专家水平相比有较大的差距，但它充满了挑战性，因为他们需要网络找到一个从更长远的时间层面上考察的策略。</p>
-<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>​        本文介绍了一种新的强化学习的深度学习模型，并通过在雅达利2600游戏中证明了其对困难游戏的控制能力，而它仅需要原始的像素信息作为输入。我们同时也展示了一种结合了随机批量更新和经验回放机制Q-learning的变种算法来降低训练强化学习中的深度神经网络难度。我们的方法在七个测试的游戏中的六个取得SOTA成果，并且没有调整过超参数和网络模型结构。</p>
-<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><p>[1] Leemon Baird. Residual algorithms: Reinforcement learning with function approximation. In <em>Proceedings of the 12th International Conference on Machine Learning (ICML 1995)</em>, pages 30–37. Morgan Kaufmann, 1995.</p>
-<p>[2] Marc Bellemare, Joel Veness, and Michael Bowling. Sketch-based linear value function ap- proximation. In <em>Advances in Neural Information Processing Systems 25</em>, pages 2222–2230, 2012.</p>
-<p>[3] Marc G Bellemare, Yavar Naddaf, Joel Veness, and Michael Bowling. The arcade learning environment: An evaluation platform for general agents. <em>Journal of Artificial Intelligence</em> <em>Research</em>, 47:253–279, 2013.</p>
-<p>[4] Marc G Bellemare, Joel Veness, and Michael Bowling. Investigating contingency awareness using atari 2600 games. In <em>AAAI</em>, 2012.</p>
-<p>[5] Marc G. Bellemare, Joel Veness, and Michael Bowling. Bayesian learning of recursively fac- tored environments. In <em>Proceedings of the Thirtieth International Conference on Machine</em> <em>Learning</em> <em>(ICML</em> <em>2013)</em>, pages 1211–1219, 2013.</p>
-<p>[6] George E. Dahl, Dong Yu, Li Deng, and Alex Acero. Context-dependent pre-trained deep neural networks for large-vocabulary speech recognition. <em>Audio, Speech, and Language Pro-</em> <em>cessing,</em> <em>IEEE</em> <em>Transactions</em> <em>on</em>, 20(1):30 –42, January 2012.</p>
-<p>[7] Alex Graves, Abdel-rahman Mohamed, and Geoffrey E. Hinton. Speech recognition with deep recurrent neural networks. In <em>Proc.</em> <em>ICASSP</em>, 2013.</p>
-<p>[8] Matthew Hausknecht, Risto Miikkulainen, and Peter Stone. A neuro-evolution approach to general atari game playing. 2013.</p>
-<p>[9] Nicolas Heess, David Silver, and Yee Whye Teh. Actor-critic reinforcement learning with energy-based policies. In <em>European</em> <em>Workshop</em> <em>on</em> <em>Reinforcement</em> <em>Learning</em>, page 43, 2012.</p>
-<p>[10] Kevin Jarrett, Koray Kavukcuoglu, MarcAurelio Ranzato, and Yann LeCun. What is the best multi-stage architecture for object recognition? In <em>Proc. International Conference on Com-</em> <em>puter</em> <em>Vision</em> <em>and</em> <em>Pattern</em> <em>Recognition</em> <em>(CVPR</em> <em>2009)</em>, pages 2146–2153. IEEE, 2009.</p>
-<p>[11] Alex Krizhevsky, Ilya Sutskever, and Geoff Hinton. Imagenet classification with deep con- volutional neural networks. In <em>Advances in Neural Information Processing Systems 25</em>, pages 1106–1114, 2012.</p>
-<p>[12] Sascha Lange and Martin Riedmiller. Deep auto-encoder neural networks in reinforcement learning. In <em>Neural Networks (IJCNN), The 2010 International Joint Conference on</em>, pages 1–8. IEEE, 2010.</p>
-<p>[13] Long-Ji Lin. Reinforcement learning for robots using neural networks. Technical report, DTIC Document, 1993.</p>
-<p>[14] Hamid Maei, Csaba Szepesvari, Shalabh Bhatnagar, Doina Precup, David Silver, and Rich Sutton. Convergent Temporal-Difference Learning with Arbitrary Smooth Function Approxi- mation. In <em>Advances</em> <em>in</em> <em>Neural</em> <em>Information</em> <em>Processing</em> <em>Systems</em> <em>22</em>, pages 1204–1212, 2009.</p>
-<p>[15] Hamid Maei, Csaba Szepesva´ri, Shalabh Bhatnagar, and Richard S. Sutton. Toward off-policy learning control with function approximation. In <em>Proceedings of the 27th International Con-</em> <em>ference</em> <em>on</em> <em>Machine</em> <em>Learning</em> <em>(ICML</em> <em>2010)</em>, pages 719–726, 2010.</p>
-<p>[16] Volodymyr Mnih. <em>Machine Learning for Aerial Image Labeling</em>. PhD thesis, University of Toronto, 2013.</p>
-<p>[17] Andrew Moore and Chris Atkeson. Prioritized sweeping: Reinforcement learning with less data and less real time. <em>Machine</em> <em>Learning</em>, 13:103–130, 1993.</p>
-<p>[18] Vinod Nair and Geoffrey E Hinton. Rectified linear units improve restricted boltzmann ma- chines. In <em>Proceedings of the 27th International Conference on Machine Learning (ICML</em> <em>2010)</em>, pages 807–814, 2010.</p>
-<p>[19] Jordan B. Pollack and Alan D. Blair. Why did td-gammon work. In <em>Advances in Neural</em> <em>Information</em> <em>Processing</em> <em>Systems</em> <em>9</em>, pages 10–16, 1996.</p>
-<p>[20] Martin Riedmiller. Neural fitted q iteration–first experiences with a data efficient neural re- inforcement learning method. In <em>Machine Learning: ECML 2005</em>, pages 317–328. Springer, 2005.</p>
-<p>[21] Brian Sallans and Geoffrey E. Hinton. Reinforcement learning with factored states and actions.</p>
-<p><em>Journal</em> <em>of</em> <em>Machine</em> <em>Learning</em> <em>Research</em>, 5:1063–1088, 2004.</p>
-<p>[22] Pierre Sermanet, Koray Kavukcuoglu, Soumith Chintala, and Yann LeCun. Pedestrian de- tection with unsupervised multi-stage feature learning. In <em>Proc. International Conference on</em> <em>Computer</em> <em>Vision</em> <em>and</em> <em>Pattern</em> <em>Recognition</em> <em>(CVPR</em> <em>2013)</em>. IEEE, 2013.</p>
-<p>[23] Richard Sutton and Andrew Barto. <em>Reinforcement Learning:</em> <em>An Introduction</em>. MIT Press, 1998.</p>
-<p>[24] Gerald Tesauro. Temporal difference learning and td-gammon. <em>Communications of the ACM</em>, 38(3):58–68, 1995.</p>
-<p>[25] John N Tsitsiklis and Benjamin Van Roy. An analysis of temporal-difference learning with function approximation. <em>Automatic</em> <em>Control,</em> <em>IEEE</em> <em>Transactions</em> <em>on</em>, 42(5):674–690, 1997.</p>
-<p>[26] Christopher JCH Watkins and Peter Dayan. Q-learning. <em>Machine learning</em>, 8(3-4):279–292, 1992.</p>
-]]></content>
-      <categories>
-        <category>强化学习</category>
-      </categories>
-      <tags>
-        <tag>强化学习</tag>
-        <tag>文献翻译</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>关于SMMS更换国内域名导致Picgo不能上传图片的解决方法</title>
     <url>/2022/08/21/%E8%A7%A3%E5%86%B3Picgo%E4%B8%8A%E4%BC%A0%E5%9B%BE%E7%89%87/</url>
     <content><![CDATA[<p>最近（2022-8-20）在写文档，突然发现用<code>PicGo</code>上传图片一直报错，主要是<code>Error: connect ETIMEDOUT</code>和<code>Error: read ECONNRESET</code>这俩，但是我挂了梯子后用SMMS是可以直接上传图片的，所以问题出在<code>PicGo</code>上面了。查了下，估计是和SMMS更换了国内域名为<code>.app</code>的原因，这里给出我的解决方法:……</p>
@@ -751,6 +700,108 @@ L_i(\theta_i)=\Bbb E_{s,a\sim \rho(·)}[(y_i-Q(s,a;\theta_i))^2]</script><p>​ 
       </categories>
       <tags>
         <tag>PicGo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>通信名词解释</title>
+    <url>/2020/01/01/%E9%80%9A%E4%BF%A1%20%E5%90%8D%E8%AF%8D%E8%A7%A3%E9%87%8A/</url>
+    <content><![CDATA[<p>本文主要用于记录常见的通信专业的专业术语，并尝试记录其简易的意义与功能，配合博客的本地搜索功能以达到查阅的目的。<span id="more"></span></p>
+<h2 id="LTE"><a href="#LTE" class="headerlink" title="LTE"></a>LTE</h2><p>LTE即(Long Term Evolution)长期演化，它其实是一种网络制式（如CDMA、GSM这些）它是3G的演进，但<strong>并非人们普遍误解的4G技术</strong>，而是3G与4G技术之间的一个<strong>过渡</strong>，是3.9G的全球标准,它改进并增强了3G的空中接入技术，采用OFDM和MIMO作为其无线网络演进的唯一标准。在20MHz频谱带宽下能够提供下行326Mbit/s与上行86Mbit/s的峰值速率。改善了小区边缘用户的性能，提高小区容量和降低系统延迟。严格意义上，其实LTE一开始的定位仅仅是3G的加强版，但是随着后期的发展，大大超出当初设计者的预期。本来只能称做3.9G，但是由于不断的在继续改善升级，所以后续版本已经成为了真正的4G。</p>
+<h2 id="OFDM"><a href="#OFDM" class="headerlink" title="OFDM"></a>OFDM</h2><p>OFDM即Orthogonal Frequency Division Multiplexing，正交频分复用，属于多载波调制的一种。OFDM技术是多载波传输方案的实现方式之一，通过<a href="https://baike.baidu.com/item/频分复用/7626706">频分复用</a>实现高速串行数据的<a href="https://baike.baidu.com/item/并行传输/5431953">并行传输</a>, 它具有较好的抗多径衰落的能力，能够支持多用户接入，它的调制和解调是分别基于IFFT和FFT来实现的，是实现复杂度最低、应用最广的一种多载波传输方案。</p>
+<h2 id="MIMO"><a href="#MIMO" class="headerlink" title="MIMO"></a>MIMO</h2><p>Multiple-In Multiple-Out多进多出，使用多根天线在发送端和接受端构建多个像互不干扰的物理无线信道，同时在收发双方的物理层之间，构建多个并行的<strong>逻辑</strong>无线信道。MIMO系统的一个明显特点就是具有极高的频谱利用效率，在对现有频谱资源充分利用的基础上通过利用空间资源来获取可靠性与有效性两方面增益，<strong>其代价是增加了发送端与接收端的处理复杂度。</strong>详细介绍可见<a href="https://blog.csdn.net/HiWangWenBing/article/details/110871535">这篇文章</a>。</p>
+<h2 id="NR"><a href="#NR" class="headerlink" title="NR"></a>NR</h2><p>手机和基站之间的接口，因为是基站和手机之间通过电磁波在空气中传播的，因此就叫做“空口”。由此可见，空口这套东西专用于基站子系统内部，跟核心网的没有直接联系。</p>
+<p><img src="https://s2.loli.net/2022/07/11/IYReFBAspcuwLdU.jpg" alt=""></p>
+<p>5G使用了新空口，即基站跟核心网这两个子系统的独立性增强了。因此，5G是非常灵活的，可以独立组网，也可以跟4G一起非独立组网。在独立组网时，5G基站连接的是5G核心网；非独立组网时，5G基站和4G基站可以连接4G核心网，也可以连接5G核心网。下图是一张非独立组网选项3和选项7的架构图。其中，4G基站和5G基站都连接到了同一套核心网，共同组成了5G非独立组网体系。</p>
+<p><img src="https://s2.loli.net/2022/07/11/nxOfzviYrGQlWD6.jpg" alt=""></p>
+<p>这样一来，不论连接的核心网是4G的EPC还是5G的5GC，同一部手机拥有两路空口连接，跟4G基站之间的链路就是“旧空口”，跟5G基站之间的连接就是所谓的“新空口”了。5G新空口是基于4G空口技术设计的，也使用了OFDM的调制方式，在帧结构上修正了4G的一些不合理之处，增加了对大连接和低时延的支持，因此更加灵活，频谱效率也更高了。</p>
+<h2 id="NG"><a href="#NG" class="headerlink" title="NG"></a>NG</h2><p><strong>简单的解释就是无线接入网和5G核心网之间的接口。</strong>NG接口是一个逻辑接口，规范了NG接口，NG-RAN节点与不同制造商提供的AMF的互连；同时，分离NG接口无线网络功能和传输网络功能，以便于引入未来的技术。从任何一个NG-RAN节点向5GC可能存在多个NG-C逻辑接口。然后，通过NAS节点选择功能确定NG-C接口的选择。从任何一个NG-RAN节点向5GC可能存在多个NG-U逻辑接口。NG-U接口的选择在5GC内完成，并由AMF发信号通知NG-RAN节点。NG接口分为NG-C接口（NG-RAN和5GC之间的控制面接口）和NG-U接口（NG-RAN和5GC之间的用户面接口）。</p>
+<h2 id="BTS"><a href="#BTS" class="headerlink" title="BTS"></a>BTS</h2><p>Base Transceiver Station，可以简单粗暴理解为专属于2G技术的基站。</p>
+<h2 id="BSC"><a href="#BSC" class="headerlink" title="BSC"></a>BSC</h2><p>Base Station Controller：基站控制器，是基站收发台和移动交换中心之间的连接点，也为基站收发台（BTS）和移动交换中心（MSC）之间交换信息提供接口。</p>
+<h2 id="MSC"><a href="#MSC" class="headerlink" title="MSC"></a>MSC</h2><p>Mobile Switch Center，移动交换中心，是在电话和数据系统之间提供呼叫转换服务和呼叫控制的设备。</p>
+<h2 id="VLR"><a href="#VLR" class="headerlink" title="VLR"></a>VLR</h2><p>Visitor Location Register，访问地址寄存器。是一个动态的数据库，在网络中VLR都是与MSCS合设，协助MSCS记录当前覆盖区域内的所有移动用户的相关信息。</p>
+<h2 id="HLR"><a href="#HLR" class="headerlink" title="HLR"></a>HLR</h2><p>Home Location Register，归属地址寄存器。是一个静态数据库，是移动网络中存储永久用户信息的主数据库，包括地址、帐户状态和偏好，是GSM系统的一个集成构件，由用户的网络运营商维护。</p>
+<h2 id="AUC"><a href="#AUC" class="headerlink" title="AUC"></a>AUC</h2><p>Authentication Center，鉴权中心，是用于产生为确定移动用户身份和对呼叫身份保密所需鉴权、加密的三参数（随机号码 RAND 、符合响应 SRES 和密钥 Kc ）的功能实体。</p>
+<h2 id="EIR"><a href="#EIR" class="headerlink" title="EIR"></a>EIR</h2><p>Equipment Identity Register，设备标识寄存器。简单理解为存储终端设备的标识符。</p>
+<h2 id="ISDN"><a href="#ISDN" class="headerlink" title="ISDN"></a>ISDN</h2><p>Integrated Services Digital Network，综合业务数字网。是一个数字电话网络国际标准，是一种典型的电路交换网络系统。在ITU的建议中，ISDN是一种在数字电话网IDN的基础上发展起来的通信网络，ISDN能够支持多种业务，包括电话业务和非电话业务。</p>
+<h2 id="PSTN"><a href="#PSTN" class="headerlink" title="PSTN"></a>PSTN</h2><p> Public Switched Telephone Network，公共交换电话网络，一种常用旧式电话系统。即我们日常生活中常用的电话网。</p>
+<h2 id="PLMN"><a href="#PLMN" class="headerlink" title="PLMN"></a>PLMN</h2><p>Public Land Mobile Network，公共陆地移动网。由政府或它所批准的经营者，为公众提供陆地移动通信业务目的而建立和经营的网络。该网路通常与公众交换电话网（PSTN）互连，形成整个地区或国家规模的通信网。</p>
+<h2 id="MME"><a href="#MME" class="headerlink" title="MME"></a>MME</h2><p>Mobility Management Entity，移动管理实体。它负责空闲模式的UE (User Equipment)的定位，传呼过程，包括中继，简单的说MME是负责信令处理部分。</p>
+<h2 id="SGW"><a href="#SGW" class="headerlink" title="SGW"></a>SGW</h2><p>Serving Gateway，服务网关。SGW（Serving GateWay，服务网关）是<a href="https://baike.baidu.com/item/移动通信网络/22287927">移动通信网络</a>EPC中的重要网元。EPC网络实际上是原3G核心网PS域的演进版本，而SGW的功能和作用与原3G核心网SGSN网元的用户面相当，即在新的EPC网络中，控制面功能和媒体面功能分离更加彻底。</p>
+<h2 id="PGW"><a href="#PGW" class="headerlink" title="PGW"></a>PGW</h2><p>PDN Gateway，PDN网关。类似于GGSN网元的功能，为EPC网络的边界网关，提供用户的会话管理和承载控制、数据转发、IP地址分配以及非3GPP用户接入等功能。它是3GPP接入和非3GPP接入公用数据网络PDN的锚点。所谓3GPP接入，是指3GPP标准家族出来的无线接入技术，比如我国中国移动和中国联通的手机，就是3GPP接入技术；所谓非3GPP接入，就是3GPP标准家族以外的无线接入技术，典型的比如中国电信的CDMA接入技术以及流行的WiFi接入技术等。就是说，在EPC网络中，移动终端如果是非3GPP接入，它可以不经过MME网元和SGW网元，但一定会经过PGW网元，才能接入到PDN。</p>
+<h2 id="SGSN"><a href="#SGSN" class="headerlink" title="SGSN"></a>SGSN</h2><p>Serving GPRS Support Node，服务GPRS支持节点。SGSN与GGSN 配合，共同完成移动通信网络分组业务（PS，Packet Service）功能。其地位和作用类似于移动通信网络电路域（CS，Circuit Switch）中的MSC/VLR。当用户处于GPRS Attach（GPRS附着）状态时，SGSN 中存储了同分组相关的用户信息和位置信息。</p>
+<h2 id="GGSN"><a href="#GGSN" class="headerlink" title="GGSN"></a>GGSN</h2><p>Gateway GPRS Support Node，网关GPRS支持节点。SGSN与GGSN 配合，共同完成移动通信网络分组业务（PS，Packet Service）功能。主要是起网关作用，它可以和多种不同的数据网络连接，如ISDN、PSPDN和LAN等，可以把GSM网中的GPRS分组数据包进行协议转换，从而可以把这些分组数据包传送到远端的TCP/IP或X.25网络。</p>
+<h2 id="ATCA"><a href="#ATCA" class="headerlink" title="ATCA"></a>ATCA</h2><p>Advanced Telecom Computing Architecture，先进电信计算架构，可以理解为是为下一代融合通信及数据网络应用提供的一个高性价比的，基于模块化结构的、兼容的、并可扩展的硬件构架。</p>
+<h2 id="ETCA"><a href="#ETCA" class="headerlink" title="ETCA"></a>ETCA</h2><p>Enhanced ATCA，增强型ATCA，可以理解为ATCA的强化版。</p>
+<h2 id="SBA"><a href="#SBA" class="headerlink" title="SBA"></a>SBA</h2><p>Service Based Architecture，即基于服务的架构。SBA架构，基于云原生构架设计，借鉴了IT领域的“微服务”理念。把原来具有多个功能的整体，分拆为多个具有独自功能的个体。每个个体，实现自己的微服务。</p>
+<h2 id="NFV"><a href="#NFV" class="headerlink" title="NFV"></a>NFV</h2><p>Network Functions Virtualization，利用<a href="https://baike.baidu.com/item/虚拟化技术/276750">虚拟化技术</a>，将<a href="https://baike.baidu.com/item/网络节点/9338583">网络节点</a>阶层的功能，分割成几个功能区块，分别以软件方式实现，不再局限于<a href="https://baike.baidu.com/item/硬件/479446">硬件</a>架构。</p>
+<h2 id="IMS"><a href="#IMS" class="headerlink" title="IMS"></a>IMS</h2><p>IP Multimedia Subsystem，是一种全新的多媒体业务形式，它能够满足的<a href="https://baike.baidu.com/item/终端客户">终端客户</a>更新颖、更多样化多媒体业务的需求。IMS被认为是下一代网络的核心技术，也是解决移动与固网融合，引入语音、数据、视频三重融合等差异化业务的重要方式。但是，全球IMS网络多数处于初级阶段，应用方式也处于业界探讨当中。</p>
+<h2 id="EPC"><a href="#EPC" class="headerlink" title="EPC"></a>EPC</h2><p>Evolved Packet Core，特点为仅有分组域而无电路域、基于全IP结构、控制与承载分离且网络结构扁平化，其中主要包含MME、SGW、PGW、PCRF等网元。其中SGW和PGW常常合设并被称为SAE-GW。</p>
+<h2 id="HSS"><a href="#HSS" class="headerlink" title="HSS"></a>HSS</h2><p>Home Subscriber Server，是IMS（IP Multimedia Subsystem，<a href="https://baike.baidu.com/item/IP多媒体子系统/2841593">IP多媒体子系统</a>）中控制层的重要组成部分，支持用于处理调用/会话的IMS网络实体的主要用户数据库。它包含用户配置文件，执行用户的身份验证和授权，并可提供有关用户物理位置的信息。</p>
+<h2 id="NRF"><a href="#NRF" class="headerlink" title="NRF"></a>NRF</h2><p>Network Repository Function，网络存储库功能，负责对网络功能服务注册登记、状态监测等，实现网络功能服务自动化管理、选择和可扩展，并允许每个网络功能发现其它网络功能提供的服务。</p>
+<h2 id="PCF"><a href="#PCF" class="headerlink" title="PCF"></a>PCF</h2><p>Policy Control function，策略控制功能，支持统一的策略框架去管理网络行为，提供策略规则给网络实体去实施执行，访问统一数据仓库（UDR）的订阅信息。</p>
+<h2 id="UDM"><a href="#UDM" class="headerlink" title="UDM"></a>UDM</h2><p>Unified Data Management，统一数据管理，负责用户标识、签约数据、鉴权数据的管理、用户的服务网元注册管理（比如当前为终端提供业务的AMF、SMF等，如当用户切换了访问的AMF时，UDM还会向旧的AMF发起注销消息，要求旧的AMF删除用户相关信息）。</p>
+<h2 id="UDR"><a href="#UDR" class="headerlink" title="UDR"></a>UDR</h2><p>Unified Data Repository，统一数据仓库功能，用于UDM存储订阅数据或读取订阅数据以及PCF存储策略数据或者读取策略数据。</p>
+<h2 id="SMF"><a href="#SMF" class="headerlink" title="SMF"></a>SMF</h2><p>Service Management Function，业务管理功能。</p>
+<h2 id="AF"><a href="#AF" class="headerlink" title="AF"></a>AF</h2><p>Application Function， 应用功能。AF类似于一个应用服务器，其与其他5G核心网控制面NF交互，并提供业务服务。AF可以针对不同的应用服务而存在，可以由运营商或可信的第三方拥有。</p>
+<h2 id="AUSF"><a href="#AUSF" class="headerlink" title="AUSF"></a>AUSF</h2><p>Authentication Server Function，鉴权服务功能 ，AUSF用于接收AMF（access and mobility management function，AMF）对UE进行身份验证的请求，通过向UDM请求密钥，再将UDM下发的密钥转发给AMF进行鉴权处理。</p>
+<h2 id="AMF"><a href="#AMF" class="headerlink" title="AMF"></a>AMF</h2><p>Access and Mobility management Function，接入和移动管理功能。AMF负责UE身份验证、鉴权、注册、移动性管理和连接管理等功能。与4G EPC相比，AMF的功能类似于MME。</p>
+<h2 id="R-AN"><a href="#R-AN" class="headerlink" title="(R)AN"></a>(R)AN</h2><p>Radio Access Network，无线接入网是指固定用户全部或部分以无线的方式接入到交换机,通常无线接入网所接入的交换机是指PSTN的交换机,但也可以是ISDN的交换机。</p>
+<h2 id="UPF"><a href="#UPF" class="headerlink" title="UPF"></a>UPF</h2><p>User Plane Function，用户平面功能，数据从基站到网络的路由转发是它的主要功能，是核心网里唯一的处理数据的模块，剩下的模块都是处理信令的，也就是做网络控制的。5G核心网是彻底的控制面与用户面分离，就是用户面模块仅仅处理数据，控制面模块仅仅负责实现网络管控。</p>
+<h2 id="UE"><a href="#UE" class="headerlink" title="UE"></a>UE</h2><p>User Equipment，用户设备（UE）是指在一台无线网络中的设备，其能够使用户通过无线通信网络通信。</p>
+]]></content>
+      <tags>
+        <tag>通信技术</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>从一维卷积到二维卷积：浅析图像卷积</title>
+    <url>/2022/08/03/%E5%9B%BE%E5%83%8F%E5%8D%B7%E7%A7%AF/</url>
+    <content><![CDATA[<h2 id="什么是卷积"><a href="#什么是卷积" class="headerlink" title="什么是卷积"></a>什么是卷积</h2><p>首先先给出一维情况的卷积的定义。</p>
+<script type="math/tex; mode=display">
+f(x)*g(x)=\int_{-\infty}^{\infty}f(x)g(\tau-x)d\tau</script><p>这个式子很难从直观层面进行理解，因为它包含了乘积、翻转、积分三个部分的内容。如果你是信通学子，那么你肯定会知道两个函数的卷积结果可以看作是他们对应的傅里叶变换在频域的乘积的反变换，也就是说把一个函数作为输入信号，另一个函数作为描述系统的一个方程，当这个系统接收到输入信号后会做出响应，这个响应$y(t)$就是输入信号$x(t)$与系统函数$h(t)$卷积的结果：</p>
+<script type="math/tex; mode=display">
+y(t)=x(t)*h(t)=\mathcal F^{-1}[X(jw)H(jw)]</script><p>但很明显不是所有人都学过信号与系统，所以我想了个更<del>好</del>恶心的例子进行描述。<span id="more"></span></p>
+<h3 id="一个恶心的例子"><a href="#一个恶心的例子" class="headerlink" title="一个恶心的例子"></a>一个<del>恶心</del>的例子</h3><p>试想这样一个场景：一个热门旅游景点的厕所。我们知道厕所需要连连不断地接待客人（？），因此厕所的囤粪速度可以用函数$F(x)$表示，如图1。</p>
+<p><img src="https://s2.loli.net/2022/08/03/7FHNVEs1uM5RCIB.png" alt="image-20220724172639005" style="zoom:50%;" /></p>
+<center><small>图1粪便囤积变化率曲线</small></center>
+
+<p>但是厕所连通的化粪池它的处理能力有限，它对排泄物的处理效率如图2所示，我们用函数$H(x)$来表示。</p>
+<p><img src="https://s2.loli.net/2022/08/03/BtJzpROGo3rTNYF.png" alt="image-20220724172618665" style="zoom:50%;" /></p>
+<center><small>图2 化粪池分解效率</small></center>
+
+<p>下面我们的问题就是需要讨论，<strong>化粪池在某个时候还有多少粪便啦！</strong></p>
+<h3 id="怎么计算？"><a href="#怎么计算？" class="headerlink" title="怎么计算？"></a>怎么计算？</h3><p>每一个粪便都是独立的个体，它们都会随着化粪池分解而减少。如果不考虑粪便的分解的话，那么粪便总量可以这样表示：</p>
+<script type="math/tex; mode=display">
+n =\int_{-\infty}^{\infty}F(x)dx</script><p>但是我们的粪便不是无线增加的，因此，需要考虑分解的情况。现在假设在$t$时刻时进行统计，经过时间间隔$\tau$后统计存在的粪便总量为：</p>
+<script type="math/tex; mode=display">
+n' = F(t)·H(\tau)</script><p>也就是说在$t+\tau$时刻，不考虑其他情况下的粪便输入，此时一共有$n’$这么多的粪便。这里则是对应了卷积操作中的乘积部分。我们换一种写法，令$T=t+\tau$，则在$T$时刻不考虑其他粪便的增加的情况下，粪便量可以记为:</p>
+<script type="math/tex; mode=display">
+n'=F(t)·H(T-t)</script><p>$H(t)$函数的变量出现了x轴反转的情况，我们离卷积的定义也越来越近啦！下一步就是积分的问题了。积分其实也很好理解，因为上面这些式子都是只考虑了单个时刻不考虑其他时刻的输入信息，因此如果要考虑其他时刻的输入的话，则是把其他时刻的粪便量进行一个叠加（离散域就是使用$\sum$求和，连续域就是使用$\int$积分）。因此$t$时刻的粪便总量可以表示为：</p>
+<script type="math/tex; mode=display">
+Y(t)=\int_{-\infty}^{t}F(t)H(\tau-t)d\tau</script><p>是不是这样就很好理解了？</p>
+<h3 id="图像的卷积是什么？"><a href="#图像的卷积是什么？" class="headerlink" title="图像的卷积是什么？"></a>图像的卷积是什么？</h3><p>卷积的本质在刚刚已经说了，就是反转、乘积、求和。到了二维也是这样子的：\</p>
+<script type="math/tex; mode=display">
+Y(x,y)=F(x,y)*H(x,y)=\sum_{n_1=-\infty}^{\infty}\sum_{n_2=-\infty}^{\infty}F(n_1,n_2)·H(x-n_1,y-n_2)</script><p>好！下面我们给出图像卷积的一个步骤：</p>
+<p><img src="https://img-blog.csdnimg.cn/20200308112430934.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L25hcnVoaW5h,size_16,color_FFFFFF,t_70" alt=""></p>
+<p>其中这个<code>Convolution Kernel</code>叫做卷积核，<code>Source Pixel</code>就是我们的图像。在这张图里红色通道对应的地方就是卷积处理的第一个像素，计算的公式在右上角，输入是1，输出是8。随着卷积核往下一个像素移动，优惠计算出新的像素值，直到按设定的规则遍历完图像。</p>
+<p><img src="https://pic3.zhimg.com/v2-8a6695c2e086525ac5a61610348739b2_b.gif" alt=""></p>
+<p>唯一需要指出的是，在这里体现了乘积和加和，那么反转是在哪里体现的呢？其实是图中卷积核已经是翻转了180°了，也就是说原本的卷积核它的“4”是在”-4“的位置的。所以这就是图像卷积的操作，是不是很好理解捏？</p>
+<h2 id="为什么是卷积"><a href="#为什么是卷积" class="headerlink" title="为什么是卷积"></a>为什么是卷积</h2><p>上结论：卷积的本质是提取图像中的特征。许多常用的图像处理方法都可以用卷积的方式表示，因此选择卷积。</p>
+<h2 id="Pytorch的图像卷积"><a href="#Pytorch的图像卷积" class="headerlink" title="Pytorch的图像卷积"></a>Pytorch的图像卷积</h2><p><img src="https://img-blog.csdnimg.cn/20201121195053531.gif" alt=""></p>
+<p>终于来到这里了。我们先看看pytorch卷积层继承的父类<code>_ConvNd</code>:</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">_ConvNd</span>(<span class="title class_ inherited__">Module</span>):</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self,</span></span><br><span class="line"><span class="params">                 in_channels: <span class="built_in">int</span>,</span></span><br><span class="line"><span class="params">                 out_channels: <span class="built_in">int</span>,</span></span><br><span class="line"><span class="params">                 kernel_size: <span class="type">Tuple</span>[<span class="built_in">int</span>, ...],</span></span><br><span class="line"><span class="params">                 stride: <span class="type">Tuple</span>[<span class="built_in">int</span>, ...],</span></span><br><span class="line"><span class="params">                 padding: <span class="type">Tuple</span>[<span class="built_in">int</span>, ...],</span></span><br><span class="line"><span class="params">                 dilation: <span class="type">Tuple</span>[<span class="built_in">int</span>, ...],</span></span><br><span class="line"><span class="params">                 transposed: <span class="built_in">bool</span>,</span></span><br><span class="line"><span class="params">                 output_padding: <span class="type">Tuple</span>[<span class="built_in">int</span>, ...],</span></span><br><span class="line"><span class="params">                 groups: <span class="built_in">int</span>,</span></span><br><span class="line"><span class="params">                 bias: <span class="built_in">bool</span>,</span></span><br><span class="line"><span class="params">                 padding_mode: <span class="built_in">str</span>,</span></span><br><span class="line"><span class="params">                 device=<span class="literal">None</span>,</span></span><br><span class="line"><span class="params">                 dtype=<span class="literal">None</span></span>) -&gt; <span class="literal">None</span>:</span><br></pre></td></tr></table></figure>
+<p>主要关注<code>in_channels</code>,<code>out_channels</code>,<code>kernel_size</code>,<code>stride</code>,<code>padding</code>这几个参数。</p>
+<h3 id="in-channels"><a href="#in-channels" class="headerlink" title="in_channels"></a>in_channels</h3><p><code>in_channels</code>的输入是按<code>(N,C,H,W)</code>排列的，<code>N</code>是mini-batch大小，<code>C</code>是通道数channel，<code>H</code>和<code>W</code>分别是输入的高和宽，<strong>这和<code>Tensorflow</code>的不太一样。</strong></p>
+<h3 id="out-channels"><a href="#out-channels" class="headerlink" title="out_channels"></a>out_channels</h3><p>在定义好了<code>in_channels</code>后，<code>out_channels</code>只需要关注输出通道数<code>K</code>即可。</p>
+<h3 id="kernel-size"><a href="#kernel-size" class="headerlink" title="kernel_size"></a>kernel_size</h3><p>卷积核大小，如果设为一个整数的话那么卷积核就是一个正方形的，否则就按长款的顺序输入一个<code>tuple</code>作为卷积核形状。</p>
+<h3 id="stride"><a href="#stride" class="headerlink" title="stride"></a>stride</h3><p>步长。也就是卷积核移动的距离，可以是一个整数也可以是一个<code>tuple</code>，类似<code>kernel_size</code>。</p>
+<h3 id="padding"><a href="#padding" class="headerlink" title="padding"></a>padding</h3><p>补丁，就是只要使用了大小大于1的卷积核去做卷积的话，输出图像的大小是比原本的图像大小要小的，因此为了保证维度的大小一致，会引入padding填充原图像的边缘位置，该值表示的是沿原图边缘进行该值大小的延拓。</p>
+]]></content>
+      <categories>
+        <category>学习记录</category>
+      </categories>
+      <tags>
+        <tag>计算机视觉</tag>
       </tags>
   </entry>
   <entry>
@@ -879,57 +930,6 @@ L_i(\theta_i)=\Bbb E_{s,a\sim \rho(·)}[(y_i-Q(s,a;\theta_i))^2]</script><p>​ 
       </tags>
   </entry>
   <entry>
-    <title>通信名词解释</title>
-    <url>/2020/01/01/%E9%80%9A%E4%BF%A1%20%E5%90%8D%E8%AF%8D%E8%A7%A3%E9%87%8A/</url>
-    <content><![CDATA[<p>本文主要用于记录常见的通信专业的专业术语，并尝试记录其简易的意义与功能，配合博客的本地搜索功能以达到查阅的目的。<span id="more"></span></p>
-<h2 id="LTE"><a href="#LTE" class="headerlink" title="LTE"></a>LTE</h2><p>LTE即(Long Term Evolution)长期演化，它其实是一种网络制式（如CDMA、GSM这些）它是3G的演进，但<strong>并非人们普遍误解的4G技术</strong>，而是3G与4G技术之间的一个<strong>过渡</strong>，是3.9G的全球标准,它改进并增强了3G的空中接入技术，采用OFDM和MIMO作为其无线网络演进的唯一标准。在20MHz频谱带宽下能够提供下行326Mbit/s与上行86Mbit/s的峰值速率。改善了小区边缘用户的性能，提高小区容量和降低系统延迟。严格意义上，其实LTE一开始的定位仅仅是3G的加强版，但是随着后期的发展，大大超出当初设计者的预期。本来只能称做3.9G，但是由于不断的在继续改善升级，所以后续版本已经成为了真正的4G。</p>
-<h2 id="OFDM"><a href="#OFDM" class="headerlink" title="OFDM"></a>OFDM</h2><p>OFDM即Orthogonal Frequency Division Multiplexing，正交频分复用，属于多载波调制的一种。OFDM技术是多载波传输方案的实现方式之一，通过<a href="https://baike.baidu.com/item/频分复用/7626706">频分复用</a>实现高速串行数据的<a href="https://baike.baidu.com/item/并行传输/5431953">并行传输</a>, 它具有较好的抗多径衰落的能力，能够支持多用户接入，它的调制和解调是分别基于IFFT和FFT来实现的，是实现复杂度最低、应用最广的一种多载波传输方案。</p>
-<h2 id="MIMO"><a href="#MIMO" class="headerlink" title="MIMO"></a>MIMO</h2><p>Multiple-In Multiple-Out多进多出，使用多根天线在发送端和接受端构建多个像互不干扰的物理无线信道，同时在收发双方的物理层之间，构建多个并行的<strong>逻辑</strong>无线信道。MIMO系统的一个明显特点就是具有极高的频谱利用效率，在对现有频谱资源充分利用的基础上通过利用空间资源来获取可靠性与有效性两方面增益，<strong>其代价是增加了发送端与接收端的处理复杂度。</strong>详细介绍可见<a href="https://blog.csdn.net/HiWangWenBing/article/details/110871535">这篇文章</a>。</p>
-<h2 id="NR"><a href="#NR" class="headerlink" title="NR"></a>NR</h2><p>手机和基站之间的接口，因为是基站和手机之间通过电磁波在空气中传播的，因此就叫做“空口”。由此可见，空口这套东西专用于基站子系统内部，跟核心网的没有直接联系。</p>
-<p><img src="https://s2.loli.net/2022/07/11/IYReFBAspcuwLdU.jpg" alt=""></p>
-<p>5G使用了新空口，即基站跟核心网这两个子系统的独立性增强了。因此，5G是非常灵活的，可以独立组网，也可以跟4G一起非独立组网。在独立组网时，5G基站连接的是5G核心网；非独立组网时，5G基站和4G基站可以连接4G核心网，也可以连接5G核心网。下图是一张非独立组网选项3和选项7的架构图。其中，4G基站和5G基站都连接到了同一套核心网，共同组成了5G非独立组网体系。</p>
-<p><img src="https://s2.loli.net/2022/07/11/nxOfzviYrGQlWD6.jpg" alt=""></p>
-<p>这样一来，不论连接的核心网是4G的EPC还是5G的5GC，同一部手机拥有两路空口连接，跟4G基站之间的链路就是“旧空口”，跟5G基站之间的连接就是所谓的“新空口”了。5G新空口是基于4G空口技术设计的，也使用了OFDM的调制方式，在帧结构上修正了4G的一些不合理之处，增加了对大连接和低时延的支持，因此更加灵活，频谱效率也更高了。</p>
-<h2 id="NG"><a href="#NG" class="headerlink" title="NG"></a>NG</h2><p><strong>简单的解释就是无线接入网和5G核心网之间的接口。</strong>NG接口是一个逻辑接口，规范了NG接口，NG-RAN节点与不同制造商提供的AMF的互连；同时，分离NG接口无线网络功能和传输网络功能，以便于引入未来的技术。从任何一个NG-RAN节点向5GC可能存在多个NG-C逻辑接口。然后，通过NAS节点选择功能确定NG-C接口的选择。从任何一个NG-RAN节点向5GC可能存在多个NG-U逻辑接口。NG-U接口的选择在5GC内完成，并由AMF发信号通知NG-RAN节点。NG接口分为NG-C接口（NG-RAN和5GC之间的控制面接口）和NG-U接口（NG-RAN和5GC之间的用户面接口）。</p>
-<h2 id="BTS"><a href="#BTS" class="headerlink" title="BTS"></a>BTS</h2><p>Base Transceiver Station，可以简单粗暴理解为专属于2G技术的基站。</p>
-<h2 id="BSC"><a href="#BSC" class="headerlink" title="BSC"></a>BSC</h2><p>Base Station Controller：基站控制器，是基站收发台和移动交换中心之间的连接点，也为基站收发台（BTS）和移动交换中心（MSC）之间交换信息提供接口。</p>
-<h2 id="MSC"><a href="#MSC" class="headerlink" title="MSC"></a>MSC</h2><p>Mobile Switch Center，移动交换中心，是在电话和数据系统之间提供呼叫转换服务和呼叫控制的设备。</p>
-<h2 id="VLR"><a href="#VLR" class="headerlink" title="VLR"></a>VLR</h2><p>Visitor Location Register，访问地址寄存器。是一个动态的数据库，在网络中VLR都是与MSCS合设，协助MSCS记录当前覆盖区域内的所有移动用户的相关信息。</p>
-<h2 id="HLR"><a href="#HLR" class="headerlink" title="HLR"></a>HLR</h2><p>Home Location Register，归属地址寄存器。是一个静态数据库，是移动网络中存储永久用户信息的主数据库，包括地址、帐户状态和偏好，是GSM系统的一个集成构件，由用户的网络运营商维护。</p>
-<h2 id="AUC"><a href="#AUC" class="headerlink" title="AUC"></a>AUC</h2><p>Authentication Center，鉴权中心，是用于产生为确定移动用户身份和对呼叫身份保密所需鉴权、加密的三参数（随机号码 RAND 、符合响应 SRES 和密钥 Kc ）的功能实体。</p>
-<h2 id="EIR"><a href="#EIR" class="headerlink" title="EIR"></a>EIR</h2><p>Equipment Identity Register，设备标识寄存器。简单理解为存储终端设备的标识符。</p>
-<h2 id="ISDN"><a href="#ISDN" class="headerlink" title="ISDN"></a>ISDN</h2><p>Integrated Services Digital Network，综合业务数字网。是一个数字电话网络国际标准，是一种典型的电路交换网络系统。在ITU的建议中，ISDN是一种在数字电话网IDN的基础上发展起来的通信网络，ISDN能够支持多种业务，包括电话业务和非电话业务。</p>
-<h2 id="PSTN"><a href="#PSTN" class="headerlink" title="PSTN"></a>PSTN</h2><p> Public Switched Telephone Network，公共交换电话网络，一种常用旧式电话系统。即我们日常生活中常用的电话网。</p>
-<h2 id="PLMN"><a href="#PLMN" class="headerlink" title="PLMN"></a>PLMN</h2><p>Public Land Mobile Network，公共陆地移动网。由政府或它所批准的经营者，为公众提供陆地移动通信业务目的而建立和经营的网络。该网路通常与公众交换电话网（PSTN）互连，形成整个地区或国家规模的通信网。</p>
-<h2 id="MME"><a href="#MME" class="headerlink" title="MME"></a>MME</h2><p>Mobility Management Entity，移动管理实体。它负责空闲模式的UE (User Equipment)的定位，传呼过程，包括中继，简单的说MME是负责信令处理部分。</p>
-<h2 id="SGW"><a href="#SGW" class="headerlink" title="SGW"></a>SGW</h2><p>Serving Gateway，服务网关。SGW（Serving GateWay，服务网关）是<a href="https://baike.baidu.com/item/移动通信网络/22287927">移动通信网络</a>EPC中的重要网元。EPC网络实际上是原3G核心网PS域的演进版本，而SGW的功能和作用与原3G核心网SGSN网元的用户面相当，即在新的EPC网络中，控制面功能和媒体面功能分离更加彻底。</p>
-<h2 id="PGW"><a href="#PGW" class="headerlink" title="PGW"></a>PGW</h2><p>PDN Gateway，PDN网关。类似于GGSN网元的功能，为EPC网络的边界网关，提供用户的会话管理和承载控制、数据转发、IP地址分配以及非3GPP用户接入等功能。它是3GPP接入和非3GPP接入公用数据网络PDN的锚点。所谓3GPP接入，是指3GPP标准家族出来的无线接入技术，比如我国中国移动和中国联通的手机，就是3GPP接入技术；所谓非3GPP接入，就是3GPP标准家族以外的无线接入技术，典型的比如中国电信的CDMA接入技术以及流行的WiFi接入技术等。就是说，在EPC网络中，移动终端如果是非3GPP接入，它可以不经过MME网元和SGW网元，但一定会经过PGW网元，才能接入到PDN。</p>
-<h2 id="SGSN"><a href="#SGSN" class="headerlink" title="SGSN"></a>SGSN</h2><p>Serving GPRS Support Node，服务GPRS支持节点。SGSN与GGSN 配合，共同完成移动通信网络分组业务（PS，Packet Service）功能。其地位和作用类似于移动通信网络电路域（CS，Circuit Switch）中的MSC/VLR。当用户处于GPRS Attach（GPRS附着）状态时，SGSN 中存储了同分组相关的用户信息和位置信息。</p>
-<h2 id="GGSN"><a href="#GGSN" class="headerlink" title="GGSN"></a>GGSN</h2><p>Gateway GPRS Support Node，网关GPRS支持节点。SGSN与GGSN 配合，共同完成移动通信网络分组业务（PS，Packet Service）功能。主要是起网关作用，它可以和多种不同的数据网络连接，如ISDN、PSPDN和LAN等，可以把GSM网中的GPRS分组数据包进行协议转换，从而可以把这些分组数据包传送到远端的TCP/IP或X.25网络。</p>
-<h2 id="ATCA"><a href="#ATCA" class="headerlink" title="ATCA"></a>ATCA</h2><p>Advanced Telecom Computing Architecture，先进电信计算架构，可以理解为是为下一代融合通信及数据网络应用提供的一个高性价比的，基于模块化结构的、兼容的、并可扩展的硬件构架。</p>
-<h2 id="ETCA"><a href="#ETCA" class="headerlink" title="ETCA"></a>ETCA</h2><p>Enhanced ATCA，增强型ATCA，可以理解为ATCA的强化版。</p>
-<h2 id="SBA"><a href="#SBA" class="headerlink" title="SBA"></a>SBA</h2><p>Service Based Architecture，即基于服务的架构。SBA架构，基于云原生构架设计，借鉴了IT领域的“微服务”理念。把原来具有多个功能的整体，分拆为多个具有独自功能的个体。每个个体，实现自己的微服务。</p>
-<h2 id="NFV"><a href="#NFV" class="headerlink" title="NFV"></a>NFV</h2><p>Network Functions Virtualization，利用<a href="https://baike.baidu.com/item/虚拟化技术/276750">虚拟化技术</a>，将<a href="https://baike.baidu.com/item/网络节点/9338583">网络节点</a>阶层的功能，分割成几个功能区块，分别以软件方式实现，不再局限于<a href="https://baike.baidu.com/item/硬件/479446">硬件</a>架构。</p>
-<h2 id="IMS"><a href="#IMS" class="headerlink" title="IMS"></a>IMS</h2><p>IP Multimedia Subsystem，是一种全新的多媒体业务形式，它能够满足的<a href="https://baike.baidu.com/item/终端客户">终端客户</a>更新颖、更多样化多媒体业务的需求。IMS被认为是下一代网络的核心技术，也是解决移动与固网融合，引入语音、数据、视频三重融合等差异化业务的重要方式。但是，全球IMS网络多数处于初级阶段，应用方式也处于业界探讨当中。</p>
-<h2 id="EPC"><a href="#EPC" class="headerlink" title="EPC"></a>EPC</h2><p>Evolved Packet Core，特点为仅有分组域而无电路域、基于全IP结构、控制与承载分离且网络结构扁平化，其中主要包含MME、SGW、PGW、PCRF等网元。其中SGW和PGW常常合设并被称为SAE-GW。</p>
-<h2 id="HSS"><a href="#HSS" class="headerlink" title="HSS"></a>HSS</h2><p>Home Subscriber Server，是IMS（IP Multimedia Subsystem，<a href="https://baike.baidu.com/item/IP多媒体子系统/2841593">IP多媒体子系统</a>）中控制层的重要组成部分，支持用于处理调用/会话的IMS网络实体的主要用户数据库。它包含用户配置文件，执行用户的身份验证和授权，并可提供有关用户物理位置的信息。</p>
-<h2 id="NRF"><a href="#NRF" class="headerlink" title="NRF"></a>NRF</h2><p>Network Repository Function，网络存储库功能，负责对网络功能服务注册登记、状态监测等，实现网络功能服务自动化管理、选择和可扩展，并允许每个网络功能发现其它网络功能提供的服务。</p>
-<h2 id="PCF"><a href="#PCF" class="headerlink" title="PCF"></a>PCF</h2><p>Policy Control function，策略控制功能，支持统一的策略框架去管理网络行为，提供策略规则给网络实体去实施执行，访问统一数据仓库（UDR）的订阅信息。</p>
-<h2 id="UDM"><a href="#UDM" class="headerlink" title="UDM"></a>UDM</h2><p>Unified Data Management，统一数据管理，负责用户标识、签约数据、鉴权数据的管理、用户的服务网元注册管理（比如当前为终端提供业务的AMF、SMF等，如当用户切换了访问的AMF时，UDM还会向旧的AMF发起注销消息，要求旧的AMF删除用户相关信息）。</p>
-<h2 id="UDR"><a href="#UDR" class="headerlink" title="UDR"></a>UDR</h2><p>Unified Data Repository，统一数据仓库功能，用于UDM存储订阅数据或读取订阅数据以及PCF存储策略数据或者读取策略数据。</p>
-<h2 id="SMF"><a href="#SMF" class="headerlink" title="SMF"></a>SMF</h2><p>Service Management Function，业务管理功能。</p>
-<h2 id="AF"><a href="#AF" class="headerlink" title="AF"></a>AF</h2><p>Application Function， 应用功能。AF类似于一个应用服务器，其与其他5G核心网控制面NF交互，并提供业务服务。AF可以针对不同的应用服务而存在，可以由运营商或可信的第三方拥有。</p>
-<h2 id="AUSF"><a href="#AUSF" class="headerlink" title="AUSF"></a>AUSF</h2><p>Authentication Server Function，鉴权服务功能 ，AUSF用于接收AMF（access and mobility management function，AMF）对UE进行身份验证的请求，通过向UDM请求密钥，再将UDM下发的密钥转发给AMF进行鉴权处理。</p>
-<h2 id="AMF"><a href="#AMF" class="headerlink" title="AMF"></a>AMF</h2><p>Access and Mobility management Function，接入和移动管理功能。AMF负责UE身份验证、鉴权、注册、移动性管理和连接管理等功能。与4G EPC相比，AMF的功能类似于MME。</p>
-<h2 id="R-AN"><a href="#R-AN" class="headerlink" title="(R)AN"></a>(R)AN</h2><p>Radio Access Network，无线接入网是指固定用户全部或部分以无线的方式接入到交换机,通常无线接入网所接入的交换机是指PSTN的交换机,但也可以是ISDN的交换机。</p>
-<h2 id="UPF"><a href="#UPF" class="headerlink" title="UPF"></a>UPF</h2><p>User Plane Function，用户平面功能，数据从基站到网络的路由转发是它的主要功能，是核心网里唯一的处理数据的模块，剩下的模块都是处理信令的，也就是做网络控制的。5G核心网是彻底的控制面与用户面分离，就是用户面模块仅仅处理数据，控制面模块仅仅负责实现网络管控。</p>
-<h2 id="UE"><a href="#UE" class="headerlink" title="UE"></a>UE</h2><p>User Equipment，用户设备（UE）是指在一台无线网络中的设备，其能够使用户通过无线通信网络通信。</p>
-]]></content>
-      <tags>
-        <tag>通信技术</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>帝国时代2决定版数据分析</title>
     <url>/2022/08/23/Aoe/</url>
     <content><![CDATA[<p><img src="https://s2.loli.net/2022/08/23/XR4r9qmpelQZ3gW.png" alt=""></p>
@@ -945,11 +945,11 @@ L_i(\theta_i)=\Bbb E_{s,a\sim \rho(·)}[(y_i-Q(s,a;\theta_i))^2]</script><p>​ 
 <p>然后整理一下，得到一个干净的整合体：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">joined_df = pd.merge(player_data, tidy_matches, left_on=<span class="string">&quot;match&quot;</span>, right_on=<span class="string">&quot;token&quot;</span>, suffixes=[<span class="string">&quot;_player&quot;</span>, <span class="string">&quot;_match&quot;</span>])</span><br><span class="line"><span class="comment">#joined_df.to_csv(&#x27;merge.csv&#x27;)</span></span><br></pre></td></tr></table></figure>
 <p>根据这份数据，我们可以做出一些有意思的分析，我们开始吧！</p>
-<div id="echarts954" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts6357" style="width: 81%;height: 400px;margin: 0 auto"></div>
 <script src="https://cdn.bootcss.com/echarts/4.1.0-release/echarts.min.js"></script>
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts954'));
+        var myChart = echarts.init(document.getElementById('echarts6357'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -6394,11 +6394,11 @@ L_i(\theta_i)=\Bbb E_{s,a\sim \rho(·)}[(y_i-Q(s,a;\theta_i))^2]</script><p>​ 
 </script>
 
 
-<div id="echarts7526" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts1528" style="width: 81%;height: 400px;margin: 0 auto"></div>
 <script src="https://cdn.bootcss.com/echarts/4.1.0-release/echarts.min.js"></script>
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts7526'));
+        var myChart = echarts.init(document.getElementById('echarts1528'));
 
         // 指定图表的配置项和数据
         var option = 
@@ -12780,11 +12780,11 @@ L_i(\theta_i)=\Bbb E_{s,a\sim \rho(·)}[(y_i-Q(s,a;\theta_i))^2]</script><p>​ 
 </script>
 
 
-<div id="echarts5555" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts6707" style="width: 81%;height: 400px;margin: 0 auto"></div>
 <script src="https://cdn.bootcss.com/echarts/4.1.0-release/echarts.min.js"></script>
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts5555'));
+        var myChart = echarts.init(document.getElementById('echarts6707'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -12985,11 +12985,11 @@ L_i(\theta_i)=\Bbb E_{s,a\sim \rho(·)}[(y_i-Q(s,a;\theta_i))^2]</script><p>​ 
 </script>
 
 
-<div id="echarts7696" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts31" style="width: 81%;height: 400px;margin: 0 auto"></div>
 <script src="https://cdn.bootcss.com/echarts/4.1.0-release/echarts.min.js"></script>
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts7696'));
+        var myChart = echarts.init(document.getElementById('echarts31'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -13276,11 +13276,11 @@ L_i(\theta_i)=\Bbb E_{s,a\sim \rho(·)}[(y_i-Q(s,a;\theta_i))^2]</script><p>​ 
 </script>
 
 
-<div id="echarts8301" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts888" style="width: 81%;height: 400px;margin: 0 auto"></div>
 <script src="https://cdn.bootcss.com/echarts/4.1.0-release/echarts.min.js"></script>
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts8301'));
+        var myChart = echarts.init(document.getElementById('echarts888'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -13542,11 +13542,11 @@ L_i(\theta_i)=\Bbb E_{s,a\sim \rho(·)}[(y_i-Q(s,a;\theta_i))^2]</script><p>​ 
 </script>
 
 
-<div id="echarts8318" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts2418" style="width: 81%;height: 400px;margin: 0 auto"></div>
 <script src="https://cdn.bootcss.com/echarts/4.1.0-release/echarts.min.js"></script>
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts8318'));
+        var myChart = echarts.init(document.getElementById('echarts2418'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -13697,11 +13697,11 @@ L_i(\theta_i)=\Bbb E_{s,a\sim \rho(·)}[(y_i-Q(s,a;\theta_i))^2]</script><p>​ 
 
 
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">win_team_count = joined_df[(joined_df.winner==<span class="literal">True</span>) &amp; (joined_df.ladder==<span class="string">&quot;RM_TEAM&quot;</span>)].value_counts(<span class="string">&#x27;civ&#x27;</span>,sort=<span class="literal">False</span>)</span><br><span class="line">win_team_count_data = win_team_count.to_list()</span><br><span class="line">win_team_count_index = win_team_count.index.to_list()</span><br><span class="line"></span><br><span class="line">bar = (</span><br><span class="line">    Bar()</span><br><span class="line">    .add_xaxis(win_team_count_index)</span><br><span class="line">    .add_yaxis(<span class="string">&quot;team&quot;</span>,win_team_count_data,category_gap=<span class="number">12</span>)</span><br><span class="line">    .set_global_opts(title_opts=opts.TitleOpts(title=<span class="string">&quot;示例&quot;</span>,pos_left=<span class="string">&#x27;center&#x27;</span>),</span><br><span class="line">                    legend_opts=opts.LegendOpts(pos_bottom=<span class="string">&#x27;bottom&#x27;</span>,is_show=<span class="literal">False</span>),</span><br><span class="line">                    xaxis_opts=opts.AxisOpts(</span><br><span class="line">                        axislabel_opts=&#123;<span class="string">&quot;rotate&quot;</span>:-<span class="number">45</span>,<span class="string">&#x27;interval&#x27;</span>: <span class="number">0</span> &#125;,</span><br><span class="line">                        name_textstyle_opts=opts.TextStyleOpts(</span><br><span class="line">                            font_size=<span class="number">2</span></span><br><span class="line">                        )),)</span><br><span class="line">    .set_series_opts(label_opts=opts.LabelOpts(is_show=<span class="literal">False</span>))</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">bar.render(<span class="string">&#x27;win_team_count.html&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<div id="echarts7120" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts668" style="width: 81%;height: 400px;margin: 0 auto"></div>
 <script src="https://cdn.bootcss.com/echarts/4.1.0-release/echarts.min.js"></script>
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts7120'));
+        var myChart = echarts.init(document.getElementById('echarts668'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -13948,11 +13948,11 @@ L_i(\theta_i)=\Bbb E_{s,a\sim \rho(·)}[(y_i-Q(s,a;\theta_i))^2]</script><p>​ 
 </script>
 
 
-<div id="echarts9520" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts1905" style="width: 81%;height: 400px;margin: 0 auto"></div>
 <script src="https://cdn.bootcss.com/echarts/4.1.0-release/echarts.min.js"></script>
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts9520'));
+        var myChart = echarts.init(document.getElementById('echarts1905'));
 
         // 指定图表的配置项和数据
         var option = {
