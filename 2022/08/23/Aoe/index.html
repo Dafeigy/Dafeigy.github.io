@@ -29,7 +29,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://s2.loli.net/2022/08/23/XR4r9qmpelQZ3gW.png">
 <meta property="article:published_time" content="2022-08-23T12:27:22.384Z">
-<meta property="article:modified_time" content="2022-08-23T15:23:11.401Z">
+<meta property="article:modified_time" content="2022-08-24T14:21:34.320Z">
 <meta property="article:author" content="阿花想养萨摩耶">
 <meta property="article:tag" content="帝国时代2">
 <meta property="article:tag" content="数据分析">
@@ -220,10 +220,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-08-23 20:27:22 / 修改时间：23:23:11" itemprop="dateCreated datePublished" datetime="2022-08-23T20:27:22+08:00">2022-08-23</time>
+              <time title="创建时间：2022-08-23 20:27:22" itemprop="dateCreated datePublished" datetime="2022-08-23T20:27:22+08:00">2022-08-23</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-24 22:21:34" itemprop="dateModified" datetime="2022-08-24T22:21:34+08:00">2022-08-24</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -246,13 +252,23 @@
 
       
         <p><img src="https://s2.loli.net/2022/08/23/XR4r9qmpelQZ3gW.png" alt=""></p>
-<p>伟大的帝国正在召唤！</p>
+<center><big>伟大的帝国正在召唤！</big></center>
+
 <span id="more"></span>
-<div id="echarts2569" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<p>我们从<a target="_blank" rel="noopener" href="https://www.kaggle.com/datasets/jerkeeler/age-of-empires-ii-de-match-data">Kaggle</a>下载数据集，解压之后可以发现一共有两个<code>.csv</code>文件。我们通过<code>pandas</code>分别对其读取，观察一下数据的大致摸样：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">match_data = pd.read_csv(<span class="string">&#x27;matches.csv&#x27;</span>)</span><br><span class="line">player_data = pd.read_csv(<span class="string">&#x27;match_players.csv&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(match_data.head())</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">              token             match  rating   color      civ  team  winner</span></span><br><span class="line"><span class="string">0  rFWxLAdY6TF78xlo  axps4XstiBOmrDeG  1565.0     Red  Chinese     1   False</span></span><br><span class="line"><span class="string">1  zsyvxRyzLh85YIba  axps4XstiBOmrDeG  1600.0    Blue    Goths     2    True</span></span><br><span class="line"><span class="string">2  CHrJISNtjKDKM114  uQdosqwC7uiQ78ya  2145.0  Orange    Incas     1   False</span></span><br><span class="line"><span class="string">3  X147inwVdQuaegxT  uQdosqwC7uiQ78ya  2124.0   Green   Tatars     2    True</span></span><br><span class="line"><span class="string">4  kNckdaCe6pjKm6Au  uQdosqwC7uiQ78ya  2105.0     Red  Magyars     1   False</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(player_data.head())</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">              token             match  rating   color      civ  team  winner</span></span><br><span class="line"><span class="string">0  rFWxLAdY6TF78xlo  axps4XstiBOmrDeG  1565.0     Red  Chinese     1   False</span></span><br><span class="line"><span class="string">1  zsyvxRyzLh85YIba  axps4XstiBOmrDeG  1600.0    Blue    Goths     2    True</span></span><br><span class="line"><span class="string">2  CHrJISNtjKDKM114  uQdosqwC7uiQ78ya  2145.0  Orange    Incas     1   False</span></span><br><span class="line"><span class="string">3  X147inwVdQuaegxT  uQdosqwC7uiQ78ya  2124.0   Green   Tatars     2    True</span></span><br><span class="line"><span class="string">4  kNckdaCe6pjKm6Au  uQdosqwC7uiQ78ya  2105.0     Red  Magyars     1   False</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>从中可以看到这份数据其实是有些瑕疵的，比如说NAN的缺失值在开头就能看到了。所以第一步要先对数据进行清洗操作，除了需要关注缺失值处理，对于竞技类游戏我们还需要清洗掉挂机和开挂等异常大的游戏数据，这种异常游戏数据的判断方法可以通过游戏进行的时间长度进行筛选。这里我过滤掉那些游戏时间小于5分钟或游戏时间超出两个小时的（这好像有点误伤，因为我第一喜欢看的八方混战的黑铁局都要酣畅淋漓地打上个三小时，但是那些数据的参考意义不大所以还是忍痛筛掉了）。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">tidy_matches = match_data.copy()</span><br><span class="line">tidy_matches = tidy_matches.dropna(subset=[<span class="string">&quot;average_rating&quot;</span>])</span><br><span class="line">tidy_matches[<span class="string">&quot;patch&quot;</span>] = tidy_matches[<span class="string">&quot;patch&quot;</span>].replace(<span class="number">37650</span>, <span class="number">37906</span>)</span><br><span class="line">tidy_matches[<span class="string">&quot;duration&quot;</span>] = pd.to_timedelta(tidy_matches[<span class="string">&quot;duration&quot;</span>])</span><br><span class="line">tidy_matches[<span class="string">&quot;duration_s&quot;</span>] = tidy_matches[<span class="string">&quot;duration&quot;</span>].dt.total_seconds()</span><br><span class="line">tidy_matches = tidy_matches[(tidy_matches[<span class="string">&quot;duration_s&quot;</span>] &gt; <span class="number">60</span> * <span class="number">5</span>) &amp; (tidy_matches[<span class="string">&quot;duration_s&quot;</span>] &lt; <span class="number">60</span> * <span class="number">60</span> * <span class="number">2</span>)]</span><br></pre></td></tr></table></figure>
+<p>随后就是对数据类型进行整理：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">tidy_matches[<span class="string">&quot;map&quot;</span>] = tidy_matches[<span class="string">&quot;map&quot;</span>].astype(<span class="string">&quot;category&quot;</span>)</span><br><span class="line">tidy_matches[<span class="string">&quot;map_size&quot;</span>] = tidy_matches[<span class="string">&quot;map_size&quot;</span>].astype(<span class="string">&quot;category&quot;</span>)</span><br><span class="line">tidy_matches[<span class="string">&quot;ladder&quot;</span>] = tidy_matches[<span class="string">&quot;ladder&quot;</span>].astype(<span class="string">&quot;category&quot;</span>)</span><br><span class="line">tidy_matches[<span class="string">&quot;patch&quot;</span>] = tidy_matches[<span class="string">&quot;patch&quot;</span>].astype(<span class="string">&quot;category&quot;</span>)</span><br><span class="line">tidy_matches[<span class="string">&quot;server&quot;</span>] = tidy_matches[<span class="string">&quot;server&quot;</span>].astype(<span class="string">&quot;category&quot;</span>)</span><br><span class="line">player_data[<span class="string">&quot;civ&quot;</span>] = player_data[<span class="string">&quot;civ&quot;</span>].astype(<span class="string">&quot;category&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>然后整理一下，得到一个干净的整合体：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">joined_df = pd.merge(player_data, tidy_matches, left_on=<span class="string">&quot;match&quot;</span>, right_on=<span class="string">&quot;token&quot;</span>, suffixes=[<span class="string">&quot;_player&quot;</span>, <span class="string">&quot;_match&quot;</span>])</span><br><span class="line"><span class="comment">#joined_df.to_csv(&#x27;merge.csv&#x27;)</span></span><br></pre></td></tr></table></figure>
+<p>根据这份数据，我们可以做出一些有意思的分析，我们开始吧！</p>
+<div id="echarts5349" style="width: 81%;height: 400px;margin: 0 auto"></div>
 <script src="https://cdn.bootcss.com/echarts/4.1.0-release/echarts.min.js"></script>
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts2569'));
+        var myChart = echarts.init(document.getElementById('echarts5349'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -5697,11 +5713,11 @@
 </script>
 
 
-<div id="echarts7737" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts4808" style="width: 81%;height: 400px;margin: 0 auto"></div>
 <script src="https://cdn.bootcss.com/echarts/4.1.0-release/echarts.min.js"></script>
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts7737'));
+        var myChart = echarts.init(document.getElementById('echarts4808'));
 
         // 指定图表的配置项和数据
         var option = 
@@ -12083,11 +12099,11 @@
 </script>
 
 
-<div id="echarts1122" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts2226" style="width: 81%;height: 400px;margin: 0 auto"></div>
 <script src="https://cdn.bootcss.com/echarts/4.1.0-release/echarts.min.js"></script>
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts1122'));
+        var myChart = echarts.init(document.getElementById('echarts2226'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -12288,11 +12304,11 @@
 </script>
 
 
-<div id="echarts4674" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts6591" style="width: 81%;height: 400px;margin: 0 auto"></div>
 <script src="https://cdn.bootcss.com/echarts/4.1.0-release/echarts.min.js"></script>
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts4674'));
+        var myChart = echarts.init(document.getElementById('echarts6591'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -12579,11 +12595,11 @@
 </script>
 
 
-<div id="echarts1377" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts4391" style="width: 81%;height: 400px;margin: 0 auto"></div>
 <script src="https://cdn.bootcss.com/echarts/4.1.0-release/echarts.min.js"></script>
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts1377'));
+        var myChart = echarts.init(document.getElementById('echarts4391'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -12845,11 +12861,11 @@
 </script>
 
 
-<div id="echarts6920" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts9153" style="width: 81%;height: 400px;margin: 0 auto"></div>
 <script src="https://cdn.bootcss.com/echarts/4.1.0-release/echarts.min.js"></script>
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts6920'));
+        var myChart = echarts.init(document.getElementById('echarts9153'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -12983,6 +12999,509 @@
             "text": "颜色使用情况🎨",
             "left": "center",
             "top": "0",
+            "padding": 5,
+            "itemGap": 10,
+            "textStyle": {
+                "fontFamily": "Fusion Pixel",
+                "color": "rgba(0,0,0)",
+                "fontSize": 30,
+            }
+        }
+    ]
+};
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+</script>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">win_team_count = joined_df[(joined_df.winner==<span class="literal">True</span>) &amp; (joined_df.ladder==<span class="string">&quot;RM_TEAM&quot;</span>)].value_counts(<span class="string">&#x27;civ&#x27;</span>,sort=<span class="literal">False</span>)</span><br><span class="line">win_team_count_data = win_team_count.to_list()</span><br><span class="line">win_team_count_index = win_team_count.index.to_list()</span><br><span class="line"></span><br><span class="line">bar = (</span><br><span class="line">    Bar()</span><br><span class="line">    .add_xaxis(win_team_count_index)</span><br><span class="line">    .add_yaxis(<span class="string">&quot;team&quot;</span>,win_team_count_data,category_gap=<span class="number">12</span>)</span><br><span class="line">    .set_global_opts(title_opts=opts.TitleOpts(title=<span class="string">&quot;示例&quot;</span>,pos_left=<span class="string">&#x27;center&#x27;</span>),</span><br><span class="line">                    legend_opts=opts.LegendOpts(pos_bottom=<span class="string">&#x27;bottom&#x27;</span>,is_show=<span class="literal">False</span>),</span><br><span class="line">                    xaxis_opts=opts.AxisOpts(</span><br><span class="line">                        axislabel_opts=&#123;<span class="string">&quot;rotate&quot;</span>:-<span class="number">45</span>,<span class="string">&#x27;interval&#x27;</span>: <span class="number">0</span> &#125;,</span><br><span class="line">                        name_textstyle_opts=opts.TextStyleOpts(</span><br><span class="line">                            font_size=<span class="number">2</span></span><br><span class="line">                        )),)</span><br><span class="line">    .set_series_opts(label_opts=opts.LabelOpts(is_show=<span class="literal">False</span>))</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">bar.render(<span class="string">&#x27;win_team_count.html&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<div id="echarts2176" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<script src="https://cdn.bootcss.com/echarts/4.1.0-release/echarts.min.js"></script>
+<script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('echarts2176'));
+
+        // 指定图表的配置项和数据
+        var option = {
+    "animation": true,
+    "animationThreshold": 2000,
+    "animationDuration": 1000,
+    "animationEasing": "cubicOut",
+    "animationDelay": 0,
+    "animationDurationUpdate": 300,
+    "animationEasingUpdate": "cubicOut",
+    "animationDelayUpdate": 0,
+    "color": [
+        "#c23531",
+        "#2f4554",
+        "#61a0a8",
+        "#d48265",
+        "#749f83",
+        "#ca8622",
+        "#bda29a",
+        "#6e7074",
+        "#546570",
+        "#c4ccd3",
+        "#f05b72",
+        "#ef5b9c",
+        "#f47920",
+        "#905a3d",
+        "#fab27b",
+        "#2a5caa",
+        "#444693",
+        "#726930",
+        "#b2d235",
+        "#6d8346",
+        "#ac6767",
+        "#1d953f",
+        "#6950a1",
+        "#918597"
+    ],
+    "series": [
+        {
+            "type": "bar",
+            "name": "1v1",
+            "legendHoverLink": true,
+            "data": [
+                91022,
+                33941,
+                111515,
+                46748,
+                29658,
+                37237,
+                65383,
+                43138,
+                51391,
+                63503,
+                159227,
+                89151,
+                76998,
+                43401,
+                24603,
+                25789,
+                57209,
+                72422,
+                21081,
+                74500,
+                61684,
+                27138,
+                30889,
+                115448,
+                108927,
+                80711,
+                18398,
+                34346,
+                35160,
+                48385,
+                32423,
+                54620,
+                32286,
+                36930,
+                69902
+            ],
+            "showBackground": false,
+            "barMinHeight": 0,
+            "barCategoryGap": 12,
+            "barGap": "30%",
+            "large": false,
+            "largeThreshold": 400,
+            "seriesLayoutBy": "column",
+            "datasetIndex": 0,
+            "clip": true,
+            "zlevel": 0,
+            "z": 2,
+            "label": {
+                "show": false,
+                "position": "top",
+                "margin": 8
+            },
+            "rippleEffect": {
+                "show": true,
+                "brushType": "stroke",
+                "scale": 2.5,
+                "period": 4
+            }
+        }
+    ],
+    "legend": [
+        {
+            "data": [
+                "1v1"
+            ],
+            "selected": {
+                "1v1": true
+            },
+            "show": false,
+            "bottom": "bottom",
+            "padding": 5,
+            "itemGap": 10,
+            "itemWidth": 25,
+            "itemHeight": 14
+        }
+    ],
+    "tooltip": {
+        "show": true,
+        "trigger": "item",
+        "triggerOn": "mousemove|click",
+        "axisPointer": {
+            "type": "line"
+        },
+        "showContent": true,
+        "alwaysShowContent": false,
+        "showDelay": 0,
+        "hideDelay": 100,
+        "textStyle": {
+            "fontSize": 14
+        },
+        "borderWidth": 0,
+        "padding": 5
+    },
+    "xAxis": [
+        {
+            "show": true,
+            "scale": false,
+            "nameLocation": "end",
+            "nameGap": 15,
+            "nameTextStyle": {
+                "fontSize": 2
+            },
+            "gridIndex": 0,
+            "axisLabel": {
+                "rotate": -45,
+                "interval": 0
+            },
+            "inverse": false,
+            "offset": 0,
+            "splitNumber": 5,
+            "minInterval": 0,
+            "splitLine": {
+                "show": false,
+                "lineStyle": {
+                    "show": true,
+                    "width": 1,
+                    "opacity": 1,
+                    "curveness": 0,
+                    "type": "solid"
+                }
+            },
+            "data": [
+                "Aztecs",
+                "Berbers",
+                "Britons",
+                "Bulgarians",
+                "Burmese",
+                "Byzantines",
+                "Celts",
+                "Chinese",
+                "Cumans",
+                "Ethiopians",
+                "Franks",
+                "Goths",
+                "Huns",
+                "Incas",
+                "Indians",
+                "Italians",
+                "Japanese",
+                "Khmer",
+                "Koreans",
+                "Lithuanians",
+                "Magyars",
+                "Malay",
+                "Malians",
+                "Mayans",
+                "Mongols",
+                "Persians",
+                "Portuguese",
+                "Saracens",
+                "Slavs",
+                "Spanish",
+                "Tatars",
+                "Teutons",
+                "Turks",
+                "Vietnamese",
+                "Vikings"
+            ]
+        }
+    ],
+    "yAxis": [
+        {
+            "show": true,
+            "scale": false,
+            "nameLocation": "end",
+            "nameGap": 15,
+            "gridIndex": 0,
+            "inverse": false,
+            "offset": 0,
+            "splitNumber": 5,
+            "minInterval": 0,
+            "splitLine": {
+                "show": false,
+                "lineStyle": {
+                    "show": true,
+                    "width": 1,
+                    "opacity": 1,
+                    "curveness": 0,
+                    "type": "solid"
+                }
+            }
+        }
+    ],
+    "title": [
+        {
+            "text": "1v1文明胜利场次统计🎊",
+            "left": "center",
+            "padding": 5,
+            "itemGap": 10,
+            "textStyle": {
+                "fontFamily": "Fusion Pixel",
+                "color": "rgba(0,0,0)",
+                "fontSize": 30,
+            }
+        }
+    ]
+};
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+</script>
+
+
+<div id="echarts5857" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<script src="https://cdn.bootcss.com/echarts/4.1.0-release/echarts.min.js"></script>
+<script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('echarts5857'));
+
+        // 指定图表的配置项和数据
+        var option = {
+    "animation": true,
+    "animationThreshold": 2000,
+    "animationDuration": 1000,
+    "animationEasing": "cubicOut",
+    "animationDelay": 0,
+    "animationDurationUpdate": 300,
+    "animationEasingUpdate": "cubicOut",
+    "animationDelayUpdate": 0,
+    "color": [
+        "#c23531",
+        "#2f4554",
+        "#61a0a8",
+        "#d48265",
+        "#749f83",
+        "#ca8622",
+        "#bda29a",
+        "#6e7074",
+        "#546570",
+        "#c4ccd3",
+        "#f05b72",
+        "#ef5b9c",
+        "#f47920",
+        "#905a3d",
+        "#fab27b",
+        "#2a5caa",
+        "#444693",
+        "#726930",
+        "#b2d235",
+        "#6d8346",
+        "#ac6767",
+        "#1d953f",
+        "#6950a1",
+        "#918597"
+    ],
+    "series": [
+        {
+            "type": "bar",
+            "name": "team",
+            "legendHoverLink": true,
+            "data": [
+                65469,
+                35800,
+                160502,
+                42498,
+                37732,
+                42589,
+                61284,
+                47902,
+                68633,
+                81460,
+                207523,
+                138029,
+                79585,
+                35575,
+                63769,
+                28364,
+                45380,
+                115044,
+                23620,
+                80297,
+                65188,
+                27862,
+                25801,
+                145722,
+                136307,
+                100364,
+                27956,
+                45416,
+                37761,
+                70665,
+                30384,
+                69509,
+                37228,
+                53787,
+                70863
+            ],
+            "showBackground": false,
+            "barMinHeight": 0,
+            "barCategoryGap": 12,
+            "barGap": "30%",
+            "large": false,
+            "largeThreshold": 400,
+            "seriesLayoutBy": "column",
+            "datasetIndex": 0,
+            "clip": true,
+            "zlevel": 0,
+            "z": 2,
+            "label": {
+                "show": false,
+                "position": "top",
+                "margin": 8
+            },
+            "rippleEffect": {
+                "show": true,
+                "brushType": "stroke",
+                "scale": 2.5,
+                "period": 4
+            }
+        }
+    ],
+    "legend": [
+        {
+            "data": [
+                "team"
+            ],
+            "selected": {
+                "team": true
+            },
+            "show": false,
+            "bottom": "bottom",
+            "padding": 5,
+            "itemGap": 10,
+            "itemWidth": 25,
+            "itemHeight": 14
+        }
+    ],
+    "tooltip": {
+        "show": true,
+        "trigger": "item",
+        "triggerOn": "mousemove|click",
+        "axisPointer": {
+            "type": "line"
+        },
+        "showContent": true,
+        "alwaysShowContent": false,
+        "showDelay": 0,
+        "hideDelay": 100,
+        "textStyle": {
+            "fontSize": 14
+        },
+        "borderWidth": 0,
+        "padding": 5
+    },
+    "xAxis": [
+        {
+            "show": true,
+            "scale": false,
+            "nameLocation": "end",
+            "nameGap": 15,
+            "nameTextStyle": {
+                "fontSize": 2
+            },
+            "gridIndex": 0,
+            "axisLabel": {
+                "rotate": -45,
+                "interval": 0
+            },
+            "inverse": false,
+            "offset": 0,
+            "splitNumber": 5,
+            "minInterval": 0,
+            "splitLine": {
+                "show": false,
+                "lineStyle": {
+                    "show": true,
+                    "width": 1,
+                    "opacity": 1,
+                    "curveness": 0,
+                    "type": "solid"
+                }
+            },
+            "data": [
+                "Aztecs",
+                "Berbers",
+                "Britons",
+                "Bulgarians",
+                "Burmese",
+                "Byzantines",
+                "Celts",
+                "Chinese",
+                "Cumans",
+                "Ethiopians",
+                "Franks",
+                "Goths",
+                "Huns",
+                "Incas",
+                "Indians",
+                "Italians",
+                "Japanese",
+                "Khmer",
+                "Koreans",
+                "Lithuanians",
+                "Magyars",
+                "Malay",
+                "Malians",
+                "Mayans",
+                "Mongols",
+                "Persians",
+                "Portuguese",
+                "Saracens",
+                "Slavs",
+                "Spanish",
+                "Tatars",
+                "Teutons",
+                "Turks",
+                "Vietnamese",
+                "Vikings"
+            ]
+        }
+    ],
+    "yAxis": [
+        {
+            "show": true,
+            "scale": false,
+            "nameLocation": "end",
+            "nameGap": 15,
+            "gridIndex": 0,
+            "inverse": false,
+            "offset": 0,
+            "splitNumber": 5,
+            "minInterval": 0,
+            "splitLine": {
+                "show": false,
+                "lineStyle": {
+                    "show": true,
+                    "width": 1,
+                    "opacity": 1,
+                    "curveness": 0,
+                    "type": "solid"
+                }
+            }
+        }
+    ],
+    "title": [
+        {
+            "text": "团战文明胜利场次统计🎊",
+            "left": "center",
             "padding": 5,
             "itemGap": 10,
             "textStyle": {
