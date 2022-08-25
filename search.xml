@@ -244,6 +244,69 @@ P(z)={\sum_{k!}^{\lambda^ke^{-\lambda}}·
       </tags>
   </entry>
   <entry>
+    <title>MD5加密算法的Python实现流程</title>
+    <url>/2022/07/29/MD5/</url>
+    <content><![CDATA[<p><strong>MD5信息摘要算法</strong>（英语：MD5 Message-Digest Algorithm），一种被广泛使用的<a href="https://baike.baidu.com/item/密码散列函数/14937715">密码散列函数</a>，可以产生出一个128位（16<a href="https://baike.baidu.com/item/字节/1096318">字节</a>）的散列值（hash value），用于确保信息传输完整一致。MD5由美国密码学家<a href="https://baike.baidu.com/item/罗纳德·李维斯特/700199">罗纳德·李维斯特</a>（Ronald Linn Rivest）设计，于1992年公开，用以取代<a href="https://baike.baidu.com/item/MD4/8090275">MD4</a>算法。这套算法的程序在 RFC 1321 标准中被加以规范。1996年后该算法被证实存在弱点，可以被加以破解，对于需要高度安全性的数据，专家一般建议改用其他算法，如<a href="https://baike.baidu.com/item/SHA-2/22718180">SHA-2</a>。2004年，证实MD5算法无法防止碰撞（collision），因此不适用于安全性认证，如<a href="https://baike.baidu.com/item/SSL/320778">SSL</a>公开密钥认证或是<a href="https://baike.baidu.com/item/数字签名/212550">数字签名</a>等用途。</p>
+<span id="more"></span>
+<p>首先先要对MD5使用的初始数据进行初始化：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">A=<span class="number">0x67452301</span></span><br><span class="line"></span><br><span class="line">B=<span class="number">0xEFCDAB89</span></span><br><span class="line"></span><br><span class="line">C=<span class="number">0x98BADCFE</span></span><br><span class="line"></span><br><span class="line">D=<span class="number">0x10325476</span></span><br><span class="line">T = [<span class="number">0xD76AA478</span>,<span class="number">0xE8C7B756</span>,<span class="number">0x242070DB</span>,<span class="number">0xC1BDCEEE</span>,<span class="number">0xF57C0FAF</span>,<span class="number">0x4787C62A</span>,<span class="number">0xA8304613</span>,<span class="number">0xFD469501</span>,</span><br><span class="line">    <span class="number">0x698098D8</span>,<span class="number">0x8B44F7AF</span>,<span class="number">0xFFFF5BB1</span>,<span class="number">0x895CD7BE</span>,<span class="number">0x6B901122</span>,<span class="number">0xFD987193</span>,<span class="number">0xA679438E</span>,<span class="number">0x49B40821</span>,</span><br><span class="line">    <span class="number">0xF61E2562</span>,<span class="number">0xC040B340</span>,<span class="number">0x265E5A51</span>,<span class="number">0xE9B6C7AA</span>,<span class="number">0xD62F105D</span>,<span class="number">0x02441453</span>,<span class="number">0xD8A1E681</span>,<span class="number">0xE7D3FBC8</span>,</span><br><span class="line">    <span class="number">0x21E1CDE6</span>,<span class="number">0xC33707D6</span>,<span class="number">0xF4D50D87</span>,<span class="number">0x455A14ED</span>,<span class="number">0xA9E3E905</span>,<span class="number">0xFCEFA3F8</span>,<span class="number">0x676F02D9</span>,<span class="number">0x8D2A4C8A</span>,</span><br><span class="line">    <span class="number">0xFFFA3942</span>,<span class="number">0x8771F681</span>,<span class="number">0x6D9D6122</span>,<span class="number">0xFDE5380C</span>,<span class="number">0xA4BEEA44</span>,<span class="number">0x4BDECFA9</span>,<span class="number">0xF6BB4B60</span>,<span class="number">0xBEBFBC70</span>,</span><br><span class="line">    <span class="number">0x289B7EC6</span>,<span class="number">0xEAA127FA</span>,<span class="number">0xD4EF3085</span>,<span class="number">0x04881D05</span>,<span class="number">0xD9D4D039</span>,<span class="number">0xE6DB99E5</span>,<span class="number">0x1FA27CF8</span>,<span class="number">0xC4AC5665</span>,</span><br><span class="line">    <span class="number">0xF4292244</span>,<span class="number">0x432AFF97</span>,<span class="number">0xAB9423A7</span>,<span class="number">0xFC93A039</span>,<span class="number">0x655B59C3</span>,<span class="number">0x8F0CCC92</span>,<span class="number">0xFFEFF47D</span>,<span class="number">0x85845DD1</span>,</span><br><span class="line">    <span class="number">0x6FA87E4F</span>,<span class="number">0xFE2CE6E0</span>,<span class="number">0xA3014314</span>,<span class="number">0x4E0811A1</span>,<span class="number">0xF7537E82</span>,<span class="number">0xBD3AF235</span>,<span class="number">0x2AD7D2BB</span>,<span class="number">0xEB86D391</span>]</span><br><span class="line"></span><br><span class="line">s = [<span class="number">7</span>,<span class="number">12</span>,<span class="number">17</span>,<span class="number">22</span>,<span class="number">7</span>,<span class="number">12</span>,<span class="number">17</span>,<span class="number">22</span>,<span class="number">7</span>,<span class="number">12</span>,<span class="number">17</span>,<span class="number">22</span>,<span class="number">7</span>,<span class="number">12</span>,<span class="number">17</span>,<span class="number">22</span>,</span><br><span class="line">    <span class="number">5</span>,<span class="number">9</span>,<span class="number">14</span>,<span class="number">20</span>,<span class="number">5</span>,<span class="number">9</span>,<span class="number">14</span>,<span class="number">20</span>,<span class="number">5</span>,<span class="number">9</span>,<span class="number">14</span>,<span class="number">20</span>,<span class="number">5</span>,<span class="number">9</span>,<span class="number">14</span>,<span class="number">20</span>,</span><br><span class="line">    <span class="number">4</span>,<span class="number">11</span>,<span class="number">16</span>,<span class="number">23</span>,<span class="number">4</span>,<span class="number">11</span>,<span class="number">16</span>,<span class="number">23</span>,<span class="number">4</span>,<span class="number">11</span>,<span class="number">16</span>,<span class="number">23</span>,<span class="number">4</span>,<span class="number">11</span>,<span class="number">16</span>,<span class="number">23</span>,</span><br><span class="line">    <span class="number">6</span>,<span class="number">10</span>,<span class="number">15</span>,<span class="number">21</span>,<span class="number">6</span>,<span class="number">10</span>,<span class="number">15</span>,<span class="number">21</span>,<span class="number">6</span>,<span class="number">10</span>,<span class="number">15</span>,<span class="number">21</span>,<span class="number">6</span>,<span class="number">10</span>,<span class="number">15</span>,<span class="number">21</span>]</span><br><span class="line"></span><br><span class="line">m = [<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>,<span class="number">10</span>,<span class="number">11</span>,<span class="number">12</span>,<span class="number">13</span>,<span class="number">14</span>,<span class="number">15</span>,</span><br><span class="line">    <span class="number">1</span>,<span class="number">6</span>,<span class="number">11</span>,<span class="number">0</span>,<span class="number">5</span>,<span class="number">10</span>,<span class="number">15</span>,<span class="number">4</span>,<span class="number">9</span>,<span class="number">14</span>,<span class="number">3</span>,<span class="number">8</span>,<span class="number">13</span>,<span class="number">2</span>,<span class="number">7</span>,<span class="number">12</span>,</span><br><span class="line">    <span class="number">5</span>,<span class="number">8</span>,<span class="number">11</span>,<span class="number">14</span>,<span class="number">1</span>,<span class="number">4</span>,<span class="number">7</span>,<span class="number">10</span>,<span class="number">13</span>,<span class="number">0</span>,<span class="number">3</span>,<span class="number">6</span>,<span class="number">9</span>,<span class="number">12</span>,<span class="number">15</span>,<span class="number">2</span>,</span><br><span class="line">    <span class="number">0</span>,<span class="number">7</span>,<span class="number">14</span>,<span class="number">5</span>,<span class="number">12</span>,<span class="number">3</span>,<span class="number">10</span>,<span class="number">1</span>,<span class="number">8</span>,<span class="number">15</span>,<span class="number">6</span>,<span class="number">13</span>,<span class="number">4</span>,<span class="number">11</span>,<span class="number">2</span>,<span class="number">9</span>]</span><br></pre></td></tr></table></figure>
+<h2 id="实现思路"><a href="#实现思路" class="headerlink" title="实现思路"></a>实现思路</h2><p>MD5加密需要经过输入转换、填充、四轮循环操作、置换以及最后的拼接等步骤。其中为了方便循环操作中的值的读取与置换，可以定义一个<code>MD5</code>类，并赋予此类一些初始的属性与函数简化后续的函数操作。现将类定义如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">md5</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, message</span>):</span><br><span class="line">        self.message = message</span><br><span class="line">        self.A = A</span><br><span class="line">        self.B = B</span><br><span class="line">        self.C = C</span><br><span class="line">        self.D = D</span><br><span class="line">        self.init_A = A</span><br><span class="line">        self.init_B = B</span><br><span class="line">        self.init_C = C</span><br><span class="line">        self.init_D = D</span><br><span class="line">        self.temptext=<span class="string">&#x27;&#x27;</span></span><br><span class="line">        self.s=s</span><br><span class="line">        self.m=m</span><br><span class="line">        self.T=T</span><br></pre></td></tr></table></figure>
+<p>对于一个MD5对象，其拥有如下几个主要属性：</p>
+<ul>
+<li>message：  输入的明文</li>
+<li>A,B,C,D：  四轮循环中的操作对象</li>
+<li>temptext： 暂存的结果，用于缓冲与临时存放</li>
+<li>s,m,T:    均为MD5加密时用到的操作参数，以列表的形式存储</li>
+</ul>
+<h2 id="填充"><a href="#填充" class="headerlink" title="填充"></a>填充</h2><ul>
+<li>将输入的明文转换成ASCII码，并按照规则进行填充。填充规则如下：</li>
+<li>当转换的ASCII码的长度的二进制长度不为$512*n+448$的整数倍时，先在末尾补一个“1”；</li>
+<li>当此时的长度依然不为$512<em>n+448$时，继续在末尾补“0”直至长度为$512</em>n+448$</li>
+<li>将输入密文的长度转换成64位的二进制数，若输入字符串的长度大于$2^{64}$，则取最后的64位。</li>
+<li>将得到的64位进行小端排序，即按8bit/组进行倒序排列</li>
+<li>将小端排序得到的结果拼接在步骤3得到的字符后，完成填充</li>
+</ul>
+<p>完成此项工作需要一个函数将输入的十进制字符串转换城标准长度的二进制数，代码如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">decToBin</span>(<span class="params">num</span>):  <span class="comment"># 十进制转标准4位二或8位进制字符串函数 注意此为专用函数不要用于其他程序中</span></span><br><span class="line">    arry = []</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        arry.append(<span class="built_in">str</span>(num % <span class="number">2</span>))</span><br><span class="line">        num = num // <span class="number">2</span></span><br><span class="line">        <span class="keyword">if</span> num == <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">while</span> <span class="built_in">len</span>(arry)%<span class="number">4</span>!=<span class="number">0</span>:</span><br><span class="line">        arry.append(<span class="string">&#x27;0&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;&quot;</span>.join(arry[::-<span class="number">1</span>])  <span class="comment"># 列表切片倒叙排列后再用join拼接</span></span><br></pre></td></tr></table></figure>
+<p>下面进行填充的操作。将填充的方法归属于MD5对象专用，以防意外调用：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">fill</span>(<span class="params">self</span>):</span><br><span class="line">    bininput = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    raw_input=self.message</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(raw_input)):</span><br><span class="line">        c = decToBin(<span class="built_in">ord</span>(raw_input[i]))</span><br><span class="line">        bininput += c</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">len</span>(bininput) % <span class="number">512</span> != <span class="number">448</span>):</span><br><span class="line">        <span class="keyword">if</span> ((<span class="built_in">len</span>(bininput) + <span class="number">1</span>) % <span class="number">512</span> != <span class="number">448</span>):</span><br><span class="line">            bininput += <span class="string">&#x27;1&#x27;</span>  <span class="comment"># 补1</span></span><br><span class="line">        <span class="keyword">while</span> (<span class="built_in">len</span>(bininput) % <span class="number">512</span> != <span class="number">448</span>):</span><br><span class="line">            bininput += <span class="string">&#x27;0&#x27;</span>  <span class="comment"># 其余位补0直到满足长度为512*n+448</span></span><br><span class="line">    length = <span class="built_in">len</span>(raw_input) * <span class="number">8</span>  <span class="comment"># ASCII码位数</span></span><br><span class="line">    <span class="keyword">if</span> length &lt;= <span class="number">255</span>:</span><br><span class="line">        length = decToBin(length)  <span class="comment"># 二进制转换，此时length保留位数为8</span></span><br><span class="line">        <span class="keyword">while</span> <span class="built_in">len</span>(length) &lt; <span class="number">8</span>:</span><br><span class="line">            length = <span class="string">&#x27;0&#x27;</span> + length</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        temp = decToBin(length)</span><br><span class="line">        <span class="keyword">while</span> <span class="built_in">len</span>(length) &lt; <span class="number">16</span>:</span><br><span class="line">            length = <span class="string">&#x27;0&#x27;</span> + length</span><br><span class="line">        length = length[<span class="number">8</span>:<span class="number">12</span>] + length[<span class="number">12</span>:<span class="number">16</span>] + length[<span class="number">0</span>:<span class="number">4</span>] + length[<span class="number">4</span>:<span class="number">8</span>]</span><br><span class="line">    bininput += length</span><br><span class="line">    <span class="keyword">while</span> <span class="built_in">len</span>(bininput) % <span class="number">512</span> != <span class="number">0</span>:</span><br><span class="line">        bininput += <span class="string">&#x27;0&#x27;</span></span><br><span class="line">    self.temptext=bininput</span><br></pre></td></tr></table></figure>
+<h2 id="4轮循环"><a href="#4轮循环" class="headerlink" title="4轮循环"></a>4轮循环</h2><h3 id="分解消息子块"><a href="#分解消息子块" class="headerlink" title="分解消息子块"></a>分解消息子块</h3><p>下面将得到的临时变量进行分组。将其分解成$16*32$的矩阵，并将其存放于<code>Mlist</code>中。后续将配合MD5类中的m矩阵进行操作。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">Cycolyce</span>(<span class="params">self</span>):</span><br><span class="line">    Mlist=[]<span class="comment">#分16组</span></span><br><span class="line">    bininput=self.temptext</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="number">512</span>,<span class="number">32</span>):<span class="comment">#16</span></span><br><span class="line">        sym=<span class="string">&#x27;&#x27;</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="built_in">len</span>(bininput[i:i+<span class="number">32</span>]),<span class="number">4</span>):</span><br><span class="line">            temp=<span class="built_in">hex</span>(<span class="built_in">int</span>((bininput[i:i+<span class="number">32</span>][j:j+<span class="number">4</span>]),<span class="number">2</span>))<span class="comment">#取十六进制</span></span><br><span class="line">            sym+=temp[<span class="number">2</span>]<span class="comment">#只取字母 忽略前面的0x 为下面的小端排序做准备</span></span><br><span class="line"></span><br><span class="line">        sym_tmp=<span class="string">&#x27;&#x27;</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">8</span>,<span class="number">0</span>,-<span class="number">2</span>):<span class="comment">#小端排序</span></span><br><span class="line">            temp=sym[j-<span class="number">2</span>:j]</span><br><span class="line">            sym_tmp+=temp</span><br><span class="line"></span><br><span class="line">        fn_sym=<span class="string">&#x27;&#x27;</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(sym_tmp)):</span><br><span class="line">            fn_sym+=decToBin(<span class="built_in">int</span>(sym_tmp[j], <span class="number">16</span>))<span class="comment">#再次转换成二进制</span></span><br><span class="line">        Mlist.append(fn_sym)</span><br></pre></td></tr></table></figure>
+<h3 id="四轮循环的操作"><a href="#四轮循环的操作" class="headerlink" title="四轮循环的操作"></a>四轮循环的操作</h3><p>我们需要定义如下四个函数：</p>
+<script type="math/tex; mode=display">
+F(x,y,z)=(x\land y)\lor (\overline x \land z)\\
+G(x,y,z)=(x\land z)\lor (y \lor \overline z)\\
+H(x,y,z)=x\oplus y \oplus z\\
+I(x,y,z)=y\oplus(x\lor \overline z)</script><p>以及定义四个操作：</p>
+<script type="math/tex; mode=display">
+FF(a,b,c,d,Mj,s,Ti)=(F(b,c,d)+a+mj+Ti)<<s\\
+GG(a,b,c,d,Mj,s,Ti)=(G(b,c,d)+a+mj+Ti)<<s\\
+HH(a,b,c,d,Mj,s,Ti)=(H(b,c,d)+a+mj+Ti)<<s\\
+II(a,b,c,d,Mj,s,Ti)=(I(b,c,d)+a+mj+Ti)<<s\\</script><p>其中，$&lt;&lt;$是循环左移，$\oplus$是异或操作。在程序实现中，将四个函数定义在MD5类外，四个操作定义在MD5类以内。如此操作有两个原因：</p>
+<ul>
+<li>定义在外部的函数可以根据需求进行更改，对于封装后的类调用而言更具操作性</li>
+<li>定义在类内部的操作是MD5的专用函数，必须专类专用</li>
+<li>二者分离有助于设置断点、检查中间结果进行调试分析</li>
+</ul>
+<p>定义完函数以及相关操作后，我们将进行如下操作：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="number">16</span>, <span class="number">4</span>):</span><br><span class="line">    self.FF(Mlist[m[j]], s[j], T[j])</span><br><span class="line">    self.FF(Mlist[m[j+<span class="number">1</span>]], s[j+<span class="number">1</span>], T[j+<span class="number">1</span>])</span><br><span class="line">    self.FF(Mlist[m[j+<span class="number">2</span>]], s[j+<span class="number">2</span>], T[j+<span class="number">2</span>])</span><br><span class="line">    self.FF(Mlist[m[j+<span class="number">3</span>]], s[j+<span class="number">3</span>], T[j+<span class="number">3</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="number">16</span>, <span class="number">4</span>):</span><br><span class="line">    self.GG(Mlist[m[<span class="number">16</span>+j]], s[<span class="number">16</span>+j], T[<span class="number">16</span>+j])</span><br><span class="line">    self.GG(Mlist[m[<span class="number">16</span>+j+<span class="number">1</span>]], s[<span class="number">16</span>+j+<span class="number">1</span>], T[<span class="number">16</span>+j+<span class="number">1</span>])</span><br><span class="line">    self.GG(Mlist[m[<span class="number">16</span>+j+<span class="number">2</span>]], s[<span class="number">16</span>+j+<span class="number">2</span>], T[<span class="number">16</span>+j+<span class="number">2</span>])</span><br><span class="line">    self.GG(Mlist[m[<span class="number">16</span>+j+<span class="number">3</span>]], s[<span class="number">16</span>+j+<span class="number">3</span>], T[<span class="number">16</span>+j+<span class="number">3</span>])</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="number">16</span>, <span class="number">4</span>):</span><br><span class="line">    self.HH(Mlist[m[<span class="number">32</span>+j]], s[<span class="number">32</span>+j], T[<span class="number">32</span>+j])</span><br><span class="line">    self.HH(Mlist[m[<span class="number">32</span>+j+<span class="number">1</span>]], s[<span class="number">32</span>+j+<span class="number">1</span>], T[<span class="number">32</span>+j+<span class="number">1</span>])</span><br><span class="line">    self.HH(Mlist[m[<span class="number">32</span>+j+<span class="number">2</span>]], s[<span class="number">32</span>+j+<span class="number">2</span>], T[<span class="number">32</span>+j+<span class="number">2</span>])</span><br><span class="line">    self.HH(Mlist[m[<span class="number">32</span>+j+<span class="number">3</span>]], s[<span class="number">32</span>+j+<span class="number">3</span>], T[<span class="number">32</span>+j+<span class="number">3</span>])</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="number">16</span>, <span class="number">4</span>):</span><br><span class="line">    self.II(Mlist[m[<span class="number">48</span>+j]], s[<span class="number">48</span>+j], T[<span class="number">48</span>+j])</span><br><span class="line">    self.II(Mlist[m[<span class="number">48</span>+j+<span class="number">1</span>]], s[<span class="number">48</span>+j+<span class="number">1</span>], T[<span class="number">48</span>+j+<span class="number">1</span>])</span><br><span class="line">    self.II(Mlist[m[<span class="number">48</span>+j+<span class="number">2</span>]], s[<span class="number">48</span>+j+<span class="number">2</span>], T[<span class="number">48</span>+j+<span class="number">2</span>])</span><br><span class="line">    self.II(Mlist[m[<span class="number">48</span>+j+<span class="number">3</span>]], s[<span class="number">48</span>+j+<span class="number">3</span>], T[<span class="number">48</span>+j+<span class="number">3</span>])</span><br></pre></td></tr></table></figure>
+<h2 id="初值相加与拼接输出"><a href="#初值相加与拼接输出" class="headerlink" title="初值相加与拼接输出"></a>初值相加与拼接输出</h2><p>完成四轮循环后，需要将此时的ABCD与初始的ABCD相加，并进行小端排序。将小端排序后的结果拼接即可得到MD5加密的结果。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">self.A = (self.A+self.init_A)%<span class="built_in">pow</span>(<span class="number">2</span>, <span class="number">32</span>)</span><br><span class="line">        <span class="built_in">print</span>(self.A)</span><br><span class="line">        self.B = (self.B+self.init_B)%<span class="built_in">pow</span>(<span class="number">2</span>, <span class="number">32</span>)</span><br><span class="line">        <span class="built_in">print</span>(self.B)</span><br><span class="line">        self.C = (self.C+self.init_C)%<span class="built_in">pow</span>(<span class="number">2</span>, <span class="number">32</span>)</span><br><span class="line">        <span class="built_in">print</span>(self.C)</span><br><span class="line">        self.D = (self.D+self.init_D)%<span class="built_in">pow</span>(<span class="number">2</span>, <span class="number">32</span>)</span><br><span class="line">        <span class="built_in">print</span>(self.D)</span><br><span class="line"></span><br><span class="line">        answer = <span class="string">&quot;&quot;</span></span><br><span class="line">        <span class="keyword">for</span> each <span class="keyword">in</span> [self.A, self.B, self.C, self.D]:</span><br><span class="line">            each = <span class="built_in">hex</span>(each)[<span class="number">2</span>:]</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">8</span>, <span class="number">0</span>, -<span class="number">2</span>):</span><br><span class="line">                answer += <span class="built_in">str</span>(each[i - <span class="number">2</span>:i])</span><br><span class="line">        <span class="keyword">return</span> answer</span><br></pre></td></tr></table></figure>
+<p>我们可以运行一下检验成果：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">MD=md5(<span class="string">&#x27;abc&#x27;</span>)</span><br><span class="line">MD.fill()</span><br><span class="line">result=MD.Cycolyce()</span><br><span class="line"><span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>通信技术</category>
+        <category>加密技术</category>
+      </categories>
+      <tags>
+        <tag>数字签名</tag>
+        <tag>Python</tag>
+        <tag>MD5</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Polar码编码及SC译码Matlab仿真</title>
     <url>/2022/07/29/G1831/</url>
     <content><![CDATA[<p>2016年11月18日，在美国内华达州里诺召开的3GPP RAN1 #87次会议，确定Polar Code作为5G eMBB（增强移动宽带）场景下控制信道编码方案。极化码具有确定性的构造方法，并且是已知的唯一一种能够被严格证明“达到”信道容量的信道编码方法，因此我们将其作为研究对象，研究其编码/译码的实现。</p>
@@ -375,165 +438,6 @@ g\left(a, b, u_{s}\right)=(-1)^{u_{s}} a+b
       </tags>
   </entry>
   <entry>
-    <title>MD5加密算法的Python实现流程</title>
-    <url>/2022/07/29/MD5/</url>
-    <content><![CDATA[<p><strong>MD5信息摘要算法</strong>（英语：MD5 Message-Digest Algorithm），一种被广泛使用的<a href="https://baike.baidu.com/item/密码散列函数/14937715">密码散列函数</a>，可以产生出一个128位（16<a href="https://baike.baidu.com/item/字节/1096318">字节</a>）的散列值（hash value），用于确保信息传输完整一致。MD5由美国密码学家<a href="https://baike.baidu.com/item/罗纳德·李维斯特/700199">罗纳德·李维斯特</a>（Ronald Linn Rivest）设计，于1992年公开，用以取代<a href="https://baike.baidu.com/item/MD4/8090275">MD4</a>算法。这套算法的程序在 RFC 1321 标准中被加以规范。1996年后该算法被证实存在弱点，可以被加以破解，对于需要高度安全性的数据，专家一般建议改用其他算法，如<a href="https://baike.baidu.com/item/SHA-2/22718180">SHA-2</a>。2004年，证实MD5算法无法防止碰撞（collision），因此不适用于安全性认证，如<a href="https://baike.baidu.com/item/SSL/320778">SSL</a>公开密钥认证或是<a href="https://baike.baidu.com/item/数字签名/212550">数字签名</a>等用途。</p>
-<span id="more"></span>
-<p>首先先要对MD5使用的初始数据进行初始化：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">A=<span class="number">0x67452301</span></span><br><span class="line"></span><br><span class="line">B=<span class="number">0xEFCDAB89</span></span><br><span class="line"></span><br><span class="line">C=<span class="number">0x98BADCFE</span></span><br><span class="line"></span><br><span class="line">D=<span class="number">0x10325476</span></span><br><span class="line">T = [<span class="number">0xD76AA478</span>,<span class="number">0xE8C7B756</span>,<span class="number">0x242070DB</span>,<span class="number">0xC1BDCEEE</span>,<span class="number">0xF57C0FAF</span>,<span class="number">0x4787C62A</span>,<span class="number">0xA8304613</span>,<span class="number">0xFD469501</span>,</span><br><span class="line">    <span class="number">0x698098D8</span>,<span class="number">0x8B44F7AF</span>,<span class="number">0xFFFF5BB1</span>,<span class="number">0x895CD7BE</span>,<span class="number">0x6B901122</span>,<span class="number">0xFD987193</span>,<span class="number">0xA679438E</span>,<span class="number">0x49B40821</span>,</span><br><span class="line">    <span class="number">0xF61E2562</span>,<span class="number">0xC040B340</span>,<span class="number">0x265E5A51</span>,<span class="number">0xE9B6C7AA</span>,<span class="number">0xD62F105D</span>,<span class="number">0x02441453</span>,<span class="number">0xD8A1E681</span>,<span class="number">0xE7D3FBC8</span>,</span><br><span class="line">    <span class="number">0x21E1CDE6</span>,<span class="number">0xC33707D6</span>,<span class="number">0xF4D50D87</span>,<span class="number">0x455A14ED</span>,<span class="number">0xA9E3E905</span>,<span class="number">0xFCEFA3F8</span>,<span class="number">0x676F02D9</span>,<span class="number">0x8D2A4C8A</span>,</span><br><span class="line">    <span class="number">0xFFFA3942</span>,<span class="number">0x8771F681</span>,<span class="number">0x6D9D6122</span>,<span class="number">0xFDE5380C</span>,<span class="number">0xA4BEEA44</span>,<span class="number">0x4BDECFA9</span>,<span class="number">0xF6BB4B60</span>,<span class="number">0xBEBFBC70</span>,</span><br><span class="line">    <span class="number">0x289B7EC6</span>,<span class="number">0xEAA127FA</span>,<span class="number">0xD4EF3085</span>,<span class="number">0x04881D05</span>,<span class="number">0xD9D4D039</span>,<span class="number">0xE6DB99E5</span>,<span class="number">0x1FA27CF8</span>,<span class="number">0xC4AC5665</span>,</span><br><span class="line">    <span class="number">0xF4292244</span>,<span class="number">0x432AFF97</span>,<span class="number">0xAB9423A7</span>,<span class="number">0xFC93A039</span>,<span class="number">0x655B59C3</span>,<span class="number">0x8F0CCC92</span>,<span class="number">0xFFEFF47D</span>,<span class="number">0x85845DD1</span>,</span><br><span class="line">    <span class="number">0x6FA87E4F</span>,<span class="number">0xFE2CE6E0</span>,<span class="number">0xA3014314</span>,<span class="number">0x4E0811A1</span>,<span class="number">0xF7537E82</span>,<span class="number">0xBD3AF235</span>,<span class="number">0x2AD7D2BB</span>,<span class="number">0xEB86D391</span>]</span><br><span class="line"></span><br><span class="line">s = [<span class="number">7</span>,<span class="number">12</span>,<span class="number">17</span>,<span class="number">22</span>,<span class="number">7</span>,<span class="number">12</span>,<span class="number">17</span>,<span class="number">22</span>,<span class="number">7</span>,<span class="number">12</span>,<span class="number">17</span>,<span class="number">22</span>,<span class="number">7</span>,<span class="number">12</span>,<span class="number">17</span>,<span class="number">22</span>,</span><br><span class="line">    <span class="number">5</span>,<span class="number">9</span>,<span class="number">14</span>,<span class="number">20</span>,<span class="number">5</span>,<span class="number">9</span>,<span class="number">14</span>,<span class="number">20</span>,<span class="number">5</span>,<span class="number">9</span>,<span class="number">14</span>,<span class="number">20</span>,<span class="number">5</span>,<span class="number">9</span>,<span class="number">14</span>,<span class="number">20</span>,</span><br><span class="line">    <span class="number">4</span>,<span class="number">11</span>,<span class="number">16</span>,<span class="number">23</span>,<span class="number">4</span>,<span class="number">11</span>,<span class="number">16</span>,<span class="number">23</span>,<span class="number">4</span>,<span class="number">11</span>,<span class="number">16</span>,<span class="number">23</span>,<span class="number">4</span>,<span class="number">11</span>,<span class="number">16</span>,<span class="number">23</span>,</span><br><span class="line">    <span class="number">6</span>,<span class="number">10</span>,<span class="number">15</span>,<span class="number">21</span>,<span class="number">6</span>,<span class="number">10</span>,<span class="number">15</span>,<span class="number">21</span>,<span class="number">6</span>,<span class="number">10</span>,<span class="number">15</span>,<span class="number">21</span>,<span class="number">6</span>,<span class="number">10</span>,<span class="number">15</span>,<span class="number">21</span>]</span><br><span class="line"></span><br><span class="line">m = [<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>,<span class="number">10</span>,<span class="number">11</span>,<span class="number">12</span>,<span class="number">13</span>,<span class="number">14</span>,<span class="number">15</span>,</span><br><span class="line">    <span class="number">1</span>,<span class="number">6</span>,<span class="number">11</span>,<span class="number">0</span>,<span class="number">5</span>,<span class="number">10</span>,<span class="number">15</span>,<span class="number">4</span>,<span class="number">9</span>,<span class="number">14</span>,<span class="number">3</span>,<span class="number">8</span>,<span class="number">13</span>,<span class="number">2</span>,<span class="number">7</span>,<span class="number">12</span>,</span><br><span class="line">    <span class="number">5</span>,<span class="number">8</span>,<span class="number">11</span>,<span class="number">14</span>,<span class="number">1</span>,<span class="number">4</span>,<span class="number">7</span>,<span class="number">10</span>,<span class="number">13</span>,<span class="number">0</span>,<span class="number">3</span>,<span class="number">6</span>,<span class="number">9</span>,<span class="number">12</span>,<span class="number">15</span>,<span class="number">2</span>,</span><br><span class="line">    <span class="number">0</span>,<span class="number">7</span>,<span class="number">14</span>,<span class="number">5</span>,<span class="number">12</span>,<span class="number">3</span>,<span class="number">10</span>,<span class="number">1</span>,<span class="number">8</span>,<span class="number">15</span>,<span class="number">6</span>,<span class="number">13</span>,<span class="number">4</span>,<span class="number">11</span>,<span class="number">2</span>,<span class="number">9</span>]</span><br></pre></td></tr></table></figure>
-<h2 id="实现思路"><a href="#实现思路" class="headerlink" title="实现思路"></a>实现思路</h2><p>MD5加密需要经过输入转换、填充、四轮循环操作、置换以及最后的拼接等步骤。其中为了方便循环操作中的值的读取与置换，可以定义一个<code>MD5</code>类，并赋予此类一些初始的属性与函数简化后续的函数操作。现将类定义如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">md5</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, message</span>):</span><br><span class="line">        self.message = message</span><br><span class="line">        self.A = A</span><br><span class="line">        self.B = B</span><br><span class="line">        self.C = C</span><br><span class="line">        self.D = D</span><br><span class="line">        self.init_A = A</span><br><span class="line">        self.init_B = B</span><br><span class="line">        self.init_C = C</span><br><span class="line">        self.init_D = D</span><br><span class="line">        self.temptext=<span class="string">&#x27;&#x27;</span></span><br><span class="line">        self.s=s</span><br><span class="line">        self.m=m</span><br><span class="line">        self.T=T</span><br></pre></td></tr></table></figure>
-<p>对于一个MD5对象，其拥有如下几个主要属性：</p>
-<ul>
-<li>message：  输入的明文</li>
-<li>A,B,C,D：  四轮循环中的操作对象</li>
-<li>temptext： 暂存的结果，用于缓冲与临时存放</li>
-<li>s,m,T:    均为MD5加密时用到的操作参数，以列表的形式存储</li>
-</ul>
-<h2 id="填充"><a href="#填充" class="headerlink" title="填充"></a>填充</h2><ul>
-<li>将输入的明文转换成ASCII码，并按照规则进行填充。填充规则如下：</li>
-<li>当转换的ASCII码的长度的二进制长度不为$512*n+448$的整数倍时，先在末尾补一个“1”；</li>
-<li>当此时的长度依然不为$512<em>n+448$时，继续在末尾补“0”直至长度为$512</em>n+448$</li>
-<li>将输入密文的长度转换成64位的二进制数，若输入字符串的长度大于$2^{64}$，则取最后的64位。</li>
-<li>将得到的64位进行小端排序，即按8bit/组进行倒序排列</li>
-<li>将小端排序得到的结果拼接在步骤3得到的字符后，完成填充</li>
-</ul>
-<p>完成此项工作需要一个函数将输入的十进制字符串转换城标准长度的二进制数，代码如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">decToBin</span>(<span class="params">num</span>):  <span class="comment"># 十进制转标准4位二或8位进制字符串函数 注意此为专用函数不要用于其他程序中</span></span><br><span class="line">    arry = []</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        arry.append(<span class="built_in">str</span>(num % <span class="number">2</span>))</span><br><span class="line">        num = num // <span class="number">2</span></span><br><span class="line">        <span class="keyword">if</span> num == <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">while</span> <span class="built_in">len</span>(arry)%<span class="number">4</span>!=<span class="number">0</span>:</span><br><span class="line">        arry.append(<span class="string">&#x27;0&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;&quot;</span>.join(arry[::-<span class="number">1</span>])  <span class="comment"># 列表切片倒叙排列后再用join拼接</span></span><br></pre></td></tr></table></figure>
-<p>下面进行填充的操作。将填充的方法归属于MD5对象专用，以防意外调用：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">fill</span>(<span class="params">self</span>):</span><br><span class="line">    bininput = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    raw_input=self.message</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(raw_input)):</span><br><span class="line">        c = decToBin(<span class="built_in">ord</span>(raw_input[i]))</span><br><span class="line">        bininput += c</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">len</span>(bininput) % <span class="number">512</span> != <span class="number">448</span>):</span><br><span class="line">        <span class="keyword">if</span> ((<span class="built_in">len</span>(bininput) + <span class="number">1</span>) % <span class="number">512</span> != <span class="number">448</span>):</span><br><span class="line">            bininput += <span class="string">&#x27;1&#x27;</span>  <span class="comment"># 补1</span></span><br><span class="line">        <span class="keyword">while</span> (<span class="built_in">len</span>(bininput) % <span class="number">512</span> != <span class="number">448</span>):</span><br><span class="line">            bininput += <span class="string">&#x27;0&#x27;</span>  <span class="comment"># 其余位补0直到满足长度为512*n+448</span></span><br><span class="line">    length = <span class="built_in">len</span>(raw_input) * <span class="number">8</span>  <span class="comment"># ASCII码位数</span></span><br><span class="line">    <span class="keyword">if</span> length &lt;= <span class="number">255</span>:</span><br><span class="line">        length = decToBin(length)  <span class="comment"># 二进制转换，此时length保留位数为8</span></span><br><span class="line">        <span class="keyword">while</span> <span class="built_in">len</span>(length) &lt; <span class="number">8</span>:</span><br><span class="line">            length = <span class="string">&#x27;0&#x27;</span> + length</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        temp = decToBin(length)</span><br><span class="line">        <span class="keyword">while</span> <span class="built_in">len</span>(length) &lt; <span class="number">16</span>:</span><br><span class="line">            length = <span class="string">&#x27;0&#x27;</span> + length</span><br><span class="line">        length = length[<span class="number">8</span>:<span class="number">12</span>] + length[<span class="number">12</span>:<span class="number">16</span>] + length[<span class="number">0</span>:<span class="number">4</span>] + length[<span class="number">4</span>:<span class="number">8</span>]</span><br><span class="line">    bininput += length</span><br><span class="line">    <span class="keyword">while</span> <span class="built_in">len</span>(bininput) % <span class="number">512</span> != <span class="number">0</span>:</span><br><span class="line">        bininput += <span class="string">&#x27;0&#x27;</span></span><br><span class="line">    self.temptext=bininput</span><br></pre></td></tr></table></figure>
-<h2 id="4轮循环"><a href="#4轮循环" class="headerlink" title="4轮循环"></a>4轮循环</h2><h3 id="分解消息子块"><a href="#分解消息子块" class="headerlink" title="分解消息子块"></a>分解消息子块</h3><p>下面将得到的临时变量进行分组。将其分解成$16*32$的矩阵，并将其存放于<code>Mlist</code>中。后续将配合MD5类中的m矩阵进行操作。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">Cycolyce</span>(<span class="params">self</span>):</span><br><span class="line">    Mlist=[]<span class="comment">#分16组</span></span><br><span class="line">    bininput=self.temptext</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="number">512</span>,<span class="number">32</span>):<span class="comment">#16</span></span><br><span class="line">        sym=<span class="string">&#x27;&#x27;</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="built_in">len</span>(bininput[i:i+<span class="number">32</span>]),<span class="number">4</span>):</span><br><span class="line">            temp=<span class="built_in">hex</span>(<span class="built_in">int</span>((bininput[i:i+<span class="number">32</span>][j:j+<span class="number">4</span>]),<span class="number">2</span>))<span class="comment">#取十六进制</span></span><br><span class="line">            sym+=temp[<span class="number">2</span>]<span class="comment">#只取字母 忽略前面的0x 为下面的小端排序做准备</span></span><br><span class="line"></span><br><span class="line">        sym_tmp=<span class="string">&#x27;&#x27;</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">8</span>,<span class="number">0</span>,-<span class="number">2</span>):<span class="comment">#小端排序</span></span><br><span class="line">            temp=sym[j-<span class="number">2</span>:j]</span><br><span class="line">            sym_tmp+=temp</span><br><span class="line"></span><br><span class="line">        fn_sym=<span class="string">&#x27;&#x27;</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(sym_tmp)):</span><br><span class="line">            fn_sym+=decToBin(<span class="built_in">int</span>(sym_tmp[j], <span class="number">16</span>))<span class="comment">#再次转换成二进制</span></span><br><span class="line">        Mlist.append(fn_sym)</span><br></pre></td></tr></table></figure>
-<h3 id="四轮循环的操作"><a href="#四轮循环的操作" class="headerlink" title="四轮循环的操作"></a>四轮循环的操作</h3><p>我们需要定义如下四个函数：</p>
-<script type="math/tex; mode=display">
-F(x,y,z)=(x\land y)\lor (\overline x \land z)\\
-G(x,y,z)=(x\land z)\lor (y \lor \overline z)\\
-H(x,y,z)=x\oplus y \oplus z\\
-I(x,y,z)=y\oplus(x\lor \overline z)</script><p>以及定义四个操作：</p>
-<script type="math/tex; mode=display">
-FF(a,b,c,d,Mj,s,Ti)=(F(b,c,d)+a+mj+Ti)<<s\\
-GG(a,b,c,d,Mj,s,Ti)=(G(b,c,d)+a+mj+Ti)<<s\\
-HH(a,b,c,d,Mj,s,Ti)=(H(b,c,d)+a+mj+Ti)<<s\\
-II(a,b,c,d,Mj,s,Ti)=(I(b,c,d)+a+mj+Ti)<<s\\</script><p>其中，$&lt;&lt;$是循环左移，$\oplus$是异或操作。在程序实现中，将四个函数定义在MD5类外，四个操作定义在MD5类以内。如此操作有两个原因：</p>
-<ul>
-<li>定义在外部的函数可以根据需求进行更改，对于封装后的类调用而言更具操作性</li>
-<li>定义在类内部的操作是MD5的专用函数，必须专类专用</li>
-<li>二者分离有助于设置断点、检查中间结果进行调试分析</li>
-</ul>
-<p>定义完函数以及相关操作后，我们将进行如下操作：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="number">16</span>, <span class="number">4</span>):</span><br><span class="line">    self.FF(Mlist[m[j]], s[j], T[j])</span><br><span class="line">    self.FF(Mlist[m[j+<span class="number">1</span>]], s[j+<span class="number">1</span>], T[j+<span class="number">1</span>])</span><br><span class="line">    self.FF(Mlist[m[j+<span class="number">2</span>]], s[j+<span class="number">2</span>], T[j+<span class="number">2</span>])</span><br><span class="line">    self.FF(Mlist[m[j+<span class="number">3</span>]], s[j+<span class="number">3</span>], T[j+<span class="number">3</span>])</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="number">16</span>, <span class="number">4</span>):</span><br><span class="line">    self.GG(Mlist[m[<span class="number">16</span>+j]], s[<span class="number">16</span>+j], T[<span class="number">16</span>+j])</span><br><span class="line">    self.GG(Mlist[m[<span class="number">16</span>+j+<span class="number">1</span>]], s[<span class="number">16</span>+j+<span class="number">1</span>], T[<span class="number">16</span>+j+<span class="number">1</span>])</span><br><span class="line">    self.GG(Mlist[m[<span class="number">16</span>+j+<span class="number">2</span>]], s[<span class="number">16</span>+j+<span class="number">2</span>], T[<span class="number">16</span>+j+<span class="number">2</span>])</span><br><span class="line">    self.GG(Mlist[m[<span class="number">16</span>+j+<span class="number">3</span>]], s[<span class="number">16</span>+j+<span class="number">3</span>], T[<span class="number">16</span>+j+<span class="number">3</span>])</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="number">16</span>, <span class="number">4</span>):</span><br><span class="line">    self.HH(Mlist[m[<span class="number">32</span>+j]], s[<span class="number">32</span>+j], T[<span class="number">32</span>+j])</span><br><span class="line">    self.HH(Mlist[m[<span class="number">32</span>+j+<span class="number">1</span>]], s[<span class="number">32</span>+j+<span class="number">1</span>], T[<span class="number">32</span>+j+<span class="number">1</span>])</span><br><span class="line">    self.HH(Mlist[m[<span class="number">32</span>+j+<span class="number">2</span>]], s[<span class="number">32</span>+j+<span class="number">2</span>], T[<span class="number">32</span>+j+<span class="number">2</span>])</span><br><span class="line">    self.HH(Mlist[m[<span class="number">32</span>+j+<span class="number">3</span>]], s[<span class="number">32</span>+j+<span class="number">3</span>], T[<span class="number">32</span>+j+<span class="number">3</span>])</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="number">16</span>, <span class="number">4</span>):</span><br><span class="line">    self.II(Mlist[m[<span class="number">48</span>+j]], s[<span class="number">48</span>+j], T[<span class="number">48</span>+j])</span><br><span class="line">    self.II(Mlist[m[<span class="number">48</span>+j+<span class="number">1</span>]], s[<span class="number">48</span>+j+<span class="number">1</span>], T[<span class="number">48</span>+j+<span class="number">1</span>])</span><br><span class="line">    self.II(Mlist[m[<span class="number">48</span>+j+<span class="number">2</span>]], s[<span class="number">48</span>+j+<span class="number">2</span>], T[<span class="number">48</span>+j+<span class="number">2</span>])</span><br><span class="line">    self.II(Mlist[m[<span class="number">48</span>+j+<span class="number">3</span>]], s[<span class="number">48</span>+j+<span class="number">3</span>], T[<span class="number">48</span>+j+<span class="number">3</span>])</span><br></pre></td></tr></table></figure>
-<h2 id="初值相加与拼接输出"><a href="#初值相加与拼接输出" class="headerlink" title="初值相加与拼接输出"></a>初值相加与拼接输出</h2><p>完成四轮循环后，需要将此时的ABCD与初始的ABCD相加，并进行小端排序。将小端排序后的结果拼接即可得到MD5加密的结果。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">self.A = (self.A+self.init_A)%<span class="built_in">pow</span>(<span class="number">2</span>, <span class="number">32</span>)</span><br><span class="line">        <span class="built_in">print</span>(self.A)</span><br><span class="line">        self.B = (self.B+self.init_B)%<span class="built_in">pow</span>(<span class="number">2</span>, <span class="number">32</span>)</span><br><span class="line">        <span class="built_in">print</span>(self.B)</span><br><span class="line">        self.C = (self.C+self.init_C)%<span class="built_in">pow</span>(<span class="number">2</span>, <span class="number">32</span>)</span><br><span class="line">        <span class="built_in">print</span>(self.C)</span><br><span class="line">        self.D = (self.D+self.init_D)%<span class="built_in">pow</span>(<span class="number">2</span>, <span class="number">32</span>)</span><br><span class="line">        <span class="built_in">print</span>(self.D)</span><br><span class="line"></span><br><span class="line">        answer = <span class="string">&quot;&quot;</span></span><br><span class="line">        <span class="keyword">for</span> each <span class="keyword">in</span> [self.A, self.B, self.C, self.D]:</span><br><span class="line">            each = <span class="built_in">hex</span>(each)[<span class="number">2</span>:]</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">8</span>, <span class="number">0</span>, -<span class="number">2</span>):</span><br><span class="line">                answer += <span class="built_in">str</span>(each[i - <span class="number">2</span>:i])</span><br><span class="line">        <span class="keyword">return</span> answer</span><br></pre></td></tr></table></figure>
-<p>我们可以运行一下检验成果：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">MD=md5(<span class="string">&#x27;abc&#x27;</span>)</span><br><span class="line">MD.fill()</span><br><span class="line">result=MD.Cycolyce()</span><br><span class="line"><span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>通信技术</category>
-        <category>加密技术</category>
-      </categories>
-      <tags>
-        <tag>数字签名</tag>
-        <tag>Python</tag>
-        <tag>MD5</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>【文献翻译】使用深度强化学习游玩雅达利游戏</title>
-    <url>/2022/07/29/Paper%20Translation/</url>
-    <content><![CDATA[<center><h1>摘要</center>
-
-<blockquote>
-<p>我们提出首个直接通过传感器高维输入并成功地学习到策略控制的深度学习模型。这个模型的是一个卷积神经网络的结构，它使用Q-learning的变种进行训练，使用远摄关的图片作为输入，输出是预测未来收益的价值。我们将我们的方法运用至Arcade Learning环境中的雅达利2600的七个游戏里，在没有调整算法的结构的条件下，我们发现它在其中六个游戏中取得比之前方法更好的表现，它在其中三个游戏中取得了超越人类专家的表现。</p>
-</blockquote>
-<span id="more"></span>
-<h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>直接从像视觉和语音等高维传感输入信息来学习控制智体一直以来都是强化学习(RL)的一个挑战。大部分成功的RL在这些领域的操作应用都需要依赖人工干预的线性价的值函数或策略函数进行特征提取整合。显然，这些RL算法的表现严重依赖于所选取的特征的质量。</p>
-<p>最近深度学习的优势是它能够从原生的传感器数据中提取深层次的特征，并在计算机视觉任务[11,22,16]和语言识别任务[6,7]中取得突破性进展。这些方法使用了一系列的神经网络结构，包括卷积神经网络、多层感知机，受限玻尔兹曼机器和循环神经网络，他们都在监督和无监督学习中得到了应用,这样一来似乎很自然地会思考相似的技术是否能对RL的传感器数据有所帮助。</p>
-<p>然而强化学习在从深度学习的观点来看有几个挑战。首先大部分成功的深度学习案例都需要大量的人工标注的训练数据。从另一个方面来说，RL的算法必须要能从量化的奖罚信号中进行学习，而这些奖罚信号通常都是充满噪声、延迟和离散的。执行动作后的以及随之而来的奖罚可能需要等待非常久的时间，在这一点上和有监督学习中的输入与输出的直接关联相比就显得艰难非常。另一个问题是绝大多数的深度学习算法都是基于样本数据之间是独立的这一假设的，但是在强化学习中通常就是状态与状态之间紧密相连，关系复杂。并且，在RL中数据概率分布会随着算法学习到新的行为而随之改变，这对深度学习基于固定概率的条件来说无疑是个的问题。</p>
-<p>本文提出了一种可以克服这些挑战以学习到成功的控制策略的卷积神经网络，而它仅需要使用复杂的RL环境中的原生视频数据。这个网络使用了一种Q-learning 的变种算法[26]进行训练，使用随机梯度下降法进行网络参数的更新。为了避免相关数据和概率不变的问题，我们使用了一种经验回放机制[13]，他能够随机地从经验池中抽取这些学习的经验，因此这能平缓训练时对先前学习到的动作分布概率。</p>
-<p><img src="https://s2.loli.net/2022/05/26/6w8c9R5T7DOHEBm.gif" alt="img" style="zoom:150%;" /></p>
-<p><small>图1  雅达利2600五种游戏的屏幕截图：（从左至右）Pong, Breakout, Space Invaders, Seaquest, Beam Rider</small></p>
-<p>我们将我们的方法应用于在Arcade Learning Environment(ALE)[3]中一系列的雅达利2600游戏中。雅达利2600是一个充满挑战性的RL测试平台，它为智体提供了高纬度的视觉输入信息(210*160大小的RGB彩色图像，屏幕刷新率为60Hz)以及为人类设计的苦难但多样有趣的挑战任务。我们的目标是去创建一个单独的神经网络作为智体使它能够成功的学习玩尽可能多的游戏。这个网路并不会被提供任何游戏相关的信息或者人为给定的视觉特征，并且也不能直接读取游戏环境的内存数据，它只能从视觉信息、奖罚西欧马屁、游戏结束信号以及一个可选则的动作空间进行学习，就和人类玩家一样。更进一步，网络结构和所有的超参数将在训练过程中保持不变。目前网络已经在7个中的6个游戏中超越之前的所有强化学习算法的性能，并且在三个游戏中甚至还取得了超越人类专家游玩的水平。图片[1]展示了五个用于训练的游戏截图。</p>
-<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>我们将问题转换为如下场景：智体在环境$\cal \varepsilon$即雅达利2600模拟器中，在每一个时间步中智体从一系列的合法动作集合$\cal A=\{1,…,K\}$中，选取一个动作$a_t$。这个选择的动作将会被传递至模拟器中并更改了游戏的底层交互数据和游戏得分，一般来说$\sf \varepsilon$是随机的。这些底层的交互数据对智体而言不可见，对它而言它只能从模拟器中观测到一张图片$x_t\in X^d$，这张图片其实一个原生的像素值的向量，描绘了当前的模拟器画面。除此之外，智体还会接收到一个奖罚信号$r_t$，代表了游戏的分的变化。注意一般来说游戏分数取决于之前的动作决策序列和观测；关于动作决策的评价反馈可能在决策做出之后的许多时间步之后才得到。</p>
-<p>由于智体只能观测到当前屏幕的图片信息，我们的任务只能观测到片面的信息，比如说对于整个游戏当前的状态而言，仅用一张图片$x_t$是很难表述的。因此我们需要考虑动作序列和观测的序列$s_t=x_1,x_2,…,x_{t-1},x_t$，我们将基于这些序列学习游戏的策略。我们认为所有的在模拟器中迭代的序列将在有限的时间步中终止。这种规范化使得我么你的问题变成一个庞大但有限的马尔可夫决策过程（MDP），在这种情况中每一个序列是一个独立的状态。最终，我们可以在马尔科夫链中使用标准的强化学习算法，仅简单地使用完整的状态序列$s_t$作为每一个时间的表征。</p>
-<p>​        智体学习的目标是通过选择一个能在未来带来最大化回报的动作，并将这个动作与模拟器交互。我们基于“未来的回报将会随着每一个时间步以一个折扣因子$\gamma$的倍率进行衰减”这一标准的设想，定义未来$t$时刻未来折扣汇报$R_t = \sum_{t’=t}^{T}\gamma^{t’-t}r_{t’}$，其中$T$是终止时的时间步。我们定义一个最优动作-价值函数$Q^{*}$，它表示为在观测一些序列$s$后根据任一策略采取一些动作$a$所期望得到的最大回报值，定义如下：$Q^{*}(s,a)=\max_\pi\Bbb E[R_t|s_t=s,a_t=a,\pi]$，其中$\pi$是一个策略，表述了一个状态到动作的映射的关系（或者状态到动作的概率分布映射）。</p>
-<p>​        最优的动作价值函数遵循一个非常的性质，即贝尔曼方程。它基于如下的设想：如果某一状态的最优的动作价值$Q^{*}$在下一个时间步中成为了所有可行动作的参考，那么最优的策略就是选择动作价值最高的动作$a’$以获取最大化的期望值$r+\gamma Q^{*}(s’,a;)$，</p>
-<script type="math/tex; mode=display">
-Q^{*}(s,a)=\Bbb E_{s'\sim\varepsilon}[r+\gamma \max_{a'}Q^{\*}(s',a')|_{s,a}]</script><p>​        许多强化学习算法的背后逻辑就是找到用于衡量动作价值函数的方法，通过使用贝尔曼方程作为迭代更新，更新的动作价值为$Q_{i+1}(s,a)=\Bbb E[r+\gamma \max_{a’}Q_i(s’,a’)|s,a]$。这种动作价值的迭代算法会依最优的动作价值函数收敛，即当$i\rightarrow\infty$时$Q_i\rightarrow Q^{*}$[23]。在实践中，这种方法是非常不切实际的，因为动作价值函数是会依据每一个状态序列进行独立的估计且不具备泛化能力。因此，我们很自然地会想到用一个近似的函数取拟合动作价值函数，$Q(s,a;\theta)\approx Q^{*}(s,a)$。在强化学习领域常会使用一个线性的函数进行拟合，但是有时一个非线性的函数也会被用于拟合，比如说神经网络。我们参考使用了一个权重为$\theta$的神经网络作为价值评估网络——Q网络。Q网络可以通过最小化变化的每一迭代$i$过程中损失函数序列值$L_i(\theta_i)$来训练：</p>
-<script type="math/tex; mode=display">
-L_i(\theta_i)=\Bbb E_{s,a\sim \rho(·)}[(y_i-Q(s,a;\theta_i))^2]</script><p>​        其中$y_i=\Bbb E_{s’\sim\varepsilon}[r+\gamma \max_{a’}Q(s’,a;\theta_{i-1})-Q(s,a;\theta_i)|_{s,a}]$是迭代$i$过程中的目标值，$\rho(s,a)$是一个基于所有状态$s$和动作$a$的概率分布，我们称之为行为分布。在前一步的迭代过程中的网络参数$\theta_{i-1}$会在优化损失函数值$L_i(\theta_i)$时被冻结（即不是所有时候都是冻结的），注意到目标值是基于神经网络的参数权重的，这和我们在有监督学习中的目标值有所区别，在监督学习中这个值在学习时一般都是固定住的。我们使用如下的梯度进行损失函数的微分：</p>
-<script type="math/tex; mode=display">
-\nabla_{\theta_i}L_i(\theta_i)= \Bbb E_{s,a\sim\rho(·);s'\sim\varepsilon}[(r+\gamma\max_{a'}Q(s',a';\theta_{i-1})-Q(s,a;\theta_i))\nabla_{\theta_i}Q(s,a;\theta_i)]</script><p>​        比起按上述公式的梯度计算完整的期望值，我们通常使用随机梯度下降方法进行计算以优化损失。如果权重在每一个时间步根据行为分布$\rho$、模拟器环境$\varepsilon$的单个样本替换期望继续宁更新，那么我们就得到了熟悉的Q-learning算法了[26]。</p>
-<p>​        注意到这是个model-free的算法，即它通过直接使用模拟器的环境$\varepsilon$抽样解决强化学习的问题，但不需要针对这个模拟器的环境$\varepsilon$进行建模和估计。同时它也是off-policy的，也就是说它会学习一个贪心的策略 $a=max_aQ(s,a;\theta)$同时也会以一定恰当的概率分布对状态空间进行探索。在实践中，我们一般使用贪心$\epsilon$策略，即使用$1-\epsilon$的概率使用决策的动作输出，以概率$\epsilon$选择一个随机的动作。</p>
-<h2 id="相关工作"><a href="#相关工作" class="headerlink" title="相关工作"></a>相关工作</h2><p>​        也许强化学习中的最广为人知的成功故事是IBM 的 Gerald Tesauro 开发的一个玩西洋双陆棋戏的程序——TD-gammom ，也即一个通过强化学习自学如何下棋的神经网络，并获得了超越人类水平的成绩[24]。TD-gammom使用了一个model-free的和Q-learning近似的强化学习算法，使用一个多个的隐藏层的网络用于感知特征以拟合价值函数。</p>
-<p>​        然而早期在尝试复现TD-gammom的时候，包括尝试在棋类游戏中使用相同的算法时，围棋和跳棋的效果就不如人意了。这就引来了一阵关于TD-gammom的方法是一个只能在双陆棋得到应用的成功特例的说法，也许是因为投骰子的随机性对状态空间的探索提供了帮助并且也使得它的价值函数尤其平缓顺滑[19]。</p>
-<p>更进一步说，model-free的强化学习算法比如Q-learning使用了非线性函数进行动作价值函数的拟合[25]，也许off-policy的学习方式确实会导致Q网络的发散的情况[1]。这些争议与讨论带来的就是强化学习的主要理论工作转移到了线性函数的拟合以获取更好的收敛性和收敛的保障[25]。</p>
-<p>​        最近，深度学习和强化学习的结合的趋势再次复苏。深度神经网络已经被应用于评估环境$\varepsilon$，受限玻尔兹曼机也被用于拟合价值函数[21]或者行为决策[9]。除此之外，最近梯度时分差分的方法的提出为Q-learning的发散问题带来了部分条件下的解决的方案。这些方法被证明当使用一个固定的用非线性函数拟合的策略可以保证模型的收敛[14]，或者可以使用一个受限的Q-learning的变种方法[15]用线性函数学习拟合一个控制策略，然而这些方法都没扩展至非线性的控制问题上。</p>
-<p>​        也许之前和我们方法最接近的方法就是使用神经拟合Q-learning（NFQ）[20]，它使用公式2的损失函数进行优化，并且使用RPROP算法进行Q网络的参数更新。然而，它在每一个迭代计算的基于使用依据数据集大小的代价进行批量更新，因此我们认为随机梯度更新在每一个迭代过程中的大规模数据集中计算的代价将会是一个非常小的常数。NFQ同样被成功应用于简单的真实世界控制任务，而且也是使用简单的树蕨输入，首先通过自动笔爱你吗其去歇息低维度的任务表征，然后将NFQ应用于该表征中进行控制[12]。与之对比，我们的方法是一个端到端的强化学习过程，直接以视觉作为输入，结果也显示这种方法一样能通过动作价值函数的评价直接学习到特征。Q-learning在之前也被应用于结合了经验回放机制和简单的神经网络[13]中，但其输入也是基于低维度的状态而不是原始的视觉信息输入。</p>
-<p>​        使用雅达利2600模拟器作为强化学习平台是参考了Marc G Bellemare[3]等的论文，他们将线性函数拟合和普通视觉信息输入应用在强化学习算法中。然后，实验的结果在后续使用更多特征和tug-of-war散列法随机映射至低维空间中的方法的改进后得到提升[2]。HyperNEAT进化架构[8]也被应用于Atari平台，用来（分别针对每款不同的游戏）形成一个表示游戏策略的神经网络。 当用模拟器的重置机制来与确定性序列做反复对抗训练时，我们发现这些策略可以利用几款Atari游戏中的设计缺陷。</p>
-<h2 id="深度强化学习"><a href="#深度强化学习" class="headerlink" title="深度强化学习"></a>深度强化学习</h2><p>​        计算机视觉和语音识别领域最近取得的一些突破，靠的就是可以在大型训练集上高效地训练深度神经网络。 其中最成功的方法是通过使用基于随机梯度下降的轻量级更新，直接用原始输入进行训练。向深度神经网络输入足够多的数据，这样常常可以学习到比人工生成的特征更好的表征[11]。 这些成功案例为我们的强化学习方法提供了启发。我们的目标是将强化学习算法与深度神经网络对接起来，这里所说的神经网络可以直接学习RGB图像，并通过使用随机梯度更新来有效地处理训练数据。</p>
-<p>​        Tesauro的TD-Gammon架构为这种方法提供了一个起点。该架构利用算法与环境的直接交互（或通过自玩，西洋双陆棋）产生的策略性经验样本$(s_t,a_t,r_t,s_{t+1},a_{t+1})$，对价值函数估计网络的参数进行更新。由于该算法在20年前能超越了水平最高的人类西洋双陆棋玩家，所以我们想知道，二十年的硬件改进以及现代深度神经网络架构和可扩展RL算法是否能让强化学习实现重大进展。</p>
-<p>​        不同于TD-Gammon和类似的在线方法，我们使用了一种叫做“经验回放”[13]的方法：将智体在每个时间步长$e_t=(s_t,a_t,r_t,s_{t+1})$上的经验储存在数据集$\cal D=e_1,…,e_N,$中，将许多episode的经验汇集至经验池中。在算法进行内部循环时，我们将Q-learning算法更新或小批量更新应用于经验样本$\cal e\sim\cal D$，这些样本是从经验池中随机抽取的。 执行经验回放后，智体根据$\epsilon$贪心策略选择动作决策。由于用任意长度的历史表征作为神经网络的输入较难实现，所以我们的Q函数使用的是函数$\phi$生成的固定长度的历史表征。 算法1给出了完整的算法流程，我们将之称为深度Q-learning算法。</p>
-<p><img src="https://s2.loli.net/2022/05/26/AoOKdq4CNsDGiPu.png" alt="image-20220526094753105"></p>
-<p>​        </p>
-<p>这种方法和标准的online Q-learning相比有几个优点[23]。受限，每一步的经验都可能会在许多网络权重更新中起作用，数据的有效性大幅增加。其次由于样本之间存在很强的相关性，直接学习连续样本效率很低；随机化样本会破坏这些相关性，减少更新的方差。第三，当学习策略时，当前的参数确定用于训练参数的下一数据样本。举个例子，如果最大化动作是向左移动，训练样本将由左侧的样本主导;如果最大化动作切换到右边，训练数据分布也会切换到右边。很容易看出，这样可能会产生不必要的反馈循环，并且参数也可能会被困在局部最小值，甚至发生严重的发散[25]。通过使用经验回放，在先前状态下的行为分布就会得到变得均匀，这样学习过程就会变得平缓化，并参数也不会出现振荡或发散。需要指出，当使用经验池抽取经验进行学习时off-policy的方法的学习非常有必要（因为我们当前的参数和产生经验使用的参数不同），这就启发了我们使用Q-learning。</p>
-<p>​        在实践中，我们的算法仅在经验池中存储最后N个经验元组，并且在执行更新时均匀地从D中随机采样。 这种方法在某些方面有一定局限，因为存储缓冲器并不区分重要的经验；而且由于存储容量N有限，存储缓冲器总是用最新的转移重写记忆。同样，均匀采样使得回放记忆中的所有转移具有相等的重要性。 更复杂的抽样策略可能会强调可以提供最多信息的转换，类似于优先扫除[17] 。</p>
-<h3 id="预处理和模型结构"><a href="#预处理和模型结构" class="headerlink" title="预处理和模型结构"></a>预处理和模型结构</h3><p>​    直接使用原始的Atari框架（128色的210×160像素图像）可能在计算上要求很高，所以我们应用了一个基本的预处理步骤来减少输入维数。进行预处理时，首先将原始帧的RGB图像表示转换成灰度图像，并将其下采样成110×84图像。通过从图像上裁剪一个可以大致捕获到游戏区域的的84×84画面，获得最终的输入表征。 然后进行最后的裁剪，因为我们使用的是Alex等提出的的2D卷积GPU实现[11]，需要方形的输入图像。在该论文的实验中，算法1的函数$\phi$将该预处理过程应用于历史记忆的最后4帧，并将它们叠加以生成Q函数的输入。</p>
-<p>​    用神经网络参数化Q函数的方法有许多种。 由于Q函数可以将历史动作对映射到其Q值的标量估计上，所以先前的一些的方法可以将历史和动作作为神经网络的输入[20,12]。 这类架构的主要缺点是需要单独进行一次前向传递来计算每个动作的Q值，这样会导致计算成本与动作数呈正比。 在我们使用的架构中，其中每个可能的动作都对应一个单独的输出单元，神经网络的输入只有状态表征。 输出则对应于输入状态的单个动作的预测Q值。 这类架构的主要优点是只需进行一遍前进传递，就可以计算某一给定状态下所有可能动作的Q值。 </p>
-<p>​    下面我们将描述七个Atari游戏所使用的架构。 神经网络的输入是由$\phi$产生的84×84×4图像。 第一个隐藏层用16个步长（stride）为4的8×8卷积核与输入图像进行卷积， 并使用非线性的激活函数ReLU函数[10,18]。 第二个隐层用32个步长为2的4×4卷积核进行卷积，应用同样的非线性激活函数ReLU函数。最后一个隐层为完全连接层，由256个激活函数单元组成。输出层是一个线性的完全连接层，每个有效的动作对应一个输出。在我们研究的游戏中，有效动作的数量在4到18之间变化。我们把用该方法训练的卷积网络称为深度Q网络（DQN）。</p>
-<h2 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h2><p>​        截至目前，我们用7款流行的ATARI游戏进行了试验——Beam Rider、Breakout、Enduro、Pong、Q*bert、Seaquest和Space Invader。在这7款游戏中，我们使用相同的网络架构、学习算法和超参数设置，以证明我们的方法还是能够在不获取特定游戏信息的条件下成功应用于多种游戏中。当在真实且未改动的游戏中对智体进行评估时，我们在训练期间只对游戏的奖励机制作出了一个改变。由于各游戏的得分范围大不相同，我们将所有正奖励都设定为1，将所有负奖励设定为-1，无变化情况设为0奖励。这样的奖励设置可以限制误差范围，便于在多种游戏中使用同一学习率。同时，该奖励机制还会影响智体的表现，因为它无法区分不同大小的奖励。</p>
-<p>​        在这些试验中，我们使用的是mini batch大小为32的RMSProp算法。训练中的行为策略为：ϵ-greedy的ϵ在前100万帧从1 线性下降到0.1，然后保持在0.1不变。我们共训练了100万帧，并使用了最近100万帧的回放记忆。</p>
-<p>​        在按照前文中的方法玩Atari游戏时，我们还使用了一种简单的跳帧技巧[3]。更确切地说，智体在每隔k帧而不是在每一帧观察并选择动作，在跳过的帧中则重复它的最后一个动作。由于模拟器向前运行一步需要的计算量少于智体选择一个动作的计算量，这种方法可以使智体在不大幅增加运行时间的情况下将游戏次数增加约k倍。除了Space Invader这款游戏，我们在其他游戏中都将k设为4，如果在这款游戏中将k设为4，就会看不见激光，因为跳过的帧与激光闪烁的时长相重叠。将k设定为3就可以看到激光，k值的改变就是不同游戏间的唯一超参数差异。</p>
-<h3 id="训练和稳定性"><a href="#训练和稳定性" class="headerlink" title="训练和稳定性"></a>训练和稳定性</h3><p>​        在监督学习中，通过使用训练集和验证集评估模型，我们可以轻易地追踪模型在训练期间的性能。但是在强化学习中，在训练期间准确评估智体的性能可能会十分困难。如Marc G Bellemare所述[3]，我们的评估指标是在若干游戏中智体在某一episode或游戏中得到的总奖励的平均值。而且我们在训练中周期性地计算该指标。总奖励均值指标往往很嘈杂，因为权重的小小改变可能会导致策略访问的状态的分布发生很大的变化。图2中最左侧的两个线图显示了总奖励均值在游戏Seapuest和Breakout的训练期间是如何变化的。这两个总奖励均值线图确实很嘈杂，给人的印象是学习算法的运行不稳定。</p>
-<p><img src="https://s2.loli.net/2022/05/26/uqRvEcmjGKDf9h5.png" alt="image-20220526095121441"></p>
-<p><small>图2：  左边两图分别展示了训练时Breakout和Seaquest每回合的平均奖励值。数据是使用$\varepsilon=0.05$的$\varepsilon -greedy$策略在运行10000步计算得到的。右图的两图则分别展示了Breakout和Seaquest部分状态下的平均最大的动作价值。大约每三十分钟每一个回合约有50000条抽样数据用于更新</small></p>
-<p><img src="https://s2.loli.net/2022/05/26/Qr4Mp86NOykVTxL.png" alt="image-20220526100408551"></p>
-<p><small>图3  最左端的图表展示了Seaquest的30帧数据预测的价值函数。三张屏幕截图分别对应图表中的A，B，C三个时刻。</small></p>
-<p>​        右侧的两个线图则较为稳定，指标是指策略的预估动作分值函数Q，该函数的作用是预测在任何给定状态下智体遵循其策略所能获得的惩罚后的奖励。我们在训练开始前运行某一随机策略，收集固定数量的状态，并追踪这些状态的最大预测Q值的均值。从图2最右侧的两个线图可以看出，预测平均Q值的增加趋势要比智体获得的总奖励的均值平缓得多，其余5个游戏的平均Q值的增长曲线也很平缓。除了预测Q值在训练期间有较为平缓的增长，我们在试验中未发现任何发散问题。这表明，除了缺乏理论上的收敛保证，我们的方法能够使用强化学习信合和随机梯度下滑以稳定的方式训练大型神经网络。</p>
-<h3 id="可视化和价值函数"><a href="#可视化和价值函数" class="headerlink" title="可视化和价值函数"></a>可视化和价值函数</h3><p>​        图3给出了游戏Seaquest中学到的价值函数的可视化形式。从图中可以看出，当屏幕左侧出现敌人后预测值出现跳跃（点A）。然后代理想敌人发射鱼雷，当鱼雷快要集中敌人时预测值达到最高点（点B）。最后当敌人消失后预测值差不多恢复到原始值（点C）。图3表明我们的方法能够在较为复杂一系列的事件中学习价值函数的变化方式。</p>
-<h3 id="主要的评估"><a href="#主要的评估" class="headerlink" title="主要的评估"></a>主要的评估</h3><p>​        我们将我们的结果与Marc中提出的方法进行了比较。该方法被称为“Sarsa”，Sarsa算法借助为Atari任务人工设计的多个特征集来学习线性策略，我们在[3,,4]中给出了表现最佳的特征集的得分[3]。Contingency算法的基本思路和Sarsa法相同，但是该方法可以通过学习智体控制范围内的屏幕区域的表征，来增强特征集[4]。需要指出，这两种方法都通过背景差分法吸纳了大量关于计算机视觉问题的知识，并将128种颜色中的每种颜色都作为一个单独的通道。由于许多Atari游戏中每种类型的目标所用的颜色通常都各不相同，将每种颜色作为一个单独的通道，这种做法类似于生成一个单独的二元映射，对每种目标类型进行编码。相比之下，我们的代理只接收原始RGB屏幕截图输入，并且必须学习自行检测目标。</p>
-<p>​        除了给出学习代理（learned agents）的得分，我们还给出了人类专业游戏玩家的得分，以及一种均匀地随机选择动作的策略。人类玩家的表现将表示为玩了两小时游戏后得到的奖励中值。需要指出，我们给出的人类玩家的得分要比Bellemare等人[3]论文中给出的得分高得多。至于学习方法，我们遵循的是Bellemare等人的论文==[3,5]==中使用的评估策略，并且我们还通过将$\epsilon$设定为0.05运行 ε 贪心策略来获得固定步数的平均得分。表1的前5行给出了所有游戏的各游戏平均得分。在这7款游戏中，我们的方法（标记为DQN）虽然没有吸纳任何关于输入的先验知识，结果还是大幅超越了其他学习方法.。</p>
-<p>​        我们同样将文献[8]中的策略搜索方法囊括进表格的后三行进行比较，并做出了两组使用该方法的结果。HNeat Best 的得分反映了通过使用人工标注的目标检测法现实游戏物体位置和类型.HNeat Pixel的得分反映的是使用特定的8种颜色通道代表雅达利游戏模拟器的特定物体类型。这两种方法依赖于确定的状态序列且不存在随机的扰动，因此与其他方法对比时对比的是单个会和下的最佳表现。相反的，我们的算法是在贪心$\epsilon$策略下进行评估的，因此必须对所有可能的情况进行归一化。然而，我们发现在所有展示的游戏中，除了Space Invaders这款游戏不单是我们算法的最优表现还是我们的平均表现都能达到一个相对较好的效果。</p>
-<p><img src="https://s2.loli.net/2022/05/26/aZeD57p8KGwxCWk.png" alt="image-20220526100647570"></p>
-<p><small>表1  上端的表格对比了使用贪心值为0.0.5的$\varepsilon-greedy$的不同学习方式平均总奖励。下端的表格展示了HNeat和DQN在单个回合中最佳表现分数。HNeat做出确定性策略与DQN使用$\varepsilon-greedy$的效果相同。</small></p>
-<p>​        最终我们发现我们的方法在Breakout，Enduro和Pong这三款游戏中达到了超越人类专家水平的水准，并且在Beam Rider种取得了与人类水平相近的成绩。Q*bert，Seaquest，Space Invaders这三款游戏我们依然与人类专家水平相比有较大的差距，但它充满了挑战性，因为他们需要网络找到一个从更长远的时间层面上考察的策略。</p>
-<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>​        本文介绍了一种新的强化学习的深度学习模型，并通过在雅达利2600游戏中证明了其对困难游戏的控制能力，而它仅需要原始的像素信息作为输入。我们同时也展示了一种结合了随机批量更新和经验回放机制Q-learning的变种算法来降低训练强化学习中的深度神经网络难度。我们的方法在七个测试的游戏中的六个取得SOTA成果，并且没有调整过超参数和网络模型结构。</p>
-<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><p>[1] Leemon Baird. Residual algorithms: Reinforcement learning with function approximation. In <em>Proceedings of the 12th International Conference on Machine Learning (ICML 1995)</em>, pages 30–37. Morgan Kaufmann, 1995.</p>
-<p>[2] Marc Bellemare, Joel Veness, and Michael Bowling. Sketch-based linear value function ap- proximation. In <em>Advances in Neural Information Processing Systems 25</em>, pages 2222–2230, 2012.</p>
-<p>[3] Marc G Bellemare, Yavar Naddaf, Joel Veness, and Michael Bowling. The arcade learning environment: An evaluation platform for general agents. <em>Journal of Artificial Intelligence</em> <em>Research</em>, 47:253–279, 2013.</p>
-<p>[4] Marc G Bellemare, Joel Veness, and Michael Bowling. Investigating contingency awareness using atari 2600 games. In <em>AAAI</em>, 2012.</p>
-<p>[5] Marc G. Bellemare, Joel Veness, and Michael Bowling. Bayesian learning of recursively fac- tored environments. In <em>Proceedings of the Thirtieth International Conference on Machine</em> <em>Learning</em> <em>(ICML</em> <em>2013)</em>, pages 1211–1219, 2013.</p>
-<p>[6] George E. Dahl, Dong Yu, Li Deng, and Alex Acero. Context-dependent pre-trained deep neural networks for large-vocabulary speech recognition. <em>Audio, Speech, and Language Pro-</em> <em>cessing,</em> <em>IEEE</em> <em>Transactions</em> <em>on</em>, 20(1):30 –42, January 2012.</p>
-<p>[7] Alex Graves, Abdel-rahman Mohamed, and Geoffrey E. Hinton. Speech recognition with deep recurrent neural networks. In <em>Proc.</em> <em>ICASSP</em>, 2013.</p>
-<p>[8] Matthew Hausknecht, Risto Miikkulainen, and Peter Stone. A neuro-evolution approach to general atari game playing. 2013.</p>
-<p>[9] Nicolas Heess, David Silver, and Yee Whye Teh. Actor-critic reinforcement learning with energy-based policies. In <em>European</em> <em>Workshop</em> <em>on</em> <em>Reinforcement</em> <em>Learning</em>, page 43, 2012.</p>
-<p>[10] Kevin Jarrett, Koray Kavukcuoglu, MarcAurelio Ranzato, and Yann LeCun. What is the best multi-stage architecture for object recognition? In <em>Proc. International Conference on Com-</em> <em>puter</em> <em>Vision</em> <em>and</em> <em>Pattern</em> <em>Recognition</em> <em>(CVPR</em> <em>2009)</em>, pages 2146–2153. IEEE, 2009.</p>
-<p>[11] Alex Krizhevsky, Ilya Sutskever, and Geoff Hinton. Imagenet classification with deep con- volutional neural networks. In <em>Advances in Neural Information Processing Systems 25</em>, pages 1106–1114, 2012.</p>
-<p>[12] Sascha Lange and Martin Riedmiller. Deep auto-encoder neural networks in reinforcement learning. In <em>Neural Networks (IJCNN), The 2010 International Joint Conference on</em>, pages 1–8. IEEE, 2010.</p>
-<p>[13] Long-Ji Lin. Reinforcement learning for robots using neural networks. Technical report, DTIC Document, 1993.</p>
-<p>[14] Hamid Maei, Csaba Szepesvari, Shalabh Bhatnagar, Doina Precup, David Silver, and Rich Sutton. Convergent Temporal-Difference Learning with Arbitrary Smooth Function Approxi- mation. In <em>Advances</em> <em>in</em> <em>Neural</em> <em>Information</em> <em>Processing</em> <em>Systems</em> <em>22</em>, pages 1204–1212, 2009.</p>
-<p>[15] Hamid Maei, Csaba Szepesva´ri, Shalabh Bhatnagar, and Richard S. Sutton. Toward off-policy learning control with function approximation. In <em>Proceedings of the 27th International Con-</em> <em>ference</em> <em>on</em> <em>Machine</em> <em>Learning</em> <em>(ICML</em> <em>2010)</em>, pages 719–726, 2010.</p>
-<p>[16] Volodymyr Mnih. <em>Machine Learning for Aerial Image Labeling</em>. PhD thesis, University of Toronto, 2013.</p>
-<p>[17] Andrew Moore and Chris Atkeson. Prioritized sweeping: Reinforcement learning with less data and less real time. <em>Machine</em> <em>Learning</em>, 13:103–130, 1993.</p>
-<p>[18] Vinod Nair and Geoffrey E Hinton. Rectified linear units improve restricted boltzmann ma- chines. In <em>Proceedings of the 27th International Conference on Machine Learning (ICML</em> <em>2010)</em>, pages 807–814, 2010.</p>
-<p>[19] Jordan B. Pollack and Alan D. Blair. Why did td-gammon work. In <em>Advances in Neural</em> <em>Information</em> <em>Processing</em> <em>Systems</em> <em>9</em>, pages 10–16, 1996.</p>
-<p>[20] Martin Riedmiller. Neural fitted q iteration–first experiences with a data efficient neural re- inforcement learning method. In <em>Machine Learning: ECML 2005</em>, pages 317–328. Springer, 2005.</p>
-<p>[21] Brian Sallans and Geoffrey E. Hinton. Reinforcement learning with factored states and actions.</p>
-<p><em>Journal</em> <em>of</em> <em>Machine</em> <em>Learning</em> <em>Research</em>, 5:1063–1088, 2004.</p>
-<p>[22] Pierre Sermanet, Koray Kavukcuoglu, Soumith Chintala, and Yann LeCun. Pedestrian de- tection with unsupervised multi-stage feature learning. In <em>Proc. International Conference on</em> <em>Computer</em> <em>Vision</em> <em>and</em> <em>Pattern</em> <em>Recognition</em> <em>(CVPR</em> <em>2013)</em>. IEEE, 2013.</p>
-<p>[23] Richard Sutton and Andrew Barto. <em>Reinforcement Learning:</em> <em>An Introduction</em>. MIT Press, 1998.</p>
-<p>[24] Gerald Tesauro. Temporal difference learning and td-gammon. <em>Communications of the ACM</em>, 38(3):58–68, 1995.</p>
-<p>[25] John N Tsitsiklis and Benjamin Van Roy. An analysis of temporal-difference learning with function approximation. <em>Automatic</em> <em>Control,</em> <em>IEEE</em> <em>Transactions</em> <em>on</em>, 42(5):674–690, 1997.</p>
-<p>[26] Christopher JCH Watkins and Peter Dayan. Q-learning. <em>Machine learning</em>, 8(3-4):279–292, 1992.</p>
-]]></content>
-      <categories>
-        <category>强化学习</category>
-      </categories>
-      <tags>
-        <tag>强化学习</tag>
-        <tag>文献翻译</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Pytorch训练神经网络的一般过程</title>
     <url>/2022/08/04/Pytorch%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%BF%87%E7%A8%8B/</url>
     <content><![CDATA[<p>这个是我在使用<code>Pytorch</code>进行图像相关任务的神经网络构建和训练过程中的一个记录，没有什么参考价值的，可以忽略~</p>
@@ -653,6 +557,102 @@ Y(x,y)=F(x,y)*H(x,y)=\sum_{n_1=-\infty}^{\infty}\sum_{n_2=-\infty}^{\infty}F(n_1
       </categories>
       <tags>
         <tag>计算机视觉</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>【文献翻译】使用深度强化学习游玩雅达利游戏</title>
+    <url>/2022/07/29/Paper%20Translation/</url>
+    <content><![CDATA[<center><h1>摘要</center>
+
+<blockquote>
+<p>我们提出首个直接通过传感器高维输入并成功地学习到策略控制的深度学习模型。这个模型的是一个卷积神经网络的结构，它使用Q-learning的变种进行训练，使用远摄关的图片作为输入，输出是预测未来收益的价值。我们将我们的方法运用至Arcade Learning环境中的雅达利2600的七个游戏里，在没有调整算法的结构的条件下，我们发现它在其中六个游戏中取得比之前方法更好的表现，它在其中三个游戏中取得了超越人类专家的表现。</p>
+</blockquote>
+<span id="more"></span>
+<h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>直接从像视觉和语音等高维传感输入信息来学习控制智体一直以来都是强化学习(RL)的一个挑战。大部分成功的RL在这些领域的操作应用都需要依赖人工干预的线性价的值函数或策略函数进行特征提取整合。显然，这些RL算法的表现严重依赖于所选取的特征的质量。</p>
+<p>最近深度学习的优势是它能够从原生的传感器数据中提取深层次的特征，并在计算机视觉任务[11,22,16]和语言识别任务[6,7]中取得突破性进展。这些方法使用了一系列的神经网络结构，包括卷积神经网络、多层感知机，受限玻尔兹曼机器和循环神经网络，他们都在监督和无监督学习中得到了应用,这样一来似乎很自然地会思考相似的技术是否能对RL的传感器数据有所帮助。</p>
+<p>然而强化学习在从深度学习的观点来看有几个挑战。首先大部分成功的深度学习案例都需要大量的人工标注的训练数据。从另一个方面来说，RL的算法必须要能从量化的奖罚信号中进行学习，而这些奖罚信号通常都是充满噪声、延迟和离散的。执行动作后的以及随之而来的奖罚可能需要等待非常久的时间，在这一点上和有监督学习中的输入与输出的直接关联相比就显得艰难非常。另一个问题是绝大多数的深度学习算法都是基于样本数据之间是独立的这一假设的，但是在强化学习中通常就是状态与状态之间紧密相连，关系复杂。并且，在RL中数据概率分布会随着算法学习到新的行为而随之改变，这对深度学习基于固定概率的条件来说无疑是个的问题。</p>
+<p>本文提出了一种可以克服这些挑战以学习到成功的控制策略的卷积神经网络，而它仅需要使用复杂的RL环境中的原生视频数据。这个网络使用了一种Q-learning 的变种算法[26]进行训练，使用随机梯度下降法进行网络参数的更新。为了避免相关数据和概率不变的问题，我们使用了一种经验回放机制[13]，他能够随机地从经验池中抽取这些学习的经验，因此这能平缓训练时对先前学习到的动作分布概率。</p>
+<p><img src="https://s2.loli.net/2022/05/26/6w8c9R5T7DOHEBm.gif" alt="img" style="zoom:150%;" /></p>
+<p><small>图1  雅达利2600五种游戏的屏幕截图：（从左至右）Pong, Breakout, Space Invaders, Seaquest, Beam Rider</small></p>
+<p>我们将我们的方法应用于在Arcade Learning Environment(ALE)[3]中一系列的雅达利2600游戏中。雅达利2600是一个充满挑战性的RL测试平台，它为智体提供了高纬度的视觉输入信息(210*160大小的RGB彩色图像，屏幕刷新率为60Hz)以及为人类设计的苦难但多样有趣的挑战任务。我们的目标是去创建一个单独的神经网络作为智体使它能够成功的学习玩尽可能多的游戏。这个网路并不会被提供任何游戏相关的信息或者人为给定的视觉特征，并且也不能直接读取游戏环境的内存数据，它只能从视觉信息、奖罚西欧马屁、游戏结束信号以及一个可选则的动作空间进行学习，就和人类玩家一样。更进一步，网络结构和所有的超参数将在训练过程中保持不变。目前网络已经在7个中的6个游戏中超越之前的所有强化学习算法的性能，并且在三个游戏中甚至还取得了超越人类专家游玩的水平。图片[1]展示了五个用于训练的游戏截图。</p>
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>我们将问题转换为如下场景：智体在环境$\cal \varepsilon$即雅达利2600模拟器中，在每一个时间步中智体从一系列的合法动作集合$\cal A=\{1,…,K\}$中，选取一个动作$a_t$。这个选择的动作将会被传递至模拟器中并更改了游戏的底层交互数据和游戏得分，一般来说$\sf \varepsilon$是随机的。这些底层的交互数据对智体而言不可见，对它而言它只能从模拟器中观测到一张图片$x_t\in X^d$，这张图片其实一个原生的像素值的向量，描绘了当前的模拟器画面。除此之外，智体还会接收到一个奖罚信号$r_t$，代表了游戏的分的变化。注意一般来说游戏分数取决于之前的动作决策序列和观测；关于动作决策的评价反馈可能在决策做出之后的许多时间步之后才得到。</p>
+<p>由于智体只能观测到当前屏幕的图片信息，我们的任务只能观测到片面的信息，比如说对于整个游戏当前的状态而言，仅用一张图片$x_t$是很难表述的。因此我们需要考虑动作序列和观测的序列$s_t=x_1,x_2,…,x_{t-1},x_t$，我们将基于这些序列学习游戏的策略。我们认为所有的在模拟器中迭代的序列将在有限的时间步中终止。这种规范化使得我么你的问题变成一个庞大但有限的马尔可夫决策过程（MDP），在这种情况中每一个序列是一个独立的状态。最终，我们可以在马尔科夫链中使用标准的强化学习算法，仅简单地使用完整的状态序列$s_t$作为每一个时间的表征。</p>
+<p>​        智体学习的目标是通过选择一个能在未来带来最大化回报的动作，并将这个动作与模拟器交互。我们基于“未来的回报将会随着每一个时间步以一个折扣因子$\gamma$的倍率进行衰减”这一标准的设想，定义未来$t$时刻未来折扣汇报$R_t = \sum_{t’=t}^{T}\gamma^{t’-t}r_{t’}$，其中$T$是终止时的时间步。我们定义一个最优动作-价值函数$Q^{*}$，它表示为在观测一些序列$s$后根据任一策略采取一些动作$a$所期望得到的最大回报值，定义如下：$Q^{*}(s,a)=\max_\pi\Bbb E[R_t|s_t=s,a_t=a,\pi]$，其中$\pi$是一个策略，表述了一个状态到动作的映射的关系（或者状态到动作的概率分布映射）。</p>
+<p>​        最优的动作价值函数遵循一个非常的性质，即贝尔曼方程。它基于如下的设想：如果某一状态的最优的动作价值$Q^{*}$在下一个时间步中成为了所有可行动作的参考，那么最优的策略就是选择动作价值最高的动作$a’$以获取最大化的期望值$r+\gamma Q^{*}(s’,a;)$，</p>
+<script type="math/tex; mode=display">
+Q^{*}(s,a)=\Bbb E_{s'\sim\varepsilon}[r+\gamma \max_{a'}Q^{\*}(s',a')|_{s,a}]</script><p>​        许多强化学习算法的背后逻辑就是找到用于衡量动作价值函数的方法，通过使用贝尔曼方程作为迭代更新，更新的动作价值为$Q_{i+1}(s,a)=\Bbb E[r+\gamma \max_{a’}Q_i(s’,a’)|s,a]$。这种动作价值的迭代算法会依最优的动作价值函数收敛，即当$i\rightarrow\infty$时$Q_i\rightarrow Q^{*}$[23]。在实践中，这种方法是非常不切实际的，因为动作价值函数是会依据每一个状态序列进行独立的估计且不具备泛化能力。因此，我们很自然地会想到用一个近似的函数取拟合动作价值函数，$Q(s,a;\theta)\approx Q^{*}(s,a)$。在强化学习领域常会使用一个线性的函数进行拟合，但是有时一个非线性的函数也会被用于拟合，比如说神经网络。我们参考使用了一个权重为$\theta$的神经网络作为价值评估网络——Q网络。Q网络可以通过最小化变化的每一迭代$i$过程中损失函数序列值$L_i(\theta_i)$来训练：</p>
+<script type="math/tex; mode=display">
+L_i(\theta_i)=\Bbb E_{s,a\sim \rho(·)}[(y_i-Q(s,a;\theta_i))^2]</script><p>​        其中$y_i=\Bbb E_{s’\sim\varepsilon}[r+\gamma \max_{a’}Q(s’,a;\theta_{i-1})-Q(s,a;\theta_i)|_{s,a}]$是迭代$i$过程中的目标值，$\rho(s,a)$是一个基于所有状态$s$和动作$a$的概率分布，我们称之为行为分布。在前一步的迭代过程中的网络参数$\theta_{i-1}$会在优化损失函数值$L_i(\theta_i)$时被冻结（即不是所有时候都是冻结的），注意到目标值是基于神经网络的参数权重的，这和我们在有监督学习中的目标值有所区别，在监督学习中这个值在学习时一般都是固定住的。我们使用如下的梯度进行损失函数的微分：</p>
+<script type="math/tex; mode=display">
+\nabla_{\theta_i}L_i(\theta_i)= \Bbb E_{s,a\sim\rho(·);s'\sim\varepsilon}[(r+\gamma\max_{a'}Q(s',a';\theta_{i-1})-Q(s,a;\theta_i))\nabla_{\theta_i}Q(s,a;\theta_i)]</script><p>​        比起按上述公式的梯度计算完整的期望值，我们通常使用随机梯度下降方法进行计算以优化损失。如果权重在每一个时间步根据行为分布$\rho$、模拟器环境$\varepsilon$的单个样本替换期望继续宁更新，那么我们就得到了熟悉的Q-learning算法了[26]。</p>
+<p>​        注意到这是个model-free的算法，即它通过直接使用模拟器的环境$\varepsilon$抽样解决强化学习的问题，但不需要针对这个模拟器的环境$\varepsilon$进行建模和估计。同时它也是off-policy的，也就是说它会学习一个贪心的策略 $a=max_aQ(s,a;\theta)$同时也会以一定恰当的概率分布对状态空间进行探索。在实践中，我们一般使用贪心$\epsilon$策略，即使用$1-\epsilon$的概率使用决策的动作输出，以概率$\epsilon$选择一个随机的动作。</p>
+<h2 id="相关工作"><a href="#相关工作" class="headerlink" title="相关工作"></a>相关工作</h2><p>​        也许强化学习中的最广为人知的成功故事是IBM 的 Gerald Tesauro 开发的一个玩西洋双陆棋戏的程序——TD-gammom ，也即一个通过强化学习自学如何下棋的神经网络，并获得了超越人类水平的成绩[24]。TD-gammom使用了一个model-free的和Q-learning近似的强化学习算法，使用一个多个的隐藏层的网络用于感知特征以拟合价值函数。</p>
+<p>​        然而早期在尝试复现TD-gammom的时候，包括尝试在棋类游戏中使用相同的算法时，围棋和跳棋的效果就不如人意了。这就引来了一阵关于TD-gammom的方法是一个只能在双陆棋得到应用的成功特例的说法，也许是因为投骰子的随机性对状态空间的探索提供了帮助并且也使得它的价值函数尤其平缓顺滑[19]。</p>
+<p>更进一步说，model-free的强化学习算法比如Q-learning使用了非线性函数进行动作价值函数的拟合[25]，也许off-policy的学习方式确实会导致Q网络的发散的情况[1]。这些争议与讨论带来的就是强化学习的主要理论工作转移到了线性函数的拟合以获取更好的收敛性和收敛的保障[25]。</p>
+<p>​        最近，深度学习和强化学习的结合的趋势再次复苏。深度神经网络已经被应用于评估环境$\varepsilon$，受限玻尔兹曼机也被用于拟合价值函数[21]或者行为决策[9]。除此之外，最近梯度时分差分的方法的提出为Q-learning的发散问题带来了部分条件下的解决的方案。这些方法被证明当使用一个固定的用非线性函数拟合的策略可以保证模型的收敛[14]，或者可以使用一个受限的Q-learning的变种方法[15]用线性函数学习拟合一个控制策略，然而这些方法都没扩展至非线性的控制问题上。</p>
+<p>​        也许之前和我们方法最接近的方法就是使用神经拟合Q-learning（NFQ）[20]，它使用公式2的损失函数进行优化，并且使用RPROP算法进行Q网络的参数更新。然而，它在每一个迭代计算的基于使用依据数据集大小的代价进行批量更新，因此我们认为随机梯度更新在每一个迭代过程中的大规模数据集中计算的代价将会是一个非常小的常数。NFQ同样被成功应用于简单的真实世界控制任务，而且也是使用简单的树蕨输入，首先通过自动笔爱你吗其去歇息低维度的任务表征，然后将NFQ应用于该表征中进行控制[12]。与之对比，我们的方法是一个端到端的强化学习过程，直接以视觉作为输入，结果也显示这种方法一样能通过动作价值函数的评价直接学习到特征。Q-learning在之前也被应用于结合了经验回放机制和简单的神经网络[13]中，但其输入也是基于低维度的状态而不是原始的视觉信息输入。</p>
+<p>​        使用雅达利2600模拟器作为强化学习平台是参考了Marc G Bellemare[3]等的论文，他们将线性函数拟合和普通视觉信息输入应用在强化学习算法中。然后，实验的结果在后续使用更多特征和tug-of-war散列法随机映射至低维空间中的方法的改进后得到提升[2]。HyperNEAT进化架构[8]也被应用于Atari平台，用来（分别针对每款不同的游戏）形成一个表示游戏策略的神经网络。 当用模拟器的重置机制来与确定性序列做反复对抗训练时，我们发现这些策略可以利用几款Atari游戏中的设计缺陷。</p>
+<h2 id="深度强化学习"><a href="#深度强化学习" class="headerlink" title="深度强化学习"></a>深度强化学习</h2><p>​        计算机视觉和语音识别领域最近取得的一些突破，靠的就是可以在大型训练集上高效地训练深度神经网络。 其中最成功的方法是通过使用基于随机梯度下降的轻量级更新，直接用原始输入进行训练。向深度神经网络输入足够多的数据，这样常常可以学习到比人工生成的特征更好的表征[11]。 这些成功案例为我们的强化学习方法提供了启发。我们的目标是将强化学习算法与深度神经网络对接起来，这里所说的神经网络可以直接学习RGB图像，并通过使用随机梯度更新来有效地处理训练数据。</p>
+<p>​        Tesauro的TD-Gammon架构为这种方法提供了一个起点。该架构利用算法与环境的直接交互（或通过自玩，西洋双陆棋）产生的策略性经验样本$(s_t,a_t,r_t,s_{t+1},a_{t+1})$，对价值函数估计网络的参数进行更新。由于该算法在20年前能超越了水平最高的人类西洋双陆棋玩家，所以我们想知道，二十年的硬件改进以及现代深度神经网络架构和可扩展RL算法是否能让强化学习实现重大进展。</p>
+<p>​        不同于TD-Gammon和类似的在线方法，我们使用了一种叫做“经验回放”[13]的方法：将智体在每个时间步长$e_t=(s_t,a_t,r_t,s_{t+1})$上的经验储存在数据集$\cal D=e_1,…,e_N,$中，将许多episode的经验汇集至经验池中。在算法进行内部循环时，我们将Q-learning算法更新或小批量更新应用于经验样本$\cal e\sim\cal D$，这些样本是从经验池中随机抽取的。 执行经验回放后，智体根据$\epsilon$贪心策略选择动作决策。由于用任意长度的历史表征作为神经网络的输入较难实现，所以我们的Q函数使用的是函数$\phi$生成的固定长度的历史表征。 算法1给出了完整的算法流程，我们将之称为深度Q-learning算法。</p>
+<p><img src="https://s2.loli.net/2022/05/26/AoOKdq4CNsDGiPu.png" alt="image-20220526094753105"></p>
+<p>​        </p>
+<p>这种方法和标准的online Q-learning相比有几个优点[23]。受限，每一步的经验都可能会在许多网络权重更新中起作用，数据的有效性大幅增加。其次由于样本之间存在很强的相关性，直接学习连续样本效率很低；随机化样本会破坏这些相关性，减少更新的方差。第三，当学习策略时，当前的参数确定用于训练参数的下一数据样本。举个例子，如果最大化动作是向左移动，训练样本将由左侧的样本主导;如果最大化动作切换到右边，训练数据分布也会切换到右边。很容易看出，这样可能会产生不必要的反馈循环，并且参数也可能会被困在局部最小值，甚至发生严重的发散[25]。通过使用经验回放，在先前状态下的行为分布就会得到变得均匀，这样学习过程就会变得平缓化，并参数也不会出现振荡或发散。需要指出，当使用经验池抽取经验进行学习时off-policy的方法的学习非常有必要（因为我们当前的参数和产生经验使用的参数不同），这就启发了我们使用Q-learning。</p>
+<p>​        在实践中，我们的算法仅在经验池中存储最后N个经验元组，并且在执行更新时均匀地从D中随机采样。 这种方法在某些方面有一定局限，因为存储缓冲器并不区分重要的经验；而且由于存储容量N有限，存储缓冲器总是用最新的转移重写记忆。同样，均匀采样使得回放记忆中的所有转移具有相等的重要性。 更复杂的抽样策略可能会强调可以提供最多信息的转换，类似于优先扫除[17] 。</p>
+<h3 id="预处理和模型结构"><a href="#预处理和模型结构" class="headerlink" title="预处理和模型结构"></a>预处理和模型结构</h3><p>​    直接使用原始的Atari框架（128色的210×160像素图像）可能在计算上要求很高，所以我们应用了一个基本的预处理步骤来减少输入维数。进行预处理时，首先将原始帧的RGB图像表示转换成灰度图像，并将其下采样成110×84图像。通过从图像上裁剪一个可以大致捕获到游戏区域的的84×84画面，获得最终的输入表征。 然后进行最后的裁剪，因为我们使用的是Alex等提出的的2D卷积GPU实现[11]，需要方形的输入图像。在该论文的实验中，算法1的函数$\phi$将该预处理过程应用于历史记忆的最后4帧，并将它们叠加以生成Q函数的输入。</p>
+<p>​    用神经网络参数化Q函数的方法有许多种。 由于Q函数可以将历史动作对映射到其Q值的标量估计上，所以先前的一些的方法可以将历史和动作作为神经网络的输入[20,12]。 这类架构的主要缺点是需要单独进行一次前向传递来计算每个动作的Q值，这样会导致计算成本与动作数呈正比。 在我们使用的架构中，其中每个可能的动作都对应一个单独的输出单元，神经网络的输入只有状态表征。 输出则对应于输入状态的单个动作的预测Q值。 这类架构的主要优点是只需进行一遍前进传递，就可以计算某一给定状态下所有可能动作的Q值。 </p>
+<p>​    下面我们将描述七个Atari游戏所使用的架构。 神经网络的输入是由$\phi$产生的84×84×4图像。 第一个隐藏层用16个步长（stride）为4的8×8卷积核与输入图像进行卷积， 并使用非线性的激活函数ReLU函数[10,18]。 第二个隐层用32个步长为2的4×4卷积核进行卷积，应用同样的非线性激活函数ReLU函数。最后一个隐层为完全连接层，由256个激活函数单元组成。输出层是一个线性的完全连接层，每个有效的动作对应一个输出。在我们研究的游戏中，有效动作的数量在4到18之间变化。我们把用该方法训练的卷积网络称为深度Q网络（DQN）。</p>
+<h2 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h2><p>​        截至目前，我们用7款流行的ATARI游戏进行了试验——Beam Rider、Breakout、Enduro、Pong、Q*bert、Seaquest和Space Invader。在这7款游戏中，我们使用相同的网络架构、学习算法和超参数设置，以证明我们的方法还是能够在不获取特定游戏信息的条件下成功应用于多种游戏中。当在真实且未改动的游戏中对智体进行评估时，我们在训练期间只对游戏的奖励机制作出了一个改变。由于各游戏的得分范围大不相同，我们将所有正奖励都设定为1，将所有负奖励设定为-1，无变化情况设为0奖励。这样的奖励设置可以限制误差范围，便于在多种游戏中使用同一学习率。同时，该奖励机制还会影响智体的表现，因为它无法区分不同大小的奖励。</p>
+<p>​        在这些试验中，我们使用的是mini batch大小为32的RMSProp算法。训练中的行为策略为：ϵ-greedy的ϵ在前100万帧从1 线性下降到0.1，然后保持在0.1不变。我们共训练了100万帧，并使用了最近100万帧的回放记忆。</p>
+<p>​        在按照前文中的方法玩Atari游戏时，我们还使用了一种简单的跳帧技巧[3]。更确切地说，智体在每隔k帧而不是在每一帧观察并选择动作，在跳过的帧中则重复它的最后一个动作。由于模拟器向前运行一步需要的计算量少于智体选择一个动作的计算量，这种方法可以使智体在不大幅增加运行时间的情况下将游戏次数增加约k倍。除了Space Invader这款游戏，我们在其他游戏中都将k设为4，如果在这款游戏中将k设为4，就会看不见激光，因为跳过的帧与激光闪烁的时长相重叠。将k设定为3就可以看到激光，k值的改变就是不同游戏间的唯一超参数差异。</p>
+<h3 id="训练和稳定性"><a href="#训练和稳定性" class="headerlink" title="训练和稳定性"></a>训练和稳定性</h3><p>​        在监督学习中，通过使用训练集和验证集评估模型，我们可以轻易地追踪模型在训练期间的性能。但是在强化学习中，在训练期间准确评估智体的性能可能会十分困难。如Marc G Bellemare所述[3]，我们的评估指标是在若干游戏中智体在某一episode或游戏中得到的总奖励的平均值。而且我们在训练中周期性地计算该指标。总奖励均值指标往往很嘈杂，因为权重的小小改变可能会导致策略访问的状态的分布发生很大的变化。图2中最左侧的两个线图显示了总奖励均值在游戏Seapuest和Breakout的训练期间是如何变化的。这两个总奖励均值线图确实很嘈杂，给人的印象是学习算法的运行不稳定。</p>
+<p><img src="https://s2.loli.net/2022/05/26/uqRvEcmjGKDf9h5.png" alt="image-20220526095121441"></p>
+<p><small>图2：  左边两图分别展示了训练时Breakout和Seaquest每回合的平均奖励值。数据是使用$\varepsilon=0.05$的$\varepsilon -greedy$策略在运行10000步计算得到的。右图的两图则分别展示了Breakout和Seaquest部分状态下的平均最大的动作价值。大约每三十分钟每一个回合约有50000条抽样数据用于更新</small></p>
+<p><img src="https://s2.loli.net/2022/05/26/Qr4Mp86NOykVTxL.png" alt="image-20220526100408551"></p>
+<p><small>图3  最左端的图表展示了Seaquest的30帧数据预测的价值函数。三张屏幕截图分别对应图表中的A，B，C三个时刻。</small></p>
+<p>​        右侧的两个线图则较为稳定，指标是指策略的预估动作分值函数Q，该函数的作用是预测在任何给定状态下智体遵循其策略所能获得的惩罚后的奖励。我们在训练开始前运行某一随机策略，收集固定数量的状态，并追踪这些状态的最大预测Q值的均值。从图2最右侧的两个线图可以看出，预测平均Q值的增加趋势要比智体获得的总奖励的均值平缓得多，其余5个游戏的平均Q值的增长曲线也很平缓。除了预测Q值在训练期间有较为平缓的增长，我们在试验中未发现任何发散问题。这表明，除了缺乏理论上的收敛保证，我们的方法能够使用强化学习信合和随机梯度下滑以稳定的方式训练大型神经网络。</p>
+<h3 id="可视化和价值函数"><a href="#可视化和价值函数" class="headerlink" title="可视化和价值函数"></a>可视化和价值函数</h3><p>​        图3给出了游戏Seaquest中学到的价值函数的可视化形式。从图中可以看出，当屏幕左侧出现敌人后预测值出现跳跃（点A）。然后代理想敌人发射鱼雷，当鱼雷快要集中敌人时预测值达到最高点（点B）。最后当敌人消失后预测值差不多恢复到原始值（点C）。图3表明我们的方法能够在较为复杂一系列的事件中学习价值函数的变化方式。</p>
+<h3 id="主要的评估"><a href="#主要的评估" class="headerlink" title="主要的评估"></a>主要的评估</h3><p>​        我们将我们的结果与Marc中提出的方法进行了比较。该方法被称为“Sarsa”，Sarsa算法借助为Atari任务人工设计的多个特征集来学习线性策略，我们在[3,,4]中给出了表现最佳的特征集的得分[3]。Contingency算法的基本思路和Sarsa法相同，但是该方法可以通过学习智体控制范围内的屏幕区域的表征，来增强特征集[4]。需要指出，这两种方法都通过背景差分法吸纳了大量关于计算机视觉问题的知识，并将128种颜色中的每种颜色都作为一个单独的通道。由于许多Atari游戏中每种类型的目标所用的颜色通常都各不相同，将每种颜色作为一个单独的通道，这种做法类似于生成一个单独的二元映射，对每种目标类型进行编码。相比之下，我们的代理只接收原始RGB屏幕截图输入，并且必须学习自行检测目标。</p>
+<p>​        除了给出学习代理（learned agents）的得分，我们还给出了人类专业游戏玩家的得分，以及一种均匀地随机选择动作的策略。人类玩家的表现将表示为玩了两小时游戏后得到的奖励中值。需要指出，我们给出的人类玩家的得分要比Bellemare等人[3]论文中给出的得分高得多。至于学习方法，我们遵循的是Bellemare等人的论文==[3,5]==中使用的评估策略，并且我们还通过将$\epsilon$设定为0.05运行 ε 贪心策略来获得固定步数的平均得分。表1的前5行给出了所有游戏的各游戏平均得分。在这7款游戏中，我们的方法（标记为DQN）虽然没有吸纳任何关于输入的先验知识，结果还是大幅超越了其他学习方法.。</p>
+<p>​        我们同样将文献[8]中的策略搜索方法囊括进表格的后三行进行比较，并做出了两组使用该方法的结果。HNeat Best 的得分反映了通过使用人工标注的目标检测法现实游戏物体位置和类型.HNeat Pixel的得分反映的是使用特定的8种颜色通道代表雅达利游戏模拟器的特定物体类型。这两种方法依赖于确定的状态序列且不存在随机的扰动，因此与其他方法对比时对比的是单个会和下的最佳表现。相反的，我们的算法是在贪心$\epsilon$策略下进行评估的，因此必须对所有可能的情况进行归一化。然而，我们发现在所有展示的游戏中，除了Space Invaders这款游戏不单是我们算法的最优表现还是我们的平均表现都能达到一个相对较好的效果。</p>
+<p><img src="https://s2.loli.net/2022/05/26/aZeD57p8KGwxCWk.png" alt="image-20220526100647570"></p>
+<p><small>表1  上端的表格对比了使用贪心值为0.0.5的$\varepsilon-greedy$的不同学习方式平均总奖励。下端的表格展示了HNeat和DQN在单个回合中最佳表现分数。HNeat做出确定性策略与DQN使用$\varepsilon-greedy$的效果相同。</small></p>
+<p>​        最终我们发现我们的方法在Breakout，Enduro和Pong这三款游戏中达到了超越人类专家水平的水准，并且在Beam Rider种取得了与人类水平相近的成绩。Q*bert，Seaquest，Space Invaders这三款游戏我们依然与人类专家水平相比有较大的差距，但它充满了挑战性，因为他们需要网络找到一个从更长远的时间层面上考察的策略。</p>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>​        本文介绍了一种新的强化学习的深度学习模型，并通过在雅达利2600游戏中证明了其对困难游戏的控制能力，而它仅需要原始的像素信息作为输入。我们同时也展示了一种结合了随机批量更新和经验回放机制Q-learning的变种算法来降低训练强化学习中的深度神经网络难度。我们的方法在七个测试的游戏中的六个取得SOTA成果，并且没有调整过超参数和网络模型结构。</p>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><p>[1] Leemon Baird. Residual algorithms: Reinforcement learning with function approximation. In <em>Proceedings of the 12th International Conference on Machine Learning (ICML 1995)</em>, pages 30–37. Morgan Kaufmann, 1995.</p>
+<p>[2] Marc Bellemare, Joel Veness, and Michael Bowling. Sketch-based linear value function ap- proximation. In <em>Advances in Neural Information Processing Systems 25</em>, pages 2222–2230, 2012.</p>
+<p>[3] Marc G Bellemare, Yavar Naddaf, Joel Veness, and Michael Bowling. The arcade learning environment: An evaluation platform for general agents. <em>Journal of Artificial Intelligence</em> <em>Research</em>, 47:253–279, 2013.</p>
+<p>[4] Marc G Bellemare, Joel Veness, and Michael Bowling. Investigating contingency awareness using atari 2600 games. In <em>AAAI</em>, 2012.</p>
+<p>[5] Marc G. Bellemare, Joel Veness, and Michael Bowling. Bayesian learning of recursively fac- tored environments. In <em>Proceedings of the Thirtieth International Conference on Machine</em> <em>Learning</em> <em>(ICML</em> <em>2013)</em>, pages 1211–1219, 2013.</p>
+<p>[6] George E. Dahl, Dong Yu, Li Deng, and Alex Acero. Context-dependent pre-trained deep neural networks for large-vocabulary speech recognition. <em>Audio, Speech, and Language Pro-</em> <em>cessing,</em> <em>IEEE</em> <em>Transactions</em> <em>on</em>, 20(1):30 –42, January 2012.</p>
+<p>[7] Alex Graves, Abdel-rahman Mohamed, and Geoffrey E. Hinton. Speech recognition with deep recurrent neural networks. In <em>Proc.</em> <em>ICASSP</em>, 2013.</p>
+<p>[8] Matthew Hausknecht, Risto Miikkulainen, and Peter Stone. A neuro-evolution approach to general atari game playing. 2013.</p>
+<p>[9] Nicolas Heess, David Silver, and Yee Whye Teh. Actor-critic reinforcement learning with energy-based policies. In <em>European</em> <em>Workshop</em> <em>on</em> <em>Reinforcement</em> <em>Learning</em>, page 43, 2012.</p>
+<p>[10] Kevin Jarrett, Koray Kavukcuoglu, MarcAurelio Ranzato, and Yann LeCun. What is the best multi-stage architecture for object recognition? In <em>Proc. International Conference on Com-</em> <em>puter</em> <em>Vision</em> <em>and</em> <em>Pattern</em> <em>Recognition</em> <em>(CVPR</em> <em>2009)</em>, pages 2146–2153. IEEE, 2009.</p>
+<p>[11] Alex Krizhevsky, Ilya Sutskever, and Geoff Hinton. Imagenet classification with deep con- volutional neural networks. In <em>Advances in Neural Information Processing Systems 25</em>, pages 1106–1114, 2012.</p>
+<p>[12] Sascha Lange and Martin Riedmiller. Deep auto-encoder neural networks in reinforcement learning. In <em>Neural Networks (IJCNN), The 2010 International Joint Conference on</em>, pages 1–8. IEEE, 2010.</p>
+<p>[13] Long-Ji Lin. Reinforcement learning for robots using neural networks. Technical report, DTIC Document, 1993.</p>
+<p>[14] Hamid Maei, Csaba Szepesvari, Shalabh Bhatnagar, Doina Precup, David Silver, and Rich Sutton. Convergent Temporal-Difference Learning with Arbitrary Smooth Function Approxi- mation. In <em>Advances</em> <em>in</em> <em>Neural</em> <em>Information</em> <em>Processing</em> <em>Systems</em> <em>22</em>, pages 1204–1212, 2009.</p>
+<p>[15] Hamid Maei, Csaba Szepesva´ri, Shalabh Bhatnagar, and Richard S. Sutton. Toward off-policy learning control with function approximation. In <em>Proceedings of the 27th International Con-</em> <em>ference</em> <em>on</em> <em>Machine</em> <em>Learning</em> <em>(ICML</em> <em>2010)</em>, pages 719–726, 2010.</p>
+<p>[16] Volodymyr Mnih. <em>Machine Learning for Aerial Image Labeling</em>. PhD thesis, University of Toronto, 2013.</p>
+<p>[17] Andrew Moore and Chris Atkeson. Prioritized sweeping: Reinforcement learning with less data and less real time. <em>Machine</em> <em>Learning</em>, 13:103–130, 1993.</p>
+<p>[18] Vinod Nair and Geoffrey E Hinton. Rectified linear units improve restricted boltzmann ma- chines. In <em>Proceedings of the 27th International Conference on Machine Learning (ICML</em> <em>2010)</em>, pages 807–814, 2010.</p>
+<p>[19] Jordan B. Pollack and Alan D. Blair. Why did td-gammon work. In <em>Advances in Neural</em> <em>Information</em> <em>Processing</em> <em>Systems</em> <em>9</em>, pages 10–16, 1996.</p>
+<p>[20] Martin Riedmiller. Neural fitted q iteration–first experiences with a data efficient neural re- inforcement learning method. In <em>Machine Learning: ECML 2005</em>, pages 317–328. Springer, 2005.</p>
+<p>[21] Brian Sallans and Geoffrey E. Hinton. Reinforcement learning with factored states and actions.</p>
+<p><em>Journal</em> <em>of</em> <em>Machine</em> <em>Learning</em> <em>Research</em>, 5:1063–1088, 2004.</p>
+<p>[22] Pierre Sermanet, Koray Kavukcuoglu, Soumith Chintala, and Yann LeCun. Pedestrian de- tection with unsupervised multi-stage feature learning. In <em>Proc. International Conference on</em> <em>Computer</em> <em>Vision</em> <em>and</em> <em>Pattern</em> <em>Recognition</em> <em>(CVPR</em> <em>2013)</em>. IEEE, 2013.</p>
+<p>[23] Richard Sutton and Andrew Barto. <em>Reinforcement Learning:</em> <em>An Introduction</em>. MIT Press, 1998.</p>
+<p>[24] Gerald Tesauro. Temporal difference learning and td-gammon. <em>Communications of the ACM</em>, 38(3):58–68, 1995.</p>
+<p>[25] John N Tsitsiklis and Benjamin Van Roy. An analysis of temporal-difference learning with function approximation. <em>Automatic</em> <em>Control,</em> <em>IEEE</em> <em>Transactions</em> <em>on</em>, 42(5):674–690, 1997.</p>
+<p>[26] Christopher JCH Watkins and Peter Dayan. Q-learning. <em>Machine learning</em>, 8(3-4):279–292, 1992.</p>
+]]></content>
+      <categories>
+        <category>强化学习</category>
+      </categories>
+      <tags>
+        <tag>强化学习</tag>
+        <tag>文献翻译</tag>
       </tags>
   </entry>
   <entry>
@@ -936,7 +936,7 @@ Y(x,y)=F(x,y)*H(x,y)=\sum_{n_1=-\infty}^{\infty}\sum_{n_2=-\infty}^{\infty}F(n_1
 <center><big>伟大的帝国正在召唤！</big></center>
 
 <span id="more"></span>
-<p>我们从<a href="https://www.kaggle.com/datasets/jerkeeler/age-of-empires-ii-de-match-data">Kaggle</a>下载数据集，解压之后可以发现一共有两个<code>.csv</code>文件。我们通过<code>pandas</code>分别对其读取，观察一下数据的大致摸样：</p>
+<p>我们从这里下载数据集，解压之后可以发现一共有两个<code>.csv</code>文件。我们通过<code>pandas</code>分别对其读取，观察一下数据的大致摸样：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">match_data = pd.read_csv(<span class="string">&#x27;matches.csv&#x27;</span>)</span><br><span class="line">player_data = pd.read_csv(<span class="string">&#x27;match_players.csv&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(match_data.head())</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">              token             match  rating   color      civ  team  winner</span></span><br><span class="line"><span class="string">0  rFWxLAdY6TF78xlo  axps4XstiBOmrDeG  1565.0     Red  Chinese     1   False</span></span><br><span class="line"><span class="string">1  zsyvxRyzLh85YIba  axps4XstiBOmrDeG  1600.0    Blue    Goths     2    True</span></span><br><span class="line"><span class="string">2  CHrJISNtjKDKM114  uQdosqwC7uiQ78ya  2145.0  Orange    Incas     1   False</span></span><br><span class="line"><span class="string">3  X147inwVdQuaegxT  uQdosqwC7uiQ78ya  2124.0   Green   Tatars     2    True</span></span><br><span class="line"><span class="string">4  kNckdaCe6pjKm6Au  uQdosqwC7uiQ78ya  2105.0     Red  Magyars     1   False</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(player_data.head())</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">              token             match  rating   color      civ  team  winner</span></span><br><span class="line"><span class="string">0  rFWxLAdY6TF78xlo  axps4XstiBOmrDeG  1565.0     Red  Chinese     1   False</span></span><br><span class="line"><span class="string">1  zsyvxRyzLh85YIba  axps4XstiBOmrDeG  1600.0    Blue    Goths     2    True</span></span><br><span class="line"><span class="string">2  CHrJISNtjKDKM114  uQdosqwC7uiQ78ya  2145.0  Orange    Incas     1   False</span></span><br><span class="line"><span class="string">3  X147inwVdQuaegxT  uQdosqwC7uiQ78ya  2124.0   Green   Tatars     2    True</span></span><br><span class="line"><span class="string">4  kNckdaCe6pjKm6Au  uQdosqwC7uiQ78ya  2105.0     Red  Magyars     1   False</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p>从中可以看到这份数据其实是有些瑕疵的，比如说NAN的缺失值在开头就能看到了。所以第一步要先对数据进行清洗操作，除了需要关注缺失值处理，对于竞技类游戏我们还需要清洗掉挂机和开挂等异常大的游戏数据，这种异常游戏数据的判断方法可以通过游戏进行的时间长度进行筛选。这里我过滤掉那些游戏时间小于5分钟或游戏时间超出两个小时的（这好像有点误伤，因为我第一喜欢看的八方混战的黑铁局都要酣畅淋漓地打上个三小时，但是那些数据的参考意义不大所以还是忍痛筛掉了）。</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">tidy_matches = match_data.copy()</span><br><span class="line">tidy_matches = tidy_matches.dropna(subset=[<span class="string">&quot;average_rating&quot;</span>])</span><br><span class="line">tidy_matches[<span class="string">&quot;patch&quot;</span>] = tidy_matches[<span class="string">&quot;patch&quot;</span>].replace(<span class="number">37650</span>, <span class="number">37906</span>)</span><br><span class="line">tidy_matches[<span class="string">&quot;duration&quot;</span>] = pd.to_timedelta(tidy_matches[<span class="string">&quot;duration&quot;</span>])</span><br><span class="line">tidy_matches[<span class="string">&quot;duration_s&quot;</span>] = tidy_matches[<span class="string">&quot;duration&quot;</span>].dt.total_seconds()</span><br><span class="line">tidy_matches = tidy_matches[(tidy_matches[<span class="string">&quot;duration_s&quot;</span>] &gt; <span class="number">60</span> * <span class="number">5</span>) &amp; (tidy_matches[<span class="string">&quot;duration_s&quot;</span>] &lt; <span class="number">60</span> * <span class="number">60</span> * <span class="number">2</span>)]</span><br></pre></td></tr></table></figure>
@@ -945,12 +945,13 @@ Y(x,y)=F(x,y)*H(x,y)=\sum_{n_1=-\infty}^{\infty}\sum_{n_2=-\infty}^{\infty}F(n_1
 <p>然后整理一下，得到一个干净的整合体：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">joined_df = pd.merge(player_data, tidy_matches, left_on=<span class="string">&quot;match&quot;</span>, right_on=<span class="string">&quot;token&quot;</span>, suffixes=[<span class="string">&quot;_player&quot;</span>, <span class="string">&quot;_match&quot;</span>])</span><br><span class="line"><span class="comment">#joined_df.to_csv(&#x27;merge.csv&#x27;)</span></span><br></pre></td></tr></table></figure>
 <p>根据这份数据，我们可以做出一些有意思的分析，我们开始吧！</p>
+<h1 id="统计计数类"><a href="#统计计数类" class="headerlink" title="统计计数类"></a>统计计数类</h1><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">rate_count1 = joined_df.value_counts(<span class="string">&#x27;average_rating&#x27;</span>,sort=<span class="literal">False</span>)</span><br><span class="line">rate_count_index1 = rate_count1.index.to_list()</span><br><span class="line">rate_count_data1 = rate_count1.to_list()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">bar = (</span><br><span class="line">    Bar()</span><br><span class="line">    .add_xaxis(rate_count_index1)</span><br><span class="line">    .add_yaxis(<span class="string">&#x27;1v1平均Rating&#x27;</span>,rate_count_data1, label_opts=opts.LabelOpts(is_show=<span class="literal">False</span>))</span><br><span class="line">    .set_global_opts(</span><br><span class="line">        title_opts=opts.TitleOpts(</span><br><span class="line">            title=<span class="string">&quot;平均Rating统计📈&quot;</span>,</span><br><span class="line">            pos_left=<span class="string">&#x27;center&#x27;</span>),</span><br><span class="line">        datazoom_opts=[opts.DataZoomOpts(), opts.DataZoomOpts(type_=<span class="string">&quot;inside&quot;</span>)],</span><br><span class="line">        legend_opts=opts.LegendOpts(is_show=<span class="literal">False</span>)</span><br><span class="line">    )</span><br><span class="line">)</span><br><span class="line">bar.render(<span class="string">&#x27;rate.html&#x27;</span>)</span><br></pre></td></tr></table></figure>
 <script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.min.js"></script>
-<div id="echarts3904" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts531" style="width: 81%;height: 400px;margin: 0 auto"></div>
 
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts3904'));
+        var myChart = echarts.init(document.getElementById('echarts531'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -6396,11 +6397,11 @@ Y(x,y)=F(x,y)*H(x,y)=\sum_{n_1=-\infty}^{\infty}\sum_{n_2=-\infty}^{\infty}F(n_1
 
 
 <script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.min.js"></script>
-<div id="echarts3903" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts7012" style="width: 81%;height: 400px;margin: 0 auto"></div>
 
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts3903'));
+        var myChart = echarts.init(document.getElementById('echarts7012'));
 
         // 指定图表的配置项和数据
         var option = 
@@ -12783,11 +12784,11 @@ Y(x,y)=F(x,y)*H(x,y)=\sum_{n_1=-\infty}^{\infty}\sum_{n_2=-\infty}^{\infty}F(n_1
 
 
 <script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.min.js"></script>
-<div id="echarts897" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts9792" style="width: 81%;height: 400px;margin: 0 auto"></div>
 
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts897'));
+        var myChart = echarts.init(document.getElementById('echarts9792'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -12989,11 +12990,11 @@ Y(x,y)=F(x,y)*H(x,y)=\sum_{n_1=-\infty}^{\infty}\sum_{n_2=-\infty}^{\infty}F(n_1
 
 
 <script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.min.js"></script>
-<div id="echarts2552" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts2953" style="width: 81%;height: 400px;margin: 0 auto"></div>
 
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts2552'));
+        var myChart = echarts.init(document.getElementById('echarts2953'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -13280,12 +13281,13 @@ Y(x,y)=F(x,y)*H(x,y)=\sum_{n_1=-\infty}^{\infty}\sum_{n_2=-\infty}^{\infty}F(n_1
 </script>
 
 
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">color_count = joined_df[~joined_df[<span class="string">&#x27;color&#x27;</span>].isna()].value_counts(<span class="string">&#x27;color&#x27;</span>,sort=<span class="literal">False</span>)</span><br><span class="line">color_count_index = color_count.index.to_list()</span><br><span class="line">color_count_data = color_count.to_list()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">pie = (</span><br><span class="line">    Pie()</span><br><span class="line">    .add(</span><br><span class="line">        <span class="string">&quot;&quot;</span>,</span><br><span class="line">        [<span class="built_in">list</span>(z) <span class="keyword">for</span> z <span class="keyword">in</span> <span class="built_in">zip</span> (color_count_index,color_count_data)],</span><br><span class="line">        radius=[<span class="string">&quot;30%&quot;</span>, <span class="string">&quot;75%&quot;</span>],</span><br><span class="line">        center=[<span class="string">&quot;50%&quot;</span>, <span class="string">&quot;50%&quot;</span>],</span><br><span class="line">        rosetype=<span class="string">&quot;radius&quot;</span>,</span><br><span class="line">        label_opts=opts.LabelOpts(is_show=<span class="literal">False</span>),</span><br><span class="line">        </span><br><span class="line">    )</span><br><span class="line">    .set_colors(color_count_index)</span><br><span class="line">    .set_global_opts(</span><br><span class="line">        title_opts=opts.TitleOpts(title=<span class="string">&quot;颜色使用情况🎨&quot;</span>,pos_left=<span class="string">&#x27;center&#x27;</span>),</span><br><span class="line">        legend_opts=opts.LegendOpts(pos_bottom=<span class="string">&#x27;bottom&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    )</span><br><span class="line">).render(<span class="string">&#x27;colors.html&#x27;</span>)</span><br></pre></td></tr></table></figure>
 <script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.min.js"></script>
-<div id="echarts107" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts6583" style="width: 81%;height: 400px;margin: 0 auto"></div>
 
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts107'));
+        var myChart = echarts.init(document.getElementById('echarts6583'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -13298,282 +13300,14 @@ Y(x,y)=F(x,y)*H(x,y)=\sum_{n_1=-\infty}^{\infty}\sum_{n_2=-\infty}^{\infty}F(n_1
     "animationEasingUpdate": "cubicOut",
     "animationDelayUpdate": 0,
     "color": [
-        "#c23531",
-        "#2f4554",
-        "#61a0a8",
-        "#d48265",
-        "#749f83",
-        "#ca8622",
-        "#bda29a",
-        "#6e7074",
-        "#546570",
-        "#c4ccd3",
-        "#f05b72",
-        "#ef5b9c",
-        "#f47920",
-        "#905a3d",
-        "#fab27b",
-        "#2a5caa",
-        "#444693",
-        "#726930",
-        "#b2d235",
-        "#6d8346",
-        "#ac6767",
-        "#1d953f",
-        "#6950a1",
-        "#918597"
-    ],
-    "series": [
-        {
-            "type": "boxplot",
-            "name": "RM_TEAM",
-            "data": [
-                [
-                    301.0,
-                    1600.0,
-                    2039.0000000000002,
-                    2462.0,
-                    7130.0
-                ],
-                [
-                    301.0,
-                    1688.0,
-                    2088.0,
-                    2550.0,
-                    7199.0
-                ],
-                [
-                    301.0,
-                    1719.0,
-                    2092.0,
-                    2539.0,
-                    7199.0
-                ],
-                [
-                    301.0,
-                    1713.0,
-                    2153.0,
-                    2607.0,
-                    7193.0
-                ]
-            ],
-            "label": {
-                "show": true,
-                "position": "top",
-                "margin": 8
-            },
-            "markPoint": {
-                "label": {
-                    "show": true,
-                    "position": "inside",
-                    "color": "#fff",
-                    "margin": 8
-                }
-            },
-            "markLine": {
-                "silent": false,
-                "precision": 2,
-                "label": {
-                    "show": true,
-                    "position": "top",
-                    "margin": 8
-                }
-            }
-        },
-        {
-            "type": "boxplot",
-            "name": "RM_1v1",
-            "data": [
-                [
-                    301.0,
-                    1349.0,
-                    1819.0,
-                    2205.0,
-                    7188.0
-                ],
-                [
-                    301.0,
-                    1339.0,
-                    1779.0,
-                    2169.0,
-                    7182.0
-                ],
-                [
-                    301.0,
-                    1369.0,
-                    1799.0,
-                    2179.0,
-                    7199.0
-                ],
-                [
-                    301.0,
-                    1455.0,
-                    1885.0000000000002,
-                    2279.0,
-                    7198.0
-                ]
-            ],
-            "label": {
-                "show": true,
-                "position": "top",
-                "margin": 8
-            },
-            "markPoint": {
-                "label": {
-                    "show": true,
-                    "position": "inside",
-                    "color": "#fff",
-                    "margin": 8
-                }
-            },
-            "markLine": {
-                "silent": false,
-                "precision": 2,
-                "label": {
-                    "show": true,
-                    "position": "top",
-                    "margin": 8
-                }
-            }
-        }
-    ],
-    "legend": [
-        {
-            "data": [
-                "RM_TEAM",
-                "RM_1v1"
-            ],
-            "selected": {
-                "RM_TEAM": true,
-                "RM_1v1": true
-            },
-            "show": true,
-            "bottom" : "bottom",
-            "orient": "vertical",
-            "padding": 5,
-            "itemGap": 10,
-            "itemWidth": 25,
-            "itemHeight": 14,
-            "textStyle": {
-                "color": "black",
-                "fontSize": 10,
-                "fontFamily": "Fusion Pixel",
-            }
-        }
-    ],
-    "tooltip": {
-        "show": true,
-        "trigger": "item",
-        "triggerOn": "mousemove|click",
-        "axisPointer": {
-            "type": "line"
-        },
-        "textStyle": {
-            "fontSize": 14,
-            "fontFamily": "Fusion Pixel",
-        },
-        "borderWidth": 0
-    },
-    "xAxis": [
-        {
-            "show": true,
-            "scale": false,
-            "nameLocation": "end",
-            "nameGap": 15,
-            "gridIndex": 0,
-            "inverse": false,
-            "offset": 0,
-            "splitNumber": 5,
-            "minInterval": 0,
-            "splitLine": {
-                "show": false,
-                "lineStyle": {
-                    "show": true,
-                    "width": 1,
-                    "opacity": 1,
-                    "curveness": 0,
-                    "type": "solid"
-                }
-            },
-            "data": [
-                35584,
-                36202,
-                36906,
-                37906
-            ]
-        }
-    ],
-    "yAxis": [
-        {
-            "show": true,
-            "scale": false,
-            "nameLocation": "end",
-            "nameGap": 15,
-            "gridIndex": 0,
-            "inverse": false,
-            "offset": 0,
-            "splitNumber": 5,
-            "minInterval": 0,
-            "splitLine": {
-                "show": false,
-                "lineStyle": {
-                    "show": true,
-                    "width": 1,
-                    "opacity": 1,
-                    "curveness": 0,
-                    "type": "solid"
-                }
-            }
-        }
-    ],
-    "title": [
-        {
-            "text": "版本积分分布情况📋",
-            "subtext": "*Have been flittered",
-            "left": "center",
-            "padding": 5,
-            "itemGap": 10,
-            "textStyle": {
-                "color": "black",
-                "fontSize": 30,
-                "fontFamily": "Fusion Pixel",
-            }
-        }
-    ]
-};
-
-        // 使用刚指定的配置项和数据显示图表。
-        myChart.setOption(option);
-</script>
-
-
-<script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.min.js"></script>
-<div id="echarts9683" style="width: 81%;height: 400px;margin: 0 auto"></div>
-
-<script type="text/javascript">
-        // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts9683'));
-
-        // 指定图表的配置项和数据
-        var option = {
-    "backgroundColor": "white",
-    "animation": true,
-    "animationThreshold": 2000,
-    "animationDuration": 1000,
-    "animationEasing": "cubicOut",
-    "animationDelay": 0,
-    "animationDurationUpdate": 300,
-    "animationEasingUpdate": "cubicOut",
-    "animationDelayUpdate": 0,
-    "color": [
-        "Grey",
-        "#FF8C00",
+        "Blue",
         "Cyan",
-        "#BA55D3",
-        "#FFD700",
-        "#98FB98",
-        "#4169E1",
-        "#DC143C"
+        "Green",
+        "Grey",
+        "Orange",
+        "Purple",
+        "Red",
+        "Yellow"
     ],
     "series": [
         {
@@ -13581,87 +13315,69 @@ Y(x,y)=F(x,y)*H(x,y)=\sum_{n_1=-\infty}^{\infty}\sum_{n_2=-\infty}^{\infty}F(n_1
             "clockwise": true,
             "data": [
                 {
-                    "name": "Grey",
-                    "value": 0.03648808734492026
-                },
-                {
-                    "name": "Orange",
-                    "value": 0.043011912035428625
+                    "name": "Blue",
+                    "value": 2483131
                 },
                 {
                     "name": "Cyan",
-                    "value": 0.06841333924342802
-                },
-                {
-                    "name": "Purple",
-                    "value": 0.0686110768007991
-                },
-                {
-                    "name": "Yellow",
-                    "value": 0.10676478635599838
+                    "value": 609446
                 },
                 {
                     "name": "Green",
-                    "value": 0.11360793792362621
+                    "value": 988391
                 },
                 {
-                    "name": "Blue",
-                    "value": 0.28146825919758484
+                    "name": "Grey",
+                    "value": 329814
+                },
+                {
+                    "name": "Orange",
+                    "value": 387382
+                },
+                {
+                    "name": "Purple",
+                    "value": 611774
                 },
                 {
                     "name": "Red",
-                    "value": 0.2816346010982146
+                    "value": 2483060
+                },
+                {
+                    "name": "Yellow",
+                    "value": 929323
                 }
             ],
-            "radius": "70%",
+            "radius": [
+                "30%",
+                "75%"
+            ],
             "center": [
                 "50%",
                 "50%"
             ],
             "roseType": "radius",
             "label": {
-                "show": true,
+                "show": false,
                 "position": "top",
-                "color": "rgba(0,0,0,0.8)",
-                "margin": 8,
-                "fontSize": 15
-            },
-            "tooltip": {
-                "show": true,
-                "trigger": "item",
-                "triggerOn": "mousemove|click",
-                "axisPointer": {
-                    "type": "line"
-                },
-                "formatter": "{a} <br/>{b}: {c} ({d}%)",
-                "textStyle": {
-                    "fontSize": 14,
-                    "fontFamily": "Fusion Pixel",
-                },
-                "borderWidth": 0
-            },
-            "rippleEffect": {
-                "show": true,
-                "brushType": "stroke",
-                "scale": 2.5,
-                "period": 4
+                "margin": 8
             }
         }
     ],
     "legend": [
         {
             "data": [
+                "Blue",
+                "Cyan",
+                "Green",
                 "Grey",
                 "Orange",
-                "Cyan",
                 "Purple",
-                "Yellow",
-                "Green",
-                "Blue",
-                "Red"
+                "Red",
+                "Yellow"
             ],
             "selected": {},
-            "show": false,
+            "show": true,
+            "bottom": "bottom",
             "padding": 5,
             "itemGap": 10,
             "itemWidth": 25,
@@ -13675,17 +13391,20 @@ Y(x,y)=F(x,y)*H(x,y)=\sum_{n_1=-\infty}^{\infty}\sum_{n_2=-\infty}^{\infty}F(n_1
         "axisPointer": {
             "type": "line"
         },
+        "showContent": true,
+        "alwaysShowContent": false,
+        "showDelay": 0,
+        "hideDelay": 100,
         "textStyle": {
-            "fontSize": 14,
-            "fontFamily": "Fusion Pixel",
+            "fontSize": 14
         },
-        "borderWidth": 0
+        "borderWidth": 0,
+        "padding": 5
     },
     "title": [
         {
             "text": "颜色使用情况🎨",
             "left": "center",
-            "top": "0",
             "padding": 5,
             "itemGap": 10,
             "textStyle": {
@@ -13702,13 +13421,13 @@ Y(x,y)=F(x,y)*H(x,y)=\sum_{n_1=-\infty}^{\infty}\sum_{n_2=-\infty}^{\infty}F(n_1
 </script>
 
 
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">win_team_count = joined_df[(joined_df.winner==<span class="literal">True</span>) &amp; (joined_df.ladder==<span class="string">&quot;RM_TEAM&quot;</span>)].value_counts(<span class="string">&#x27;civ&#x27;</span>,sort=<span class="literal">False</span>)</span><br><span class="line">win_team_count_data = win_team_count.to_list()</span><br><span class="line">win_team_count_index = win_team_count.index.to_list()</span><br><span class="line"></span><br><span class="line">bar = (</span><br><span class="line">    Bar()</span><br><span class="line">    .add_xaxis(win_team_count_index)</span><br><span class="line">    .add_yaxis(<span class="string">&quot;team&quot;</span>,win_team_count_data,category_gap=<span class="number">12</span>)</span><br><span class="line">    .set_global_opts(title_opts=opts.TitleOpts(title=<span class="string">&quot;示例&quot;</span>,pos_left=<span class="string">&#x27;center&#x27;</span>),</span><br><span class="line">                    legend_opts=opts.LegendOpts(pos_bottom=<span class="string">&#x27;bottom&#x27;</span>,is_show=<span class="literal">False</span>),</span><br><span class="line">                    xaxis_opts=opts.AxisOpts(</span><br><span class="line">                        axislabel_opts=&#123;<span class="string">&quot;rotate&quot;</span>:-<span class="number">45</span>,<span class="string">&#x27;interval&#x27;</span>: <span class="number">0</span> &#125;,</span><br><span class="line">                        name_textstyle_opts=opts.TextStyleOpts(</span><br><span class="line">                            font_size=<span class="number">2</span></span><br><span class="line">                        )),)</span><br><span class="line">    .set_series_opts(label_opts=opts.LabelOpts(is_show=<span class="literal">False</span>))</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">bar.render(<span class="string">&#x27;win_team_count.html&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">win_team_count = joined_df[(joined_df.winner==<span class="literal">True</span>) &amp; (joined_df.ladder==<span class="string">&quot;RM_TEAM&quot;</span>)].value_counts(<span class="string">&#x27;civ&#x27;</span>,sort=<span class="literal">False</span>)</span><br><span class="line">win_team_count_data = win_team_count.to_list()</span><br><span class="line">win_team_count_index = win_team_count.index.to_list()</span><br><span class="line"></span><br><span class="line">bar = (</span><br><span class="line">    Bar()</span><br><span class="line">    .add_xaxis(win_team_count_index)</span><br><span class="line">    .add_yaxis(<span class="string">&quot;team&quot;</span>,win_team_count_data,category_gap=<span class="number">12</span>)</span><br><span class="line">    .set_global_opts(title_opts=opts.TitleOpts(title=<span class="string">&quot;团战文明胜利场次统计🎊&quot;</span>,pos_left=<span class="string">&#x27;center&#x27;</span>),</span><br><span class="line">                    legend_opts=opts.LegendOpts(pos_bottom=<span class="string">&#x27;bottom&#x27;</span>,is_show=<span class="literal">False</span>),</span><br><span class="line">                    xaxis_opts=opts.AxisOpts(</span><br><span class="line">                        axislabel_opts=&#123;<span class="string">&quot;rotate&quot;</span>:-<span class="number">45</span>,<span class="string">&#x27;interval&#x27;</span>: <span class="number">0</span> &#125;,</span><br><span class="line">                        name_textstyle_opts=opts.TextStyleOpts(</span><br><span class="line">                            font_size=<span class="number">2</span></span><br><span class="line">                        )),)</span><br><span class="line">    .set_series_opts(label_opts=opts.LabelOpts(is_show=<span class="literal">False</span>))</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">bar.render(<span class="string">&#x27;win_team_count.html&#x27;</span>)</span><br></pre></td></tr></table></figure>
 <script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.min.js"></script>
-<div id="echarts4902" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts7030" style="width: 81%;height: 400px;margin: 0 auto"></div>
 
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts4902'));
+        var myChart = echarts.init(document.getElementById('echarts7030'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -13956,11 +13675,11 @@ Y(x,y)=F(x,y)*H(x,y)=\sum_{n_1=-\infty}^{\infty}\sum_{n_2=-\infty}^{\infty}F(n_1
 
 
 <script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.min.js"></script>
-<div id="echarts7557" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts3633" style="width: 81%;height: 400px;margin: 0 auto"></div>
 
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts7557'));
+        var myChart = echarts.init(document.getElementById('echarts3633'));
 
         // 指定图表的配置项和数据
         var option = {

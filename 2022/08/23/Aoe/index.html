@@ -29,7 +29,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://s2.loli.net/2022/08/23/XR4r9qmpelQZ3gW.png">
 <meta property="article:published_time" content="2022-08-23T12:27:22.384Z">
-<meta property="article:modified_time" content="2022-08-24T14:21:34.320Z">
+<meta property="article:modified_time" content="2022-08-25T08:22:23.814Z">
 <meta property="article:author" content="阿花想养萨摩耶">
 <meta property="article:tag" content="帝国时代2">
 <meta property="article:tag" content="数据分析">
@@ -228,7 +228,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-24 22:21:34" itemprop="dateModified" datetime="2022-08-24T22:21:34+08:00">2022-08-24</time>
+                <time title="修改时间：2022-08-25 16:22:23" itemprop="dateModified" datetime="2022-08-25T16:22:23+08:00">2022-08-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -255,7 +255,7 @@
 <center><big>伟大的帝国正在召唤！</big></center>
 
 <span id="more"></span>
-<p>我们从<a target="_blank" rel="noopener" href="https://www.kaggle.com/datasets/jerkeeler/age-of-empires-ii-de-match-data">Kaggle</a>下载数据集，解压之后可以发现一共有两个<code>.csv</code>文件。我们通过<code>pandas</code>分别对其读取，观察一下数据的大致摸样：</p>
+<p>我们从这里下载数据集，解压之后可以发现一共有两个<code>.csv</code>文件。我们通过<code>pandas</code>分别对其读取，观察一下数据的大致摸样：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">match_data = pd.read_csv(<span class="string">&#x27;matches.csv&#x27;</span>)</span><br><span class="line">player_data = pd.read_csv(<span class="string">&#x27;match_players.csv&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(match_data.head())</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">              token             match  rating   color      civ  team  winner</span></span><br><span class="line"><span class="string">0  rFWxLAdY6TF78xlo  axps4XstiBOmrDeG  1565.0     Red  Chinese     1   False</span></span><br><span class="line"><span class="string">1  zsyvxRyzLh85YIba  axps4XstiBOmrDeG  1600.0    Blue    Goths     2    True</span></span><br><span class="line"><span class="string">2  CHrJISNtjKDKM114  uQdosqwC7uiQ78ya  2145.0  Orange    Incas     1   False</span></span><br><span class="line"><span class="string">3  X147inwVdQuaegxT  uQdosqwC7uiQ78ya  2124.0   Green   Tatars     2    True</span></span><br><span class="line"><span class="string">4  kNckdaCe6pjKm6Au  uQdosqwC7uiQ78ya  2105.0     Red  Magyars     1   False</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(player_data.head())</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">              token             match  rating   color      civ  team  winner</span></span><br><span class="line"><span class="string">0  rFWxLAdY6TF78xlo  axps4XstiBOmrDeG  1565.0     Red  Chinese     1   False</span></span><br><span class="line"><span class="string">1  zsyvxRyzLh85YIba  axps4XstiBOmrDeG  1600.0    Blue    Goths     2    True</span></span><br><span class="line"><span class="string">2  CHrJISNtjKDKM114  uQdosqwC7uiQ78ya  2145.0  Orange    Incas     1   False</span></span><br><span class="line"><span class="string">3  X147inwVdQuaegxT  uQdosqwC7uiQ78ya  2124.0   Green   Tatars     2    True</span></span><br><span class="line"><span class="string">4  kNckdaCe6pjKm6Au  uQdosqwC7uiQ78ya  2105.0     Red  Magyars     1   False</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p>从中可以看到这份数据其实是有些瑕疵的，比如说NAN的缺失值在开头就能看到了。所以第一步要先对数据进行清洗操作，除了需要关注缺失值处理，对于竞技类游戏我们还需要清洗掉挂机和开挂等异常大的游戏数据，这种异常游戏数据的判断方法可以通过游戏进行的时间长度进行筛选。这里我过滤掉那些游戏时间小于5分钟或游戏时间超出两个小时的（这好像有点误伤，因为我第一喜欢看的八方混战的黑铁局都要酣畅淋漓地打上个三小时，但是那些数据的参考意义不大所以还是忍痛筛掉了）。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">tidy_matches = match_data.copy()</span><br><span class="line">tidy_matches = tidy_matches.dropna(subset=[<span class="string">&quot;average_rating&quot;</span>])</span><br><span class="line">tidy_matches[<span class="string">&quot;patch&quot;</span>] = tidy_matches[<span class="string">&quot;patch&quot;</span>].replace(<span class="number">37650</span>, <span class="number">37906</span>)</span><br><span class="line">tidy_matches[<span class="string">&quot;duration&quot;</span>] = pd.to_timedelta(tidy_matches[<span class="string">&quot;duration&quot;</span>])</span><br><span class="line">tidy_matches[<span class="string">&quot;duration_s&quot;</span>] = tidy_matches[<span class="string">&quot;duration&quot;</span>].dt.total_seconds()</span><br><span class="line">tidy_matches = tidy_matches[(tidy_matches[<span class="string">&quot;duration_s&quot;</span>] &gt; <span class="number">60</span> * <span class="number">5</span>) &amp; (tidy_matches[<span class="string">&quot;duration_s&quot;</span>] &lt; <span class="number">60</span> * <span class="number">60</span> * <span class="number">2</span>)]</span><br></pre></td></tr></table></figure>
@@ -264,12 +264,13 @@
 <p>然后整理一下，得到一个干净的整合体：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">joined_df = pd.merge(player_data, tidy_matches, left_on=<span class="string">&quot;match&quot;</span>, right_on=<span class="string">&quot;token&quot;</span>, suffixes=[<span class="string">&quot;_player&quot;</span>, <span class="string">&quot;_match&quot;</span>])</span><br><span class="line"><span class="comment">#joined_df.to_csv(&#x27;merge.csv&#x27;)</span></span><br></pre></td></tr></table></figure>
 <p>根据这份数据，我们可以做出一些有意思的分析，我们开始吧！</p>
+<h1 id="统计计数类"><a href="#统计计数类" class="headerlink" title="统计计数类"></a>统计计数类</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">rate_count1 = joined_df.value_counts(<span class="string">&#x27;average_rating&#x27;</span>,sort=<span class="literal">False</span>)</span><br><span class="line">rate_count_index1 = rate_count1.index.to_list()</span><br><span class="line">rate_count_data1 = rate_count1.to_list()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">bar = (</span><br><span class="line">    Bar()</span><br><span class="line">    .add_xaxis(rate_count_index1)</span><br><span class="line">    .add_yaxis(<span class="string">&#x27;1v1平均Rating&#x27;</span>,rate_count_data1, label_opts=opts.LabelOpts(is_show=<span class="literal">False</span>))</span><br><span class="line">    .set_global_opts(</span><br><span class="line">        title_opts=opts.TitleOpts(</span><br><span class="line">            title=<span class="string">&quot;平均Rating统计📈&quot;</span>,</span><br><span class="line">            pos_left=<span class="string">&#x27;center&#x27;</span>),</span><br><span class="line">        datazoom_opts=[opts.DataZoomOpts(), opts.DataZoomOpts(type_=<span class="string">&quot;inside&quot;</span>)],</span><br><span class="line">        legend_opts=opts.LegendOpts(is_show=<span class="literal">False</span>)</span><br><span class="line">    )</span><br><span class="line">)</span><br><span class="line">bar.render(<span class="string">&#x27;rate.html&#x27;</span>)</span><br></pre></td></tr></table></figure>
 <script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.min.js"></script>
-<div id="echarts3904" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts531" style="width: 81%;height: 400px;margin: 0 auto"></div>
 
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts3904'));
+        var myChart = echarts.init(document.getElementById('echarts531'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -5715,11 +5716,11 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.min.js"></script>
-<div id="echarts3903" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts7012" style="width: 81%;height: 400px;margin: 0 auto"></div>
 
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts3903'));
+        var myChart = echarts.init(document.getElementById('echarts7012'));
 
         // 指定图表的配置项和数据
         var option = 
@@ -12102,11 +12103,11 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.min.js"></script>
-<div id="echarts897" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts9792" style="width: 81%;height: 400px;margin: 0 auto"></div>
 
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts897'));
+        var myChart = echarts.init(document.getElementById('echarts9792'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -12308,11 +12309,11 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.min.js"></script>
-<div id="echarts2552" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts2953" style="width: 81%;height: 400px;margin: 0 auto"></div>
 
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts2552'));
+        var myChart = echarts.init(document.getElementById('echarts2953'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -12599,12 +12600,13 @@
 </script>
 
 
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">color_count = joined_df[~joined_df[<span class="string">&#x27;color&#x27;</span>].isna()].value_counts(<span class="string">&#x27;color&#x27;</span>,sort=<span class="literal">False</span>)</span><br><span class="line">color_count_index = color_count.index.to_list()</span><br><span class="line">color_count_data = color_count.to_list()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">pie = (</span><br><span class="line">    Pie()</span><br><span class="line">    .add(</span><br><span class="line">        <span class="string">&quot;&quot;</span>,</span><br><span class="line">        [<span class="built_in">list</span>(z) <span class="keyword">for</span> z <span class="keyword">in</span> <span class="built_in">zip</span> (color_count_index,color_count_data)],</span><br><span class="line">        radius=[<span class="string">&quot;30%&quot;</span>, <span class="string">&quot;75%&quot;</span>],</span><br><span class="line">        center=[<span class="string">&quot;50%&quot;</span>, <span class="string">&quot;50%&quot;</span>],</span><br><span class="line">        rosetype=<span class="string">&quot;radius&quot;</span>,</span><br><span class="line">        label_opts=opts.LabelOpts(is_show=<span class="literal">False</span>),</span><br><span class="line">        </span><br><span class="line">    )</span><br><span class="line">    .set_colors(color_count_index)</span><br><span class="line">    .set_global_opts(</span><br><span class="line">        title_opts=opts.TitleOpts(title=<span class="string">&quot;颜色使用情况🎨&quot;</span>,pos_left=<span class="string">&#x27;center&#x27;</span>),</span><br><span class="line">        legend_opts=opts.LegendOpts(pos_bottom=<span class="string">&#x27;bottom&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    )</span><br><span class="line">).render(<span class="string">&#x27;colors.html&#x27;</span>)</span><br></pre></td></tr></table></figure>
 <script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.min.js"></script>
-<div id="echarts107" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts6583" style="width: 81%;height: 400px;margin: 0 auto"></div>
 
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts107'));
+        var myChart = echarts.init(document.getElementById('echarts6583'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -12617,282 +12619,14 @@
     "animationEasingUpdate": "cubicOut",
     "animationDelayUpdate": 0,
     "color": [
-        "#c23531",
-        "#2f4554",
-        "#61a0a8",
-        "#d48265",
-        "#749f83",
-        "#ca8622",
-        "#bda29a",
-        "#6e7074",
-        "#546570",
-        "#c4ccd3",
-        "#f05b72",
-        "#ef5b9c",
-        "#f47920",
-        "#905a3d",
-        "#fab27b",
-        "#2a5caa",
-        "#444693",
-        "#726930",
-        "#b2d235",
-        "#6d8346",
-        "#ac6767",
-        "#1d953f",
-        "#6950a1",
-        "#918597"
-    ],
-    "series": [
-        {
-            "type": "boxplot",
-            "name": "RM_TEAM",
-            "data": [
-                [
-                    301.0,
-                    1600.0,
-                    2039.0000000000002,
-                    2462.0,
-                    7130.0
-                ],
-                [
-                    301.0,
-                    1688.0,
-                    2088.0,
-                    2550.0,
-                    7199.0
-                ],
-                [
-                    301.0,
-                    1719.0,
-                    2092.0,
-                    2539.0,
-                    7199.0
-                ],
-                [
-                    301.0,
-                    1713.0,
-                    2153.0,
-                    2607.0,
-                    7193.0
-                ]
-            ],
-            "label": {
-                "show": true,
-                "position": "top",
-                "margin": 8
-            },
-            "markPoint": {
-                "label": {
-                    "show": true,
-                    "position": "inside",
-                    "color": "#fff",
-                    "margin": 8
-                }
-            },
-            "markLine": {
-                "silent": false,
-                "precision": 2,
-                "label": {
-                    "show": true,
-                    "position": "top",
-                    "margin": 8
-                }
-            }
-        },
-        {
-            "type": "boxplot",
-            "name": "RM_1v1",
-            "data": [
-                [
-                    301.0,
-                    1349.0,
-                    1819.0,
-                    2205.0,
-                    7188.0
-                ],
-                [
-                    301.0,
-                    1339.0,
-                    1779.0,
-                    2169.0,
-                    7182.0
-                ],
-                [
-                    301.0,
-                    1369.0,
-                    1799.0,
-                    2179.0,
-                    7199.0
-                ],
-                [
-                    301.0,
-                    1455.0,
-                    1885.0000000000002,
-                    2279.0,
-                    7198.0
-                ]
-            ],
-            "label": {
-                "show": true,
-                "position": "top",
-                "margin": 8
-            },
-            "markPoint": {
-                "label": {
-                    "show": true,
-                    "position": "inside",
-                    "color": "#fff",
-                    "margin": 8
-                }
-            },
-            "markLine": {
-                "silent": false,
-                "precision": 2,
-                "label": {
-                    "show": true,
-                    "position": "top",
-                    "margin": 8
-                }
-            }
-        }
-    ],
-    "legend": [
-        {
-            "data": [
-                "RM_TEAM",
-                "RM_1v1"
-            ],
-            "selected": {
-                "RM_TEAM": true,
-                "RM_1v1": true
-            },
-            "show": true,
-            "bottom" : "bottom",
-            "orient": "vertical",
-            "padding": 5,
-            "itemGap": 10,
-            "itemWidth": 25,
-            "itemHeight": 14,
-            "textStyle": {
-                "color": "black",
-                "fontSize": 10,
-                "fontFamily": "Fusion Pixel",
-            }
-        }
-    ],
-    "tooltip": {
-        "show": true,
-        "trigger": "item",
-        "triggerOn": "mousemove|click",
-        "axisPointer": {
-            "type": "line"
-        },
-        "textStyle": {
-            "fontSize": 14,
-            "fontFamily": "Fusion Pixel",
-        },
-        "borderWidth": 0
-    },
-    "xAxis": [
-        {
-            "show": true,
-            "scale": false,
-            "nameLocation": "end",
-            "nameGap": 15,
-            "gridIndex": 0,
-            "inverse": false,
-            "offset": 0,
-            "splitNumber": 5,
-            "minInterval": 0,
-            "splitLine": {
-                "show": false,
-                "lineStyle": {
-                    "show": true,
-                    "width": 1,
-                    "opacity": 1,
-                    "curveness": 0,
-                    "type": "solid"
-                }
-            },
-            "data": [
-                35584,
-                36202,
-                36906,
-                37906
-            ]
-        }
-    ],
-    "yAxis": [
-        {
-            "show": true,
-            "scale": false,
-            "nameLocation": "end",
-            "nameGap": 15,
-            "gridIndex": 0,
-            "inverse": false,
-            "offset": 0,
-            "splitNumber": 5,
-            "minInterval": 0,
-            "splitLine": {
-                "show": false,
-                "lineStyle": {
-                    "show": true,
-                    "width": 1,
-                    "opacity": 1,
-                    "curveness": 0,
-                    "type": "solid"
-                }
-            }
-        }
-    ],
-    "title": [
-        {
-            "text": "版本积分分布情况📋",
-            "subtext": "*Have been flittered",
-            "left": "center",
-            "padding": 5,
-            "itemGap": 10,
-            "textStyle": {
-                "color": "black",
-                "fontSize": 30,
-                "fontFamily": "Fusion Pixel",
-            }
-        }
-    ]
-};
-
-        // 使用刚指定的配置项和数据显示图表。
-        myChart.setOption(option);
-</script>
-
-
-<script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.min.js"></script>
-<div id="echarts9683" style="width: 81%;height: 400px;margin: 0 auto"></div>
-
-<script type="text/javascript">
-        // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts9683'));
-
-        // 指定图表的配置项和数据
-        var option = {
-    "backgroundColor": "white",
-    "animation": true,
-    "animationThreshold": 2000,
-    "animationDuration": 1000,
-    "animationEasing": "cubicOut",
-    "animationDelay": 0,
-    "animationDurationUpdate": 300,
-    "animationEasingUpdate": "cubicOut",
-    "animationDelayUpdate": 0,
-    "color": [
-        "Grey",
-        "#FF8C00",
+        "Blue",
         "Cyan",
-        "#BA55D3",
-        "#FFD700",
-        "#98FB98",
-        "#4169E1",
-        "#DC143C"
+        "Green",
+        "Grey",
+        "Orange",
+        "Purple",
+        "Red",
+        "Yellow"
     ],
     "series": [
         {
@@ -12900,87 +12634,69 @@
             "clockwise": true,
             "data": [
                 {
-                    "name": "Grey",
-                    "value": 0.03648808734492026
-                },
-                {
-                    "name": "Orange",
-                    "value": 0.043011912035428625
+                    "name": "Blue",
+                    "value": 2483131
                 },
                 {
                     "name": "Cyan",
-                    "value": 0.06841333924342802
-                },
-                {
-                    "name": "Purple",
-                    "value": 0.0686110768007991
-                },
-                {
-                    "name": "Yellow",
-                    "value": 0.10676478635599838
+                    "value": 609446
                 },
                 {
                     "name": "Green",
-                    "value": 0.11360793792362621
+                    "value": 988391
                 },
                 {
-                    "name": "Blue",
-                    "value": 0.28146825919758484
+                    "name": "Grey",
+                    "value": 329814
+                },
+                {
+                    "name": "Orange",
+                    "value": 387382
+                },
+                {
+                    "name": "Purple",
+                    "value": 611774
                 },
                 {
                     "name": "Red",
-                    "value": 0.2816346010982146
+                    "value": 2483060
+                },
+                {
+                    "name": "Yellow",
+                    "value": 929323
                 }
             ],
-            "radius": "70%",
+            "radius": [
+                "30%",
+                "75%"
+            ],
             "center": [
                 "50%",
                 "50%"
             ],
             "roseType": "radius",
             "label": {
-                "show": true,
+                "show": false,
                 "position": "top",
-                "color": "rgba(0,0,0,0.8)",
-                "margin": 8,
-                "fontSize": 15
-            },
-            "tooltip": {
-                "show": true,
-                "trigger": "item",
-                "triggerOn": "mousemove|click",
-                "axisPointer": {
-                    "type": "line"
-                },
-                "formatter": "{a} <br/>{b}: {c} ({d}%)",
-                "textStyle": {
-                    "fontSize": 14,
-                    "fontFamily": "Fusion Pixel",
-                },
-                "borderWidth": 0
-            },
-            "rippleEffect": {
-                "show": true,
-                "brushType": "stroke",
-                "scale": 2.5,
-                "period": 4
+                "margin": 8
             }
         }
     ],
     "legend": [
         {
             "data": [
+                "Blue",
+                "Cyan",
+                "Green",
                 "Grey",
                 "Orange",
-                "Cyan",
                 "Purple",
-                "Yellow",
-                "Green",
-                "Blue",
-                "Red"
+                "Red",
+                "Yellow"
             ],
             "selected": {},
-            "show": false,
+            "show": true,
+            "bottom": "bottom",
             "padding": 5,
             "itemGap": 10,
             "itemWidth": 25,
@@ -12994,17 +12710,20 @@
         "axisPointer": {
             "type": "line"
         },
+        "showContent": true,
+        "alwaysShowContent": false,
+        "showDelay": 0,
+        "hideDelay": 100,
         "textStyle": {
-            "fontSize": 14,
-            "fontFamily": "Fusion Pixel",
+            "fontSize": 14
         },
-        "borderWidth": 0
+        "borderWidth": 0,
+        "padding": 5
     },
     "title": [
         {
             "text": "颜色使用情况🎨",
             "left": "center",
-            "top": "0",
             "padding": 5,
             "itemGap": 10,
             "textStyle": {
@@ -13021,13 +12740,13 @@
 </script>
 
 
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">win_team_count = joined_df[(joined_df.winner==<span class="literal">True</span>) &amp; (joined_df.ladder==<span class="string">&quot;RM_TEAM&quot;</span>)].value_counts(<span class="string">&#x27;civ&#x27;</span>,sort=<span class="literal">False</span>)</span><br><span class="line">win_team_count_data = win_team_count.to_list()</span><br><span class="line">win_team_count_index = win_team_count.index.to_list()</span><br><span class="line"></span><br><span class="line">bar = (</span><br><span class="line">    Bar()</span><br><span class="line">    .add_xaxis(win_team_count_index)</span><br><span class="line">    .add_yaxis(<span class="string">&quot;team&quot;</span>,win_team_count_data,category_gap=<span class="number">12</span>)</span><br><span class="line">    .set_global_opts(title_opts=opts.TitleOpts(title=<span class="string">&quot;示例&quot;</span>,pos_left=<span class="string">&#x27;center&#x27;</span>),</span><br><span class="line">                    legend_opts=opts.LegendOpts(pos_bottom=<span class="string">&#x27;bottom&#x27;</span>,is_show=<span class="literal">False</span>),</span><br><span class="line">                    xaxis_opts=opts.AxisOpts(</span><br><span class="line">                        axislabel_opts=&#123;<span class="string">&quot;rotate&quot;</span>:-<span class="number">45</span>,<span class="string">&#x27;interval&#x27;</span>: <span class="number">0</span> &#125;,</span><br><span class="line">                        name_textstyle_opts=opts.TextStyleOpts(</span><br><span class="line">                            font_size=<span class="number">2</span></span><br><span class="line">                        )),)</span><br><span class="line">    .set_series_opts(label_opts=opts.LabelOpts(is_show=<span class="literal">False</span>))</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">bar.render(<span class="string">&#x27;win_team_count.html&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">win_team_count = joined_df[(joined_df.winner==<span class="literal">True</span>) &amp; (joined_df.ladder==<span class="string">&quot;RM_TEAM&quot;</span>)].value_counts(<span class="string">&#x27;civ&#x27;</span>,sort=<span class="literal">False</span>)</span><br><span class="line">win_team_count_data = win_team_count.to_list()</span><br><span class="line">win_team_count_index = win_team_count.index.to_list()</span><br><span class="line"></span><br><span class="line">bar = (</span><br><span class="line">    Bar()</span><br><span class="line">    .add_xaxis(win_team_count_index)</span><br><span class="line">    .add_yaxis(<span class="string">&quot;team&quot;</span>,win_team_count_data,category_gap=<span class="number">12</span>)</span><br><span class="line">    .set_global_opts(title_opts=opts.TitleOpts(title=<span class="string">&quot;团战文明胜利场次统计🎊&quot;</span>,pos_left=<span class="string">&#x27;center&#x27;</span>),</span><br><span class="line">                    legend_opts=opts.LegendOpts(pos_bottom=<span class="string">&#x27;bottom&#x27;</span>,is_show=<span class="literal">False</span>),</span><br><span class="line">                    xaxis_opts=opts.AxisOpts(</span><br><span class="line">                        axislabel_opts=&#123;<span class="string">&quot;rotate&quot;</span>:-<span class="number">45</span>,<span class="string">&#x27;interval&#x27;</span>: <span class="number">0</span> &#125;,</span><br><span class="line">                        name_textstyle_opts=opts.TextStyleOpts(</span><br><span class="line">                            font_size=<span class="number">2</span></span><br><span class="line">                        )),)</span><br><span class="line">    .set_series_opts(label_opts=opts.LabelOpts(is_show=<span class="literal">False</span>))</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">bar.render(<span class="string">&#x27;win_team_count.html&#x27;</span>)</span><br></pre></td></tr></table></figure>
 <script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.min.js"></script>
-<div id="echarts4902" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts7030" style="width: 81%;height: 400px;margin: 0 auto"></div>
 
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts4902'));
+        var myChart = echarts.init(document.getElementById('echarts7030'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -13275,11 +12994,11 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.min.js"></script>
-<div id="echarts7557" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts3633" style="width: 81%;height: 400px;margin: 0 auto"></div>
 
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts7557'));
+        var myChart = echarts.init(document.getElementById('echarts3633'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -13662,6 +13381,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%9F%E8%AE%A1%E8%AE%A1%E6%95%B0%E7%B1%BB"><span class="nav-number">1.</span> <span class="nav-text">统计计数类</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
