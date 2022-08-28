@@ -266,11 +266,11 @@
 <p>根据这份数据，我们可以做出一些有意思的分析，我们开始吧！</p>
 <h1 id="统计计数类"><a href="#统计计数类" class="headerlink" title="统计计数类"></a>统计计数类</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">rate_count1 = joined_df.value_counts(<span class="string">&#x27;average_rating&#x27;</span>,sort=<span class="literal">False</span>)</span><br><span class="line">rate_count_index1 = rate_count1.index.to_list()</span><br><span class="line">rate_count_data1 = rate_count1.to_list()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">bar = (</span><br><span class="line">    Bar()</span><br><span class="line">    .add_xaxis(rate_count_index1)</span><br><span class="line">    .add_yaxis(<span class="string">&#x27;1v1平均Rating&#x27;</span>,rate_count_data1, label_opts=opts.LabelOpts(is_show=<span class="literal">False</span>))</span><br><span class="line">    .set_global_opts(</span><br><span class="line">        title_opts=opts.TitleOpts(</span><br><span class="line">            title=<span class="string">&quot;平均Rating统计📈&quot;</span>,</span><br><span class="line">            pos_left=<span class="string">&#x27;center&#x27;</span>),</span><br><span class="line">        datazoom_opts=[opts.DataZoomOpts(), opts.DataZoomOpts(type_=<span class="string">&quot;inside&quot;</span>)],</span><br><span class="line">        legend_opts=opts.LegendOpts(is_show=<span class="literal">False</span>)</span><br><span class="line">    )</span><br><span class="line">)</span><br><span class="line">bar.render(<span class="string">&#x27;rate.html&#x27;</span>)</span><br></pre></td></tr></table></figure>
 <script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.min.js"></script>
-<div id="echarts6706" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts1129" style="width: 81%;height: 400px;margin: 0 auto"></div>
 
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts6706'));
+        var myChart = echarts.init(document.getElementById('echarts1129'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -5716,11 +5716,11 @@
 
 
 <p>胜率热力图分析：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">latest_patch = <span class="number">37906</span></span><br><span class="line">joined_1v1 = joined_df[(joined_df.ladder == <span class="string">&#x27;RM_1v1&#x27;</span>) &amp; (joined_df.patch == latest_patch)]</span><br><span class="line">renames = &#123;</span><br><span class="line">    <span class="string">&#x27;token_player&#x27;</span>: <span class="string">&#x27;opponent&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;civ&#x27;</span> : <span class="string">&#x27;opponent_civ&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line">op_data = joined_1v1[[<span class="string">&#x27;match&#x27;</span>,<span class="string">&#x27;token_player&#x27;</span>,<span class="string">&#x27;civ&#x27;</span>]].rename(columns = renames)</span><br><span class="line">vs_data = pd.merge(joined_1v1,op_data,left_on=<span class="string">&#x27;match&#x27;</span>, right_on=<span class="string">&#x27;match&#x27;</span>)</span><br><span class="line">vs_data = vs_data[vs_data[<span class="string">&#x27;token_player&#x27;</span>]!=vs_data[<span class="string">&#x27;opponent&#x27;</span>]]</span><br><span class="line">vs_data.to_csv(<span class="string">&#x27;heat_data.csv&#x27;</span>)</span><br><span class="line">heat_data = vs_data.pivot_table(values=<span class="string">&#x27;winner&#x27;</span>, index=<span class="string">&#x27;civ&#x27;</span>, columns=<span class="string">&#x27;opponent_civ&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(heat_data.head())</span><br><span class="line"></span><br><span class="line">xdata = heat_data.index.to_list()</span><br><span class="line">ydata = xdata</span><br><span class="line"></span><br><span class="line">heat = (</span><br><span class="line">    HeatMap()</span><br><span class="line">    .add_xaxis(xdata)</span><br><span class="line">    .add_yaxis(<span class="string">&#x27;胜率&#x27;</span>,ydata,[[i,j, <span class="number">100</span>*heat_data[xdata[i]][ydata[j]]] <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(xdata)) <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(ydata))])</span><br><span class="line">    .set_global_opts(</span><br><span class="line">        title_opts=opts.TitleOpts(title=<span class="string">&quot;文明间胜率&quot;</span>,pos_left = <span class="string">&#x27;center&#x27;</span>),</span><br><span class="line">        visualmap_opts=opts.VisualMapOpts(</span><br><span class="line">            pos_left=<span class="string">&#x27;right&#x27;</span>,</span><br><span class="line">            pos_top = <span class="string">&#x27;center&#x27;</span>,</span><br><span class="line">            range_color=[<span class="string">&#x27;#FFA500&#x27;</span>,<span class="string">&#x27;#DC143C&#x27;</span>],</span><br><span class="line">            max_ = <span class="number">70</span>,</span><br><span class="line">            min_= <span class="number">30</span>,</span><br><span class="line">            ),</span><br><span class="line">        legend_opts=opts.LegendOpts(</span><br><span class="line">            is_show=<span class="literal">False</span></span><br><span class="line">        ),</span><br><span class="line">        xaxis_opts=opts.AxisOpts(</span><br><span class="line">            axislabel_opts=&#123;<span class="string">&quot;rotate&quot;</span>:-<span class="number">45</span>,<span class="string">&#x27;interval&#x27;</span>: <span class="number">0</span> &#125;,</span><br><span class="line">        )</span><br><span class="line">    )</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">heat.render(<span class="string">&#x27;heat_civ.html&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">opponent_civ    Aztecs   Berbers   Britons  Bulgarians   Burmese  Byzantines     Celts   Chinese    Cumans  Ethiopians    Franks     Goths      Huns  ...   Malians    Mayans   Mongols  Persians  Portuguese  Saracens     Slavs   Spanish    Tatars   Teutons     Turks  Vietnamese   Vikings</span></span><br><span class="line"><span class="string">civ                                                                                                                                                   ...</span></span><br><span class="line"><span class="string">Aztecs        0.500000  0.519409  0.522204    0.444700  0.535714    0.572115  0.482425  0.553350  0.505618    0.515586  0.457627  0.455416  0.487547  ...  0.425428  0.491753  0.529975  0.521455    0.621993  0.557960  0.453731  0.508088  0.508224  0.443996  0.502899    0.550420  0.431284</span></span><br><span class="line"><span class="string">Berbers       0.480591  0.500000  0.513193    0.567050  0.541935    0.475336  0.449351  0.613027  0.542208    0.506527  0.458333  0.446680  0.473934  ...  0.446927  0.514644  0.545839  0.524510    0.552083  0.533654  0.477612  0.538690  0.574661  0.448387  0.511628    0.552511  0.498778</span></span><br><span class="line"><span class="string">Britons       0.477796  0.486807  0.500000    0.532271  0.573003    0.502203  0.486817  0.525826  0.508761    0.533719  0.469757  0.453132  0.446475  ...  0.492635  0.498131  0.535856  0.497549    0.617647  0.577160  0.503876  0.533037  0.541262  0.527235  0.563725    0.500497  0.501971</span></span><br><span class="line"><span class="string">Bulgarians    0.555300  0.432950  0.467729    0.500000  0.450000    0.571429  0.539232  0.516355  0.534636    0.457413  0.469477  0.502787  0.445667  ...  0.440329  0.480702  0.479428  0.526756    0.518293  0.495385  0.489097  0.485401  0.498452  0.503968  0.542751    0.503817  0.431271</span></span><br><span class="line"><span class="string">Burmese       0.464286  0.458065  0.426997    0.550000  0.500000    0.587571  0.513441  0.420601  0.567708    0.460317  0.536517  0.571134  0.463104  ...  0.570513  0.455405  0.501515  0.495702    0.493976  0.420849  0.569231  0.533708  0.505376  0.543860  0.613445    0.446281  0.494413</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">[5 rows x 35 columns]</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure><br><script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.min.js"></script>
-<div id="echarts3734" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts5013" style="width: 81%;height: 400px;margin: 0 auto"></div>
 
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts3734'));
+        var myChart = echarts.init(document.getElementById('echarts5013'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -12096,11 +12096,11 @@
 
 </p>
 <script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.min.js"></script>
-<div id="echarts4618" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts1374" style="width: 81%;height: 400px;margin: 0 auto"></div>
 
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts4618'));
+        var myChart = echarts.init(document.getElementById('echarts1374'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -12302,11 +12302,11 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.min.js"></script>
-<div id="echarts3319" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts2188" style="width: 81%;height: 400px;margin: 0 auto"></div>
 
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts3319'));
+        var myChart = echarts.init(document.getElementById('echarts2188'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -12595,11 +12595,11 @@
 
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">color_count = joined_df[~joined_df[<span class="string">&#x27;color&#x27;</span>].isna()].value_counts(<span class="string">&#x27;color&#x27;</span>,sort=<span class="literal">False</span>)</span><br><span class="line">color_count_index = color_count.index.to_list()</span><br><span class="line">color_count_data = color_count.to_list()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">pie = (</span><br><span class="line">    Pie()</span><br><span class="line">    .add(</span><br><span class="line">        <span class="string">&quot;&quot;</span>,</span><br><span class="line">        [<span class="built_in">list</span>(z) <span class="keyword">for</span> z <span class="keyword">in</span> <span class="built_in">zip</span> (color_count_index,color_count_data)],</span><br><span class="line">        radius=[<span class="string">&quot;30%&quot;</span>, <span class="string">&quot;75%&quot;</span>],</span><br><span class="line">        center=[<span class="string">&quot;50%&quot;</span>, <span class="string">&quot;50%&quot;</span>],</span><br><span class="line">        rosetype=<span class="string">&quot;radius&quot;</span>,</span><br><span class="line">        label_opts=opts.LabelOpts(is_show=<span class="literal">False</span>),</span><br><span class="line">        </span><br><span class="line">    )</span><br><span class="line">    .set_colors(color_count_index)</span><br><span class="line">    .set_global_opts(</span><br><span class="line">        title_opts=opts.TitleOpts(title=<span class="string">&quot;颜色使用情况🎨&quot;</span>,pos_left=<span class="string">&#x27;center&#x27;</span>),</span><br><span class="line">        legend_opts=opts.LegendOpts(pos_bottom=<span class="string">&#x27;bottom&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    )</span><br><span class="line">).render(<span class="string">&#x27;colors.html&#x27;</span>)</span><br></pre></td></tr></table></figure>
 <script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.min.js"></script>
-<div id="echarts8939" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts2951" style="width: 81%;height: 400px;margin: 0 auto"></div>
 
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts8939'));
+        var myChart = echarts.init(document.getElementById('echarts2951'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -12735,11 +12735,11 @@
 
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">win_team_count = joined_df[(joined_df.winner==<span class="literal">True</span>) &amp; (joined_df.ladder==<span class="string">&quot;RM_TEAM&quot;</span>)].value_counts(<span class="string">&#x27;civ&#x27;</span>,sort=<span class="literal">False</span>)</span><br><span class="line">win_team_count_data = win_team_count.to_list()</span><br><span class="line">win_team_count_index = win_team_count.index.to_list()</span><br><span class="line"></span><br><span class="line">bar = (</span><br><span class="line">    Bar()</span><br><span class="line">    .add_xaxis(win_team_count_index)</span><br><span class="line">    .add_yaxis(<span class="string">&quot;team&quot;</span>,win_team_count_data,category_gap=<span class="number">12</span>)</span><br><span class="line">    .set_global_opts(</span><br><span class="line">        title_opts=opts.TitleOpts(</span><br><span class="line">            title=<span class="string">&quot;团战文明胜利场次统计🎊&quot;</span>,</span><br><span class="line">            pos_left=<span class="string">&#x27;center&#x27;</span>),</span><br><span class="line">        legend_opts=opts.LegendOpts(</span><br><span class="line">            pos_bottom=<span class="string">&#x27;bottom&#x27;</span>,</span><br><span class="line">            is_show=<span class="literal">False</span>),</span><br><span class="line">        xaxis_opts=opts.AxisOpts(</span><br><span class="line">            axislabel_opts=&#123;<span class="string">&quot;rotate&quot;</span>:-<span class="number">45</span>,<span class="string">&#x27;interval&#x27;</span>: <span class="number">0</span> &#125;,</span><br><span class="line">            name_textstyle_opts=opts.TextStyleOpts(</span><br><span class="line">                font_size=<span class="number">2</span></span><br><span class="line">            )),)</span><br><span class="line">    .set_series_opts(label_opts=opts.LabelOpts(is_show=<span class="literal">False</span>))</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">bar.render(<span class="string">&#x27;win_team_count.html&#x27;</span>)</span><br></pre></td></tr></table></figure>
 <script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.min.js"></script>
-<div id="echarts2023" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts2472" style="width: 81%;height: 400px;margin: 0 auto"></div>
 
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts2023'));
+        var myChart = echarts.init(document.getElementById('echarts2472'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -12987,11 +12987,11 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.min.js"></script>
-<div id="echarts8398" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts9102" style="width: 81%;height: 400px;margin: 0 auto"></div>
 
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts8398'));
+        var myChart = echarts.init(document.getElementById('echarts9102'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -13393,7 +13393,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-count">15</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -13406,7 +13406,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-count">23</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -13432,6 +13432,9 @@
     </div>
     <ul class="links-of-recent-posts-list">
         <li class="links-of-recent-posts-item">
+          <a href="/2022/08/28/Markdown%20%E6%A8%A1%E6%9D%BF/" title="2022&#x2F;08&#x2F;28&#x2F;Markdown 模板&#x2F;">Typora新建文件时使用模板</a>
+        </li>
+        <li class="links-of-recent-posts-item">
           <a href="/2022/08/28/%E7%8B%AC%E7%AB%8B%E7%BB%84%E7%BD%91%E5%92%8C%E9%9D%9E%E7%8B%AC%E7%AB%8B%E7%BB%84%E7%BD%91/" title="2022&#x2F;08&#x2F;28&#x2F;独立组网和非独立组网&#x2F;">独立组网和非独立组网</a>
         </li>
         <li class="links-of-recent-posts-item">
@@ -13439,9 +13442,6 @@
         </li>
         <li class="links-of-recent-posts-item">
           <a href="/2022/08/21/%E8%A7%A3%E5%86%B3Picgo%E4%B8%8A%E4%BC%A0%E5%9B%BE%E7%89%87/" title="2022&#x2F;08&#x2F;21&#x2F;解决Picgo上传图片&#x2F;">关于SMMS更换国内域名导致Picgo不能上传图片的解决方法</a>
-        </li>
-        <li class="links-of-recent-posts-item">
-          <a href="/2022/08/20/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%952022-8-20/" title="2022&#x2F;08&#x2F;20&#x2F;学习记录2022-8-20&#x2F;">【学习记录】2022-8-20-？</a>
         </li>
     </ul>
   </div>
