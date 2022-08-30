@@ -47,6 +47,137 @@
       </tags>
   </entry>
   <entry>
+    <title>Polar码编码及SC译码Matlab仿真</title>
+    <url>/2022/07/29/G1831/</url>
+    <content><![CDATA[<p>2016年11月18日，在美国内华达州里诺召开的3GPP RAN1 #87次会议，确定Polar Code作为5G eMBB（增强移动宽带）场景下控制信道编码方案。极化码具有确定性的构造方法，并且是已知的唯一一种能够被严格证明“达到”信道容量的信道编码方法，因此我们将其作为研究对象，研究其编码/译码的实现。</p>
+<p><img src="https://s2.loli.net/2022/05/27/t4Gi5PnegJYhRkv.png" alt=""></p>
+<span id="more"></span>
+<h1 id="研究讨论"><a href="#研究讨论" class="headerlink" title="研究讨论"></a>研究讨论</h1><h3 id="研究现状"><a href="#研究现状" class="headerlink" title="研究现状"></a>研究现状</h3><p>在针对时延扩展较长的信道时，频域选择性严重衰落，会出现残留冗余造成带宽浪费，通过采用以信源状态转移关系为基础构建信源信道联合译码网格图，综合信源转移概率和信道转移概率计算统一的序列后验概率的方式，可以实现了信源译码和信道译码的一体化联合优化，进而在不降低通信速率的情况下提高传输可靠性，基本实现无误码通信。不仅如此，在对6G$^{[1]}$的展望中，消除冗余的Polar码仍具有较LDPC码更优的BER性能，对于高阶调制的Polar码和多核Polar码设计也处于研究阶段，但纠错性能有一定的局限性，因此，具有较高纠错性能的多核Polar码的设计仍在发展中，也许成功的研究会应用于6G的信道编码技术。不过本次我们的仿真旨在理解Polar Code的基础原理，因此采用最基础的原始理论进行编写。</p>
+<h3 id="研究意义"><a href="#研究意义" class="headerlink" title="研究意义"></a>研究意义</h3><p>作为一种新兴的码种，极化码在推出之时就获得学术界的广泛关注。它是第一个能达到香农极限的编码方式，因此在推动通信系统的性能发展中有不可限量的应用前途。作为通信系的学生，尝试研读、复现论文成果一来能锻炼科研的理解能力、实践能力，同时也能从中汲取到通信这一学科的前沿知识，能获得较高的实用价值。极化码的编码、译码是极化码的核心部分，也是小组成员拟研究的方向。</p>
+<h3 id="研究计划"><a href="#研究计划" class="headerlink" title="研究计划"></a>研究计划</h3><ul>
+<li>研读极化码的原始论文《Channel polarization: A method for constructing capacity-achieving codes for symmetric binary-input memoryless channels》，掌握信道极化的思想以及编码/译码思路；</li>
+<li>在Matlab中搭建仿真平台，完成极化码编码、译码实现；</li>
+<li>对比其他编码方式以及译码方式，对极化码实用性进行评估，并针对仿真结果，对编码译码方式进行考量并做出评价。</li>
+</ul>
+<h2 id="实现过程"><a href="#实现过程" class="headerlink" title="实现过程"></a>实现过程</h2><h3 id="编码部分"><a href="#编码部分" class="headerlink" title="编码部分"></a>编码部分</h3><h4 id="编码原理"><a href="#编码原理" class="headerlink" title="编码原理"></a>编码原理</h4><p>Polar Code是通过引入信道极化概念而构建的。</p>
+<p>信道极化分为两个阶段，分别是信道联合和信道分裂。通过信道的联合与分裂，各个子信道的对称容量将呈现两级分化的趋势：随着码长（即联合信道数）N的增加，一部分子信道的容量趋于1，而其余子信道的容量趋于0。Polar Code正是利用这一信道极化的现象，在容量趋于1的K个子信道上传输消息比特，在其余子信道上传输冻结比特（即收发双方已知的固定比特，通常设置为全零）。由此构成的编码即为Polar Code，码率为$K/N$。</p>
+<p>可以看出，编码问题的关键在于生成矩阵和信息位、冻结位的判决选取。最终的编码输出结果，可以简化为矩阵运算：</p>
+<script type="math/tex; mode=display">
+u^N=c_{i}^N·G_N</script><p>其中，$u^N$代表编码结果，$c_{i}^N$代表了输入数据，$G_N$为生成矩阵，$N$代表输入码长，且该值规定为2的正整数幂。</p>
+<h4 id="生成矩阵的产生"><a href="#生成矩阵的产生" class="headerlink" title="生成矩阵的产生"></a>生成矩阵的产生</h4><p>首先先引入<strong>克罗内克积($\otimes$)</strong>运算：</p>
+<p> 如果<em>A</em>是一个<em>m</em>×<em>n</em>的矩阵，而<em>B</em>是一个<em>p</em>×<em>q</em>的矩阵，则它们的克罗内克积则是一个<em>mp</em>×<em>nq</em>的分块矩阵，记为：</p>
+<script type="math/tex; mode=display">
+\mathrm{A} \otimes \mathrm{B}=\left[\begin{array}{ccc}
+a_{11} B & \cdots & a_{1 n} B \\
+\vdots & \ddots & \vdots \\
+a_{1 n} B & \cdots & a_{n n} B
+\end{array}\right]</script><p>以下举A，B为二阶矩阵时运算克罗内克积为例：</p>
+<script type="math/tex; mode=display">
+\left[\begin{array}{ll}
+a_{11} & a_{12} \\
+a_{21} & a_{22}
+\end{array}\right] \otimes\left[\begin{array}{ll}
+b_{11} & b_{12} \\
+b_{21} & b_{22}
+\end{array}\right]=\left[\begin{array}{llll}
+a_{11} b_{11} & a_{11} b_{12} & a_{12} b_{11} & a_{12} b_{12} \\
+a_{11} b_{21} & a_{11} b_{22} & a_{12} b_{21} & a_{12} b_{22} \\
+a_{21} b_{11} & a_{21} b_{12} & a_{22} b_{11} & a_{22} b_{12} \\
+a_{21} b_{21} & a_{21} b_{22} & a_{22} b_{21} & a_{22} b_{22}
+\end{array}\right]</script><p>下图为文献$^{[1]}$中的编码示意图：</p>
+<p><img src="https://i.loli.net/2021/09/03/sohiuSG6P1JtvKw.png" alt="image-20210903221730402" style="zoom: 80%;" /></p>
+<p>该过程可以简化为如下流程：</p>
+<p>首先输入的码字经过了向量元素的重排操作，即通过图中的$R_N$矩阵相乘运算，然后将翻转后的码字经过信道进行联合、分裂。</p>
+<p>同时，也可以将整个生成矩阵的产生过程可以简化为如下运算：</p>
+<script type="math/tex; mode=display">
+G_{N}=B_{N} F^{\otimes n}</script><p>下面对该表达式进行说明：</p>
+<ul>
+<li><p>$B_N$为元素经过扩展重排后的结果，定义为：</p>
+<script type="math/tex; mode=display">
+B_{N}=R_{N}\left(I_{2} \otimes B_{N / 2}\right)</script><p>其中：</p>
+<ul>
+<li><p>$I_2$为二阶单位矩阵。从定义式可以看出，$B_N$的生成为一递归过程，给定递归初值为$B_2=I_2$。</p>
+</li>
+<li><p>$R_N$为置换矩阵，即将输入序列完成奇序元素和偶序元素的分离。用符号表示为：</p>
+<script type="math/tex; mode=display">
+\left(u_{1}, u_{2}, u_{3}, u_{4}, \cdots, u_{N}\right) \times R_{N}=u_{1}, u_{3}, u_{5}, \cdots, u_{N-1}, u_{2}, u_{4}, u_{6}, \cdots, u_{N}</script></li>
+</ul>
+<p>经过上述操作后，$B_N$完成了比特反序重排。即将每个原序列的十进制序号$i \in\{1,2,3,…,N\}$先减一得到$i-1$，再将$i-1$按二进制表示，随后将该二进制的高低位进行倒叙排列，将得到的一串二进制重新转化为十进制数$j-1$，然后将第$j$位对应的数变成原来的第$i$位数。以元素$u_7$举例如下：</p>
+<script type="math/tex; mode=display">
+u_{7} \stackrel{7-1}{\longrightarrow} u_{6} \stackrel{\text { 十进制转二进制 }}{\longrightarrow} 110 \stackrel{\text { reverse }}{\longrightarrow} 011 \stackrel{\text { 二进制转十进制 }}{\longrightarrow} 3 \stackrel{3 * 1}{\rightarrow} 4 \rightarrow u_7^*=u_{4}</script><p>其他元素可依次依照此流程重新排序，这里不再赘述。</p>
+</li>
+<li><p>$F^{\otimes n}$为F的n次克罗内克积,即对矩阵$F$进行n次克罗内克积运算。文献$^{[1]}$中给出的$F$矩阵定义为：</p>
+</li>
+</ul>
+<script type="math/tex; mode=display">
+F=\left[\begin{array}{ll}
+1 & 0 \\
+1 & 1
+\end{array}\right]</script><h4 id="信息位与冻结位的选取"><a href="#信息位与冻结位的选取" class="headerlink" title="信息位与冻结位的选取"></a>信息位与冻结位的选取</h4><p>信道极化过程中，有一部分信道的信道容量$I(W)$可以到达1，另一部分则趋近于0。引入文献$^{[1]}$的巴氏参数$Z(W)$来衡量信道容量的趋向性：</p>
+<script type="math/tex; mode=display">
+Z\left(W_{N}^{(i)}\right)=\sum_{y_{1}^{N} \in Y^{N}} \sum_{u_{1}^{i-1} \in X^{i-1}} \sqrt{W_{N}^{(i)}\left(y_{1}^{N}, u_{1}^{i-1} \mid 0\right) W_{N}^{(i)}\left(y_{1}^{N}, u_{1}^{i-1} \mid 1\right)}</script><p>式中的$W_N^{i}(y,u|x)$表示第i个信道的条件转移概率。</p>
+<p>对于一个给定信道，巴氏参数越大说明该信道越不可靠。因此我们只需计算出联合、分裂后信道的巴氏参数，并对它们进行排序，然后根据码率选择巴氏参数较小的信道作为信息位，剩余信道作为冻结位。</p>
+<h4 id="编码输出"><a href="#编码输出" class="headerlink" title="编码输出"></a>编码输出</h4><p>得到巴氏参数的序列后，将该序列从小到大进行排列，前一半作为信息位，后一半为冻结位。即将原始的输入$u$重新排序为$c_i$。最后将排序后的信息$c_i$与生成矩阵相乘：</p>
+<script type="math/tex; mode=display">
+u^N=c_{i}^N·G_N</script><h3 id="信道部分"><a href="#信道部分" class="headerlink" title="信道部分"></a>信道部分</h3><p>我们在常见的高斯加性白噪声信道中进行模拟。将编码结果经过BPSK调制，即将$\{0,1\}$符号映射为$\{1,-1\}$，随后用不同信噪比的高斯加性白噪声与调制结果叠加。</p>
+<h3 id="译码部分"><a href="#译码部分" class="headerlink" title="译码部分"></a>译码部分</h3><h4 id="译码原理"><a href="#译码原理" class="headerlink" title="译码原理"></a>译码原理</h4><p>由之前提到的编码可以看出极化码的构造就是一个信道选择的过程，而极化信道的选择实际上就是按照最优SC译码性能为标准的。因此对极化码而言，最合适的译码算法应当是基于SC译码的，只有这类译码算法才能充分利用极化码的结构，并且同时保证在码长足够长时容量可达。</p>
+<p>SC译码全称为successive cancellation decoder即连续消除译码，采用蝶形算法，通过递归的方式来进行串行解码。而根据蝶形算法的特性，从右向左进行计算，因此在解码时我们首先要确定最右端所判决得到的近似值。</p>
+<h4 id="近似判决"><a href="#近似判决" class="headerlink" title="近似判决"></a>近似判决</h4><p>先对信息位和冻结位进行判决：</p>
+<script type="math/tex; mode=display">
+\hat{\mathrm{u}}_{1}^{(\mathrm{i})}\left\{\begin{array}{c}
+\mathrm{h}_{\mathrm{i}}\left(\mathrm{y}_{\mathrm{N}}^{(\mathrm{i})}, \hat{\mathrm{u}}_{1}^{(\mathrm{i}-1)}\right), \text { if } \mathrm{i} \in \mathrm{A} \\
+\mathrm{u}_{\mathrm{i}}, \text { if } \mathrm{i} \in \mathrm{A}^{\mathrm{c}}
+\end{array}\right.</script><p>其中$\mathrm{i} \in \mathrm{A}^{\mathrm{c}}$表明该比特为冻结比特，$\mathrm{i} \in \mathrm{A}$表明该比特为承载信息的比特。</p>
+<p>随后是对信息位进行判决：</p>
+<script type="math/tex; mode=display">
+\widehat{\mathrm{h}}_{1}^{(\mathrm{i})}\left\{\begin{array}{l}
+0, \text { if } \mathrm{L}_{\mathrm{N}}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{i})}, \hat{\mathrm{u}}_{1}^{(\mathrm{i}-1)}\right) \geq 0 \\
+1, \text { if if } \mathrm{L}_{\mathrm{N}}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{i})}, \hat{\mathrm{u}}_{1}^{(\mathrm{i}-1)}\right)<0
+\end{array}\right.</script><p>其中$\mathrm{L}_{\mathrm{N}}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{i})}, \widehat{\mathrm{u}}_{1}^{(\mathrm{i}-1)}\right)$为对数似然比（Log-Likelihood Ratio）：</p>
+<script type="math/tex; mode=display">
+\mathrm{L}_{\mathrm{N}}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{i})}, \widehat{\mathrm{u}}_{1}^{(\mathrm{i}-1)}\right) \triangleq \ln \left(\frac{\mathrm{W}_{\mathrm{N}}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{i})}, \widehat{\mathrm{u}}_{1}^{(\mathrm{i}-1)} \mid 0\right)}{\mathrm{W}_{\mathrm{N}}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{i})}, \hat{\mathrm{u}}_{1}^{(\mathrm{i}-1)} \mid 1\right)}\right)</script><p>该式说明LLR的值为在接收端得到$\left(\mathrm{y}_{1}^{(\mathrm{i})}, \widehat{\mathrm{u}}_{1}^{(\mathrm{i}-1)}\right)$发送端原本的发送”0”和”1”的比值取对数，当该对数值大于等于0时，说明原本发送”0”的概率要大，因此我们可以将其判决为接收端收到的应该为”0”，反之则为”1”。</p>
+<h4 id="递归求解"><a href="#递归求解" class="headerlink" title="递归求解"></a>递归求解</h4><p>给定递归求解的公式：</p>
+<script type="math/tex; mode=display">
+\begin{gathered}
+\mathrm{L}_{\mathrm{N}}^{(2 \mathrm{i}-1)}\left(\mathrm{y}_{1}^{(\mathrm{N})}, \widehat{\mathrm{u}}_{1}^{(2 \mathrm{i}-2)}\right)=\mathrm{f}\left(\mathrm{L}_{\mathrm{N} / 2}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{N} / 2)}, \widehat{\mathrm{u}}_{1,0}^{(2 \mathrm{i}-2)} \oplus \hat{\mathrm{u}}_{1, \mathrm{e}}^{(2 \mathrm{i}-2)}\right), \mathrm{L}_{\mathrm{N} / 2}^{(\mathrm{i})}\left(\mathrm{y}_{\mathrm{N} / 2+1}^{(\mathrm{N}}, \hat{\mathrm{u}}_{1, \mathrm{e}}^{(2 \mathrm{i}-2)}\right)\right. \\
+\mathrm{L}_{\mathrm{N}}^{(2 \mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{N})}, \hat{\mathrm{u}}_{1}^{(2 \mathrm{i}-1)}\right)=\mathrm{g}\left(\mathrm{L}_{\mathrm{N} / 2}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{N} / 2)}, \hat{\mathrm{u}}_{1,0}^{(2 \mathrm{i}-2)} \oplus \hat{\mathrm{u}}_{1, \mathrm{e}}^{(2 \mathrm{i}-2)}\right), \mathrm{L}_{\mathrm{N} / 2}^{(\mathrm{i})}\left(\mathrm{y}_{\mathrm{N} / 2+1}^{(\mathrm{N}} \hat{\mathrm{u}}_{1, \mathrm{e}}^{(2 \mathrm{i}-2)}\right), \hat{\mathrm{u}}_{2 \mathrm{i}-1}\right).
+\end{gathered}</script><p>其中：</p>
+<script type="math/tex; mode=display">
+\begin{gathered}
+f(a, b)=\ln \left(\frac{1+e^{a+b}}{e^{a}+e^{b}}\right) \\
+g\left(a, b, u_{s}\right)=(-1)^{u_{s}} a+b
+\end{gathered}</script><p>上述递归的的终止条件为$N=1$,即递归到达了最左端的$W$端。此时：</p>
+<script type="math/tex; mode=display">
+\mathrm{L}_{1}^{1}\left(\mathrm{y}_{\mathrm{j}}\right)=\ln \frac{\mathrm{W}\left(\mathrm{y}_{\mathrm{j}} \mid 0\right)}{\mathrm{W}\left(\mathrm{y}_{\mathrm{j}} \mid 1\right)}</script><p>由于我们在高斯信道下进行仿真，因此：</p>
+<script type="math/tex; mode=display">
+\mathrm{W}(\mathrm{y} \mid \mathrm{x})=\frac{1}{\sqrt{2 \pi} \sigma} \exp \left(-\frac{(\mathrm{y}-\mathrm{x})^{2}}{2 \sigma^{2}}\right)</script><p>给定递归出口：</p>
+<script type="math/tex; mode=display">
+\mathrm{L}_{1}^{1}\left(\mathrm{y}_{\mathrm{j}}\right)=\frac{2 \mathrm{y}}{\sigma^{2}}</script><h4 id="译码结果"><a href="#译码结果" class="headerlink" title="译码结果"></a>译码结果</h4><p>循环求出最后一列所有节点的似然值，然后倒推计算之前各个节点的似然值，重复该过程直到最右端即可完成译码。</p>
+<h2 id="实现结果"><a href="#实现结果" class="headerlink" title="实现结果"></a>实现结果</h2><h3 id="结果评估"><a href="#结果评估" class="headerlink" title="结果评估"></a>结果评估</h3><p>我们在信噪比为5-20dB的情况下进行不同码长的极化码编码译码仿真，并统计了误码率，结果如下所示：</p>
+<p><img src="https://i.loli.net/2021/09/06/OkXdnBWDjHc1oRS.jpg" style="zoom:50%;" /></p>
+<center>码长为8时SNR-BER</center>
+
+<p><img src="https://i.loli.net/2021/09/09/rbHnPJFvyMx7a1f.jpg" style="zoom:50%;" /></p>
+<center>码长为16时SNR-BER</center>
+
+<p>信噪比提高时时，误码率也在减小。码长增大时，抗噪性能越好。</p>
+<h3 id="改进以及探究"><a href="#改进以及探究" class="headerlink" title="改进以及探究"></a>改进以及探究</h3><h4 id="巴氏参数的递归求解"><a href="#巴氏参数的递归求解" class="headerlink" title="巴氏参数的递归求解"></a>巴氏参数的递归求解</h4><p>在文献$^{[1]}$中，给定的巴氏参数计算方法较为复杂。且考虑条件转移概率和信道特性后，我们可以将该过程用递归过程实现：</p>
+<script type="math/tex; mode=display">
+\begin{gathered}
+\mathrm{Z}\left(\mathrm{W}_{\mathrm{N}}^{(2 \mathrm{j}-1)}\right)=2 \mathrm{Z}\left(\mathrm{W}_{\mathrm{N} / 2}^{(\mathrm{j})}\right)-\mathrm{Z}\left(\mathrm{W}_{\mathrm{N} / 2}^{(\mathrm{j})}\right)^{2} \\
+\mathrm{Z}\left(\mathrm{W}_{\mathrm{N}}^{(2 \mathrm{j})}\right)=\mathrm{Z}\left(\mathrm{W}_{\mathrm{N} / 2}^{(\mathrm{j})}\right)^{2}
+\end{gathered}</script><h4 id="近似LLR硬件实现优化"><a href="#近似LLR硬件实现优化" class="headerlink" title="近似LLR硬件实现优化"></a>近似LLR硬件实现优化</h4><p>文献$^{[2]}$中指出，同时含有指数运算以及对数运算的过程不利于硬件实现，因此我们做出如下近似：</p>
+<p>$$<br>f(a, b)=\ln \left(\frac{1+e^{a+b}}{e^{a}+e^{b}}\right)\thickapprox sgn(a·b)·\min\</p>
+]]></content>
+      <categories>
+        <category>通信技术</category>
+      </categories>
+      <tags>
+        <tag>5G通信</tag>
+        <tag>极化码</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>区块链技术的基本原理以及简单应用</title>
     <url>/2022/07/29/BlockChain/</url>
     <content><![CDATA[<p>2008年11月1日，一位自称中本聪(Satoshi Nakamoto)的人发表了《比特币:一种点对点的电子现金系统》一文，阐述了基于P2P网络技术、加密技术、时间戳技术、区块链技术等的电子现金系统的构架理念，这标志着比特币的诞生。两个月后理论步入实践，2009年1月3日第一个序号为0的创世区块诞生。几天后2009年1月9日出现序号为1的区块，并与序号为0的创世区块相连接形成了链，标志着区块链的诞生。下面将阐述区块链的基本原理与功能并用代码实现区块链仿真以及一个简单的应用，同时讨论它的安全性与可靠性。</p>
@@ -244,137 +375,6 @@ P(z)={\sum_{k!}^{\lambda^ke^{-\lambda}}·
       </tags>
   </entry>
   <entry>
-    <title>Polar码编码及SC译码Matlab仿真</title>
-    <url>/2022/07/29/G1831/</url>
-    <content><![CDATA[<p>2016年11月18日，在美国内华达州里诺召开的3GPP RAN1 #87次会议，确定Polar Code作为5G eMBB（增强移动宽带）场景下控制信道编码方案。极化码具有确定性的构造方法，并且是已知的唯一一种能够被严格证明“达到”信道容量的信道编码方法，因此我们将其作为研究对象，研究其编码/译码的实现。</p>
-<p><img src="https://s2.loli.net/2022/05/27/t4Gi5PnegJYhRkv.png" alt=""></p>
-<span id="more"></span>
-<h1 id="研究讨论"><a href="#研究讨论" class="headerlink" title="研究讨论"></a>研究讨论</h1><h3 id="研究现状"><a href="#研究现状" class="headerlink" title="研究现状"></a>研究现状</h3><p>在针对时延扩展较长的信道时，频域选择性严重衰落，会出现残留冗余造成带宽浪费，通过采用以信源状态转移关系为基础构建信源信道联合译码网格图，综合信源转移概率和信道转移概率计算统一的序列后验概率的方式，可以实现了信源译码和信道译码的一体化联合优化，进而在不降低通信速率的情况下提高传输可靠性，基本实现无误码通信。不仅如此，在对6G$^{[1]}$的展望中，消除冗余的Polar码仍具有较LDPC码更优的BER性能，对于高阶调制的Polar码和多核Polar码设计也处于研究阶段，但纠错性能有一定的局限性，因此，具有较高纠错性能的多核Polar码的设计仍在发展中，也许成功的研究会应用于6G的信道编码技术。不过本次我们的仿真旨在理解Polar Code的基础原理，因此采用最基础的原始理论进行编写。</p>
-<h3 id="研究意义"><a href="#研究意义" class="headerlink" title="研究意义"></a>研究意义</h3><p>作为一种新兴的码种，极化码在推出之时就获得学术界的广泛关注。它是第一个能达到香农极限的编码方式，因此在推动通信系统的性能发展中有不可限量的应用前途。作为通信系的学生，尝试研读、复现论文成果一来能锻炼科研的理解能力、实践能力，同时也能从中汲取到通信这一学科的前沿知识，能获得较高的实用价值。极化码的编码、译码是极化码的核心部分，也是小组成员拟研究的方向。</p>
-<h3 id="研究计划"><a href="#研究计划" class="headerlink" title="研究计划"></a>研究计划</h3><ul>
-<li>研读极化码的原始论文《Channel polarization: A method for constructing capacity-achieving codes for symmetric binary-input memoryless channels》，掌握信道极化的思想以及编码/译码思路；</li>
-<li>在Matlab中搭建仿真平台，完成极化码编码、译码实现；</li>
-<li>对比其他编码方式以及译码方式，对极化码实用性进行评估，并针对仿真结果，对编码译码方式进行考量并做出评价。</li>
-</ul>
-<h2 id="实现过程"><a href="#实现过程" class="headerlink" title="实现过程"></a>实现过程</h2><h3 id="编码部分"><a href="#编码部分" class="headerlink" title="编码部分"></a>编码部分</h3><h4 id="编码原理"><a href="#编码原理" class="headerlink" title="编码原理"></a>编码原理</h4><p>Polar Code是通过引入信道极化概念而构建的。</p>
-<p>信道极化分为两个阶段，分别是信道联合和信道分裂。通过信道的联合与分裂，各个子信道的对称容量将呈现两级分化的趋势：随着码长（即联合信道数）N的增加，一部分子信道的容量趋于1，而其余子信道的容量趋于0。Polar Code正是利用这一信道极化的现象，在容量趋于1的K个子信道上传输消息比特，在其余子信道上传输冻结比特（即收发双方已知的固定比特，通常设置为全零）。由此构成的编码即为Polar Code，码率为$K/N$。</p>
-<p>可以看出，编码问题的关键在于生成矩阵和信息位、冻结位的判决选取。最终的编码输出结果，可以简化为矩阵运算：</p>
-<script type="math/tex; mode=display">
-u^N=c_{i}^N·G_N</script><p>其中，$u^N$代表编码结果，$c_{i}^N$代表了输入数据，$G_N$为生成矩阵，$N$代表输入码长，且该值规定为2的正整数幂。</p>
-<h4 id="生成矩阵的产生"><a href="#生成矩阵的产生" class="headerlink" title="生成矩阵的产生"></a>生成矩阵的产生</h4><p>首先先引入<strong>克罗内克积($\otimes$)</strong>运算：</p>
-<p> 如果<em>A</em>是一个<em>m</em>×<em>n</em>的矩阵，而<em>B</em>是一个<em>p</em>×<em>q</em>的矩阵，则它们的克罗内克积则是一个<em>mp</em>×<em>nq</em>的分块矩阵，记为：</p>
-<script type="math/tex; mode=display">
-\mathrm{A} \otimes \mathrm{B}=\left[\begin{array}{ccc}
-a_{11} B & \cdots & a_{1 n} B \\
-\vdots & \ddots & \vdots \\
-a_{1 n} B & \cdots & a_{n n} B
-\end{array}\right]</script><p>以下举A，B为二阶矩阵时运算克罗内克积为例：</p>
-<script type="math/tex; mode=display">
-\left[\begin{array}{ll}
-a_{11} & a_{12} \\
-a_{21} & a_{22}
-\end{array}\right] \otimes\left[\begin{array}{ll}
-b_{11} & b_{12} \\
-b_{21} & b_{22}
-\end{array}\right]=\left[\begin{array}{llll}
-a_{11} b_{11} & a_{11} b_{12} & a_{12} b_{11} & a_{12} b_{12} \\
-a_{11} b_{21} & a_{11} b_{22} & a_{12} b_{21} & a_{12} b_{22} \\
-a_{21} b_{11} & a_{21} b_{12} & a_{22} b_{11} & a_{22} b_{12} \\
-a_{21} b_{21} & a_{21} b_{22} & a_{22} b_{21} & a_{22} b_{22}
-\end{array}\right]</script><p>下图为文献$^{[1]}$中的编码示意图：</p>
-<p><img src="https://i.loli.net/2021/09/03/sohiuSG6P1JtvKw.png" alt="image-20210903221730402" style="zoom: 80%;" /></p>
-<p>该过程可以简化为如下流程：</p>
-<p>首先输入的码字经过了向量元素的重排操作，即通过图中的$R_N$矩阵相乘运算，然后将翻转后的码字经过信道进行联合、分裂。</p>
-<p>同时，也可以将整个生成矩阵的产生过程可以简化为如下运算：</p>
-<script type="math/tex; mode=display">
-G_{N}=B_{N} F^{\otimes n}</script><p>下面对该表达式进行说明：</p>
-<ul>
-<li><p>$B_N$为元素经过扩展重排后的结果，定义为：</p>
-<script type="math/tex; mode=display">
-B_{N}=R_{N}\left(I_{2} \otimes B_{N / 2}\right)</script><p>其中：</p>
-<ul>
-<li><p>$I_2$为二阶单位矩阵。从定义式可以看出，$B_N$的生成为一递归过程，给定递归初值为$B_2=I_2$。</p>
-</li>
-<li><p>$R_N$为置换矩阵，即将输入序列完成奇序元素和偶序元素的分离。用符号表示为：</p>
-<script type="math/tex; mode=display">
-\left(u_{1}, u_{2}, u_{3}, u_{4}, \cdots, u_{N}\right) \times R_{N}=u_{1}, u_{3}, u_{5}, \cdots, u_{N-1}, u_{2}, u_{4}, u_{6}, \cdots, u_{N}</script></li>
-</ul>
-<p>经过上述操作后，$B_N$完成了比特反序重排。即将每个原序列的十进制序号$i \in\{1,2,3,…,N\}$先减一得到$i-1$，再将$i-1$按二进制表示，随后将该二进制的高低位进行倒叙排列，将得到的一串二进制重新转化为十进制数$j-1$，然后将第$j$位对应的数变成原来的第$i$位数。以元素$u_7$举例如下：</p>
-<script type="math/tex; mode=display">
-u_{7} \stackrel{7-1}{\longrightarrow} u_{6} \stackrel{\text { 十进制转二进制 }}{\longrightarrow} 110 \stackrel{\text { reverse }}{\longrightarrow} 011 \stackrel{\text { 二进制转十进制 }}{\longrightarrow} 3 \stackrel{3 * 1}{\rightarrow} 4 \rightarrow u_7^*=u_{4}</script><p>其他元素可依次依照此流程重新排序，这里不再赘述。</p>
-</li>
-<li><p>$F^{\otimes n}$为F的n次克罗内克积,即对矩阵$F$进行n次克罗内克积运算。文献$^{[1]}$中给出的$F$矩阵定义为：</p>
-</li>
-</ul>
-<script type="math/tex; mode=display">
-F=\left[\begin{array}{ll}
-1 & 0 \\
-1 & 1
-\end{array}\right]</script><h4 id="信息位与冻结位的选取"><a href="#信息位与冻结位的选取" class="headerlink" title="信息位与冻结位的选取"></a>信息位与冻结位的选取</h4><p>信道极化过程中，有一部分信道的信道容量$I(W)$可以到达1，另一部分则趋近于0。引入文献$^{[1]}$的巴氏参数$Z(W)$来衡量信道容量的趋向性：</p>
-<script type="math/tex; mode=display">
-Z\left(W_{N}^{(i)}\right)=\sum_{y_{1}^{N} \in Y^{N}} \sum_{u_{1}^{i-1} \in X^{i-1}} \sqrt{W_{N}^{(i)}\left(y_{1}^{N}, u_{1}^{i-1} \mid 0\right) W_{N}^{(i)}\left(y_{1}^{N}, u_{1}^{i-1} \mid 1\right)}</script><p>式中的$W_N^{i}(y,u|x)$表示第i个信道的条件转移概率。</p>
-<p>对于一个给定信道，巴氏参数越大说明该信道越不可靠。因此我们只需计算出联合、分裂后信道的巴氏参数，并对它们进行排序，然后根据码率选择巴氏参数较小的信道作为信息位，剩余信道作为冻结位。</p>
-<h4 id="编码输出"><a href="#编码输出" class="headerlink" title="编码输出"></a>编码输出</h4><p>得到巴氏参数的序列后，将该序列从小到大进行排列，前一半作为信息位，后一半为冻结位。即将原始的输入$u$重新排序为$c_i$。最后将排序后的信息$c_i$与生成矩阵相乘：</p>
-<script type="math/tex; mode=display">
-u^N=c_{i}^N·G_N</script><h3 id="信道部分"><a href="#信道部分" class="headerlink" title="信道部分"></a>信道部分</h3><p>我们在常见的高斯加性白噪声信道中进行模拟。将编码结果经过BPSK调制，即将$\{0,1\}$符号映射为$\{1,-1\}$，随后用不同信噪比的高斯加性白噪声与调制结果叠加。</p>
-<h3 id="译码部分"><a href="#译码部分" class="headerlink" title="译码部分"></a>译码部分</h3><h4 id="译码原理"><a href="#译码原理" class="headerlink" title="译码原理"></a>译码原理</h4><p>由之前提到的编码可以看出极化码的构造就是一个信道选择的过程，而极化信道的选择实际上就是按照最优SC译码性能为标准的。因此对极化码而言，最合适的译码算法应当是基于SC译码的，只有这类译码算法才能充分利用极化码的结构，并且同时保证在码长足够长时容量可达。</p>
-<p>SC译码全称为successive cancellation decoder即连续消除译码，采用蝶形算法，通过递归的方式来进行串行解码。而根据蝶形算法的特性，从右向左进行计算，因此在解码时我们首先要确定最右端所判决得到的近似值。</p>
-<h4 id="近似判决"><a href="#近似判决" class="headerlink" title="近似判决"></a>近似判决</h4><p>先对信息位和冻结位进行判决：</p>
-<script type="math/tex; mode=display">
-\hat{\mathrm{u}}_{1}^{(\mathrm{i})}\left\{\begin{array}{c}
-\mathrm{h}_{\mathrm{i}}\left(\mathrm{y}_{\mathrm{N}}^{(\mathrm{i})}, \hat{\mathrm{u}}_{1}^{(\mathrm{i}-1)}\right), \text { if } \mathrm{i} \in \mathrm{A} \\
-\mathrm{u}_{\mathrm{i}}, \text { if } \mathrm{i} \in \mathrm{A}^{\mathrm{c}}
-\end{array}\right.</script><p>其中$\mathrm{i} \in \mathrm{A}^{\mathrm{c}}$表明该比特为冻结比特，$\mathrm{i} \in \mathrm{A}$表明该比特为承载信息的比特。</p>
-<p>随后是对信息位进行判决：</p>
-<script type="math/tex; mode=display">
-\widehat{\mathrm{h}}_{1}^{(\mathrm{i})}\left\{\begin{array}{l}
-0, \text { if } \mathrm{L}_{\mathrm{N}}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{i})}, \hat{\mathrm{u}}_{1}^{(\mathrm{i}-1)}\right) \geq 0 \\
-1, \text { if if } \mathrm{L}_{\mathrm{N}}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{i})}, \hat{\mathrm{u}}_{1}^{(\mathrm{i}-1)}\right)<0
-\end{array}\right.</script><p>其中$\mathrm{L}_{\mathrm{N}}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{i})}, \widehat{\mathrm{u}}_{1}^{(\mathrm{i}-1)}\right)$为对数似然比（Log-Likelihood Ratio）：</p>
-<script type="math/tex; mode=display">
-\mathrm{L}_{\mathrm{N}}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{i})}, \widehat{\mathrm{u}}_{1}^{(\mathrm{i}-1)}\right) \triangleq \ln \left(\frac{\mathrm{W}_{\mathrm{N}}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{i})}, \widehat{\mathrm{u}}_{1}^{(\mathrm{i}-1)} \mid 0\right)}{\mathrm{W}_{\mathrm{N}}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{i})}, \hat{\mathrm{u}}_{1}^{(\mathrm{i}-1)} \mid 1\right)}\right)</script><p>该式说明LLR的值为在接收端得到$\left(\mathrm{y}_{1}^{(\mathrm{i})}, \widehat{\mathrm{u}}_{1}^{(\mathrm{i}-1)}\right)$发送端原本的发送”0”和”1”的比值取对数，当该对数值大于等于0时，说明原本发送”0”的概率要大，因此我们可以将其判决为接收端收到的应该为”0”，反之则为”1”。</p>
-<h4 id="递归求解"><a href="#递归求解" class="headerlink" title="递归求解"></a>递归求解</h4><p>给定递归求解的公式：</p>
-<script type="math/tex; mode=display">
-\begin{gathered}
-\mathrm{L}_{\mathrm{N}}^{(2 \mathrm{i}-1)}\left(\mathrm{y}_{1}^{(\mathrm{N})}, \widehat{\mathrm{u}}_{1}^{(2 \mathrm{i}-2)}\right)=\mathrm{f}\left(\mathrm{L}_{\mathrm{N} / 2}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{N} / 2)}, \widehat{\mathrm{u}}_{1,0}^{(2 \mathrm{i}-2)} \oplus \hat{\mathrm{u}}_{1, \mathrm{e}}^{(2 \mathrm{i}-2)}\right), \mathrm{L}_{\mathrm{N} / 2}^{(\mathrm{i})}\left(\mathrm{y}_{\mathrm{N} / 2+1}^{(\mathrm{N}}, \hat{\mathrm{u}}_{1, \mathrm{e}}^{(2 \mathrm{i}-2)}\right)\right. \\
-\mathrm{L}_{\mathrm{N}}^{(2 \mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{N})}, \hat{\mathrm{u}}_{1}^{(2 \mathrm{i}-1)}\right)=\mathrm{g}\left(\mathrm{L}_{\mathrm{N} / 2}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{N} / 2)}, \hat{\mathrm{u}}_{1,0}^{(2 \mathrm{i}-2)} \oplus \hat{\mathrm{u}}_{1, \mathrm{e}}^{(2 \mathrm{i}-2)}\right), \mathrm{L}_{\mathrm{N} / 2}^{(\mathrm{i})}\left(\mathrm{y}_{\mathrm{N} / 2+1}^{(\mathrm{N}} \hat{\mathrm{u}}_{1, \mathrm{e}}^{(2 \mathrm{i}-2)}\right), \hat{\mathrm{u}}_{2 \mathrm{i}-1}\right).
-\end{gathered}</script><p>其中：</p>
-<script type="math/tex; mode=display">
-\begin{gathered}
-f(a, b)=\ln \left(\frac{1+e^{a+b}}{e^{a}+e^{b}}\right) \\
-g\left(a, b, u_{s}\right)=(-1)^{u_{s}} a+b
-\end{gathered}</script><p>上述递归的的终止条件为$N=1$,即递归到达了最左端的$W$端。此时：</p>
-<script type="math/tex; mode=display">
-\mathrm{L}_{1}^{1}\left(\mathrm{y}_{\mathrm{j}}\right)=\ln \frac{\mathrm{W}\left(\mathrm{y}_{\mathrm{j}} \mid 0\right)}{\mathrm{W}\left(\mathrm{y}_{\mathrm{j}} \mid 1\right)}</script><p>由于我们在高斯信道下进行仿真，因此：</p>
-<script type="math/tex; mode=display">
-\mathrm{W}(\mathrm{y} \mid \mathrm{x})=\frac{1}{\sqrt{2 \pi} \sigma} \exp \left(-\frac{(\mathrm{y}-\mathrm{x})^{2}}{2 \sigma^{2}}\right)</script><p>给定递归出口：</p>
-<script type="math/tex; mode=display">
-\mathrm{L}_{1}^{1}\left(\mathrm{y}_{\mathrm{j}}\right)=\frac{2 \mathrm{y}}{\sigma^{2}}</script><h4 id="译码结果"><a href="#译码结果" class="headerlink" title="译码结果"></a>译码结果</h4><p>循环求出最后一列所有节点的似然值，然后倒推计算之前各个节点的似然值，重复该过程直到最右端即可完成译码。</p>
-<h2 id="实现结果"><a href="#实现结果" class="headerlink" title="实现结果"></a>实现结果</h2><h3 id="结果评估"><a href="#结果评估" class="headerlink" title="结果评估"></a>结果评估</h3><p>我们在信噪比为5-20dB的情况下进行不同码长的极化码编码译码仿真，并统计了误码率，结果如下所示：</p>
-<p><img src="https://i.loli.net/2021/09/06/OkXdnBWDjHc1oRS.jpg" style="zoom:50%;" /></p>
-<center>码长为8时SNR-BER</center>
-
-<p><img src="https://i.loli.net/2021/09/09/rbHnPJFvyMx7a1f.jpg" style="zoom:50%;" /></p>
-<center>码长为16时SNR-BER</center>
-
-<p>信噪比提高时时，误码率也在减小。码长增大时，抗噪性能越好。</p>
-<h3 id="改进以及探究"><a href="#改进以及探究" class="headerlink" title="改进以及探究"></a>改进以及探究</h3><h4 id="巴氏参数的递归求解"><a href="#巴氏参数的递归求解" class="headerlink" title="巴氏参数的递归求解"></a>巴氏参数的递归求解</h4><p>在文献$^{[1]}$中，给定的巴氏参数计算方法较为复杂。且考虑条件转移概率和信道特性后，我们可以将该过程用递归过程实现：</p>
-<script type="math/tex; mode=display">
-\begin{gathered}
-\mathrm{Z}\left(\mathrm{W}_{\mathrm{N}}^{(2 \mathrm{j}-1)}\right)=2 \mathrm{Z}\left(\mathrm{W}_{\mathrm{N} / 2}^{(\mathrm{j})}\right)-\mathrm{Z}\left(\mathrm{W}_{\mathrm{N} / 2}^{(\mathrm{j})}\right)^{2} \\
-\mathrm{Z}\left(\mathrm{W}_{\mathrm{N}}^{(2 \mathrm{j})}\right)=\mathrm{Z}\left(\mathrm{W}_{\mathrm{N} / 2}^{(\mathrm{j})}\right)^{2}
-\end{gathered}</script><h4 id="近似LLR硬件实现优化"><a href="#近似LLR硬件实现优化" class="headerlink" title="近似LLR硬件实现优化"></a>近似LLR硬件实现优化</h4><p>文献$^{[2]}$中指出，同时含有指数运算以及对数运算的过程不利于硬件实现，因此我们做出如下近似：</p>
-<p>$$<br>f(a, b)=\ln \left(\frac{1+e^{a+b}}{e^{a}+e^{b}}\right)\thickapprox sgn(a·b)·\min\</p>
-]]></content>
-      <categories>
-        <category>通信技术</category>
-      </categories>
-      <tags>
-        <tag>5G通信</tag>
-        <tag>极化码</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>MD5加密算法的Python实现流程</title>
     <url>/2022/07/29/MD5/</url>
     <content><![CDATA[<p><strong>MD5信息摘要算法</strong>（英语：MD5 Message-Digest Algorithm），一种被广泛使用的<a href="https://baike.baidu.com/item/密码散列函数/14937715">密码散列函数</a>，可以产生出一个128位（16<a href="https://baike.baidu.com/item/字节/1096318">字节</a>）的散列值（hash value），用于确保信息传输完整一致。MD5由美国密码学家<a href="https://baike.baidu.com/item/罗纳德·李维斯特/700199">罗纳德·李维斯特</a>（Ronald Linn Rivest）设计，于1992年公开，用以取代<a href="https://baike.baidu.com/item/MD4/8090275">MD4</a>算法。这套算法的程序在 RFC 1321 标准中被加以规范。1996年后该算法被证实存在弱点，可以被加以破解，对于需要高度安全性的数据，专家一般建议改用其他算法，如<a href="https://baike.baidu.com/item/SHA-2/22718180">SHA-2</a>。2004年，证实MD5算法无法防止碰撞（collision），因此不适用于安全性认证，如<a href="https://baike.baidu.com/item/SSL/320778">SSL</a>公开密钥认证或是<a href="https://baike.baidu.com/item/数字签名/212550">数字签名</a>等用途。</p>
@@ -438,24 +438,16 @@ II(a,b,c,d,Mj,s,Ti)=(I(b,c,d)+a+mj+Ti)<<s\\</script><p>其中，$&lt;&lt;$是循
       </tags>
   </entry>
   <entry>
-    <title></title>
-    <url>/2022/08/28/PDU%E4%BC%9A%E8%AF%9D/</url>
-    <content><![CDATA[<p>PDU会话是UE和指定DN之间的一条逻辑连接，为UE提供到DN的用户面连接。PDU会话的建立简化过程如下：</p>
-<p><img src="https://s2.loli.net/2022/08/27/89RuGbNqwKJjI6A.png" alt="image-20220827155413747"></p>
-<p>完整过程可以参考下图：</p>
-<p><img src="https://s2.loli.net/2022/08/27/LM8gxfRhF4NydK7.png" alt="img"></p>
-]]></content>
-  </entry>
-  <entry>
     <title>Typora新建文件时使用模板</title>
     <url>/2022/08/28/Markdown%20%E6%A8%A1%E6%9D%BF/</url>
     <content><![CDATA[<p align="center">
     <img src="https://s2.loli.net/2022/08/20/oxvPZeT8G7ydzct.png" alt="pyecharts logo" width=200 height=200 />
 </p>
-<h1 align="center">Type Your Title here</h1>
+<h1 align="center">这是文章模板的标题</h1>
 <p align="center">
-    <em>type your subtitle here</em>
+    <em>这是文章模板的副标题</em>
 </p>
+
 
 
 <p>经常写日记/博客/ToDo的朋友应该会对每次新建md文件时都要从以前的文档里复制粘贴一份修改感到厌倦，但是我们完全可以使用Typora在新建文档的时候直接搬用模板！看看我是怎么操作的&gt;&gt;&gt;</p>
@@ -478,6 +470,64 @@ II(a,b,c,d,Mj,s,Ti)=(I(b,c,d)+a+mj+Ti)<<s\\</script><p>其中，$&lt;&lt;$是循
       </categories>
       <tags>
         <tag>Typora</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>PDU会话过程的建立过程</title>
+    <url>/2022/08/28/PDU%E4%BC%9A%E8%AF%9D/</url>
+    <content><![CDATA[<p align="center">
+    <img src="https://s2.loli.net/2022/08/20/oxvPZeT8G7ydzct.png" alt="pyecharts logo" width=200 height=200 />
+</p>
+<h1 align="center">PDU会话的可视化说明</h1>
+<p align="center">
+    <em></em>
+</p>
+
+<p>PDU会话是UE和指定DN之间的一条逻辑连接，为UE提供到DN的用户面连接。那么他的建立过程是怎样的呢?</p>
+<blockquote>
+<blockquote>
+<p>&gt;</p>
+</blockquote>
+</blockquote>
+<span id="more"></span>
+<p>PDU会话的建立简化过程如下：</p>
+<p><img src="https://s2.loli.net/2022/08/27/89RuGbNqwKJjI6A.png" alt="image-20220827155413747"></p>
+<p>完整过程可以参考下图：</p>
+<p><img src="https://s2.loli.net/2022/08/27/LM8gxfRhF4NydK7.png" alt="img"></p>
+]]></content>
+      <categories>
+        <category>学习记录</category>
+      </categories>
+      <tags>
+        <tag>通信技术</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>一种用于路径规划的栅格地图简易生成方法</title>
+    <url>/2022/07/29/%E4%B8%80%E7%A7%8D%E6%A0%85%E6%A0%BC%E5%9C%B0%E5%9B%BE%E7%9A%84%E7%94%9F%E6%88%90%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>做机器人路径规划还有避碰方面的应该都离不开栅格地图环境。最近一个项目是要使用N*N大小的栅格地图生成可视障碍物，并要保证在动作空间$\mathcal A=\{up,down.left,right\}$时，从起点到终点有至少一条可行的道路。所有的障碍物用黑色表示，可行区域用白色表示。栅格地图的生成我看网上大多数的文章是基于matlab生成的，使用python的比较少，即使有也是使用gym这个强化学习测试平台进行搭建的，它是强化学习中一个公认的标准测试平台是，用户可以通过自定义环境或修改现有环境构建一个符合自己需要的模型，但是开发文档太长了…它的内核是pygame，有些规范化的东西其实我不太喜欢，而且代码也忒长了。我参考了这位<a href="https://www.ihawo.com/archives/85.html">大佬的文章</a>尝试搭了一下，奈何发现修改起来太麻烦了。gym其实还有一个问题就是，它的环境是固定死的，也就是说你想调整栅格地图的大小和精度就必须重新编写程序，这样其实对需要做大量对比实验的人来说非常不友好，因此我构想了一种更快更容易修改的栅格地图生成法。</p>
+<span id="more"></span>
+<h2 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h2><p>算法的核心其实就是构建一个矩阵，以0标识为可行区域，以1标识障碍区域。矩阵的构建约束为在每一个标识为0的区域在其四个方向的单步延拓至少有一个标识为0的区域，且对于设定的起点与终点均需保证他们的标识为0。我的想法是将可视化工作用热力图来表示，seaborn的热力图比plt的好看多了就选择了seaborn。可以先进行一个简单的<code>5*5</code>大小的生成测试观察可视化结果：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> seaborn <span class="keyword">as</span> sns</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line">a = np.array([[<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>],</span><br><span class="line">              [<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>],</span><br><span class="line">              [<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>],</span><br><span class="line">              [<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>],</span><br><span class="line">              [<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>]])</span><br><span class="line"></span><br><span class="line">fig, ax = plt.subplots(figsize = (<span class="number">9</span>,<span class="number">9</span>))</span><br><span class="line"><span class="comment">#二维的数组的热力图，横轴和数轴的ticklabels要加上去的话，既可以通过将array转换成有column</span></span><br><span class="line"><span class="comment">#和index的DataFrame直接绘图生成，也可以后续再加上去。后面加上去的话，更灵活，包括可设置labels大小方向等。</span></span><br><span class="line">sns.heatmap(pd.DataFrame(np.<span class="built_in">round</span>(a,<span class="number">2</span>), columns = [<span class="string">&#x27;0&#x27;</span>, <span class="string">&#x27;1&#x27;</span>, <span class="string">&#x27;2&#x27;</span>,<span class="string">&#x27;3&#x27;</span>,<span class="string">&#x27;4&#x27;</span>], index = [<span class="string">&#x27;0&#x27;</span>, <span class="string">&#x27;1&#x27;</span>, <span class="string">&#x27;2&#x27;</span>,<span class="string">&#x27;3&#x27;</span>,<span class="string">&#x27;4&#x27;</span>]), linecolor=<span class="string">&#x27;gray&#x27;</span>,linewidths=<span class="number">1</span>,</span><br><span class="line">                annot=<span class="literal">True</span>, vmax=<span class="number">1</span>,vmin = <span class="number">0</span>, xticklabels= <span class="literal">True</span>, yticklabels= <span class="literal">True</span>, square=<span class="literal">True</span>,cmap=<span class="string">&quot;hot_r&quot;</span>, cbar= <span class="literal">False</span>)<span class="comment"># cmap=&quot;Blues&quot;</span></span><br><span class="line">plt.savefig(<span class="string">&#x27;5x5.png&#x27;</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://s2.loli.net/2022/05/30/4chvdXGm7U3RnfM.png" style="zoom: 33%;" /></p>
+<p>这里我设定的起点是(0,0)和(4,4)。可以看到通过我人为的控制保证了一条路径生成。但是随着N的扩大，这种人为控制的方法显然是不现实的，而且这样生成的图也有明显的人为痕迹，因此我们需要进一步的拓展。我们可以先生成路径，再生成随机的地图，这样就能满足需求了。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">Function: Draw a grid map with the size of N*N</span></span><br><span class="line"><span class="string">Input: N -- the size of the grip map</span></span><br><span class="line"><span class="string">Output: None</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">drawGrid</span>(<span class="params">N</span>):</span><br><span class="line">    routedata = []	<span class="comment">#用于存储路径</span></span><br><span class="line">    alldata = []	<span class="comment">#用于存储栅格信息</span></span><br><span class="line">    a,b = <span class="number">0</span>,<span class="number">0</span>		<span class="comment">#路径的行与列索引</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 路径生成</span></span><br><span class="line">    <span class="keyword">while</span> a!= N-<span class="number">1</span> <span class="keyword">or</span> b!=N-<span class="number">1</span>:</span><br><span class="line">        judge = random.randint(<span class="number">0</span>,<span class="number">1</span>)	<span class="comment"># 栅格50%覆盖</span></span><br><span class="line">        <span class="keyword">if</span> a &lt; N-<span class="number">1</span> <span class="keyword">and</span> b&lt;N-<span class="number">1</span>:</span><br><span class="line">            <span class="keyword">if</span> judge==<span class="number">1</span>:</span><br><span class="line">                a += <span class="number">1</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                b += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">elif</span> a&gt;=N-<span class="number">1</span> <span class="keyword">and</span> b&lt;N-<span class="number">1</span>:</span><br><span class="line">            b += <span class="number">1</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">elif</span> a &lt; N-<span class="number">1</span> <span class="keyword">and</span> b &gt;= N-<span class="number">1</span>:</span><br><span class="line">            a+=<span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;error!&quot;</span>)</span><br><span class="line">        routedata.append([a,b])</span><br><span class="line">        </span><br><span class="line">	<span class="comment"># 栅格生成</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(N):</span><br><span class="line">        subdata = []</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(N):</span><br><span class="line">            a = random.randint(<span class="number">0</span>,<span class="number">1</span>)</span><br><span class="line">            subdata.append(a)</span><br><span class="line">        alldata.append(subdata)</span><br><span class="line"></span><br><span class="line">	<span class="comment"># 强行覆盖地图</span></span><br><span class="line">    <span class="keyword">for</span> each <span class="keyword">in</span> routedata:</span><br><span class="line">        alldata[each[<span class="number">0</span>]][each[<span class="number">1</span>]] = <span class="number">0</span></span><br><span class="line">        </span><br><span class="line">	<span class="comment"># 强行覆盖初始位置</span></span><br><span class="line">    alldata[<span class="number">0</span>][<span class="number">0</span>] = <span class="number">0</span></span><br><span class="line">    alldata[N-<span class="number">1</span>][N-<span class="number">1</span>] = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    data = np.array(alldata)</span><br><span class="line">    fig, ax = plt.subplots(figsize = (<span class="number">9</span>,<span class="number">9</span>))</span><br><span class="line">    sns.heatmap(pd.DataFrame(np.<span class="built_in">round</span>(data,<span class="number">2</span>)), linecolor=<span class="string">&#x27;gray&#x27;</span>,linewidths=<span class="number">1</span>,</span><br><span class="line">        annot=<span class="literal">True</span>, vmax=<span class="number">1</span>,vmin = <span class="number">0</span>, xticklabels= <span class="literal">True</span>, yticklabels= <span class="literal">True</span>, square=<span class="literal">True</span>,cmap=<span class="string">&quot;hot_r&quot;</span>, cbar= <span class="literal">False</span>)<span class="comment"># cmap=&quot;Blues&quot;</span></span><br><span class="line">    <span class="comment">#plt.savefig(&#x27;N*N.png&#x27;)</span></span><br><span class="line">    plt.show()</span><br></pre></td></tr></table></figure>
+<p>测试一下<code>N=15</code>和<code>N=20</code>的情况：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">drawGrid(15)</span><br><span class="line">drawGrid(20)</span><br></pre></td></tr></table></figure>
+<p><img src="https://s2.loli.net/2022/05/30/nQ2bdJofyCTG9V3.png" style="zoom: 33%;" /></p>
+<center><small>10*10栅格地图</small></center>
+
+<p><img src="https://s2.loli.net/2022/05/30/fl8qz47knpRu9O2.png" alt="20x20" style="zoom:33%;" /></p>
+<center><small>20*20栅格地图</small></center>
+
+<p>大功告成~</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>如果使用gym去构建的话，我估计20*20的代码量大概要两三百行…但是这种方法生成的话应该会快一点。gym的代码量大其实可以理解，毕竟它还需要负责智体的交互部分，所以大家按需选择咯。我的方案是生成图片再使用像素值得差异进行路径规划算法的研究。</p>
+]]></content>
+      <categories>
+        <category>强化学习</category>
+      </categories>
+      <tags>
+        <tag>栅格地图</tag>
       </tags>
   </entry>
   <entry>
@@ -524,31 +574,54 @@ II(a,b,c,d,Mj,s,Ti)=(I(b,c,d)+a+mj+Ti)<<s\\</script><p>其中，$&lt;&lt;$是循
       </tags>
   </entry>
   <entry>
-    <title>一种用于路径规划的栅格地图简易生成方法</title>
-    <url>/2022/07/29/%E4%B8%80%E7%A7%8D%E6%A0%85%E6%A0%BC%E5%9C%B0%E5%9B%BE%E7%9A%84%E7%94%9F%E6%88%90%E6%96%B9%E6%B3%95/</url>
-    <content><![CDATA[<h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>做机器人路径规划还有避碰方面的应该都离不开栅格地图环境。最近一个项目是要使用N*N大小的栅格地图生成可视障碍物，并要保证在动作空间$\mathcal A=\{up,down.left,right\}$时，从起点到终点有至少一条可行的道路。所有的障碍物用黑色表示，可行区域用白色表示。栅格地图的生成我看网上大多数的文章是基于matlab生成的，使用python的比较少，即使有也是使用gym这个强化学习测试平台进行搭建的，它是强化学习中一个公认的标准测试平台是，用户可以通过自定义环境或修改现有环境构建一个符合自己需要的模型，但是开发文档太长了…它的内核是pygame，有些规范化的东西其实我不太喜欢，而且代码也忒长了。我参考了这位<a href="https://www.ihawo.com/archives/85.html">大佬的文章</a>尝试搭了一下，奈何发现修改起来太麻烦了。gym其实还有一个问题就是，它的环境是固定死的，也就是说你想调整栅格地图的大小和精度就必须重新编写程序，这样其实对需要做大量对比实验的人来说非常不友好，因此我构想了一种更快更容易修改的栅格地图生成法。</p>
-<span id="more"></span>
-<h2 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h2><p>算法的核心其实就是构建一个矩阵，以0标识为可行区域，以1标识障碍区域。矩阵的构建约束为在每一个标识为0的区域在其四个方向的单步延拓至少有一个标识为0的区域，且对于设定的起点与终点均需保证他们的标识为0。我的想法是将可视化工作用热力图来表示，seaborn的热力图比plt的好看多了就选择了seaborn。可以先进行一个简单的<code>5*5</code>大小的生成测试观察可视化结果：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> seaborn <span class="keyword">as</span> sns</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line">a = np.array([[<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>],</span><br><span class="line">              [<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>],</span><br><span class="line">              [<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>],</span><br><span class="line">              [<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>],</span><br><span class="line">              [<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>]])</span><br><span class="line"></span><br><span class="line">fig, ax = plt.subplots(figsize = (<span class="number">9</span>,<span class="number">9</span>))</span><br><span class="line"><span class="comment">#二维的数组的热力图，横轴和数轴的ticklabels要加上去的话，既可以通过将array转换成有column</span></span><br><span class="line"><span class="comment">#和index的DataFrame直接绘图生成，也可以后续再加上去。后面加上去的话，更灵活，包括可设置labels大小方向等。</span></span><br><span class="line">sns.heatmap(pd.DataFrame(np.<span class="built_in">round</span>(a,<span class="number">2</span>), columns = [<span class="string">&#x27;0&#x27;</span>, <span class="string">&#x27;1&#x27;</span>, <span class="string">&#x27;2&#x27;</span>,<span class="string">&#x27;3&#x27;</span>,<span class="string">&#x27;4&#x27;</span>], index = [<span class="string">&#x27;0&#x27;</span>, <span class="string">&#x27;1&#x27;</span>, <span class="string">&#x27;2&#x27;</span>,<span class="string">&#x27;3&#x27;</span>,<span class="string">&#x27;4&#x27;</span>]), linecolor=<span class="string">&#x27;gray&#x27;</span>,linewidths=<span class="number">1</span>,</span><br><span class="line">                annot=<span class="literal">True</span>, vmax=<span class="number">1</span>,vmin = <span class="number">0</span>, xticklabels= <span class="literal">True</span>, yticklabels= <span class="literal">True</span>, square=<span class="literal">True</span>,cmap=<span class="string">&quot;hot_r&quot;</span>, cbar= <span class="literal">False</span>)<span class="comment"># cmap=&quot;Blues&quot;</span></span><br><span class="line">plt.savefig(<span class="string">&#x27;5x5.png&#x27;</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
-<p><img src="https://s2.loli.net/2022/05/30/4chvdXGm7U3RnfM.png" style="zoom: 33%;" /></p>
-<p>这里我设定的起点是(0,0)和(4,4)。可以看到通过我人为的控制保证了一条路径生成。但是随着N的扩大，这种人为控制的方法显然是不现实的，而且这样生成的图也有明显的人为痕迹，因此我们需要进一步的拓展。我们可以先生成路径，再生成随机的地图，这样就能满足需求了。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">Function: Draw a grid map with the size of N*N</span></span><br><span class="line"><span class="string">Input: N -- the size of the grip map</span></span><br><span class="line"><span class="string">Output: None</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">drawGrid</span>(<span class="params">N</span>):</span><br><span class="line">    routedata = []	<span class="comment">#用于存储路径</span></span><br><span class="line">    alldata = []	<span class="comment">#用于存储栅格信息</span></span><br><span class="line">    a,b = <span class="number">0</span>,<span class="number">0</span>		<span class="comment">#路径的行与列索引</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 路径生成</span></span><br><span class="line">    <span class="keyword">while</span> a!= N-<span class="number">1</span> <span class="keyword">or</span> b!=N-<span class="number">1</span>:</span><br><span class="line">        judge = random.randint(<span class="number">0</span>,<span class="number">1</span>)	<span class="comment"># 栅格50%覆盖</span></span><br><span class="line">        <span class="keyword">if</span> a &lt; N-<span class="number">1</span> <span class="keyword">and</span> b&lt;N-<span class="number">1</span>:</span><br><span class="line">            <span class="keyword">if</span> judge==<span class="number">1</span>:</span><br><span class="line">                a += <span class="number">1</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                b += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">elif</span> a&gt;=N-<span class="number">1</span> <span class="keyword">and</span> b&lt;N-<span class="number">1</span>:</span><br><span class="line">            b += <span class="number">1</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">elif</span> a &lt; N-<span class="number">1</span> <span class="keyword">and</span> b &gt;= N-<span class="number">1</span>:</span><br><span class="line">            a+=<span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;error!&quot;</span>)</span><br><span class="line">        routedata.append([a,b])</span><br><span class="line">        </span><br><span class="line">	<span class="comment"># 栅格生成</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(N):</span><br><span class="line">        subdata = []</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(N):</span><br><span class="line">            a = random.randint(<span class="number">0</span>,<span class="number">1</span>)</span><br><span class="line">            subdata.append(a)</span><br><span class="line">        alldata.append(subdata)</span><br><span class="line"></span><br><span class="line">	<span class="comment"># 强行覆盖地图</span></span><br><span class="line">    <span class="keyword">for</span> each <span class="keyword">in</span> routedata:</span><br><span class="line">        alldata[each[<span class="number">0</span>]][each[<span class="number">1</span>]] = <span class="number">0</span></span><br><span class="line">        </span><br><span class="line">	<span class="comment"># 强行覆盖初始位置</span></span><br><span class="line">    alldata[<span class="number">0</span>][<span class="number">0</span>] = <span class="number">0</span></span><br><span class="line">    alldata[N-<span class="number">1</span>][N-<span class="number">1</span>] = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    data = np.array(alldata)</span><br><span class="line">    fig, ax = plt.subplots(figsize = (<span class="number">9</span>,<span class="number">9</span>))</span><br><span class="line">    sns.heatmap(pd.DataFrame(np.<span class="built_in">round</span>(data,<span class="number">2</span>)), linecolor=<span class="string">&#x27;gray&#x27;</span>,linewidths=<span class="number">1</span>,</span><br><span class="line">        annot=<span class="literal">True</span>, vmax=<span class="number">1</span>,vmin = <span class="number">0</span>, xticklabels= <span class="literal">True</span>, yticklabels= <span class="literal">True</span>, square=<span class="literal">True</span>,cmap=<span class="string">&quot;hot_r&quot;</span>, cbar= <span class="literal">False</span>)<span class="comment"># cmap=&quot;Blues&quot;</span></span><br><span class="line">    <span class="comment">#plt.savefig(&#x27;N*N.png&#x27;)</span></span><br><span class="line">    plt.show()</span><br></pre></td></tr></table></figure>
-<p>测试一下<code>N=15</code>和<code>N=20</code>的情况：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">drawGrid(15)</span><br><span class="line">drawGrid(20)</span><br></pre></td></tr></table></figure>
-<p><img src="https://s2.loli.net/2022/05/30/nQ2bdJofyCTG9V3.png" style="zoom: 33%;" /></p>
-<center><small>10*10栅格地图</small></center>
+    <title>从一维卷积到二维卷积：浅析图像卷积</title>
+    <url>/2022/08/03/%E5%9B%BE%E5%83%8F%E5%8D%B7%E7%A7%AF/</url>
+    <content><![CDATA[<h2 id="什么是卷积"><a href="#什么是卷积" class="headerlink" title="什么是卷积"></a>什么是卷积</h2><p>首先先给出一维情况的卷积的定义。</p>
+<script type="math/tex; mode=display">
+f(x)*g(x)=\int_{-\infty}^{\infty}f(x)g(\tau-x)d\tau</script><p>这个式子很难从直观层面进行理解，因为它包含了乘积、翻转、积分三个部分的内容。如果你是信通学子，那么你肯定会知道两个函数的卷积结果可以看作是他们对应的傅里叶变换在频域的乘积的反变换，也就是说把一个函数作为输入信号，另一个函数作为描述系统的一个方程，当这个系统接收到输入信号后会做出响应，这个响应$y(t)$就是输入信号$x(t)$与系统函数$h(t)$卷积的结果：</p>
+<script type="math/tex; mode=display">
+y(t)=x(t)*h(t)=\mathcal F^{-1}[X(jw)H(jw)]</script><p>但很明显不是所有人都学过信号与系统，所以我想了个更<del>好</del>恶心的例子进行描述。<span id="more"></span></p>
+<h3 id="一个恶心的例子"><a href="#一个恶心的例子" class="headerlink" title="一个恶心的例子"></a>一个<del>恶心</del>的例子</h3><p>试想这样一个场景：一个热门旅游景点的厕所。我们知道厕所需要连连不断地接待客人（？），因此厕所的囤粪速度可以用函数$F(x)$表示，如图1。</p>
+<p><img src="https://s2.loli.net/2022/08/03/7FHNVEs1uM5RCIB.png" alt="image-20220724172639005" style="zoom:50%;" /></p>
+<center><small>图1粪便囤积变化率曲线</small></center>
 
-<p><img src="https://s2.loli.net/2022/05/30/fl8qz47knpRu9O2.png" alt="20x20" style="zoom:33%;" /></p>
-<center><small>20*20栅格地图</small></center>
+<p>但是厕所连通的化粪池它的处理能力有限，它对排泄物的处理效率如图2所示，我们用函数$H(x)$来表示。</p>
+<p><img src="https://s2.loli.net/2022/08/03/BtJzpROGo3rTNYF.png" alt="image-20220724172618665" style="zoom:50%;" /></p>
+<center><small>图2 化粪池分解效率</small></center>
 
-<p>大功告成~</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>如果使用gym去构建的话，我估计20*20的代码量大概要两三百行…但是这种方法生成的话应该会快一点。gym的代码量大其实可以理解，毕竟它还需要负责智体的交互部分，所以大家按需选择咯。我的方案是生成图片再使用像素值得差异进行路径规划算法的研究。</p>
+<p>下面我们的问题就是需要讨论，<strong>化粪池在某个时候还有多少粪便啦！</strong></p>
+<h3 id="怎么计算？"><a href="#怎么计算？" class="headerlink" title="怎么计算？"></a>怎么计算？</h3><p>每一个粪便都是独立的个体，它们都会随着化粪池分解而减少。如果不考虑粪便的分解的话，那么粪便总量可以这样表示：</p>
+<script type="math/tex; mode=display">
+n =\int_{-\infty}^{\infty}F(x)dx</script><p>但是我们的粪便不是无线增加的，因此，需要考虑分解的情况。现在假设在$t$时刻时进行统计，经过时间间隔$\tau$后统计存在的粪便总量为：</p>
+<script type="math/tex; mode=display">
+n' = F(t)·H(\tau)</script><p>也就是说在$t+\tau$时刻，不考虑其他情况下的粪便输入，此时一共有$n’$这么多的粪便。这里则是对应了卷积操作中的乘积部分。我们换一种写法，令$T=t+\tau$，则在$T$时刻不考虑其他粪便的增加的情况下，粪便量可以记为:</p>
+<script type="math/tex; mode=display">
+n'=F(t)·H(T-t)</script><p>$H(t)$函数的变量出现了x轴反转的情况，我们离卷积的定义也越来越近啦！下一步就是积分的问题了。积分其实也很好理解，因为上面这些式子都是只考虑了单个时刻不考虑其他时刻的输入信息，因此如果要考虑其他时刻的输入的话，则是把其他时刻的粪便量进行一个叠加（离散域就是使用$\sum$求和，连续域就是使用$\int$积分）。因此$t$时刻的粪便总量可以表示为：</p>
+<script type="math/tex; mode=display">
+Y(t)=\int_{-\infty}^{t}F(t)H(\tau-t)d\tau</script><p>是不是这样就很好理解了？</p>
+<h3 id="图像的卷积是什么？"><a href="#图像的卷积是什么？" class="headerlink" title="图像的卷积是什么？"></a>图像的卷积是什么？</h3><p>卷积的本质在刚刚已经说了，就是反转、乘积、求和。到了二维也是这样子的：\</p>
+<script type="math/tex; mode=display">
+Y(x,y)=F(x,y)*H(x,y)=\sum_{n_1=-\infty}^{\infty}\sum_{n_2=-\infty}^{\infty}F(n_1,n_2)·H(x-n_1,y-n_2)</script><p>好！下面我们给出图像卷积的一个步骤：</p>
+<p><img src="https://img-blog.csdnimg.cn/20200308112430934.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L25hcnVoaW5h,size_16,color_FFFFFF,t_70" alt=""></p>
+<p>其中这个<code>Convolution Kernel</code>叫做卷积核，<code>Source Pixel</code>就是我们的图像。在这张图里红色通道对应的地方就是卷积处理的第一个像素，计算的公式在右上角，输入是1，输出是8。随着卷积核往下一个像素移动，优惠计算出新的像素值，直到按设定的规则遍历完图像。</p>
+<p><img src="https://pic3.zhimg.com/v2-8a6695c2e086525ac5a61610348739b2_b.gif" alt=""></p>
+<p>唯一需要指出的是，在这里体现了乘积和加和，那么反转是在哪里体现的呢？其实是图中卷积核已经是翻转了180°了，也就是说原本的卷积核它的“4”是在”-4“的位置的。所以这就是图像卷积的操作，是不是很好理解捏？</p>
+<h2 id="为什么是卷积"><a href="#为什么是卷积" class="headerlink" title="为什么是卷积"></a>为什么是卷积</h2><p>上结论：卷积的本质是提取图像中的特征。许多常用的图像处理方法都可以用卷积的方式表示，因此选择卷积。</p>
+<h2 id="Pytorch的图像卷积"><a href="#Pytorch的图像卷积" class="headerlink" title="Pytorch的图像卷积"></a>Pytorch的图像卷积</h2><p><img src="https://img-blog.csdnimg.cn/20201121195053531.gif" alt=""></p>
+<p>终于来到这里了。我们先看看pytorch卷积层继承的父类<code>_ConvNd</code>:</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">_ConvNd</span>(<span class="title class_ inherited__">Module</span>):</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self,</span></span><br><span class="line"><span class="params">                 in_channels: <span class="built_in">int</span>,</span></span><br><span class="line"><span class="params">                 out_channels: <span class="built_in">int</span>,</span></span><br><span class="line"><span class="params">                 kernel_size: <span class="type">Tuple</span>[<span class="built_in">int</span>, ...],</span></span><br><span class="line"><span class="params">                 stride: <span class="type">Tuple</span>[<span class="built_in">int</span>, ...],</span></span><br><span class="line"><span class="params">                 padding: <span class="type">Tuple</span>[<span class="built_in">int</span>, ...],</span></span><br><span class="line"><span class="params">                 dilation: <span class="type">Tuple</span>[<span class="built_in">int</span>, ...],</span></span><br><span class="line"><span class="params">                 transposed: <span class="built_in">bool</span>,</span></span><br><span class="line"><span class="params">                 output_padding: <span class="type">Tuple</span>[<span class="built_in">int</span>, ...],</span></span><br><span class="line"><span class="params">                 groups: <span class="built_in">int</span>,</span></span><br><span class="line"><span class="params">                 bias: <span class="built_in">bool</span>,</span></span><br><span class="line"><span class="params">                 padding_mode: <span class="built_in">str</span>,</span></span><br><span class="line"><span class="params">                 device=<span class="literal">None</span>,</span></span><br><span class="line"><span class="params">                 dtype=<span class="literal">None</span></span>) -&gt; <span class="literal">None</span>:</span><br></pre></td></tr></table></figure>
+<p>主要关注<code>in_channels</code>,<code>out_channels</code>,<code>kernel_size</code>,<code>stride</code>,<code>padding</code>这几个参数。</p>
+<h3 id="in-channels"><a href="#in-channels" class="headerlink" title="in_channels"></a>in_channels</h3><p><code>in_channels</code>的输入是按<code>(N,C,H,W)</code>排列的，<code>N</code>是mini-batch大小，<code>C</code>是通道数channel，<code>H</code>和<code>W</code>分别是输入的高和宽，<strong>这和<code>Tensorflow</code>的不太一样。</strong></p>
+<h3 id="out-channels"><a href="#out-channels" class="headerlink" title="out_channels"></a>out_channels</h3><p>在定义好了<code>in_channels</code>后，<code>out_channels</code>只需要关注输出通道数<code>K</code>即可。</p>
+<h3 id="kernel-size"><a href="#kernel-size" class="headerlink" title="kernel_size"></a>kernel_size</h3><p>卷积核大小，如果设为一个整数的话那么卷积核就是一个正方形的，否则就按长款的顺序输入一个<code>tuple</code>作为卷积核形状。</p>
+<h3 id="stride"><a href="#stride" class="headerlink" title="stride"></a>stride</h3><p>步长。也就是卷积核移动的距离，可以是一个整数也可以是一个<code>tuple</code>，类似<code>kernel_size</code>。</p>
+<h3 id="padding"><a href="#padding" class="headerlink" title="padding"></a>padding</h3><p>补丁，就是只要使用了大小大于1的卷积核去做卷积的话，输出图像的大小是比原本的图像大小要小的，因此为了保证维度的大小一致，会引入padding填充原图像的边缘位置，该值表示的是沿原图边缘进行该值大小的延拓。</p>
 ]]></content>
       <categories>
-        <category>强化学习</category>
+        <category>学习记录</category>
       </categories>
       <tags>
-        <tag>栅格地图</tag>
+        <tag>计算机视觉</tag>
       </tags>
   </entry>
   <entry>
@@ -648,54 +721,182 @@ L_i(\theta_i)=\Bbb E_{s,a\sim \rho(·)}[(y_i-Q(s,a;\theta_i))^2]</script><p>​ 
       </tags>
   </entry>
   <entry>
-    <title>从一维卷积到二维卷积：浅析图像卷积</title>
-    <url>/2022/08/03/%E5%9B%BE%E5%83%8F%E5%8D%B7%E7%A7%AF/</url>
-    <content><![CDATA[<h2 id="什么是卷积"><a href="#什么是卷积" class="headerlink" title="什么是卷积"></a>什么是卷积</h2><p>首先先给出一维情况的卷积的定义。</p>
-<script type="math/tex; mode=display">
-f(x)*g(x)=\int_{-\infty}^{\infty}f(x)g(\tau-x)d\tau</script><p>这个式子很难从直观层面进行理解，因为它包含了乘积、翻转、积分三个部分的内容。如果你是信通学子，那么你肯定会知道两个函数的卷积结果可以看作是他们对应的傅里叶变换在频域的乘积的反变换，也就是说把一个函数作为输入信号，另一个函数作为描述系统的一个方程，当这个系统接收到输入信号后会做出响应，这个响应$y(t)$就是输入信号$x(t)$与系统函数$h(t)$卷积的结果：</p>
-<script type="math/tex; mode=display">
-y(t)=x(t)*h(t)=\mathcal F^{-1}[X(jw)H(jw)]</script><p>但很明显不是所有人都学过信号与系统，所以我想了个更<del>好</del>恶心的例子进行描述。<span id="more"></span></p>
-<h3 id="一个恶心的例子"><a href="#一个恶心的例子" class="headerlink" title="一个恶心的例子"></a>一个<del>恶心</del>的例子</h3><p>试想这样一个场景：一个热门旅游景点的厕所。我们知道厕所需要连连不断地接待客人（？），因此厕所的囤粪速度可以用函数$F(x)$表示，如图1。</p>
-<p><img src="https://s2.loli.net/2022/08/03/7FHNVEs1uM5RCIB.png" alt="image-20220724172639005" style="zoom:50%;" /></p>
-<center><small>图1粪便囤积变化率曲线</small></center>
+    <title>【学习记录】2022-8-20-？</title>
+    <url>/2022/08/20/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%952022-8-20/</url>
+    <content><![CDATA[<p>师兄让我别去CV卷了，让我搞搞通信。然后就是让我看看5G核心网相关的内容，笑死😂，我本科的时候移动通信的老师也和我们一起摆烂，考试开卷基本没啥东西记住的。不过想想也是，CV就业压力挺大的，当成业余兴趣爱好去研究下也不错，做成工作可能也很难受，也卷不过985的顶级实验室出来的。娄山雀说他前几天有个北大ACM区域金牌的计算机硕去面他们的后端都没有机会，然后四个清华大学的硕去面OPPO连简历复筛都没过……很可怕很可怕。然后最近看了严曦老师的《造神年代》，我再次燃起了对通信事业的热情。链接每个节点、信息的传输，和生命的波纹好像，当这些所有波纹和对事件的响应结合到一起构建成了一个系统，就完成了一个宏观定义的世界交互（我好像在说一些乱七八糟的屁话😂）这种感觉和造物其实也挺像的。所以开始吧：</p>
+<span id="more"></span>
+<h2 id="说在开始前"><a href="#说在开始前" class="headerlink" title="说在开始前"></a>说在开始前</h2><p>我对通信比较喜欢不上来的点在于更新速度太快，然后各种缩写在查阅资料的时候又非常麻烦，所以这次真的是破釜沉舟，把每一个缩写都给吃透了。阅读的时候如果有需要查阅的缩写可以直接在网站的搜索功能进行搜索，应该会有解释的。这次学习的内容主要是5G的核心网，由于我的基础比较薄弱，所以我得花花时间了解下发展的历程和了解些工程的问题。</p>
+<p><img src="https://s2.loli.net/2022/08/21/8tsFlNCMLvTDSeX.png" alt="img" style="zoom: 25%;" /></p>
+<h2 id="核心网"><a href="#核心网" class="headerlink" title="核心网"></a>核心网</h2><h3 id="核心网是什么"><a href="#核心网是什么" class="headerlink" title="核心网是什么"></a>核心网是什么</h3><p>在了解5G核心网之前我们需要先了解核心网到底是什么。核心网，有个洋气的英文名，叫Core Network（核心网络），简称CN。说实话，核心网的概念很难定义！广义上的解释难以界定，而狭义角度的解释又没有对应实体。我们只能通过类比以下来描述一下核心网：试想一个快递分拣中心，上面的传送带装满了双十一的各种包裹，传送带是负责传送包裹的，但是哪一个包裹需要传送到哪个地方，是需要一个智体进行调配的。在这个分拣中心，包裹相当于需要传输的数据，传送带相当于一个承载网络，作为信息的承载介质，而我们的核心网就是负责调配数据应该如何传输的指挥官。在这个基础上，我们可以进一步看看核心网到底是怎么发展的。</p>
+<h3 id="核心网的发展"><a href="#核心网的发展" class="headerlink" title="核心网的发展"></a>核心网的发展</h3><p>首先先说说2G，为什么不从1G开始说呢，<del>因为1G的时候根本上不了网啊😂</del>因为1G和2G的核心网架构是非常近似的，这里可以直接等价了。</p>
+<p><img src="https://s2.loli.net/2022/08/21/xMaLeEgD5KvWkcp.jpg" alt="640?wx_fmt=png" style="zoom:50%;" /></p>
+<center><small>2G核心网架构</small></center>
 
-<p>但是厕所连通的化粪池它的处理能力有限，它对排泄物的处理效率如图2所示，我们用函数$H(x)$来表示。</p>
-<p><img src="https://s2.loli.net/2022/08/03/BtJzpROGo3rTNYF.png" alt="image-20220724172618665" style="zoom:50%;" /></p>
-<center><small>图2 化粪池分解效率</small></center>
 
-<p>下面我们的问题就是需要讨论，<strong>化粪池在某个时候还有多少粪便啦！</strong></p>
-<h3 id="怎么计算？"><a href="#怎么计算？" class="headerlink" title="怎么计算？"></a>怎么计算？</h3><p>每一个粪便都是独立的个体，它们都会随着化粪池分解而减少。如果不考虑粪便的分解的话，那么粪便总量可以这样表示：</p>
-<script type="math/tex; mode=display">
-n =\int_{-\infty}^{\infty}F(x)dx</script><p>但是我们的粪便不是无线增加的，因此，需要考虑分解的情况。现在假设在$t$时刻时进行统计，经过时间间隔$\tau$后统计存在的粪便总量为：</p>
-<script type="math/tex; mode=display">
-n' = F(t)·H(\tau)</script><p>也就是说在$t+\tau$时刻，不考虑其他情况下的粪便输入，此时一共有$n’$这么多的粪便。这里则是对应了卷积操作中的乘积部分。我们换一种写法，令$T=t+\tau$，则在$T$时刻不考虑其他粪便的增加的情况下，粪便量可以记为:</p>
-<script type="math/tex; mode=display">
-n'=F(t)·H(T-t)</script><p>$H(t)$函数的变量出现了x轴反转的情况，我们离卷积的定义也越来越近啦！下一步就是积分的问题了。积分其实也很好理解，因为上面这些式子都是只考虑了单个时刻不考虑其他时刻的输入信息，因此如果要考虑其他时刻的输入的话，则是把其他时刻的粪便量进行一个叠加（离散域就是使用$\sum$求和，连续域就是使用$\int$积分）。因此$t$时刻的粪便总量可以表示为：</p>
-<script type="math/tex; mode=display">
-Y(t)=\int_{-\infty}^{t}F(t)H(\tau-t)d\tau</script><p>是不是这样就很好理解了？</p>
-<h3 id="图像的卷积是什么？"><a href="#图像的卷积是什么？" class="headerlink" title="图像的卷积是什么？"></a>图像的卷积是什么？</h3><p>卷积的本质在刚刚已经说了，就是反转、乘积、求和。到了二维也是这样子的：\</p>
-<script type="math/tex; mode=display">
-Y(x,y)=F(x,y)*H(x,y)=\sum_{n_1=-\infty}^{\infty}\sum_{n_2=-\infty}^{\infty}F(n_1,n_2)·H(x-n_1,y-n_2)</script><p>好！下面我们给出图像卷积的一个步骤：</p>
-<p><img src="https://img-blog.csdnimg.cn/20200308112430934.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L25hcnVoaW5h,size_16,color_FFFFFF,t_70" alt=""></p>
-<p>其中这个<code>Convolution Kernel</code>叫做卷积核，<code>Source Pixel</code>就是我们的图像。在这张图里红色通道对应的地方就是卷积处理的第一个像素，计算的公式在右上角，输入是1，输出是8。随着卷积核往下一个像素移动，优惠计算出新的像素值，直到按设定的规则遍历完图像。</p>
-<p><img src="https://pic3.zhimg.com/v2-8a6695c2e086525ac5a61610348739b2_b.gif" alt=""></p>
-<p>唯一需要指出的是，在这里体现了乘积和加和，那么反转是在哪里体现的呢？其实是图中卷积核已经是翻转了180°了，也就是说原本的卷积核它的“4”是在”-4“的位置的。所以这就是图像卷积的操作，是不是很好理解捏？</p>
-<h2 id="为什么是卷积"><a href="#为什么是卷积" class="headerlink" title="为什么是卷积"></a>为什么是卷积</h2><p>上结论：卷积的本质是提取图像中的特征。许多常用的图像处理方法都可以用卷积的方式表示，因此选择卷积。</p>
-<h2 id="Pytorch的图像卷积"><a href="#Pytorch的图像卷积" class="headerlink" title="Pytorch的图像卷积"></a>Pytorch的图像卷积</h2><p><img src="https://img-blog.csdnimg.cn/20201121195053531.gif" alt=""></p>
-<p>终于来到这里了。我们先看看pytorch卷积层继承的父类<code>_ConvNd</code>:</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">_ConvNd</span>(<span class="title class_ inherited__">Module</span>):</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self,</span></span><br><span class="line"><span class="params">                 in_channels: <span class="built_in">int</span>,</span></span><br><span class="line"><span class="params">                 out_channels: <span class="built_in">int</span>,</span></span><br><span class="line"><span class="params">                 kernel_size: <span class="type">Tuple</span>[<span class="built_in">int</span>, ...],</span></span><br><span class="line"><span class="params">                 stride: <span class="type">Tuple</span>[<span class="built_in">int</span>, ...],</span></span><br><span class="line"><span class="params">                 padding: <span class="type">Tuple</span>[<span class="built_in">int</span>, ...],</span></span><br><span class="line"><span class="params">                 dilation: <span class="type">Tuple</span>[<span class="built_in">int</span>, ...],</span></span><br><span class="line"><span class="params">                 transposed: <span class="built_in">bool</span>,</span></span><br><span class="line"><span class="params">                 output_padding: <span class="type">Tuple</span>[<span class="built_in">int</span>, ...],</span></span><br><span class="line"><span class="params">                 groups: <span class="built_in">int</span>,</span></span><br><span class="line"><span class="params">                 bias: <span class="built_in">bool</span>,</span></span><br><span class="line"><span class="params">                 padding_mode: <span class="built_in">str</span>,</span></span><br><span class="line"><span class="params">                 device=<span class="literal">None</span>,</span></span><br><span class="line"><span class="params">                 dtype=<span class="literal">None</span></span>) -&gt; <span class="literal">None</span>:</span><br></pre></td></tr></table></figure>
-<p>主要关注<code>in_channels</code>,<code>out_channels</code>,<code>kernel_size</code>,<code>stride</code>,<code>padding</code>这几个参数。</p>
-<h3 id="in-channels"><a href="#in-channels" class="headerlink" title="in_channels"></a>in_channels</h3><p><code>in_channels</code>的输入是按<code>(N,C,H,W)</code>排列的，<code>N</code>是mini-batch大小，<code>C</code>是通道数channel，<code>H</code>和<code>W</code>分别是输入的高和宽，<strong>这和<code>Tensorflow</code>的不太一样。</strong></p>
-<h3 id="out-channels"><a href="#out-channels" class="headerlink" title="out_channels"></a>out_channels</h3><p>在定义好了<code>in_channels</code>后，<code>out_channels</code>只需要关注输出通道数<code>K</code>即可。</p>
-<h3 id="kernel-size"><a href="#kernel-size" class="headerlink" title="kernel_size"></a>kernel_size</h3><p>卷积核大小，如果设为一个整数的话那么卷积核就是一个正方形的，否则就按长款的顺序输入一个<code>tuple</code>作为卷积核形状。</p>
-<h3 id="stride"><a href="#stride" class="headerlink" title="stride"></a>stride</h3><p>步长。也就是卷积核移动的距离，可以是一个整数也可以是一个<code>tuple</code>，类似<code>kernel_size</code>。</p>
-<h3 id="padding"><a href="#padding" class="headerlink" title="padding"></a>padding</h3><p>补丁，就是只要使用了大小大于1的卷积核去做卷积的话，输出图像的大小是比原本的图像大小要小的，因此为了保证维度的大小一致，会引入padding填充原图像的边缘位置，该值表示的是沿原图边缘进行该值大小的延拓。</p>
+
+<p>2G其实前期也是没法上网的，直到2.5G出现才解决了这一问题。从图中可以看出来，2G的核心网组网非常简单，MSC就是核心网的最主要设备。HLR、EIR和用户身份有关，用于鉴权。值得注意的是，之所以图上面写的是“MSC/VLR”，是因为VLR是一个功能实体，但是物理上，VLR和MSC是同一个硬件设备。相当于一个设备实现了两个角色，所以画在一起。HLR/AUC也是如此，HLR和AUC物理合一。下面是2.5G的核心网：</p>
+<p><img src = 'https://s2.loli.net/2022/08/21/2qwdskLl6fxXOhQ.jpg' style="zoom:50%;" ></p>
+<center><small>2.5G核心网架构，为了图简单没有把2G核心网里面的HLR等模块画上去</small></center>
+
+
+
+<p>相比于2G其实就是多了SGSN和GGSN两个模块。这两个模块都是为了实现GPRS数据业务而存在的，GPRS则是2.5G上网的核心服务：</p>
+<p><img src="https://s2.loli.net/2022/08/21/vcplj7bGWZX9ymr.png" alt="640?wx_fmt=png" style="zoom:67%;" /></p>
+<p>再之后就是3G时代了：</p>
+<p><img src="https://s2.loli.net/2022/08/21/9JoVwjSYZR1Gvtb.jpg" alt="640?wx_fmt=png" style="zoom: 50%;" /></p>
+<center><small>3G核心网架构，为了图简单没把HLR等模块画上去</small></center>
+
+
+
+<p>可以看出3G其实变化较大的部分是基站部分，引入了一个<code>NodeB</code>和一个<code>RNC</code>的东西。这个<code>NodeB</code>其实就是专属于3G时代的基站，只是为了区分和2G时代的基站而另起一个名字而已😂这样的作法会在后面的4G、5G都有体现。尽管在图中3G核心网的变化与2G的相比没啥不同，但其实硬件设备已经经过了一轮新的迭代。我们知道，硬件才是工程里面最能指导性能突破的核心力量，因此3G的成功之处很大一部分要感谢硬件的蓬勃发展。不要小看了硬件平台，实际上，就像最开始<strong>华为的C&amp;C08</strong>、<strong>中兴的ZXJ10</strong>一样，设备商自家的很多不同业务的设备，都是基于同一个硬件平台进行开发的。不可能每个设备都单独开发硬件平台，既浪费时间和精力，又不利于生产和维护。稳定可靠且处理能力强大的硬件平台，是产品的基石。从2G到3G，除了IP化以及硬件平台的升级之外，最大的不同就在于分离。在通信系统里面，说白了，就两个（平）面，用户面和控制面：</p>
+<p><img src="https://s2.loli.net/2022/08/21/ZrOvf4BPnq1sxW5.jpg" alt="640?wx_fmt=png" style="zoom:50%;" /></p>
+<p><img src="https://s2.loli.net/2022/08/21/mjOSBUkM4HC8YiF.png" alt="640?wx_fmt=png" style="zoom:50%;" /></p>
+<p>用户面，就是用户的实际业务数据，就是你的语音数据啊，视频流数据啊之类的。而控制面，是为了管理数据走向的信令、命令。这两个面，在通信设备内部，就相当于两个不同的系统，2G时代，用户面和控制面没有明显分开。3G时代，把两个面进行了分离。接着，SGSN变成MME，GGSN变成SGW/PGW，也就演进成了4G核心网：</p>
+<p><img src="https://s2.loli.net/2022/08/21/jIu8dYUeKiX5HDp.jpg" alt="640?wx_fmt=png" style="zoom:50%;" /></p>
+<p>值得注意的是基站里面的RNC没有了，为了实现扁平化，功能一部分给了核心网，一部分给了<code>eNodeB</code>（还记得我说的NodeB是什么嘛）。发展到这里的时候，硬件平台也升级了，以中兴为例，开始启用ATCA/ETCA平台（后来MME就用了它），还有xGW T8000平台（后面PGW和SGW用了它，PGW和SGW物理上是一体的）。</p>
+<p><img src="https://s2.loli.net/2022/08/21/YTSwIyQ87Z5RUgC.jpg" alt="?wx_fmt=jpeg"></p>
+<center><small>中兴ATCA机框</small></center>
+
+
+
+<p>在3G到4G的过程中，IMS出现了，取代传统CS（也就是MSC那些），提供更强大的多媒体服务（语音、图片短信、视频电话等）。IMS，使用的也主要是ATCA平台。实际上这些硬件很像一个电脑，有处理器（MP单板），有网卡（以太网接口卡，光纤接口卡）。而ATCA平台，更像一台电脑了，前面你也看到了，名字就叫“先进电信计算平台”，也就是“电信服务器”嘛。确切说，ATCA里面的业务处理单板，本身就是一台单板造型的“小型化电脑”，有处理器、内存、硬盘，俗称“刀片”。</p>
+<p><img src="https://s2.loli.net/2022/08/21/VNQCTUz3WoZdKhe.jpg" alt="640?wx_fmt=png"></p>
+<center><small>ATCA业务处理板——“刀片”</small></center>
+
+
+
+<p>既然都走到这一步，原来的专用硬件，越做越像IT机房里面的x86通用服务器，那么，不如干脆直接用x86服务器吧!于是虚拟化时代就到来了。虚拟化，就是网元功能虚拟化（Network Function Virtualization，<strong>NFV</strong>）。说白了就是在硬件上，直接采用HP、IBM等IT厂家的x86平台通用服务器（目前以刀片服务器为主，节约空间，也够用）。</p>
+<p><img src="https://s2.loli.net/2022/08/21/9whUsXVCz2xHRl7.jpg" alt="640?wx_fmt=jpeg"></p>
+<p>软件上，设备商基于openstack这样的开源平台，开发自己的虚拟化平台，把以前的核心网网元，“种植”在这个平台之上：</p>
+<p><img src="https://s2.loli.net/2022/08/21/NnYyhD6bJQv3em9.jpg" alt="?wx_fmt=jpeg"></p>
+<p>虚拟化平台不等于5G核心网。也就是说，并不是只有5G才能用虚拟化平台。也不是用了虚拟化平台，就是5G。按照惯例，设备商先在虚拟化平台部署4G核心网，也就是，在为后面5G做准备，提前实验。硬件平台，永远都会提前准备。上面说了5G核心网的硬件平台，接下来，我们仔细说说5G核心网的架构。到了5G，网络逻辑结构彻底改变了。</p>
+<h3 id="5G核心网引入"><a href="#5G核心网引入" class="headerlink" title="5G核心网引入"></a>5G核心网引入</h3><p>5G核心网，采用的是SBA架构（Service Based Architecture，即基于服务的架构）。SBA架构，基于云原生构架设计，借鉴了IT领域的“微服务”理念，把原来具有多个功能的整体，分拆为多个具有独自功能的个体。每个个体，实现自己的微服务。这样的变化，会有一个明显的外部表现，就是网元大量增加了。</p>
+<p><img src="https://s2.loli.net/2022/08/21/QTJyAWGHx68INun.jpg" alt="640?wx_fmt=png" style="zoom:50%;" /></p>
+<center><small>红色虚线内为5G核心网,除了UPF之外，都是控制面</small></center>
+
+
+
+<p>这些网元看上去很多，实际上，硬件都是在虚拟化平台里面虚拟出来的。简而言之，<strong>5G核心网就是模块化、软件化</strong>。5G核心网之所以要模块化，还有一个主要原因，就是为了<strong>“切片”</strong>。5G是一个天下一统的网络，通吃所有用户。设计之初，就需要它应对各种需求。这些需求，被整理为三大应用场景:</p>
+<ul>
+<li><p><strong>eMBB（增强型移动宽带）</strong></p>
+<p>一般日常情况下的上网方式。</p>
+</li>
+<li><p><strong>mMTC（海量物联网通信）</strong></p>
+<p>那堆搞物联网的应该就要搞这个。</p>
+</li>
+<li><p><strong>uRLLC（低时延、高可靠通信）</strong></p>
+<p>用于智能无人驾驶、工业自动化等需要低时延高可靠连接的业务。</p>
+</li>
+</ul>
+<p>既然网络用途不同，当然要见招拆招。以一个死板的固定网络结构去应对，肯定是不行的。只有拆分成模块，灵活组队，才能搞定。所以模块化的设计，有利于网络切片，根据业务需求进行模块的删改增补。</p>
 ]]></content>
       <categories>
         <category>学习记录</category>
       </categories>
       <tags>
-        <tag>计算机视觉</tag>
+        <tag>通信技术</tag>
+        <tag>5G</tag>
+        <tag>核心网</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>独立组网和非独立组网</title>
+    <url>/2022/08/28/%E7%8B%AC%E7%AB%8B%E7%BB%84%E7%BD%91%E5%92%8C%E9%9D%9E%E7%8B%AC%E7%AB%8B%E7%BB%84%E7%BD%91/</url>
+    <content><![CDATA[<p><h1 align="center">4/5G技术过渡的组网分析</h1></p>
+<p align="center">
+    <em></em>
+</p>
+
+
+
+<span id="more"></span>
+<h1 id="独立（NSA）组网和非独立-NSA-组网"><a href="#独立（NSA）组网和非独立-NSA-组网" class="headerlink" title="独立（NSA）组网和非独立(NSA)组网"></a>独立（NSA）组网和非独立(NSA)组网</h1><h2 id="5G网络架构"><a href="#5G网络架构" class="headerlink" title="5G网络架构"></a>5G网络架构</h2><p>5G网络中有SA和NSA两种，在3GPP的R15版本中分成两个阶段，他们的部署是不同的。所谓SA即为<code>StandAlon</code>的缩写，NSA即为<code>NotStandAlone</code>，之所以有两种组网方式，是因为4G从推广普及到现在这个时间其实还不算很久，当初为了4G通信而购置的大量硬件设施的成本还没盈利回来，所以现阶段的5G通信为了推行技术，故对4G的设备进行了一定的兼容。这样，各大运营商可以使用上5G技术来赚米，又不会浪费现在的设备。</p>
+<h2 id="SA和NSA简略介绍"><a href="#SA和NSA简略介绍" class="headerlink" title="SA和NSA简略介绍"></a>SA和NSA简略介绍</h2><p>如果从技术理论设计上来说，<strong>SA（独立组网）无疑是最佳的选择</strong>，但现实是 3GPP 不得不考虑目前各大运营 商已存在庞大的 4G 网络，如何能<strong>让就网络设备能继续发挥作用，节省投资，又能享受 5G 的体验，这就是 NSA （非独立组网）。</strong></p>
+<h3 id="SA与NSA分类"><a href="#SA与NSA分类" class="headerlink" title="SA与NSA分类"></a>SA与NSA分类</h3><p><img src="https://s2.loli.net/2022/08/28/RYD6uAb1SsX4WlZ.png" alt="image-20220828172224509" style="zoom:50%;" /></p>
+<center><small>图1 5G组网分类</small></center>
+
+<p><img src="https://s2.loli.net/2022/08/28/aQ47rIyAvwtZW16.png" alt="image-20220828172703315" style="zoom:50%;" /></p>
+<center><small>图2 SA和NSA组网方式</small></center>
+
+<p>图2高亮的部分其实对应图1的物种组网方式。这么多的选项，就是 3GPP 提供给运营商更多的选择，主要为他们提供节省资源利旧，我们看一下它们的差别。</p>
+<ul>
+<li><p>SA-opt2（NGC+NR）：全新的 5G 核心网和无线网 gNB 组网，完全新建。这样的优势是可以完全发挥 5G 的各项性能， 按照 3GPP 的标准推进。缺点就需要浩大的投资。</p>
+</li>
+<li><p>SA-opt3（NGC+NR（CP）+LTE）：把原来的 4G 基站进行升级接入，它也属于独立组网。</p>
+</li>
+<li><p>NSA-opt3： 4G 核心网+（4G 基站与 5G 基站混合），运营商一般都爱用3x选项，把UPF数据分两部分，把对4G网络造成瓶颈的部分放到5G处理，剩下那部分走4G的LTE基站。</p>
+<p><img src="https://s2.loli.net/2022/08/28/lzfWReDn8HUaGbX.png" alt="image-20220828173203767" style="zoom:50%;" /></p>
+</li>
+<li><p>NSA-opt4：5G 核心网+（4G 基站与 5G 基站混合）</p>
+</li>
+<li><p>NSA-op7：5G 核心网+（4G 基站与 5G 基站混合），但是UPF和CPF的方式不同。</p>
+</li>
+</ul>
+<h3 id="技术要点总结"><a href="#技术要点总结" class="headerlink" title="技术要点总结"></a>技术要点总结</h3><ul>
+<li>NSA 没有 5G 核心网，是利用现有的 4G 核心网接入，而 SA 则是全部采用 5G 架构，包括 5G 的核心网。</li>
+<li>由于 NSA 是新建 5G 基站+4G 基站升级支持 5G 的，再连接 4G 核心网，因此，在 NSA 组网下，5G 与 4G 在接入网级互通复杂，虽然利旧了 4G 设备，但组网和运营成本大增；在 SA 组网下，5G 与 4G 仅在核心网级互 通，非常简单。</li>
+<li>在 NSA 组网下，终端需要支持 LTE 和 NR 双连接，终端成本会更高；在 SA 组网下，终端仅连接 NR 一种 无线接入技术，对 4G 采用回落技术，简单成熟的技术。</li>
+</ul>
+<p>从技术的角度来说，NSA 肯定是要比 SA 差很远，但 NSA 可以利用现有的设备，节 省投资快速部署 5G，是运营商愿意使用的关键。</p>
+<h3 id="功能差异对比"><a href="#功能差异对比" class="headerlink" title="功能差异对比"></a>功能差异对比</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">功能名称</th>
+<th style="text-align:center">SA支持情况</th>
+<th style="text-align:center">NSA支持情况</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">5G网络切片</td>
+<td style="text-align:center">✅</td>
+<td style="text-align:center">❌</td>
+</tr>
+<tr>
+<td style="text-align:center">多接入边缘计算（MEC）</td>
+<td style="text-align:center">✅</td>
+<td style="text-align:center">❌</td>
+</tr>
+<tr>
+<td style="text-align:center">网络安全与开放</td>
+<td style="text-align:center">安全和开放能力增强</td>
+<td style="text-align:center">安全能力与4G网络一致，无开放能力</td>
+</tr>
+<tr>
+<td style="text-align:center">部署运维</td>
+<td style="text-align:center">部署成本高，运维成本低</td>
+<td style="text-align:center">部署成本低且快，运维成本高</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>综上所述，SA 将是运营商未来的方向，NSA 只作为过渡快速部署和利旧的方案，会获得短期的应用。</p>
+]]></content>
+      <categories>
+        <category>学习记录</category>
+      </categories>
+      <tags>
+        <tag>通信技术</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>关于SMMS更换国内域名导致Picgo不能上传图片的解决方法</title>
+    <url>/2022/08/21/%E8%A7%A3%E5%86%B3Picgo%E4%B8%8A%E4%BC%A0%E5%9B%BE%E7%89%87/</url>
+    <content><![CDATA[<p>最近（2022-8-20）在写文档，突然发现用<code>PicGo</code>上传图片一直报错，主要是<code>Error: connect ETIMEDOUT</code>和<code>Error: read ECONNRESET</code>这俩，但是我挂了梯子后用SMMS是可以直接上传图片的，所以问题出在<code>PicGo</code>上面了。查了下，估计是和SMMS更换了国内域名为<code>.app</code>的原因，这里给出我的解决方法:……</p>
+<span id="more"></span>
+<p>解决方法也很简单，打开<code>PicGo</code>然后点<code>PicGo设置</code>，设置下代理和镜像源就好：</p>
+<p><img src="https://s2.loli.net/2022/08/21/YOnJ9T2FG3A8sEb.png" alt="image-20220821001419713" style="zoom:80%;" /></p>
+<center><small>我的PicGo设置</small></center>
+
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">上传代理:</span> <span class="string">http://127.0.0.1:7890</span></span><br><span class="line"><span class="string">插件安装代理:</span> <span class="string">http://127.0.0.1:7890</span></span><br><span class="line"><span class="string">插件镜像地址:</span> <span class="string">https://registry.npm.taobao.org/</span></span><br></pre></td></tr></table></figure>
+<p>然后就点确定重启一下<code>PicGo</code>就好了~</p>
+]]></content>
+      <categories>
+        <category>学习记录</category>
+      </categories>
+      <tags>
+        <tag>PicGo</tag>
       </tags>
   </entry>
   <entry>
@@ -824,188 +1025,6 @@ Y(x,y)=F(x,y)*H(x,y)=\sum_{n_1=-\infty}^{\infty}\sum_{n_2=-\infty}^{\infty}F(n_1
       </tags>
   </entry>
   <entry>
-    <title>【学习记录】2022-8-20-？</title>
-    <url>/2022/08/20/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%952022-8-20/</url>
-    <content><![CDATA[<p>师兄让我别去CV卷了，让我搞搞通信。然后就是让我看看5G核心网相关的内容，笑死😂，我本科的时候移动通信的老师也和我们一起摆烂，考试开卷基本没啥东西记住的。不过想想也是，CV就业压力挺大的，当成业余兴趣爱好去研究下也不错，做成工作可能也很难受，也卷不过985的顶级实验室出来的。娄山雀说他前几天有个北大ACM区域金牌的计算机硕去面他们的后端都没有机会，然后四个清华大学的硕去面OPPO连简历复筛都没过……很可怕很可怕。然后最近看了严曦老师的《造神年代》，我再次燃起了对通信事业的热情。链接每个节点、信息的传输，和生命的波纹好像，当这些所有波纹和对事件的响应结合到一起构建成了一个系统，就完成了一个宏观定义的世界交互（我好像在说一些乱七八糟的屁话😂）这种感觉和造物其实也挺像的。所以开始吧：</p>
-<span id="more"></span>
-<h2 id="说在开始前"><a href="#说在开始前" class="headerlink" title="说在开始前"></a>说在开始前</h2><p>我对通信比较喜欢不上来的点在于更新速度太快，然后各种缩写在查阅资料的时候又非常麻烦，所以这次真的是破釜沉舟，把每一个缩写都给吃透了。阅读的时候如果有需要查阅的缩写可以直接在网站的搜索功能进行搜索，应该会有解释的。这次学习的内容主要是5G的核心网，由于我的基础比较薄弱，所以我得花花时间了解下发展的历程和了解些工程的问题。</p>
-<p><img src="https://s2.loli.net/2022/08/21/8tsFlNCMLvTDSeX.png" alt="img" style="zoom: 25%;" /></p>
-<h2 id="核心网"><a href="#核心网" class="headerlink" title="核心网"></a>核心网</h2><h3 id="核心网是什么"><a href="#核心网是什么" class="headerlink" title="核心网是什么"></a>核心网是什么</h3><p>在了解5G核心网之前我们需要先了解核心网到底是什么。核心网，有个洋气的英文名，叫Core Network（核心网络），简称CN。说实话，核心网的概念很难定义！广义上的解释难以界定，而狭义角度的解释又没有对应实体。我们只能通过类比以下来描述一下核心网：试想一个快递分拣中心，上面的传送带装满了双十一的各种包裹，传送带是负责传送包裹的，但是哪一个包裹需要传送到哪个地方，是需要一个智体进行调配的。在这个分拣中心，包裹相当于需要传输的数据，传送带相当于一个承载网络，作为信息的承载介质，而我们的核心网就是负责调配数据应该如何传输的指挥官。在这个基础上，我们可以进一步看看核心网到底是怎么发展的。</p>
-<h3 id="核心网的发展"><a href="#核心网的发展" class="headerlink" title="核心网的发展"></a>核心网的发展</h3><p>首先先说说2G，为什么不从1G开始说呢，<del>因为1G的时候根本上不了网啊😂</del>因为1G和2G的核心网架构是非常近似的，这里可以直接等价了。</p>
-<p><img src="https://s2.loli.net/2022/08/21/xMaLeEgD5KvWkcp.jpg" alt="640?wx_fmt=png" style="zoom:50%;" /></p>
-<center><small>2G核心网架构</small></center>
-
-
-
-<p>2G其实前期也是没法上网的，直到2.5G出现才解决了这一问题。从图中可以看出来，2G的核心网组网非常简单，MSC就是核心网的最主要设备。HLR、EIR和用户身份有关，用于鉴权。值得注意的是，之所以图上面写的是“MSC/VLR”，是因为VLR是一个功能实体，但是物理上，VLR和MSC是同一个硬件设备。相当于一个设备实现了两个角色，所以画在一起。HLR/AUC也是如此，HLR和AUC物理合一。下面是2.5G的核心网：</p>
-<p><img src = 'https://s2.loli.net/2022/08/21/2qwdskLl6fxXOhQ.jpg' style="zoom:50%;" ></p>
-<center><small>2.5G核心网架构，为了图简单没有把2G核心网里面的HLR等模块画上去</small></center>
-
-
-
-<p>相比于2G其实就是多了SGSN和GGSN两个模块。这两个模块都是为了实现GPRS数据业务而存在的，GPRS则是2.5G上网的核心服务：</p>
-<p><img src="https://s2.loli.net/2022/08/21/vcplj7bGWZX9ymr.png" alt="640?wx_fmt=png" style="zoom:67%;" /></p>
-<p>再之后就是3G时代了：</p>
-<p><img src="https://s2.loli.net/2022/08/21/9JoVwjSYZR1Gvtb.jpg" alt="640?wx_fmt=png" style="zoom: 50%;" /></p>
-<center><small>3G核心网架构，为了图简单没把HLR等模块画上去</small></center>
-
-
-
-<p>可以看出3G其实变化较大的部分是基站部分，引入了一个<code>NodeB</code>和一个<code>RNC</code>的东西。这个<code>NodeB</code>其实就是专属于3G时代的基站，只是为了区分和2G时代的基站而另起一个名字而已😂这样的作法会在后面的4G、5G都有体现。尽管在图中3G核心网的变化与2G的相比没啥不同，但其实硬件设备已经经过了一轮新的迭代。我们知道，硬件才是工程里面最能指导性能突破的核心力量，因此3G的成功之处很大一部分要感谢硬件的蓬勃发展。不要小看了硬件平台，实际上，就像最开始<strong>华为的C&amp;C08</strong>、<strong>中兴的ZXJ10</strong>一样，设备商自家的很多不同业务的设备，都是基于同一个硬件平台进行开发的。不可能每个设备都单独开发硬件平台，既浪费时间和精力，又不利于生产和维护。稳定可靠且处理能力强大的硬件平台，是产品的基石。从2G到3G，除了IP化以及硬件平台的升级之外，最大的不同就在于分离。在通信系统里面，说白了，就两个（平）面，用户面和控制面：</p>
-<p><img src="https://s2.loli.net/2022/08/21/ZrOvf4BPnq1sxW5.jpg" alt="640?wx_fmt=png" style="zoom:50%;" /></p>
-<p><img src="https://s2.loli.net/2022/08/21/mjOSBUkM4HC8YiF.png" alt="640?wx_fmt=png" style="zoom:50%;" /></p>
-<p>用户面，就是用户的实际业务数据，就是你的语音数据啊，视频流数据啊之类的。而控制面，是为了管理数据走向的信令、命令。这两个面，在通信设备内部，就相当于两个不同的系统，2G时代，用户面和控制面没有明显分开。3G时代，把两个面进行了分离。接着，SGSN变成MME，GGSN变成SGW/PGW，也就演进成了4G核心网：</p>
-<p><img src="https://s2.loli.net/2022/08/21/jIu8dYUeKiX5HDp.jpg" alt="640?wx_fmt=png" style="zoom:50%;" /></p>
-<p>值得注意的是基站里面的RNC没有了，为了实现扁平化，功能一部分给了核心网，一部分给了<code>eNodeB</code>（还记得我说的NodeB是什么嘛）。发展到这里的时候，硬件平台也升级了，以中兴为例，开始启用ATCA/ETCA平台（后来MME就用了它），还有xGW T8000平台（后面PGW和SGW用了它，PGW和SGW物理上是一体的）。</p>
-<p><img src="https://s2.loli.net/2022/08/21/YTSwIyQ87Z5RUgC.jpg" alt="?wx_fmt=jpeg"></p>
-<center><small>中兴ATCA机框</small></center>
-
-
-
-<p>在3G到4G的过程中，IMS出现了，取代传统CS（也就是MSC那些），提供更强大的多媒体服务（语音、图片短信、视频电话等）。IMS，使用的也主要是ATCA平台。实际上这些硬件很像一个电脑，有处理器（MP单板），有网卡（以太网接口卡，光纤接口卡）。而ATCA平台，更像一台电脑了，前面你也看到了，名字就叫“先进电信计算平台”，也就是“电信服务器”嘛。确切说，ATCA里面的业务处理单板，本身就是一台单板造型的“小型化电脑”，有处理器、内存、硬盘，俗称“刀片”。</p>
-<p><img src="https://s2.loli.net/2022/08/21/VNQCTUz3WoZdKhe.jpg" alt="640?wx_fmt=png"></p>
-<center><small>ATCA业务处理板——“刀片”</small></center>
-
-
-
-<p>既然都走到这一步，原来的专用硬件，越做越像IT机房里面的x86通用服务器，那么，不如干脆直接用x86服务器吧!于是虚拟化时代就到来了。虚拟化，就是网元功能虚拟化（Network Function Virtualization，<strong>NFV</strong>）。说白了就是在硬件上，直接采用HP、IBM等IT厂家的x86平台通用服务器（目前以刀片服务器为主，节约空间，也够用）。</p>
-<p><img src="https://s2.loli.net/2022/08/21/9whUsXVCz2xHRl7.jpg" alt="640?wx_fmt=jpeg"></p>
-<p>软件上，设备商基于openstack这样的开源平台，开发自己的虚拟化平台，把以前的核心网网元，“种植”在这个平台之上：</p>
-<p><img src="https://s2.loli.net/2022/08/21/NnYyhD6bJQv3em9.jpg" alt="?wx_fmt=jpeg"></p>
-<p>虚拟化平台不等于5G核心网。也就是说，并不是只有5G才能用虚拟化平台。也不是用了虚拟化平台，就是5G。按照惯例，设备商先在虚拟化平台部署4G核心网，也就是，在为后面5G做准备，提前实验。硬件平台，永远都会提前准备。上面说了5G核心网的硬件平台，接下来，我们仔细说说5G核心网的架构。到了5G，网络逻辑结构彻底改变了。</p>
-<h3 id="5G核心网引入"><a href="#5G核心网引入" class="headerlink" title="5G核心网引入"></a>5G核心网引入</h3><p>5G核心网，采用的是SBA架构（Service Based Architecture，即基于服务的架构）。SBA架构，基于云原生构架设计，借鉴了IT领域的“微服务”理念，把原来具有多个功能的整体，分拆为多个具有独自功能的个体。每个个体，实现自己的微服务。这样的变化，会有一个明显的外部表现，就是网元大量增加了。</p>
-<p><img src="https://s2.loli.net/2022/08/21/QTJyAWGHx68INun.jpg" alt="640?wx_fmt=png" style="zoom:50%;" /></p>
-<center><small>红色虚线内为5G核心网,除了UPF之外，都是控制面</small></center>
-
-
-
-<p>这些网元看上去很多，实际上，硬件都是在虚拟化平台里面虚拟出来的。简而言之，<strong>5G核心网就是模块化、软件化</strong>。5G核心网之所以要模块化，还有一个主要原因，就是为了<strong>“切片”</strong>。5G是一个天下一统的网络，通吃所有用户。设计之初，就需要它应对各种需求。这些需求，被整理为三大应用场景:</p>
-<ul>
-<li><p><strong>eMBB（增强型移动宽带）</strong></p>
-<p>一般日常情况下的上网方式。</p>
-</li>
-<li><p><strong>mMTC（海量物联网通信）</strong></p>
-<p>那堆搞物联网的应该就要搞这个。</p>
-</li>
-<li><p><strong>uRLLC（低时延、高可靠通信）</strong></p>
-<p>用于智能无人驾驶、工业自动化等需要低时延高可靠连接的业务。</p>
-</li>
-</ul>
-<p>既然网络用途不同，当然要见招拆招。以一个死板的固定网络结构去应对，肯定是不行的。只有拆分成模块，灵活组队，才能搞定。所以模块化的设计，有利于网络切片，根据业务需求进行模块的删改增补。</p>
-]]></content>
-      <categories>
-        <category>学习记录</category>
-      </categories>
-      <tags>
-        <tag>5G</tag>
-        <tag>通信技术</tag>
-        <tag>核心网</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>独立组网和非独立组网</title>
-    <url>/2022/08/28/%E7%8B%AC%E7%AB%8B%E7%BB%84%E7%BD%91%E5%92%8C%E9%9D%9E%E7%8B%AC%E7%AB%8B%E7%BB%84%E7%BD%91/</url>
-    <content><![CDATA[<p align="center">
-    <img src="https://s2.loli.net/2022/08/20/oxvPZeT8G7ydzct.png" alt="pyecharts logo" width=200 height=200 />
-</p>
-<h1 align="center">独立组网和非独立组网</h1>
-<p align="center">
-    <em>4/5G技术过渡的组网分析</em>
-</p>
-
-
-
-<span id="more"></span>
-<h1 id="独立（NSA）组网和非独立-NSA-组网"><a href="#独立（NSA）组网和非独立-NSA-组网" class="headerlink" title="独立（NSA）组网和非独立(NSA)组网"></a>独立（NSA）组网和非独立(NSA)组网</h1><h2 id="5G网络架构"><a href="#5G网络架构" class="headerlink" title="5G网络架构"></a>5G网络架构</h2><p>5G网络中有SA和NSA两种，在3GPP的R15版本中分成两个阶段，他们的部署是不同的。所谓SA即为<code>StandAlon</code>的缩写，NSA即为<code>NotStandAlone</code>，之所以有两种组网方式，是因为4G从推广普及到现在这个时间其实还不算很久，当初为了4G通信而购置的大量硬件设施的成本还没盈利回来，所以现阶段的5G通信为了推行技术，故对4G的设备进行了一定的兼容。这样，各大运营商可以使用上5G技术来赚米，又不会浪费现在的设备。</p>
-<h2 id="SA和NSA简略介绍"><a href="#SA和NSA简略介绍" class="headerlink" title="SA和NSA简略介绍"></a>SA和NSA简略介绍</h2><p>如果从技术理论设计上来说，<strong>SA（独立组网）无疑是最佳的选择</strong>，但现实是 3GPP 不得不考虑目前各大运营 商已存在庞大的 4G 网络，如何能<strong>让就网络设备能继续发挥作用，节省投资，又能享受 5G 的体验，这就是 NSA （非独立组网）。</strong></p>
-<h3 id="SA与NSA分类"><a href="#SA与NSA分类" class="headerlink" title="SA与NSA分类"></a>SA与NSA分类</h3><p><img src="https://s2.loli.net/2022/08/28/RYD6uAb1SsX4WlZ.png" alt="image-20220828172224509" style="zoom:50%;" /></p>
-<center><small>图1 5G组网分类</small></center>
-
-<p><img src="https://s2.loli.net/2022/08/28/aQ47rIyAvwtZW16.png" alt="image-20220828172703315" style="zoom:50%;" /></p>
-<center><small>图2 SA和NSA组网方式</small></center>
-
-<p>图2高亮的部分其实对应图1的物种组网方式。这么多的选项，就是 3GPP 提供给运营商更多的选择，主要为他们提供节省资源利旧，我们看一下它们的差别。</p>
-<ul>
-<li><p>SA-opt2（NGC+NR）：全新的 5G 核心网和无线网 gNB 组网，完全新建。这样的优势是可以完全发挥 5G 的各项性能， 按照 3GPP 的标准推进。缺点就需要浩大的投资。</p>
-</li>
-<li><p>SA-opt3（NGC+NR（CP）+LTE）：把原来的 4G 基站进行升级接入，它也属于独立组网。</p>
-</li>
-<li><p>NSA-opt3： 4G 核心网+（4G 基站与 5G 基站混合），运营商一般都爱用3x选项，把UPF数据分两部分，把对4G网络造成瓶颈的部分放到5G处理，剩下那部分走4G的LTE基站。</p>
-<p><img src="https://s2.loli.net/2022/08/28/lzfWReDn8HUaGbX.png" alt="image-20220828173203767" style="zoom:50%;" /></p>
-</li>
-<li><p>NSA-opt4：5G 核心网+（4G 基站与 5G 基站混合）</p>
-</li>
-<li><p>NSA-op7：5G 核心网+（4G 基站与 5G 基站混合），但是UPF和CPF的方式不同。</p>
-</li>
-</ul>
-<h3 id="技术要点总结"><a href="#技术要点总结" class="headerlink" title="技术要点总结"></a>技术要点总结</h3><ul>
-<li>NSA 没有 5G 核心网，是利用现有的 4G 核心网接入，而 SA 则是全部采用 5G 架构，包括 5G 的核心网。</li>
-<li>由于 NSA 是新建 5G 基站+4G 基站升级支持 5G 的，再连接 4G 核心网，因此，在 NSA 组网下，5G 与 4G 在接入网级互通复杂，虽然利旧了 4G 设备，但组网和运营成本大增；在 SA 组网下，5G 与 4G 仅在核心网级互 通，非常简单。</li>
-<li>在 NSA 组网下，终端需要支持 LTE 和 NR 双连接，终端成本会更高；在 SA 组网下，终端仅连接 NR 一种 无线接入技术，对 4G 采用回落技术，简单成熟的技术。</li>
-</ul>
-<p>从技术的角度来说，NSA 肯定是要比 SA 差很远，但 NSA 可以利用现有的设备，节 省投资快速部署 5G，是运营商愿意使用的关键。</p>
-<h3 id="功能差异对比"><a href="#功能差异对比" class="headerlink" title="功能差异对比"></a>功能差异对比</h3><div class="table-container">
-<table>
-<thead>
-<tr>
-<th style="text-align:center">功能名称</th>
-<th style="text-align:center">SA支持情况</th>
-<th style="text-align:center">NSA支持情况</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">5G网络切片</td>
-<td style="text-align:center">✅</td>
-<td style="text-align:center">❌</td>
-</tr>
-<tr>
-<td style="text-align:center">多接入边缘计算（MEC）</td>
-<td style="text-align:center">✅</td>
-<td style="text-align:center">❌</td>
-</tr>
-<tr>
-<td style="text-align:center">网络安全与开放</td>
-<td style="text-align:center">安全和开放能力增强</td>
-<td style="text-align:center">安全能力与4G网络一致，无开放能力</td>
-</tr>
-<tr>
-<td style="text-align:center">部署运维</td>
-<td style="text-align:center">部署成本高，运维成本低</td>
-<td style="text-align:center">部署成本低且快，运维成本高</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>综上所述，SA 将是运营商未来的方向，NSA 只作为过渡快速部署和利旧的方案，会获得短期的应用。</p>
-]]></content>
-      <categories>
-        <category>学习记录</category>
-      </categories>
-      <tags>
-        <tag>通信技术</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>关于SMMS更换国内域名导致Picgo不能上传图片的解决方法</title>
-    <url>/2022/08/21/%E8%A7%A3%E5%86%B3Picgo%E4%B8%8A%E4%BC%A0%E5%9B%BE%E7%89%87/</url>
-    <content><![CDATA[<p>最近（2022-8-20）在写文档，突然发现用<code>PicGo</code>上传图片一直报错，主要是<code>Error: connect ETIMEDOUT</code>和<code>Error: read ECONNRESET</code>这俩，但是我挂了梯子后用SMMS是可以直接上传图片的，所以问题出在<code>PicGo</code>上面了。查了下，估计是和SMMS更换了国内域名为<code>.app</code>的原因，这里给出我的解决方法:……</p>
-<span id="more"></span>
-<p>解决方法也很简单，打开<code>PicGo</code>然后点<code>PicGo设置</code>，设置下代理和镜像源就好：</p>
-<p><img src="https://s2.loli.net/2022/08/21/YOnJ9T2FG3A8sEb.png" alt="image-20220821001419713" style="zoom:80%;" /></p>
-<center><small>我的PicGo设置</small></center>
-
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">上传代理:</span> <span class="string">http://127.0.0.1:7890</span></span><br><span class="line"><span class="string">插件安装代理:</span> <span class="string">http://127.0.0.1:7890</span></span><br><span class="line"><span class="string">插件镜像地址:</span> <span class="string">https://registry.npm.taobao.org/</span></span><br></pre></td></tr></table></figure>
-<p>然后就点确定重启一下<code>PicGo</code>就好了~</p>
-]]></content>
-      <categories>
-        <category>学习记录</category>
-      </categories>
-      <tags>
-        <tag>PicGo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>通信名词解释</title>
     <url>/2020/01/01/%E9%80%9A%E4%BF%A1%20%E5%90%8D%E8%AF%8D%E8%A7%A3%E9%87%8A/</url>
     <content><![CDATA[<p>本文主要用于记录常见的通信专业的专业术语，并尝试记录其简易的意义与功能，配合博客的本地搜索功能以达到查阅的目的。<span id="more"></span></p>
@@ -1074,11 +1093,11 @@ Y(x,y)=F(x,y)*H(x,y)=\sum_{n_1=-\infty}^{\infty}\sum_{n_2=-\infty}^{\infty}F(n_1
 <p>根据这份数据，我们可以做出一些有意思的分析，我们开始吧！</p>
 <h1 id="统计计数类"><a href="#统计计数类" class="headerlink" title="统计计数类"></a>统计计数类</h1><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">rate_count1 = joined_df.value_counts(<span class="string">&#x27;average_rating&#x27;</span>,sort=<span class="literal">False</span>)</span><br><span class="line">rate_count_index1 = rate_count1.index.to_list()</span><br><span class="line">rate_count_data1 = rate_count1.to_list()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">bar = (</span><br><span class="line">    Bar()</span><br><span class="line">    .add_xaxis(rate_count_index1)</span><br><span class="line">    .add_yaxis(<span class="string">&#x27;1v1平均Rating&#x27;</span>,rate_count_data1, label_opts=opts.LabelOpts(is_show=<span class="literal">False</span>))</span><br><span class="line">    .set_global_opts(</span><br><span class="line">        title_opts=opts.TitleOpts(</span><br><span class="line">            title=<span class="string">&quot;平均Rating统计📈&quot;</span>,</span><br><span class="line">            pos_left=<span class="string">&#x27;center&#x27;</span>),</span><br><span class="line">        datazoom_opts=[opts.DataZoomOpts(), opts.DataZoomOpts(type_=<span class="string">&quot;inside&quot;</span>)],</span><br><span class="line">        legend_opts=opts.LegendOpts(is_show=<span class="literal">False</span>)</span><br><span class="line">    )</span><br><span class="line">)</span><br><span class="line">bar.render(<span class="string">&#x27;rate.html&#x27;</span>)</span><br></pre></td></tr></table></figure>
 <script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.min.js"></script>
-<div id="echarts2442" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts7904" style="width: 81%;height: 400px;margin: 0 auto"></div>
 
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts2442'));
+        var myChart = echarts.init(document.getElementById('echarts7904'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -6524,11 +6543,11 @@ Y(x,y)=F(x,y)*H(x,y)=\sum_{n_1=-\infty}^{\infty}\sum_{n_2=-\infty}^{\infty}F(n_1
 
 
 <p>胜率热力图分析：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">latest_patch = <span class="number">37906</span></span><br><span class="line">joined_1v1 = joined_df[(joined_df.ladder == <span class="string">&#x27;RM_1v1&#x27;</span>) &amp; (joined_df.patch == latest_patch)]</span><br><span class="line">renames = &#123;</span><br><span class="line">    <span class="string">&#x27;token_player&#x27;</span>: <span class="string">&#x27;opponent&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;civ&#x27;</span> : <span class="string">&#x27;opponent_civ&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line">op_data = joined_1v1[[<span class="string">&#x27;match&#x27;</span>,<span class="string">&#x27;token_player&#x27;</span>,<span class="string">&#x27;civ&#x27;</span>]].rename(columns = renames)</span><br><span class="line">vs_data = pd.merge(joined_1v1,op_data,left_on=<span class="string">&#x27;match&#x27;</span>, right_on=<span class="string">&#x27;match&#x27;</span>)</span><br><span class="line">vs_data = vs_data[vs_data[<span class="string">&#x27;token_player&#x27;</span>]!=vs_data[<span class="string">&#x27;opponent&#x27;</span>]]</span><br><span class="line">vs_data.to_csv(<span class="string">&#x27;heat_data.csv&#x27;</span>)</span><br><span class="line">heat_data = vs_data.pivot_table(values=<span class="string">&#x27;winner&#x27;</span>, index=<span class="string">&#x27;civ&#x27;</span>, columns=<span class="string">&#x27;opponent_civ&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(heat_data.head())</span><br><span class="line"></span><br><span class="line">xdata = heat_data.index.to_list()</span><br><span class="line">ydata = xdata</span><br><span class="line"></span><br><span class="line">heat = (</span><br><span class="line">    HeatMap()</span><br><span class="line">    .add_xaxis(xdata)</span><br><span class="line">    .add_yaxis(<span class="string">&#x27;胜率&#x27;</span>,ydata,[[i,j, <span class="number">100</span>*heat_data[xdata[i]][ydata[j]]] <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(xdata)) <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(ydata))])</span><br><span class="line">    .set_global_opts(</span><br><span class="line">        title_opts=opts.TitleOpts(title=<span class="string">&quot;文明间胜率&quot;</span>,pos_left = <span class="string">&#x27;center&#x27;</span>),</span><br><span class="line">        visualmap_opts=opts.VisualMapOpts(</span><br><span class="line">            pos_left=<span class="string">&#x27;right&#x27;</span>,</span><br><span class="line">            pos_top = <span class="string">&#x27;center&#x27;</span>,</span><br><span class="line">            range_color=[<span class="string">&#x27;#FFA500&#x27;</span>,<span class="string">&#x27;#DC143C&#x27;</span>],</span><br><span class="line">            max_ = <span class="number">70</span>,</span><br><span class="line">            min_= <span class="number">30</span>,</span><br><span class="line">            ),</span><br><span class="line">        legend_opts=opts.LegendOpts(</span><br><span class="line">            is_show=<span class="literal">False</span></span><br><span class="line">        ),</span><br><span class="line">        xaxis_opts=opts.AxisOpts(</span><br><span class="line">            axislabel_opts=&#123;<span class="string">&quot;rotate&quot;</span>:-<span class="number">45</span>,<span class="string">&#x27;interval&#x27;</span>: <span class="number">0</span> &#125;,</span><br><span class="line">        )</span><br><span class="line">    )</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">heat.render(<span class="string">&#x27;heat_civ.html&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">opponent_civ    Aztecs   Berbers   Britons  Bulgarians   Burmese  Byzantines     Celts   Chinese    Cumans  Ethiopians    Franks     Goths      Huns  ...   Malians    Mayans   Mongols  Persians  Portuguese  Saracens     Slavs   Spanish    Tatars   Teutons     Turks  Vietnamese   Vikings</span></span><br><span class="line"><span class="string">civ                                                                                                                                                   ...</span></span><br><span class="line"><span class="string">Aztecs        0.500000  0.519409  0.522204    0.444700  0.535714    0.572115  0.482425  0.553350  0.505618    0.515586  0.457627  0.455416  0.487547  ...  0.425428  0.491753  0.529975  0.521455    0.621993  0.557960  0.453731  0.508088  0.508224  0.443996  0.502899    0.550420  0.431284</span></span><br><span class="line"><span class="string">Berbers       0.480591  0.500000  0.513193    0.567050  0.541935    0.475336  0.449351  0.613027  0.542208    0.506527  0.458333  0.446680  0.473934  ...  0.446927  0.514644  0.545839  0.524510    0.552083  0.533654  0.477612  0.538690  0.574661  0.448387  0.511628    0.552511  0.498778</span></span><br><span class="line"><span class="string">Britons       0.477796  0.486807  0.500000    0.532271  0.573003    0.502203  0.486817  0.525826  0.508761    0.533719  0.469757  0.453132  0.446475  ...  0.492635  0.498131  0.535856  0.497549    0.617647  0.577160  0.503876  0.533037  0.541262  0.527235  0.563725    0.500497  0.501971</span></span><br><span class="line"><span class="string">Bulgarians    0.555300  0.432950  0.467729    0.500000  0.450000    0.571429  0.539232  0.516355  0.534636    0.457413  0.469477  0.502787  0.445667  ...  0.440329  0.480702  0.479428  0.526756    0.518293  0.495385  0.489097  0.485401  0.498452  0.503968  0.542751    0.503817  0.431271</span></span><br><span class="line"><span class="string">Burmese       0.464286  0.458065  0.426997    0.550000  0.500000    0.587571  0.513441  0.420601  0.567708    0.460317  0.536517  0.571134  0.463104  ...  0.570513  0.455405  0.501515  0.495702    0.493976  0.420849  0.569231  0.533708  0.505376  0.543860  0.613445    0.446281  0.494413</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">[5 rows x 35 columns]</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure><br><script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.min.js"></script>
-<div id="echarts5986" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts158" style="width: 81%;height: 400px;margin: 0 auto"></div>
 
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts5986'));
+        var myChart = echarts.init(document.getElementById('echarts158'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -12904,11 +12923,11 @@ Y(x,y)=F(x,y)*H(x,y)=\sum_{n_1=-\infty}^{\infty}\sum_{n_2=-\infty}^{\infty}F(n_1
 
 </p>
 <script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.min.js"></script>
-<div id="echarts2546" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts3023" style="width: 81%;height: 400px;margin: 0 auto"></div>
 
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts2546'));
+        var myChart = echarts.init(document.getElementById('echarts3023'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -13110,11 +13129,11 @@ Y(x,y)=F(x,y)*H(x,y)=\sum_{n_1=-\infty}^{\infty}\sum_{n_2=-\infty}^{\infty}F(n_1
 
 
 <script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.min.js"></script>
-<div id="echarts709" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts8380" style="width: 81%;height: 400px;margin: 0 auto"></div>
 
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts709'));
+        var myChart = echarts.init(document.getElementById('echarts8380'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -13403,11 +13422,11 @@ Y(x,y)=F(x,y)*H(x,y)=\sum_{n_1=-\infty}^{\infty}\sum_{n_2=-\infty}^{\infty}F(n_1
 
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">color_count = joined_df[~joined_df[<span class="string">&#x27;color&#x27;</span>].isna()].value_counts(<span class="string">&#x27;color&#x27;</span>,sort=<span class="literal">False</span>)</span><br><span class="line">color_count_index = color_count.index.to_list()</span><br><span class="line">color_count_data = color_count.to_list()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">pie = (</span><br><span class="line">    Pie()</span><br><span class="line">    .add(</span><br><span class="line">        <span class="string">&quot;&quot;</span>,</span><br><span class="line">        [<span class="built_in">list</span>(z) <span class="keyword">for</span> z <span class="keyword">in</span> <span class="built_in">zip</span> (color_count_index,color_count_data)],</span><br><span class="line">        radius=[<span class="string">&quot;30%&quot;</span>, <span class="string">&quot;75%&quot;</span>],</span><br><span class="line">        center=[<span class="string">&quot;50%&quot;</span>, <span class="string">&quot;50%&quot;</span>],</span><br><span class="line">        rosetype=<span class="string">&quot;radius&quot;</span>,</span><br><span class="line">        label_opts=opts.LabelOpts(is_show=<span class="literal">False</span>),</span><br><span class="line">        </span><br><span class="line">    )</span><br><span class="line">    .set_colors(color_count_index)</span><br><span class="line">    .set_global_opts(</span><br><span class="line">        title_opts=opts.TitleOpts(title=<span class="string">&quot;颜色使用情况🎨&quot;</span>,pos_left=<span class="string">&#x27;center&#x27;</span>),</span><br><span class="line">        legend_opts=opts.LegendOpts(pos_bottom=<span class="string">&#x27;bottom&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    )</span><br><span class="line">).render(<span class="string">&#x27;colors.html&#x27;</span>)</span><br></pre></td></tr></table></figure>
 <script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.min.js"></script>
-<div id="echarts5034" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts8041" style="width: 81%;height: 400px;margin: 0 auto"></div>
 
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts5034'));
+        var myChart = echarts.init(document.getElementById('echarts8041'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -13543,11 +13562,11 @@ Y(x,y)=F(x,y)*H(x,y)=\sum_{n_1=-\infty}^{\infty}\sum_{n_2=-\infty}^{\infty}F(n_1
 
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">win_team_count = joined_df[(joined_df.winner==<span class="literal">True</span>) &amp; (joined_df.ladder==<span class="string">&quot;RM_TEAM&quot;</span>)].value_counts(<span class="string">&#x27;civ&#x27;</span>,sort=<span class="literal">False</span>)</span><br><span class="line">win_team_count_data = win_team_count.to_list()</span><br><span class="line">win_team_count_index = win_team_count.index.to_list()</span><br><span class="line"></span><br><span class="line">bar = (</span><br><span class="line">    Bar()</span><br><span class="line">    .add_xaxis(win_team_count_index)</span><br><span class="line">    .add_yaxis(<span class="string">&quot;team&quot;</span>,win_team_count_data,category_gap=<span class="number">12</span>)</span><br><span class="line">    .set_global_opts(</span><br><span class="line">        title_opts=opts.TitleOpts(</span><br><span class="line">            title=<span class="string">&quot;团战文明胜利场次统计🎊&quot;</span>,</span><br><span class="line">            pos_left=<span class="string">&#x27;center&#x27;</span>),</span><br><span class="line">        legend_opts=opts.LegendOpts(</span><br><span class="line">            pos_bottom=<span class="string">&#x27;bottom&#x27;</span>,</span><br><span class="line">            is_show=<span class="literal">False</span>),</span><br><span class="line">        xaxis_opts=opts.AxisOpts(</span><br><span class="line">            axislabel_opts=&#123;<span class="string">&quot;rotate&quot;</span>:-<span class="number">45</span>,<span class="string">&#x27;interval&#x27;</span>: <span class="number">0</span> &#125;,</span><br><span class="line">            name_textstyle_opts=opts.TextStyleOpts(</span><br><span class="line">                font_size=<span class="number">2</span></span><br><span class="line">            )),)</span><br><span class="line">    .set_series_opts(label_opts=opts.LabelOpts(is_show=<span class="literal">False</span>))</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">bar.render(<span class="string">&#x27;win_team_count.html&#x27;</span>)</span><br></pre></td></tr></table></figure>
 <script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.min.js"></script>
-<div id="echarts5737" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts5666" style="width: 81%;height: 400px;margin: 0 auto"></div>
 
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts5737'));
+        var myChart = echarts.init(document.getElementById('echarts5666'));
 
         // 指定图表的配置项和数据
         var option = {
@@ -13795,11 +13814,11 @@ Y(x,y)=F(x,y)*H(x,y)=\sum_{n_1=-\infty}^{\infty}\sum_{n_2=-\infty}^{\infty}F(n_1
 
 
 <script src="https://cdn.jsdelivr.net/npm/echarts@4.8.0/dist/echarts.min.js"></script>
-<div id="echarts278" style="width: 81%;height: 400px;margin: 0 auto"></div>
+<div id="echarts9961" style="width: 81%;height: 400px;margin: 0 auto"></div>
 
 <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts278'));
+        var myChart = echarts.init(document.getElementById('echarts9961'));
 
         // 指定图表的配置项和数据
         var option = {
