@@ -20,28 +20,41 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":5},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="阿花的Blog">
-<meta property="og:url" content="http://example.com/index.html">
+  <meta name="description" content="摘要：由于现有的车辆高密度和多样的车载服务需求，在当前的LTE网络使用效益最高的方法保证车载服务质量充满了挑战。很幸运的是，随着5G技术的发展，大量的蜂窝小区的建立被视为可达到车联网低延迟需求的场景下的一个可行方案。然而，这可能会导致大量的操作开销的产生以及由受限的回传容量以及爆发式增长的信号发射造成的移动网络操作的成本。本文提出一种把软件定义的网络和无线资源虚拟化整合到基于LTE系统的车联网络，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【文献翻译】Delay-Optimal Virtualized Radio Resource Scheduling in Software-Defined Vehicular Networks via Stochastic Learning">
+<meta property="og:url" content="http://example.com/2022/09/24/Translation/index.html">
 <meta property="og:site_name" content="阿花的Blog">
+<meta property="og:description" content="摘要：由于现有的车辆高密度和多样的车载服务需求，在当前的LTE网络使用效益最高的方法保证车载服务质量充满了挑战。很幸运的是，随着5G技术的发展，大量的蜂窝小区的建立被视为可达到车联网低延迟需求的场景下的一个可行方案。然而，这可能会导致大量的操作开销的产生以及由受限的回传容量以及爆发式增长的信号发射造成的移动网络操作的成本。本文提出一种把软件定义的网络和无线资源虚拟化整合到基于LTE系统的车联网络，">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/09/21/hfYW52qV1MEF3G9.png">
+<meta property="og:image" content="https://s2.loli.net/2022/09/21/TW7BfgAZrtO4ojJ.png">
+<meta property="og:image" content="https://s2.loli.net/2022/09/24/BdkJlFwh5HrQf6j.png">
+<meta property="og:image" content="https://s2.loli.net/2022/09/24/9MPw8Y7HIAbzaXD.png">
+<meta property="og:image" content="https://s2.loli.net/2022/09/24/JL8k6MH7CQoyXvI.png">
+<meta property="og:image" content="https://s2.loli.net/2022/09/24/RJxB8aoNlPnVXeZ.png">
+<meta property="og:image" content="https://s2.loli.net/2022/09/24/UZYAVRLPKBkH26j.png">
+<meta property="article:published_time" content="2022-09-24T05:15:14.422Z">
+<meta property="article:modified_time" content="2022-09-24T05:14:56.957Z">
 <meta property="article:author" content="阿花想养萨摩耶">
+<meta property="article:tag" content="文献翻译">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2022/09/21/hfYW52qV1MEF3G9.png">
 
-<link rel="canonical" href="http://example.com/">
+<link rel="canonical" href="http://example.com/2022/09/24/Translation/">
 
 
 <script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : true,
-    isPost : false,
+    isHome : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>阿花的Blog</title>
+  <title>【文献翻译】Delay-Optimal Virtualized Radio Resource Scheduling in Software-Defined Vehicular Networks via Stochastic Learning | 阿花的Blog</title>
   
 
 
@@ -183,9 +196,10 @@
         <div class="content-wrap">
           
 
-          <div class="content index posts-expand">
+          <div class="content post posts-expand">
             
-      
+
+    
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
@@ -201,10 +215,9 @@
       <meta itemprop="name" content="阿花的Blog">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/09/24/Translation/" class="post-title-link" itemprop="url">【文献翻译】Delay-Optimal Virtualized Radio Resource Scheduling in Software-Defined Vehicular Networks via Stochastic Learning</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          【文献翻译】Delay-Optimal Virtualized Radio Resource Scheduling in Software-Defined Vehicular Networks via Stochastic Learning
+        </h1>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -237,7 +250,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>摘要：由于现有的车辆高密度和多样的车载服务需求，在当前的LTE网络使用效益最高的方法保证车载服务质量充满了挑战。很幸运的是，随着5G技术的发展，大量的蜂窝小区的建立被视为可达到车联网低延迟需求的场景下的一个可行方案。然而，这可能会导致大量的操作开销的产生以及由受限的回传容量以及爆发式增长的信号发射造成的移动网络操作的成本。本文提出一种把软件定义的网络和无线资源虚拟化整合到基于LTE系统的车联网络，比如说</p>
+        <p>摘要：由于现有的车辆高密度和多样的车载服务需求，在当前的LTE网络使用效益最高的方法保证车载服务质量充满了挑战。很幸运的是，随着5G技术的发展，大量的蜂窝小区的建立被视为可达到车联网低延迟需求的场景下的一个可行方案。然而，这可能会导致大量的操作开销的产生以及由受限的回传容量以及爆发式增长的信号发射造成的移动网络操作的成本。本文提出一种把软件定义的网络和无线资源虚拟化整合到基于LTE系统的车联网络，比如说</p>
 <p>，<strong>SoftdEfined heteRogeneous VehICular nEtwork</strong>。基于此系统框架，我们提出了基于stochastic Learning的时延最优虚拟无线电资源规划方法。延迟优化问题可以被建模成一个无限维度的平均损耗的部分可观测马尔可夫决策链的过程。然后，使用一个等价的贝尔曼方程来解决这个问题。我们提出的方法可以分成两部分，宏观虚拟资源分配MaVRA以及微观虚拟资源分配MiVRA。前者基于大尺度的时间段单元（交通密度的）而使用，后者通过小尺度的时间段单元履行职能（信道状态 队列状态）。仿真的结果显示了我们提出的方法比传统方法更有效。</p>
 <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>“链接的车辆”被视为能提高交通运势效率，保障交通安全，减少交通事故并降低交通拥塞影响的方法。智能交通系统通过V2V以及V2I的通信为交通安全与效率提供了支持，车辆的无线连接已经称为多方追逐社会与经济效益的目标。同时，大量的服务被设计来保证交通安全，提高交通质量并满足乘客娱乐需求（？），要做到这些就需要达到严格的服务质量QoS需求。通常，安全服务的最大容许延迟时间是需要小于100ms的，对于特殊服务，比如说碰撞预测警报，最大允许的时延是50ms，其他的非安全相关服务的最大允许时延时间是500ms。</p>
 <p>多样的无线通信技术已经被考虑纳入支持ITS服务。1999年DSRC技术取得发展，它最广为人知的叫法是IEEE 802</p>
@@ -475,753 +488,90 @@ X_{(b,n),k}=\frac{\Delta T}{\bar N_{b,n}}(q^n(T_b,Q_{b,n}-1)-q^n(T_b,Q_{b,n}))\l
 <p>图6表示MDP方法打的收敛性，给出了长度为10的队列状态$\{q_b^n(Q)\}$平均的势函数以及时隙槽的关系图。可以看到我们给出的方法收敛速度很快，而且随着队列状态空间越大，能更快收敛。这种现象的原因是和图六中所给出的在仿真条件下小长度序列拥有更多状态空间的队列的更新频率更快。</p>
 <h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>本文提出了一种在SERVICE框架下的两步时延最优虚拟无线资源分配方法。这种方法可以建模成有限域中的平均成本POMDP问题，通过解一个等价的贝尔曼方程即可求解。为了减少计算复杂度以及信令开销，使用了1)分成MaVRA以及MiVRA两个从不同时间层面决策的决策步；2）通过累加每个用于估计系统势函数SvBS的势函数进行线性拟合，大量地减少了系统空间的维数，并且使用了在线分布学习的分布式算法去估计每个车辆的势函数，最终，我们证明了我么牛的方法可以收敛并且达到了一个不错的性能增益效果。</p>
 
-      
     </div>
 
     
     
     
+
       <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/09/20/usrp/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="阿花想养萨摩耶">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="阿花的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/09/20/usrp/" class="post-title-link" itemprop="url">在Ubuntu20.04 LTS中配置USRP B210</a>
-        </h2>
+          <div class="post-tags">
+              <a href="/tags/%E6%96%87%E7%8C%AE%E7%BF%BB%E8%AF%91/" rel="tag"><i class="fa fa-tag"></i> 文献翻译</a>
+          </div>
+          <script type="text/javascript">
+            var tagsall=document.getElementsByClassName("post-tags")
+            for (var i = tagsall.length - 1; i >= 0; i--){
+                var tags=tagsall[i].getElementsByTagName("a");
+                for (var j = tags.length - 1; j >= 0; j--) {
+                    var golden_ratio = 0.618033988749895;
+                    var s = 0.5;
+                    var v = 0.999;
+                    var h = golden_ratio + Math.random()*0.8 - 0.5;
+                    var h_i = parseInt(h * 6);
+                    var f = h * 6 - h_i;
+                    var p = v * (1 - s);
+                    var q = v * (1 - f * s);
+                    var t = v * (1 - (1 - f) * s);
+                    var r, g, b;
+                    switch (h_i) {
+                        case 0:
+                            r = v;
+                            g = t;
+                            b = p;
+                            break;
+                        case 1:
+                            r = q;
+                            g = v;
+                            b = p;
+                            break;
+                        case 2:
+                            r = p;
+                            g = v;
+                            b = t;
+                            break;
+                        case 3 :
+                            r = p;
+                            g = q;
+                            b = v;
+                            break;
+                        case 4:
+                            r = t;
+                            g = p;
+                            b = v;
+                            break;
+                        case 5:
+                            r = v;
+                            g = p;
+                            b = q;
+                            break;
+                        default:
+                            r = 1;
+                            g = 1;
+                            b = 1;
+                      }
+                    tags[j].style.background = "rgba("+parseInt(r*255)+","+parseInt(g*255)+","+parseInt(b*255)+","+0.5+")";
+                }
+            }                        
+            </script>
 
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-09-20 23:09:58 / 修改时间：23:09:48" itemprop="dateCreated datePublished" datetime="2022-09-20T23:09:58+08:00">2022-09-20</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>从实验室白嫖了SDR，是USRP B210，准备用作UE放在Ubuntu搭建的核心网里，记录一下配置的过程。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/09/20/usrp/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
-    </div>
 
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/09/09/%E5%85%89%E6%A8%A1%E5%9D%97%E5%95%86%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="阿花想养萨摩耶">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="阿花的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/09/09/%E5%85%89%E6%A8%A1%E5%9D%97%E5%95%86%E7%94%A8/" class="post-title-link" itemprop="url">光模块发展简易调研</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-09-09 08:59:18" itemprop="dateCreated datePublished" datetime="2022-09-09T08:59:18+08:00">2022-09-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-09-15 19:51:21" itemprop="dateModified" datetime="2022-09-15T19:51:21+08:00">2022-09-15</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%80%9A%E4%BF%A1%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">通信技术</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>​        光模块是光通信中的核心器件，其核心功能是实现光电信号的相互转换。在数据流量爆发与网络需求升级的背景下，全球光模块市场成长动能强劲。从长期来看，光模块厂商未来有望迎来发展黄金时期，产品力的提升与工程师红利为光模块行业带来巨大潜能，国内龙头厂商如中际旭创、新易盛等在全球光模块竞争市场中逐渐崛起，近年来产品竞争力已赶超海外。本文试从商用光模块基本信息概述与光模块发展趋势两个维度对光模块发展进行简单的分析。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/09/09/%E5%85%89%E6%A8%A1%E5%9D%97%E5%95%86%E7%94%A8/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/09/20/usrp/" rel="prev" title="在Ubuntu20.04 LTS中配置USRP B210">
+      <i class="fa fa-chevron-left"></i> 在Ubuntu20.04 LTS中配置USRP B210
+    </a></div>
+      <div class="post-nav-item"></div>
     </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
       </footer>
+    
   </article>
   
   
   
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/08/30/%E9%80%A0%E7%A5%9E%E5%B9%B4%E4%BB%A3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="阿花想养萨摩耶">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="阿花的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/30/%E9%80%A0%E7%A5%9E%E5%B9%B4%E4%BB%A3/" class="post-title-link" itemprop="url">读《造神年代》的一些读后随想</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-08-30 20:57:22 / 修改时间：21:43:39" itemprop="dateCreated datePublished" datetime="2022-08-30T20:57:22+08:00">2022-08-30</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%9D%82%E9%A1%B9/" itemprop="url" rel="index"><span itemprop="name">杂项</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p align="center">
-    <img src="https://s2.loli.net/2022/08/30/EpnfvMBasDtQ1Tr.png" alt="pyecharts logo" width=768 height=563 />
-</p>
-<h1 align="center">造神年代真几把好看！</h1>
-<p align="center"></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/08/30/%E9%80%A0%E7%A5%9E%E5%B9%B4%E4%BB%A3/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/08/28/PDU%E4%BC%9A%E8%AF%9D/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="阿花想养萨摩耶">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="阿花的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/28/PDU%E4%BC%9A%E8%AF%9D/" class="post-title-link" itemprop="url">PDU会话过程的建立过程</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-28 18:13:01" itemprop="dateCreated datePublished" datetime="2022-08-28T18:13:01+08:00">2022-08-28</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-09-15 16:33:53" itemprop="dateModified" datetime="2022-09-15T16:33:53+08:00">2022-09-15</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>PDU会话是UE和指定DN之间的一条逻辑连接，为UE提供到DN的用户面连接。那么他的建立过程是怎样的呢?</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/08/28/PDU%E4%BC%9A%E8%AF%9D/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/08/28/Markdown%20%E6%A8%A1%E6%9D%BF/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="阿花想养萨摩耶">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="阿花的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/28/Markdown%20%E6%A8%A1%E6%9D%BF/" class="post-title-link" itemprop="url">Typora新建文件时使用模板</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-28 17:37:17" itemprop="dateCreated datePublished" datetime="2022-08-28T17:37:17+08:00">2022-08-28</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-09-15 16:34:46" itemprop="dateModified" datetime="2022-09-15T16:34:46+08:00">2022-09-15</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p align="center">
-    <img src="https://s2.loli.net/2022/08/20/oxvPZeT8G7ydzct.png" alt="banner" width=200 height=200 />
-</p>
-<h1 align="center">这是文章模板的标题</h1>
-<p align="center">
-    <em>这是文章模板的副标题</em>
-</p>
-
-
-
-
-<p>经常写日记/博客/ToDo的朋友应该会对每次新建md文件时都要从以前的文档里复制粘贴一份修改感到厌倦，但是我们完全可以使用Typora在新建文档的时候直接搬用模板！&gt;&gt;&gt;</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/08/28/Markdown%20%E6%A8%A1%E6%9D%BF/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/08/28/%E7%8B%AC%E7%AB%8B%E7%BB%84%E7%BD%91%E5%92%8C%E9%9D%9E%E7%8B%AC%E7%AB%8B%E7%BB%84%E7%BD%91/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="阿花想养萨摩耶">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="阿花的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/28/%E7%8B%AC%E7%AB%8B%E7%BB%84%E7%BD%91%E5%92%8C%E9%9D%9E%E7%8B%AC%E7%AB%8B%E7%BB%84%E7%BD%91/" class="post-title-link" itemprop="url">独立组网和非独立组网</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-28 16:13:44" itemprop="dateCreated datePublished" datetime="2022-08-28T16:13:44+08:00">2022-08-28</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-09-15 16:35:20" itemprop="dateModified" datetime="2022-09-15T16:35:20+08:00">2022-09-15</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>4G技术刚落地没多久（按通信技术的代数来划分来说4G还是比较年轻的），5G就开始推广了。为了更充分发挥现有的4G基站设备，5G技术的发展迭代后诞生了NSA和NSA组网的两种方式，下文将简单解析。</p>
-<p><img src="https://s2.loli.net/2022/08/28/RYD6uAb1SsX4WlZ.png" alt="image-20220828172224509" style="zoom:50%;" /></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/08/28/%E7%8B%AC%E7%AB%8B%E7%BB%84%E7%BD%91%E5%92%8C%E9%9D%9E%E7%8B%AC%E7%AB%8B%E7%BB%84%E7%BD%91/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/08/23/Aoe/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="阿花想养萨摩耶">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="阿花的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/23/Aoe/" class="post-title-link" itemprop="url">帝国时代2决定版数据分析</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-23 20:27:22" itemprop="dateCreated datePublished" datetime="2022-08-23T20:27:22+08:00">2022-08-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-26 00:05:10" itemprop="dateModified" datetime="2022-08-26T00:05:10+08:00">2022-08-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><img src="https://s2.loli.net/2022/08/23/XR4r9qmpelQZ3gW.png" alt=""></p>
-<center><big>伟大的帝国正在召唤！</big></center>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/08/23/Aoe/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/08/21/%E8%A7%A3%E5%86%B3Picgo%E4%B8%8A%E4%BC%A0%E5%9B%BE%E7%89%87/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="阿花想养萨摩耶">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="阿花的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/21/%E8%A7%A3%E5%86%B3Picgo%E4%B8%8A%E4%BC%A0%E5%9B%BE%E7%89%87/" class="post-title-link" itemprop="url">关于SMMS更换国内域名导致Picgo不能上传图片的解决方法</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-08-21 00:09:04 / 修改时间：00:19:55" itemprop="dateCreated datePublished" datetime="2022-08-21T00:09:04+08:00">2022-08-21</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>最近（2022-8-20）在写文档，突然发现用<code>PicGo</code>上传图片一直报错，主要是<code>Error: connect ETIMEDOUT</code>和<code>Error: read ECONNRESET</code>这俩，但是我挂了梯子后用SMMS是可以直接上传图片的，所以问题出在<code>PicGo</code>上面了。查了下，估计是和SMMS更换了国内域名为<code>.app</code>的原因，这里给出我的解决方法:……</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/08/21/%E8%A7%A3%E5%86%B3Picgo%E4%B8%8A%E4%BC%A0%E5%9B%BE%E7%89%87/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/08/20/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%952022-8-20/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="阿花想养萨摩耶">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="阿花的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/20/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%952022-8-20/" class="post-title-link" itemprop="url">【学习记录】2022-8-20-？</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-20 20:17:19" itemprop="dateCreated datePublished" datetime="2022-08-20T20:17:19+08:00">2022-08-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-21 10:56:10" itemprop="dateModified" datetime="2022-08-21T10:56:10+08:00">2022-08-21</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>师兄让我别去CV卷了，让我搞搞通信。然后就是让我看看5G核心网相关的内容，笑死😂，我本科的时候移动通信的老师也和我们一起摆烂，考试开卷基本没啥东西记住的。不过想想也是，CV就业压力挺大的，当成业余兴趣爱好去研究下也不错，做成工作可能也很难受，也卷不过985的顶级实验室出来的。娄山雀说他前几天有个北大ACM区域金牌的计算机硕去面他们的后端都没有机会，然后四个清华大学的硕去面OPPO连简历复筛都没过……很可怕很可怕。然后最近看了严曦老师的《造神年代》，我再次燃起了对通信事业的热情。链接每个节点、信息的传输，和生命的波纹好像，当这些所有波纹和对事件的响应结合到一起构建成了一个系统，就完成了一个宏观定义的世界交互（我好像在说一些乱七八糟的屁话😂）这种感觉和造物其实也挺像的。所以开始吧：</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/08/20/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%952022-8-20/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-
-  
-  <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
-  </nav>
 
 
 
@@ -1273,6 +623,7 @@ X_{(b,n),k}=\frac{\Delta T}{\bar N_{b,n}}(q^n(T_b,Q_{b,n}-1)-q^n(T_b,Q_{b,n}))\l
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%95%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BD%AF%E4%BB%B6%E5%AE%9A%E4%B9%89%E7%BD%91%E7%BB%9C"><span class="nav-number">2.</span> <span class="nav-text">软件定义网络</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SOTA"><span class="nav-number">2.1.</span> <span class="nav-text">SOTA</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SERVICE%E7%9A%84%E7%BB%93%E6%9E%84"><span class="nav-number">2.2.</span> <span class="nav-text">SERVICE的结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Win-Lots%E6%9C%BA%E5%88%B6"><span class="nav-number">2.3.</span> <span class="nav-text">Win-Lots机制</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E6%A8%A1%E5%9E%8B"><span class="nav-number">3.</span> <span class="nav-text">系统模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E6%8B%93%E6%89%91"><span class="nav-number">3.1.</span> <span class="nav-text">系统拓扑</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E6%97%A0%E7%BA%BF%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86%E7%AD%96%E7%95%A5"><span class="nav-number">3.2.</span> <span class="nav-text">虚拟无线资源管理策略</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%BB%BA%E6%A8%A1"><span class="nav-number">4.</span> <span class="nav-text">问题建模</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E7%B3%BB%E7%BB%9F%E7%8A%B6%E6%80%81%E8%BD%AC%E7%A7%BB"><span class="nav-number">4.1.</span> <span class="nav-text">动态系统状态转移</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E9%87%8D%E8%BF%B0"><span class="nav-number">4.2.</span> <span class="nav-text">问题重述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#POMDP"><span class="nav-number">4.3.</span> <span class="nav-text">POMDP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AD%89%E4%BB%B7%E8%B4%9D%E5%B0%94%E6%9B%BC%E6%96%B9%E7%A8%8B"><span class="nav-number">4.4.</span> <span class="nav-text">等价贝尔曼方程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E8%88%AC%E7%9A%84%E4%BD%8E%E8%AE%A1%E7%AE%97%E5%A4%8D%E6%9D%82%E5%BA%A6%E7%9A%84%E8%A7%A3"><span class="nav-number">5.</span> <span class="nav-text">一般的低计算复杂度的解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E6%8B%9F%E5%90%88MVRAS%E9%80%89%E6%8B%A9Q%E5%9B%A0%E5%AD%90"><span class="nav-number">5.1.</span> <span class="nav-text">线性拟合MVRAS选择Q因子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AF%8F%E4%B8%80SvBS%E5%8A%BF%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%86%E8%A7%A3"><span class="nav-number">5.2.</span> <span class="nav-text">每一SvBS势函数的分解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9A%8F%E6%9C%BA%E6%8B%9F%E5%90%88%E7%9A%84%E5%9C%A8%E7%BA%BF%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95"><span class="nav-number">5.3.</span> <span class="nav-text">随机拟合的在线分布式学习算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E5%A4%8D%E6%9D%82%E5%BA%A6%E4%B8%8E%E4%BF%A1%E5%8F%B7%E5%88%86%E6%9E%90"><span class="nav-number">5.4.</span> <span class="nav-text">计算复杂度与信号分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%BF%E7%9C%9F%E7%BB%93%E6%9E%9C%E4%B8%8E%E5%88%86%E6%9E%90"><span class="nav-number">6.</span> <span class="nav-text">仿真结果与分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%BF%E7%9C%9F%E5%AE%9E%E9%AA%8C%E8%AE%BE%E7%BD%AE"><span class="nav-number">6.1.</span> <span class="nav-text">仿真实验设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E6%9E%9C%E5%88%86%E6%9E%90"><span class="nav-number">6.2.</span> <span class="nav-text">结果分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA"><span class="nav-number">7.</span> <span class="nav-text">结论</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
