@@ -35,7 +35,7 @@
 <meta property="og:image" content="https://s2.loli.net/2022/09/24/RJxB8aoNlPnVXeZ.png">
 <meta property="og:image" content="https://s2.loli.net/2022/09/24/UZYAVRLPKBkH26j.png">
 <meta property="article:published_time" content="2022-09-24T05:15:14.422Z">
-<meta property="article:modified_time" content="2022-09-26T07:40:11.516Z">
+<meta property="article:modified_time" content="2022-09-26T07:54:05.033Z">
 <meta property="article:author" content="阿花想养萨摩耶">
 <meta property="article:tag" content="车联网">
 <meta property="article:tag" content="资源分配">
@@ -234,7 +234,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-09-26 15:40:11" itemprop="dateModified" datetime="2022-09-26T15:40:11+08:00">2022-09-26</time>
+                <time title="修改时间：2022-09-26 15:54:05" itemprop="dateModified" datetime="2022-09-26T15:54:05+08:00">2022-09-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -305,50 +305,21 @@
 <p>如图2所示，SERVICE控制器将$M$个SvBS虚拟化以覆盖整个路边区域。每个SvBS可以本地测量本地的CSI和QSI。SERVICE控制器可以从每个分散的SvBS中获取全局的QSI。然后，每个VE可以报告其信息，比如说速度，状态，通过MvBS传输到控制器，这意味着控制器可以获取每个SvBS的交通密度。、在P-GW中，存在许多与在控制器覆盖范围内的全部VE的流通信息序列。控制器将从每个SvBS收集的信息转发到RRM应用中。基于转发的信息，时延优化的无线资源分配方案会反馈到相应的车辆。在这里我们给出了详细的交通和我通信行为模型的假设：</p>
 <ul>
 <li><p>交通行为模型： 如图2所示，每个SvBS通信范围覆盖了长度为$d_C$长的子路段。假设车辆都处于畅通状态，在该条件下，根据文献p[30]，以下假设是合理的：</p>
-<ul>
-<li>假设1：每辆车的速度是独立且均服从正态分布的随机变量，该概率分布密度表述为：</li>
+<p>假设1：每辆车的速度是独立且均服从正态分布的随机变量，该概率分布密度表述为：</p>
+<script type="math/tex; mode=display">
+f_V(v)=\frac{\xi}{\sigma_V\sqrt{2 \pi}}e^{-(\frac{v-\bar V}{\sigma_V\sqrt{2}})^2},
+v\in[V_{min},V_{max}]</script><p>其中，$\bar V$，$V_{max}$以及$V_{min}$分别为平均、最大、最小的车辆速度，$\sigma_V$是车辆速度的标准差，$\xi$是截断产生的归一化常数。</p>
+<p>假设2：车辆的到达时间间隔构成一系列独立且服从指数分布的随机变量，概率分布密度表示为：</p>
+<script type="math/tex; mode=display">
+f_I(t)=\frac{1}{\mu}e^{-\frac{t}{\mu_v}},t\geq 0</script></li>
 </ul>
-</li>
-</ul>
-<pre><code>$$
-f_V(v)=\frac&#123;\xi&#125;&#123;\sigma_V\sqrt&#123;2 \pi&#125;&#125;e^&#123;-(\frac&#123;v-\bar V&#125;&#123;\sigma_V\sqrt&#123;2&#125;&#125;)^2&#125;,
-v\in[V_&#123;min&#125;,V_&#123;max&#125;]
-$$
-
-其中，$\bar V$，$V_&#123;max&#125;$以及$V_&#123;min&#125;$分别为平均、最大、最小的车辆速度，$\sigma_V$是车辆速度的标准差，$\xi$是截断产生的归一化常数。
-</code></pre><ul>
-<li>假设2：车辆的到达时间间隔构成一系列独立且服从指数分布的随机变量，概率分布密度表示为：</li>
-</ul>
-<pre><code>$$
-f_I(t)=\frac&#123;1&#125;&#123;\mu&#125;e^&#123;-\frac&#123;t&#125;&#123;\mu_v&#125;&#125;,t\geq 0
-$$
-
-其中，$\bar V$，$V_&#123;max&#125;$以及$V_&#123;min&#125;$分别为平均、最大、最小的车辆速度，$\sigma_V$是车辆速度的标准差，$\xi$是截断产生的归一化常数：
-
-
-
-$$
-\rho_v=\mu_v\bar V^&#123;-1&#125;
-$$
-
-
-
-基于前面的假设，可以得到车辆位置的稳定状态服从一般分布【？感觉是均匀分布】：
-
-
-
-$$
-g_l(r)=\frac&#123;1&#125;&#123;R&#125;,0\leq r\leq R
-$$
-
-在SvBS中的车辆数分布则服从：
-
-
-
-$$
-Pr(N_b=n)=e^&#123;-\phi_b&#125;\frac&#123;\phi_b^n&#125;&#123;n!&#125;
-$$
-</code></pre><ul>
+<p>  其中，$\bar V$，$V_{max}$以及$V_{min}$分别为平均、最大、最小的车辆速度，$\sigma_V$是车辆速度的标准差，$\xi$是截断产生的归一化常数：</p>
+<script type="math/tex; mode=display">
+  \rho_v=\mu_v\bar V^{-1}</script><p>  基于前面的假设，可以得到车辆位置的稳定状态服从一般分布【？感觉是均匀分布】：</p>
+<script type="math/tex; mode=display">
+  g_l(r)=\frac{1}{R},0\leq r\leq R</script><p>  在SvBS中的车辆数分布则服从：</p>
+<script type="math/tex; mode=display">
+  Pr(N_b=n)=e^{-\phi_b}\frac{\phi_b^n}{n!}</script><ul>
 <li>通信行为模型：为了简化通信行为模型，假设收端和发端的CSI处于完美状态。因此，车载设备（VE）$n$的最大可达速率可以被计算为：</li>
 </ul>
 <script type="math/tex; mode=display">
@@ -356,9 +327,7 @@ $$
 <p>  我们假设每个VE拥有一个长度为$N_Q$的有限长队列用于缓存到达的包数据。当前场景下的所有VE的队列长度可以用$Q(t)=\{Q_{b,n}\}_{n\in V_b,v\in\mathcal B}$表示，并且队列的状态转换按如下公式进行：</p>
 <script type="math/tex; mode=display">
   Q_{b,n}(t+1)=\min\{[Q_{b,n}(t)-\mu_{b,n}(t)\Delta T]^{+}+A_{b,n}(t),N_Q\}</script><p>  其中，$A_{b,n}(t)$是在第t个时间间隔中第$n$个VE与SvBS $b$相连的随机新到达的包，并将其表述为$A(t)=\{A_{b,n}(t):b\in \mathrm V_b,b\in\mathcal B\}$</p>
-<ul>
-<li>假设3：包到达过程$A_{b,n}$在时隙规划时是独立同分布的，并且在与SvBS和VE相关时他们之间是独立的。</li>
-</ul>
+<p>  假设3：包到达过程$A_{b,n}$在时隙规划时是独立同分布的，并且在与SvBS和VE相关时他们之间是独立的。</p>
 <h3 id="虚拟无线资源管理策略"><a href="#虚拟无线资源管理策略" class="headerlink" title="虚拟无线资源管理策略"></a>虚拟无线资源管理策略</h3><p>在第t个时隙开始之时，SERVICE的控制器通过获取得到的交通密度条件决定了所有SvBS的MaVRA。然后每个SvBS对其无线资源进行分配，这个过程被定义为MiVRA在给定观测的CSI和QSI后的操作。MaVRA的定义如下：</p>
 <ul>
 <li><p><strong>*定义1</strong> MaVRA*：定义一个可行的MaVRA $V \in \mathcal V$是总的虚拟无线资源集合$\mathcal N_f$的一个子集，它的定义如下：</p>
@@ -444,17 +413,17 @@ J=\min_{\Omega}J_{\beta}(\Omega)</script><p>最优的动作$\Omega^*$可以通�
 <ul>
 <li><strong><em>定义3 条件MiVRA动作集</em></strong> 给定一个MiVRA的策略$\Omega_s$，我们定义条件无线资源分配动作集为$\Omega_s(\mathrm T)=\{s=\Omega_s(\chi):\chi=\mathrm{(T,H,Q),\forall H,Q}\}$作为给定$\mathrm T$时的所有可能CSI和QSI集合。</li>
 </ul>
-<p>基于定义3，POMDP转换成馋鬼的有限域平均成本MDP问题。除此之外，最优控制策略$\Omega^*$可通过如下的等价贝尔曼方程求解得到。</p>
+<p>基于定义3，POMDP转换成馋鬼的有限域平均成本MDP问题。除此之外，最优控制策略$\Omega^{*}$可通过如下的等价贝尔曼方程求解得到。</p>
 <ul>
-<li><strong><em>引理1 等价贝尔曼方程与MaVRA选择方法</em></strong> 问题1的时延最优化问题的最佳控制策略$\Omega^<em> = (\Omega_v^</em>,\Omega_s^*)$可以通过如下等价的贝尔曼方程求解得到：<script type="math/tex; mode=display">
+<li><strong><em>引理1 等价贝尔曼方程与MaVRA选择方法</em></strong> 问题1的时延最优化问题的最佳控制策略$\Omega^{<em>} = (\Omega_v^{</em>},\Omega_s^{*})$可以通过如下等价的贝尔曼方程求解得到：<script type="math/tex; mode=display">
 \begin{align}
 &\mathbb Q(\mathrm T,V)+\theta
 \\=&\min_{\Omega_s(\mathrm T)}\{\bar{g}(\mathrm T,V,\Omega_s(\mathrm T))
 \\&+\sum_{\mathrm T'}\mathrm{Pr}[\mathrm T'|\mathrm T,V, \Omega_s(\mathrm T)]\min_{V'}(\mathrm T',V')\},\forall\mathrm T \in \mathcal T, V\in \mathcal V
 \end{align}\\</script></li>
 </ul>
-<p>​        其中$\mathbb Q(\mathrm T,V)$是MaVRA的选择的Q因子，$\bar g(\mathrm T,V,\Omega_s(\mathrm T))=\mathbb E[g(\chi,V,\Omega_s(\chi))|\mathrm T]$是每步执行的条件期望，$\mathrm {Pr}[\mathrm T’|\mathrm T,V,\Omega_s(\mathrm T)]=\mathbb E[\mathrm{Pr[\mathrm T’|\chi,\Omega_s(\chi)]}\mathrm T]$是条件转移概率的期望。问题1中的最优的平均损耗$\theta=\min_{\Omega}J_\beta(\Omega)$必须满足等式16所指出的贝尔曼方程。通过最小化最小化等式16的右侧并求$\Omega_v^*(\mathrm T)=\arg \min \mathbb Q(\mathrm T,V)$即可得到最优的控制策略。</p>
-<p>等式16提出的等价贝尔曼方程只考虑交通密度信息$\mathrm T$。通过解等式16的方程，可以求得最优的MiVRA策略$\Omega_s^<em>=\cup_\mathrm T\Omega_s^</em>(\mathrm T)$，其中的$\Omega_s^*$已经在定义3中给出。然而这个定义可以对全局的CSI $\mathrm H$以及QSI $\mathrm Q$同样适用，因此，在下一部分，我们将使用线性拟合和随即学习来减少计算的复杂度。</p>
+<p>​        其中$\mathbb Q(\mathrm T,V)$是MaVRA的选择的Q因子，$\bar g(\mathrm T,V,\Omega_s(\mathrm T))=\mathbb E[g(\chi,V,\Omega_s(\chi))|\mathrm T]$是每步执行的条件期望，$\mathrm {Pr}[\mathrm T’|\mathrm T,V,\Omega_s(\mathrm T)]=\mathbb E[\mathrm{Pr[\mathrm T’|\chi,\Omega_s(\chi)]}\mathrm T]$是条件转移概率的期望。问题1中的最优的平均损耗$\theta=\min_{\Omega}J_\beta(\Omega)$必须满足等式16所指出的贝尔曼方程。通过最小化最小化等式16的右侧并求$\Omega_v^{*}(\mathrm T)=\arg \min \mathbb Q(\mathrm T,V)$即可得到最优的控制策略。</p>
+<p>​        等式16提出的等价贝尔曼方程只考虑交通密度信息$\mathrm T$。通过解等式16的方程，可以求得最优的MiVRA策略$\Omega_s^{\star}=\cup_{\mathrm T}\Omega_s^{\star}(\mathrm T)$，其中的$\Omega_s^{*}$已经在定义3中给出。然而这个定义可以对全局的CSI $\mathrm H$以及QSI $\mathrm Q$同样适用，因此，在下一部分，我们将使用线性拟合和随机学习来减少计算的复杂度。</p>
 <h2 id="一般的低计算复杂度的解"><a href="#一般的低计算复杂度的解" class="headerlink" title="一般的低计算复杂度的解"></a>一般的低计算复杂度的解</h2><p>直接的暴力计算需要考虑指数级别的信道状态数和队列状态数的暴增带来的问题。而且由于部署位置位于整个系统的中心位置，因此大量的数据会不断回传。在这一部分，我们使用线性拟合和随机学习的分布式方法来估计的势函数。</p>
 <h3 id="线性拟合MVRAS选择Q因子"><a href="#线性拟合MVRAS选择Q因子" class="headerlink" title="线性拟合MVRAS选择Q因子"></a>线性拟合MVRAS选择Q因子</h3><p>记$T_b\in\mathrm T$为第b个SvBS的交通密度值。为了减少状态空间的维数以及计算复杂度，同时为了把资源分配问题去中心化，我们通过线性累加每个SvBS的函数$q_b(T_b)$，如下所示：</p>
 <script type="math/tex; mode=display">
