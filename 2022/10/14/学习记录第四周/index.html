@@ -20,34 +20,25 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":5},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="本周工作主要是看《SoftdEfined heteRogeneous VehICular nEtwork》以及弄清楚师兄让我搭的5G小系统。">
+  <meta name="description" content="这周终于把OAI给倒腾好了…一共有三个部分，分别是核心网、gNB以及UE终端。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【学习记录】2022-9-26">
-<meta property="og:url" content="http://example.com/2022/10/03/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%20%E7%AC%AC%E4%B8%89%E5%91%A8/index.html">
+<meta property="og:title" content="【学习记录】2022-10-4">
+<meta property="og:url" content="http://example.com/2022/10/14/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%E7%AC%AC%E5%9B%9B%E5%91%A8/index.html">
 <meta property="og:site_name" content="阿花的Blog">
-<meta property="og:description" content="本周工作主要是看《SoftdEfined heteRogeneous VehICular nEtwork》以及弄清楚师兄让我搭的5G小系统。">
+<meta property="og:description" content="这周终于把OAI给倒腾好了…一共有三个部分，分别是核心网、gNB以及UE终端。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://s2.loli.net/2022/09/27/ociUB37CxXeaYzF.png">
-<meta property="og:image" content="https://s2.loli.net/2022/09/27/LCl8MaBjpXFkcKY.png">
-<meta property="og:image" content="https://s2.loli.net/2022/09/27/wicEF3nIHYOUr1V.png">
-<meta property="og:image" content="https://s2.loli.net/2022/09/27/g6iZfKh374VaG2S.png">
-<meta property="og:image" content="https://s2.loli.net/2022/09/27/qm8ApOoStYaC1rU.png">
-<meta property="og:image" content="https://s2.loli.net/2022/09/29/7gy6U18w2jLNfDp.png">
-<meta property="og:image" content="https://s2.loli.net/2022/09/28/S7jZtGRDOCr8MQh.png">
-<meta property="og:image" content="https://s2.loli.net/2022/09/28/PfrtkgBe1bja2ST.png">
-<meta property="og:image" content="https://s2.loli.net/2022/09/28/S8pzMnNeykGQxRj.png">
-<meta property="og:image" content="https://s2.loli.net/2022/09/28/VfKHdp2MTi6SrP3.png">
-<meta property="og:image" content="https://s2.loli.net/2022/09/28/9rN3HPmvzWiS8AR.png">
-<meta property="og:image" content="https://s2.loli.net/2022/09/30/TgC1m76tD9E543O.png">
-<meta property="article:published_time" content="2022-10-03T01:58:01.089Z">
-<meta property="article:modified_time" content="2022-10-08T01:25:40.272Z">
+<meta property="og:image" content="https://s2.loli.net/2022/10/07/mNgKAnOZLfrQk1x.jpg">
+<meta property="og:image" content="c:/Users/cybercolyce/AppData/Roaming/Typora/typora-user-images/image-20221007093402599.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/07/gDdqRhmy3fQeMzP.png">
+<meta property="article:published_time" content="2022-10-14T00:08:11.011Z">
+<meta property="article:modified_time" content="2022-10-14T00:10:16.351Z">
 <meta property="article:author" content="阿花想养萨摩耶">
 <meta property="article:tag" content="5G">
 <meta property="article:tag" content="核心网">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://s2.loli.net/2022/09/27/ociUB37CxXeaYzF.png">
+<meta name="twitter:image" content="https://s2.loli.net/2022/10/07/mNgKAnOZLfrQk1x.jpg">
 
-<link rel="canonical" href="http://example.com/2022/10/03/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%20%E7%AC%AC%E4%B8%89%E5%91%A8/">
+<link rel="canonical" href="http://example.com/2022/10/14/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%E7%AC%AC%E5%9B%9B%E5%91%A8/">
 
 
 <script id="page-configurations">
@@ -60,7 +51,7 @@
   };
 </script>
 
-  <title>【学习记录】2022-9-26 | 阿花的Blog</title>
+  <title>【学习记录】2022-10-4 | 阿花的Blog</title>
   
 
 
@@ -209,7 +200,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/10/03/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%20%E7%AC%AC%E4%B8%89%E5%91%A8/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/10/14/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%E7%AC%AC%E5%9B%9B%E5%91%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -222,7 +213,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          【学习记录】2022-9-26
+          【学习记录】2022-10-4
         </h1>
 
         <div class="post-meta">
@@ -231,16 +222,10 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2022-10-03 09:58:01" itemprop="dateCreated datePublished" datetime="2022-10-03T09:58:01+08:00">2022-10-03</time>
+              <time title="创建时间：2022-10-14 08:08:11 / 修改时间：08:10:16" itemprop="dateCreated datePublished" datetime="2022-10-14T08:08:11+08:00">2022-10-14</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-08 09:25:40" itemprop="dateModified" datetime="2022-10-08T09:25:40+08:00">2022-10-08</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -262,61 +247,55 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>本周工作主要是看《SoftdEfined heteRogeneous VehICular nEtwork》以及弄清楚师兄让我搭的5G小系统。</p>
+        <p>这周终于把OAI给倒腾好了…一共有三个部分，分别是核心网、gNB以及UE终端。</p>
 <span id="more"></span>
-<h2 id="5G核心网架构"><a href="#5G核心网架构" class="headerlink" title="5G核心网架构"></a>5G核心网架构</h2><p>在前面已经提到，5G核心网采用的是服务化架构，如图所示：</p>
-<p><img src="https://s2.loli.net/2022/09/27/ociUB37CxXeaYzF.png" alt="image-20220926141829546"></p>
-<p>以前的网络是按层来划分的，是一种节点与节点、边与边的拓扑网络结构，关系错综复杂，集成度很高，共嗯大包大揽，入网简单，但是也有问题：首先扩展性差、升级困难，而且升级只能基于原本的硬件平台进行。</p>
-<p>但是SBA架构没有这种问题，因为它拆分了网络功能（NF），这些网络功能通过接口介入到系统中，这样一来：</p>
+<h2 id="OpenAirInterface的5G小系统部署"><a href="#OpenAirInterface的5G小系统部署" class="headerlink" title="OpenAirInterface的5G小系统部署"></a>OpenAirInterface的5G小系统部署</h2><p>我尝试了两种部署的方式，分别是使用我的台式机和笔记本组成核心网与gNB，以及台式机充当gNB与部署在云端的Kubernetes的核心网组网。这个过程可谓折磨，因为OAI官方的文档是<strong>错误的</strong>！我跟着错误的tutorial和documentation做了很久都不成功…</p>
+<h3 id="docker-compose部署"><a href="#docker-compose部署" class="headerlink" title="docker-compose部署"></a>docker-compose部署</h3><h4 id="部署前的问题"><a href="#部署前的问题" class="headerlink" title="部署前的问题"></a>部署前的问题</h4><p>部署前，先说说设备是怎么分配的。我原本是打算使用网线连着校园网的台式机作为核心网运行docker-compose，笔记本通过wifi连接校园网作为gNB。但是不知道笔记本是什么回事，gNB的部署需要USRP，但是笔记本在安装了UHD之后都一直无法识别USRP B210，甚至在我重装最新版本的UHD驱动也无济于事…所以最后的硬件分配是笔记本使用docker-compose运行核心网，台式机运行gNB。解决硬件问题之后，就是IP问题。Ubuntu下，查看ip的方法是<code>ifconfig</code>，我在台式机使用网线连接校园网、笔记本使用WiFi连接校园网时，他们的IP分别是这样的：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$docker</span>-compose: 10.24.80.186</span><br><span class="line"><span class="variable">$gNB</span>:10.25.18.205</span><br></pre></td></tr></table></figure>
+<p>他们俩明显不在同一个网段….所以我把台式机改成用wifi连接到校园网，它的IP也变了：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$docker</span>-compose: 10.24.80.186</span><br><span class="line"><span class="variable">$gNB</span>:10.24.82.195</span><br></pre></td></tr></table></figure>
+<p>似乎他们在同一个网段了吧？但其实还是不行…在后续的添加路由转发步骤依然会失败。出现该问题的原因可能是WIFI给他们划分到不同的地方去了，也就是说即使都是连接着校园网，但是并不是我们家庭中的“局域网”。其实解决方法也很简单：两台设备同时使用网线连接校园网或者两台设备同时连接手机热点即可。方法一得到的IP为：</p>
+<p>方法而得到的IP为：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$docker</span>-compose: 10.24.80.186</span><br><span class="line"><span class="variable">$gNB</span>:10.24.82.195</span><br></pre></td></tr></table></figure>
+<p>而检验硬件配置是否成功的标准，我将会在下文提到。</p>
+<h4 id="启动核心网"><a href="#启动核心网" class="headerlink" title="启动核心网"></a>启动核心网</h4><p>Docker Compose部署核心网其实是将核心网的网元（也可以称为网络功能，NF）部署在一个个的Docker中，我使用的是mini-deployment，这意味着只有<code>AMF</code>、<code>SMF</code>、<code>UPF</code>、<code>SPGWU</code>以及<code>NRF</code>这几个网元会运行起来。但是在进行部署之前，需要在<code>核心网主机</code>上面进行路由转发的接受操作：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo sysctl net.ipv4.conf.<span class="built_in">all</span>.forwarding=<span class="number">1</span></span><br><span class="line">sudo iptables -P FORWARD ACCEPT</span><br></pre></td></tr></table></figure>
+<p>在安装了docker-compose环境后，需要下载OAI的核心网的源码：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> --branch v1.3.0 https://gitlab.eurecom.fr/oai/cn5g/oai-cn5g-fed.git</span><br><span class="line"><span class="built_in">cd</span> oai-cn5g-fed</span><br><span class="line">git checkout -f v1.4.0</span><br><span class="line">./scripts/syncComponents.sh </span><br></pre></td></tr></table></figure>
+<p>需要注意的是，在截至2022/10/5时，<code>oai-cn5g-fed</code>最新的版本是<code>1.4.0</code>，后续不保证其他版本的源码也可以编译成功使用。</p>
+<p>下载完源码以及执行完同步操作后，可以使用如下命令查看核心网启动的选项：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 core-network.py --<span class="built_in">help</span></span><br></pre></td></tr></table></figure>
+<p>由于我用mini部署，所以我的命令是：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 ./core-network.py --<span class="built_in">type</span> start-mini</span><br></pre></td></tr></table></figure>
+<p>当需要停止运行核心网（相当于是将docker-compose中的每个docker给删除掉，所以运行的信息也会清空）时，最好先对运行的日志进行保存：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">docker logs oai-amf &gt; amf.log</span><br><span class="line">docker logs oai-smf &gt; smf.log</span><br><span class="line">docker logs oai-nrf &gt; nrf.log</span><br><span class="line">docker logs oai-spgwu &gt; spgwu.log</span><br><span class="line"><span class="comment"># 停止核心网 注意type后的参数要和start的对应</span></span><br><span class="line">python3 ./core-network.py --<span class="built_in">type</span> stop-mini</span><br></pre></td></tr></table></figure>
+<h4 id="启动gNB"><a href="#启动gNB" class="headerlink" title="启动gNB"></a>启动gNB</h4><p>gNB同样是需要配置的，最重要的一步就是添加路由转发：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo ip route add 192.168.70.128/26 via 192.168.28.153 dev enp4s0;</span><br></pre></td></tr></table></figure>
+<p><strong>其中，<code>192.168.70.128/26</code>不要动！<code>enp4s0</code>是gNB的网口！``是Docker-compose部署的IP地址！不要被OAI官方的教程中的命令给骗了！！！</strong></p>
+<p><img src="https://s2.loli.net/2022/10/07/mNgKAnOZLfrQk1x.jpg" alt="SA Demo" style="zoom: 67%;" /></p>
+<center>这才是正确的图，已经更正了</center>
+
+<p>命令则是去掉横线的这部分：</p>
+<p><img src="C:\Users\cybercolyce\AppData\Roaming\Typora\typora-user-images\image-20221007093402599.png" alt="image-20221007093402599"></p>
+<p>好了絮絮叨叨完了，下面就要验证IP配置是否成功了。第一步就是要验证两台设备之间的IP是否能ping通。在这个的基础上，gNB主机需要再ping通<code>192.168.70.129</code>这个IP；随后则要ping通docker-compose 中的各个容器的IP地址：</p>
+<p><img src="https://s2.loli.net/2022/10/07/gDdqRhmy3fQeMzP.png" alt="image-20221007093725075" style="zoom:80%;" /></p>
+<p>如果都ping通了，那么就可以启动gNB了。先确保核心网已经在运行了，然后切到存放gNB源码的文件夹中，同时插上USRP：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> cmake_targets/ran_build/build</span><br><span class="line">sudo ./nr-softmodem -E --sa -O ../../../targets/PROJECTS/GENERIC-NR-5GC/CONF/gnb.sa.band78.fr1.106PRB.usrpb210.conf </span><br></pre></td></tr></table></figure>
+<p>然后就运行起来了。运行的过程以及记录可以再docker-compose中的amf日志进行查询。</p>
+<h3 id="kubernetes的部署"><a href="#kubernetes的部署" class="headerlink" title="kubernetes的部署"></a>kubernetes的部署</h3><p>这个方式比较方便，师兄把核心网的网元都部署在了云端，然后我只需要运行gNB就可以了，很符合我对5G的想象，不觉得很酷吗？（对不起</p>
+<p>这样的作法其实只需要更改gNB文件的配置就好，就是之前那个启动gNB命令中的<code>gnb.sa.band78.fr1.106PRB.usrpb210.conf</code>文件，需要更改的地方有如下几个：</p>
 <ul>
-<li>相同的网络功能一起承担和提供网络功能服务（NFS），负荷可以均衡分担。</li>
-<li>任意的网络功能出现障碍，可以通过智能化的网络管理功能让他暂时退出服务，将其负责的业务转移到其他的正常的网络功能上处理。</li>
-<li>扩展新的网络功能非常方便，调用接口就可以了。</li>
-<li>升级很容易，软件和硬件都可以直接接入</li>
-<li>网络开放，在标准接口下其他的系统也可以入网。</li>
+<li><p>AMF的IP地址，师兄把它绑定在<code>x.x.x.x</code>，因此配置时：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#gNB 参考配置中的AMF地址</span></span><br><span class="line">amf_ip_address      = ( &#123; ipv4       = <span class="string">&quot;x.x.x.x&quot;</span>;</span><br><span class="line">                          ipv6       = <span class="string">&quot;192:168:30::17&quot;</span>;</span><br><span class="line">                          active     = <span class="string">&quot;yes&quot;</span>;</span><br><span class="line">                          preference = <span class="string">&quot;ipv4&quot;</span>;</span><br><span class="line">                        &#125;</span><br><span class="line">                      );</span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">NETWORK_INTERFACES :</span><br><span class="line">&#123;</span><br><span class="line">    GNB_INTERFACE_NAME_FOR_NG_AMF            = <span class="string">&quot;网卡名称&quot;</span>;</span><br><span class="line">    GNB_IPV4_ADDRESS_FOR_NG_AMF              = <span class="string">&quot;IP地址（校园网）/24&quot;</span>;</span><br><span class="line">    GNB_INTERFACE_NAME_FOR_NGU               = 网卡名称<span class="string">&quot;;</span></span><br><span class="line"><span class="string">    GNB_IPV4_ADDRESS_FOR_NGU                 = &quot;</span>IP地址（校园网）/24<span class="string">&quot;;</span></span><br><span class="line"><span class="string">    GNB_PORT_FOR_S1U                         = 2152; # Spec 2152</span></span><br><span class="line"><span class="string">&#125;;</span></span><br><span class="line"><span class="string">  </span></span><br></pre></td></tr></table></figure>
+</li>
 </ul>
-<p>总的来说，SBA在核心网中就是对核心网进行改革，实现核心网软件化、灵活化、开放化和智慧化，<strong>做到即插即用的效果。</strong></p>
-<p><img src="https://s2.loli.net/2022/09/27/LCl8MaBjpXFkcKY.png" alt="image-20220926143041127"></p>
-<h2 id="服务化架构关键技术点"><a href="#服务化架构关键技术点" class="headerlink" title="服务化架构关键技术点"></a>服务化架构关键技术点</h2><p>服务化架构的主要技术要点又如下三点：</p>
 <ul>
-<li><p>服务的提供通过生产者与消费者之间的信息交互达成。交互模式分成两种：Request-Response以及Subscrive-Notify，因为这样足够简单，所以在各类的网络功能（NF）之间接口交互很方便。</p>
-<ul>
-<li><p>Request-Response：网络功能服务消费者<code>NF_A</code>向网络功能服务生产者<code>NF_B</code>请求特定的网络功能服务（服务内容可能是某种操作或者提供信息之类的），网络功能生产者根据请求的内容返回相应的服务结果。</p>
-<center><img src="https://s2.loli.net/2022/09/27/wicEF3nIHYOUr1V.png" alt="image-20220926143901796" style="zoom: 25%;" />
-    &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-    <img src="https://s2.loli.net/2022/09/27/g6iZfKh374VaG2S.png" alt="image-20220926143949780" style="zoom:25%;" /></center>
-</li>
-<li><p>Subscribe-Notify：<code>NF_A</code>向<code>NF_B</code>订阅网络功能服务。<code>NF_B</code>对所有订阅服务的NF发送通知并返回结果。订阅的服务可能是按周期更新的信息或者特定事件的触发通知（某个东西到达了峰值、某个地方发生了改变）。</p>
-<p><img src="https://s2.loli.net/2022/09/27/qm8ApOoStYaC1rU.png" alt="image-20220926144803196" style="zoom:25%;" /></p>
+<li><p>MCC/MNC配置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">plmn_support:</span><br><span class="line">  -</span><br><span class="line">    plmn_id:</span><br><span class="line">      mcc: 466</span><br><span class="line">      mnc: 92</span><br><span class="line">    s_nssai:</span><br><span class="line">    - sd: ffffff</span><br><span class="line">      sst: 1</span><br><span class="line">  -</span><br><span class="line">    plmn_id:</span><br><span class="line">      mcc: 466</span><br><span class="line">      mnc: 92</span><br><span class="line">    s_nssai:</span><br><span class="line">    - sd: 101010</span><br><span class="line">      sst: 1</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
-</li>
-<li><p>实现了服务的自动化注册和发现。NF 通过服务化接口，将自身的能力作为一种服务暴露到网络中，并 被其他 NF 复用；NF 通过服务化接口的发现获取拥有所需 NF 服务的其它 NF 实例。这种注册和发现是通过 5G 核 心网引入的新型网络功能 NRF 来实现的： NRF 接收其它 NF 发来的服务注册信息，维护 NF 实例的相关信息和支 持的服务信息； NRF 接收其它 NF 发来的 NF 发现请求，返回对应的 NF 示例信息。</p>
-</li>
-<li><p>采用统一服务化接口协议。 R15 阶段在设计接口协议时，考虑了适应 IT 化、虚拟化、微服务化的需求， 目前定义的接口协议栈从下往上在传输层采用了 TCP，在应用层采用 HTTP/2.0 [3]，在序列化协议方面采用了 JSON， 接口描述语言采用 OpenAPI3.0， API 的设计方式采用 RESTFul。</p>
-</li>
-</ul>
-<h2 id="架构调整"><a href="#架构调整" class="headerlink" title="架构调整"></a>架构调整</h2><p>5G中的核心网主要有三个关键的逻辑节点：AMF、SMF和UPF。</p>
-<p><img src="https://s2.loli.net/2022/09/29/7gy6U18w2jLNfDp.png" alt="image-20220929092924527"></p>
-<p>同时从另一个维度进行讨论的控制面（Control Pannel）和用户面（User Pannel）在5G也进行了重构：控制平面分成了AMF和SMF两个逻辑节点，AMF负责移动性相关的管理，SMF则负责会话管理；UPF替代了4G时代的服务网关SGW和PDN网关PGW，控制面功能集中了，与用户面进一步分离，这样大家都能灵活配置网络功能了。</p>
-<h2 id="关于AMF"><a href="#关于AMF" class="headerlink" title="关于AMF"></a>关于AMF</h2><p><strong>AMF是核心网的重中之重</strong>，所有UE的接入靠的是他们与AMF之间的接口NG-RAN接口，再次声明下，不要把接口想象成一个四四方方的充电器插槽，在5G时代一切都要虚拟化（不能说百分百虚拟化，但至少是看不见的），都什么年代了，还在玩传统核心网？（bushi）</p>
-<p>AMF的功能挺多的，这里加个<code>TODO</code>标签，以后提醒自己补一补。</p>
-<h2 id="SoftdEfined-heteRogeneous-VehICular-nEtwork"><a href="#SoftdEfined-heteRogeneous-VehICular-nEtwork" class="headerlink" title="SoftdEfined heteRogeneous VehICular nEtwork"></a>SoftdEfined heteRogeneous VehICular nEtwork</h2><p>软件定义的车联异构网络。文章介绍了一个SOTA级别的框架，这个框架结合了异构网络的特点，同时也充分发挥了软件定义的框架的优势。整个网络架构分成三层：网络设施层（位于顶层）、控制层（位于中层）以及应用层（位于顶层）。</p>
-<p><img src="https://s2.loli.net/2022/09/28/S7jZtGRDOCr8MQh.png" alt="image-20220928150707187" style="zoom: 80%;" /></p>
-<h3 id="网络设施层"><a href="#网络设施层" class="headerlink" title="网络设施层"></a>网络设施层</h3><p><img src="https://s2.loli.net/2022/09/28/PfrtkgBe1bja2ST.png" alt="image-20220928150824672" style="zoom:80%;" /></p>
-<p>设施层主要是基础功能的集合，在SERVICE框架中设施主要分为三类，分别是通信设施、存储设施以及计算设施。这些设施在原文是这么给出的（图中左边中间的蜂窝区部分）：</p>
-<p><img src="https://s2.loli.net/2022/09/28/S8pzMnNeykGQxRj.png" alt="image-20220928152113627"></p>
-<p>作者们对这个层的组件的称呼是“设施”，但是我们很容易先入为主的认为“设施”是某一类型的硬件设施，但在SERVICE这个软件定义网络的异构网络中，<strong>“设施”应该理解成一种资源</strong>，作者给出的样例中有计算资源、存储资源以及通信资源。其中计算资源以及存储资源又可以按照性能分成三种类型：微观云资源、本地云资源以及远程云资源。</p>
-<p>这种资源的划分是合理的（通信资源为什么不在列，我的理解是通信在车辆行驶中的重要性是首要的，必须优先保障的，安全服务需要的资源是即时的，因此不能承受远程、云端的时效性风险），因为存储资源与计算资源的设立需要的设施（这次是真的硬件设施了，包括硬盘、算卡等资源）在路段很难部署，但是需求又不能不处理，而完全交给一个节点完成又会造成瘫痪，所以负载均衡是最好的选择。</p>
-<h3 id="控制层"><a href="#控制层" class="headerlink" title="控制层"></a>控制层</h3><p><img src="https://s2.loli.net/2022/09/28/VfKHdp2MTi6SrP3.png" alt="image-20220928151313382" style="zoom: 28%;" /></p>
-<p>控制层是一个层级结构，在一个服务区域（Service Area，一般认为设备的覆盖区域就是服务区域）中，由<strong>主控制器</strong>和<strong>次控制器</strong>构成的控制层对计算资源、通信资源以及存储资源进行分配。控制层由于其处于SERVICE结构的中层，因此它需要与上下层进行信息的流通与交互，交互的方式一共有三种：南向（控制层到网络设施层、应用层到控制层）交互、北向交互（控制层到应用层、网络设施层到控制层）。</p>
-<p><img src="https://s2.loli.net/2022/09/28/9rN3HPmvzWiS8AR.png" alt="image-20220928151556984"></p>
-<p>值得一提的是，这个所谓的<code>控制器</code>其实<strong>并不是真的是一个具体的器件</strong>，因为在一个软件定义的网络框架中一切都可以软件化，所以<strong>与其说“控制器”倒不如说“控制算法”或“控制软件”</strong>。还有一点注意的是，控制层的控制对象是“通信控制”、“计算控制”和“存储控制”，这与网络设施层相呼应。</p>
-<h3 id="应用层"><a href="#应用层" class="headerlink" title="应用层"></a>应用层</h3><p>应用层高高在上，但是它主要是一般网络功能应用设计者用来存放、部署他们的成果的地方，前文提到，控制层位于网络架构的中层，所以应用层通过API与控制层交互，从而达到应用层控制一切的效果，但其实我们都知道真正在起作用的是控制层，应用层只是个指挥人干活的领导（抱歉，好像内涵了某些人）。作者给出的例子是接入管理和动态资源分配，本质上其实都是资源分配的过程问题。</p>
-<h2 id="虚拟化"><a href="#虚拟化" class="headerlink" title="虚拟化"></a>虚拟化</h2><p>前文提到网络设施层是资源的集合地，作者在后面干脆不装了，直接搬出了软件化的概念：把一切都虚拟化吧！把基站虚拟化，把计算资源虚拟化，把存储资源虚拟化……这不是我乱说，它真的是直接不装了把资源直接上云了。我们知道以往的通信设备比较垄断，要搞一套完整的通信系统很麻烦，几百万买个基站、天线以及配套的乱七八糟的东西才能搭建起来一个通信系统，但是到了5G时代，一切都软件化了：网元被拆成了网络功能，开放的接口、易于扩展的特点让大家都感叹真牛逼，所以SERVICE框架也想向这方面靠拢，因此在传统网络框架底层的部分原本应该陈列大件硬件设施的地方换成了几乎（话不能说太死）不占空间的虚拟资源。</p>
-<p><img src="https://s2.loli.net/2022/09/30/TgC1m76tD9E543O.png" alt="image-20220930111139061"></p>
-<p>软件化一切是一种趋势，因为我们知道现在是个AI时代，你上大学没学过点人工智能或者机器学习都不好意思说你是工科生，我们知道人工智能最吃算力资源，算力资源的承载体——服务器有多大、多脆弱相信大家都知道了，所以资源虚拟化能很好迎合人工智能算法的部署（也方便我水论文^_^）。</p>
-<h3 id="虚拟化资源"><a href="#虚拟化资源" class="headerlink" title="虚拟化资源"></a>虚拟化资源</h3><p>前面提到SERVICE中存在多种资源（计算、通信、存储），然而在一个异构网络框架中还是要将他们标准化到一种特定的形式，才能方便后续的资源调度。SERVICE框架中的资源称为MDR（Multi Domain Resouce），他们存在MDRP（Multi Domain Resouce Pool）中。</p>
+<p>然后启动就好了。</p>
+<h2 id="手机连接gNB"><a href="#手机连接gNB" class="headerlink" title="手机连接gNB"></a>手机连接gNB</h2><p>开飞行模式，然后关掉飞行模式就好，可以连接，然后登陆验证（校园网的原因），可以测速了。</p>
 
     </div>
 
@@ -392,13 +371,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2022/09/27/%E5%BC%82%E6%9E%84%E7%BD%91%E7%BB%9C/" rel="prev" title="异构网络与同构网络">
-      <i class="fa fa-chevron-left"></i> 异构网络与同构网络
+    <a href="/2022/10/03/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%20%E7%AC%AC%E4%B8%89%E5%91%A8/" rel="prev" title="【学习记录】2022-9-26">
+      <i class="fa fa-chevron-left"></i> 【学习记录】2022-9-26
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2022/10/14/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%E7%AC%AC%E5%9B%9B%E5%91%A8/" rel="next" title="【学习记录】2022-10-4">
-      【学习记录】2022-10-4 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -457,7 +433,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#5G%E6%A0%B8%E5%BF%83%E7%BD%91%E6%9E%B6%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">5G核心网架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%8C%96%E6%9E%B6%E6%9E%84%E5%85%B3%E9%94%AE%E6%8A%80%E6%9C%AF%E7%82%B9"><span class="nav-number">2.</span> <span class="nav-text">服务化架构关键技术点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E8%B0%83%E6%95%B4"><span class="nav-number">3.</span> <span class="nav-text">架构调整</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E4%BA%8EAMF"><span class="nav-number">4.</span> <span class="nav-text">关于AMF</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SoftdEfined-heteRogeneous-VehICular-nEtwork"><span class="nav-number">5.</span> <span class="nav-text">SoftdEfined heteRogeneous VehICular nEtwork</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E8%AE%BE%E6%96%BD%E5%B1%82"><span class="nav-number">5.1.</span> <span class="nav-text">网络设施层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E5%B1%82"><span class="nav-number">5.2.</span> <span class="nav-text">控制层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%B1%82"><span class="nav-number">5.3.</span> <span class="nav-text">应用层</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E5%8C%96"><span class="nav-number">6.</span> <span class="nav-text">虚拟化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E5%8C%96%E8%B5%84%E6%BA%90"><span class="nav-number">6.1.</span> <span class="nav-text">虚拟化资源</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#OpenAirInterface%E7%9A%845G%E5%B0%8F%E7%B3%BB%E7%BB%9F%E9%83%A8%E7%BD%B2"><span class="nav-number">1.</span> <span class="nav-text">OpenAirInterface的5G小系统部署</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#docker-compose%E9%83%A8%E7%BD%B2"><span class="nav-number">1.1.</span> <span class="nav-text">docker-compose部署</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2%E5%89%8D%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">1.1.1.</span> <span class="nav-text">部署前的问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8%E6%A0%B8%E5%BF%83%E7%BD%91"><span class="nav-number">1.1.2.</span> <span class="nav-text">启动核心网</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8gNB"><span class="nav-number">1.1.3.</span> <span class="nav-text">启动gNB</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#kubernetes%E7%9A%84%E9%83%A8%E7%BD%B2"><span class="nav-number">1.2.</span> <span class="nav-text">kubernetes的部署</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%8B%E6%9C%BA%E8%BF%9E%E6%8E%A5gNB"><span class="nav-number">2.</span> <span class="nav-text">手机连接gNB</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
