@@ -20,20 +20,22 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":5},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta property="og:type" content="article">
-<meta property="og:title" content="异构网络与同构网络">
-<meta property="og:url" content="http://example.com/2022/09/27/%E5%BC%82%E6%9E%84%E7%BD%91%E7%BB%9C/index.html">
+  <meta name="description" content="语义分割中数据增强方式（待补充）EfficientNet-L2+NAS-FPNVOC PASCAL 达到90.5%mIoU，次SOTA，2020年  standard Flip ＆ Crop：包含了水平翻转和尺度抖动。水平翻转很常规，尺度抖动（Scale Jittering）即将不规则大小的img按照短边等比例缩放到某一个区间（一般为crop_size的$[0.8,1.2]$），并对等比例缩放后的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="语义分割任务的数据增强方式">
+<meta property="og:url" content="http://example.com/2022/10/14/Segmentation%20Augmentation/index.html">
 <meta property="og:site_name" content="阿花的Blog">
+<meta property="og:description" content="语义分割中数据增强方式（待补充）EfficientNet-L2+NAS-FPNVOC PASCAL 达到90.5%mIoU，次SOTA，2020年  standard Flip ＆ Crop：包含了水平翻转和尺度抖动。水平翻转很常规，尺度抖动（Scale Jittering）即将不规则大小的img按照短边等比例缩放到某一个区间（一般为crop_size的$[0.8,1.2]$），并对等比例缩放后的">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://s2.loli.net/2022/09/27/EveAk8j4pChcowF.png">
-<meta property="article:published_time" content="2022-09-27T05:15:20.205Z">
-<meta property="article:modified_time" content="2022-09-27T05:22:43.198Z">
+<meta property="og:image" content="c:/Users/10706/AppData/Roaming/Typora/typora-user-images/image-20221014135442552.png">
+<meta property="article:published_time" content="2022-10-14T11:12:17.294Z">
+<meta property="article:modified_time" content="2022-10-14T11:12:03.441Z">
 <meta property="article:author" content="阿花想养萨摩耶">
-<meta property="article:tag" content="计算机网络">
+<meta property="article:tag" content="计算机视觉">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://s2.loli.net/2022/09/27/EveAk8j4pChcowF.png">
+<meta name="twitter:image" content="c:/Users/10706/AppData/Roaming/Typora/typora-user-images/image-20221014135442552.png">
 
-<link rel="canonical" href="http://example.com/2022/09/27/%E5%BC%82%E6%9E%84%E7%BD%91%E7%BB%9C/">
+<link rel="canonical" href="http://example.com/2022/10/14/Segmentation%20Augmentation/">
 
 
 <script id="page-configurations">
@@ -46,7 +48,7 @@
   };
 </script>
 
-  <title>异构网络与同构网络 | 阿花的Blog</title>
+  <title>语义分割任务的数据增强方式 | 阿花的Blog</title>
   
 
 
@@ -195,7 +197,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/09/27/%E5%BC%82%E6%9E%84%E7%BD%91%E7%BB%9C/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/10/14/Segmentation%20Augmentation/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -208,7 +210,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          异构网络与同构网络
+          语义分割任务的数据增强方式
         </h1>
 
         <div class="post-meta">
@@ -219,7 +221,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2022-09-27 13:15:20 / 修改时间：13:22:43" itemprop="dateCreated datePublished" datetime="2022-09-27T13:15:20+08:00">2022-09-27</time>
+              <time title="创建时间：2022-10-14 19:12:17 / 修改时间：19:12:03" itemprop="dateCreated datePublished" datetime="2022-10-14T19:12:17+08:00">2022-10-14</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -227,7 +229,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89/" itemprop="url" rel="index"><span itemprop="name">计算机视觉</span></a>
                 </span>
             </span>
 
@@ -242,12 +244,30 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p><img src="https://s2.loli.net/2022/09/27/EveAk8j4pChcowF.png" alt="img"></p>
-<span id="more"></span>
-<p>Homogeneous networks are networks where all the nodes have the same function in the network. One user is interchangeable with the next in the basic function they perform. In a landline telephone network, for example, each node (telephone) performs basically the same function as any other, and people tend to get telephones for the same reasons. Telecommunications networks, in general, are often homogeneous.</p>
-<p>同构网络中的所有节点都具备相同的功能。一个用户可以与下一个用户通过基本功能交互。在固定电话网络中，每个节点（电话）基本上执行与其他任何节点相同的功能，并且人们出于相同的原因而使用电话。电信网络通常是同构网络。</p>
-<p>Heterogeneous networks are networks where there are two or more classes of nodes categorized by both function and utility. On the Honeybook market network, event planners behave differently than photographers, who behave differently from florists. Buyer nodes on eBay are on the network for fundamentally different reason from seller nodes.</p>
-<p>异构网络是指按功能和效用将节点分为两类或更多类的网络。对于一台机房，一些设备是Linux系统，一些设备是Windows系统，还有一些Unix系统的其他设备，如果把这些设备互联起来组成一个网络，那么就属于是异构网络。 在日常生活中，连接多个电脑通常会用到路由器或者交换机，他们两个之间有区别，比如交换机只能连接电脑，但是路由器可以连接电脑，也可以提供wifi给手机连接。那么由交换机组成的网络就属于同构网络，由路由器组成的网络就属于异构网络。区分异构网络和同构网络的本质，是看是否兼容不同的协议，上述手机和电脑之间的功能相似，但是他们分别使用不同的协议，因此属于是异构网络，Linux和Windows同理。</p>
+        <h1 id="语义分割中数据增强方式（待补充）"><a href="#语义分割中数据增强方式（待补充）" class="headerlink" title="语义分割中数据增强方式（待补充）"></a>语义分割中数据增强方式（待补充）</h1><h2 id="EfficientNet-L2-NAS-FPN"><a href="#EfficientNet-L2-NAS-FPN" class="headerlink" title="EfficientNet-L2+NAS-FPN"></a>EfficientNet-L2+NAS-FPN</h2><p>VOC PASCAL 达到90.5%mIoU，次SOTA，2020年</p>
+<ul>
+<li><p>standard Flip ＆ Crop：包含了水平翻转和尺度抖动。水平翻转很常规，尺度抖动（Scale Jittering）即将不规则大小的img按照短边等比例缩放到某一个区间（一般为<code>crop_size</code>的$[0.8,1.2]$），并对等比例缩放后的结果进行固定尺寸大小的<code>crop_size</code>进行裁剪。</p>
+</li>
+<li><p>更大尺度的村都抖动：这篇文章里将尺度抖动放大到了$[0.5,2]$。</p>
+</li>
+<li><p>Auto Augment：<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1805.09501">[1805.09501] AutoAugment: Learning Augmentation Policies from Data (arxiv.org)</a>：是一种强化学习探索得到的针对数据集适合的数据增强方式，尽管达到当时的SOTA，但是参考价值不大。具体来说是构建一系列的基本图像数据增强方式：</p>
+<p><img src="C:\Users\10706\AppData\Roaming\Typora\typora-user-images\image-20221014135442552.png" alt="image-20221014135442552"></p>
+<p>随后通过PPO的迭代找到最优的策略操作，一共有两个operation，operation将从上面的增强方式中进行选取。</p>
+</li>
+<li><p>RandAugment：<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1909.13719">[1909.13719] RandAugment: Practical automated data augmentation with a reduced search space (arxiv.org)</a>：</p>
+<p>首先讲讲自动数据增强方法中的”随机性“。以AutoAugment为例，通过搜索得出的最佳增强策略中，有多个（假设有K个）子策略，然后在训练时，对于某一批次的数据，从这K个中随机选择一个进行应用（这是随机性的第一层体现）。每个子策略由两种增强操作构成，每个操作有概率和幅度两个参数，也就是说，即使选中了这个子策略，这一批次的数据有没有被增强，或者经过这两个操作中哪个的增强，都由该子策略中的这两个概率参数控制（这是随机性的第二层体现）。即使应用了某一操作，比如旋转，虽然幅度参数指定了增强的幅度（比如说旋转45度），但具体是逆时针还是顺时针同样也是随机的（这是随机性的第三层体现）。</p>
+<p>对此，作者舍弃掉这一系列的随机性（按我的理解是，这些反复的随机性，其实是削弱了AutoAugment中概率和幅度参数的作用。因此作者认为舍弃掉概率参数，或者说，将这些参数设为统一的值，从而免去搜索这些值的时间，换来效率的提高是值得的），直接将每种操作的应用概率设置为一样。因此，RandAugment方法为：</p>
+<ol>
+<li><p>设定一个操作集，例如作者的操作集由14种操作构成：Identity、AutoContrast、Equalize、Rotate、Solarize、Color、Posterize、Contrast、Brightness、Sharpness、ShearX、ShearY、TranslateX、TranslateY。</p>
+</li>
+<li><p>RandAugment只有两个参数：N和M。其中N为在每次增强时使用N次操作（使用的这N个操作，都是从操作集中等概率抽取的，例如操作集中有14种操作，则每种操作被选中的概率为1/14，每张图像的N次增强中，选到的操作可能是一样的），M为正整数，表示所有操作在应用时，幅度都为M。</p>
+</li>
+<li><p>使用网格搜索，或者更为高端的方法（如反向传播等）在完整数据集、完整网络上实验，找到最适合的N和M。这样一来，假如说N的搜索空间为1和2，M为1至10，则搜索空间仅为10^2，远小于之前的自动增强方法。</p>
+</li>
+</ol>
+<p>通过更改N、M的值，便能控制训练时的正则化强度。N、M越大，正则化强度则越高。</p>
+</li>
+</ul>
 
     </div>
 
@@ -258,7 +278,7 @@
       <footer class="post-footer">
           
           <div class="post-tags">
-              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag"><i class="fa fa-tag"></i> 计算机网络</a>
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89/" rel="tag"><i class="fa fa-tag"></i> 计算机视觉</a>
           </div>
           <script type="text/javascript">
             var tagsall=document.getElementsByClassName("post-tags")
@@ -322,12 +342,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2022/09/26/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%20%E7%AC%AC%E4%BA%8C%E5%91%A8/" rel="prev" title="【学习记录】2022-09-19">
-      <i class="fa fa-chevron-left"></i> 【学习记录】2022-09-19
+    <a href="/2022/10/14/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%E7%AC%AC%E5%9B%9B%E5%91%A8/" rel="prev" title="【学习记录】2022-10-4">
+      <i class="fa fa-chevron-left"></i> 【学习记录】2022-10-4
     </a></div>
       <div class="post-nav-item">
-    <a href="/2022/10/03/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%20%E7%AC%AC%E4%B8%89%E5%91%A8/" rel="next" title="【学习记录】2022-9-26">
-      【学习记录】2022-9-26 <i class="fa fa-chevron-right"></i>
+    <a href="/2022/10/14/LSTM%E5%88%9D%E6%8E%A2/" rel="next" title="LSTM初探">
+      LSTM初探 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -387,6 +407,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AF%AD%E4%B9%89%E5%88%86%E5%89%B2%E4%B8%AD%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA%E6%96%B9%E5%BC%8F%EF%BC%88%E5%BE%85%E8%A1%A5%E5%85%85%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">语义分割中数据增强方式（待补充）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#EfficientNet-L2-NAS-FPN"><span class="nav-number">1.1.</span> <span class="nav-text">EfficientNet-L2+NAS-FPN</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -534,59 +555,6 @@
   
 
   
-      
-
-<script>
-  if (typeof MathJax === 'undefined') {
-    window.MathJax = {
-      loader: {
-        source: {
-          '[tex]/amsCd': '[tex]/amscd',
-          '[tex]/AMScd': '[tex]/amscd'
-        }
-      },
-      tex: {
-        inlineMath: {'[+]': [['$', '$']]},
-        tags: 'ams'
-      },
-      options: {
-        renderActions: {
-          findScript: [10, doc => {
-            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
-              const display = !!node.type.match(/; *mode=display/);
-              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
-              const text = document.createTextNode('');
-              node.parentNode.replaceChild(text, node);
-              math.start = {node: text, delim: '', n: 0};
-              math.end = {node: text, delim: '', n: 0};
-              doc.math.push(math);
-            });
-          }, '', false],
-          insertedScript: [200, () => {
-            document.querySelectorAll('mjx-container').forEach(node => {
-              let target = node.parentNode;
-              if (target.nodeName.toLowerCase() === 'li') {
-                target.parentNode.classList.add('has-jax');
-              }
-            });
-          }, '', false]
-        }
-      }
-    };
-    (function () {
-      var script = document.createElement('script');
-      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
-      script.defer = true;
-      document.head.appendChild(script);
-    })();
-  } else {
-    MathJax.startup.document.state(0);
-    MathJax.texReset();
-    MathJax.typeset();
-  }
-</script>
-
-    
 
   
 

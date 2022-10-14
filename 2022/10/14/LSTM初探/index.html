@@ -20,20 +20,29 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":5},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta property="og:type" content="article">
-<meta property="og:title" content="异构网络与同构网络">
-<meta property="og:url" content="http://example.com/2022/09/27/%E5%BC%82%E6%9E%84%E7%BD%91%E7%BB%9C/index.html">
+  <meta name="description" content="长短期记忆（Long Short Term Memory）在一般的循环神经网络的基础上补充完善了对信息的记忆机制，对时序信息有更好的处理能力，不但在NLP任务中大放光彩，甚至在一些视频、医学重建任务中也能发挥作用。下面则是我对LSTM的一个学习记录。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LSTM初探">
+<meta property="og:url" content="http://example.com/2022/10/14/LSTM%E5%88%9D%E6%8E%A2/index.html">
 <meta property="og:site_name" content="阿花的Blog">
+<meta property="og:description" content="长短期记忆（Long Short Term Memory）在一般的循环神经网络的基础上补充完善了对信息的记忆机制，对时序信息有更好的处理能力，不但在NLP任务中大放光彩，甚至在一些视频、医学重建任务中也能发挥作用。下面则是我对LSTM的一个学习记录。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://s2.loli.net/2022/09/27/EveAk8j4pChcowF.png">
-<meta property="article:published_time" content="2022-09-27T05:15:20.205Z">
-<meta property="article:modified_time" content="2022-09-27T05:22:43.198Z">
+<meta property="og:image" content="https://pic4.zhimg.com/v2-03c41f0aaee75d920c1ba7bd756ae207.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/14/BAHdpuG2mlFzkqc.jpg">
+<meta property="og:image" content="https://s2.loli.net/2022/10/14/9amJuXiEDCSTdPb.jpg">
+<meta property="og:image" content="https://s2.loli.net/2022/10/14/YXLjJ1dcvhRbeAV.jpg">
+<meta property="og:image" content="https://s2.loli.net/2022/10/14/vuUZE39CXFdTVxi.png">
+<meta property="article:published_time" content="2022-10-14T11:12:17.295Z">
+<meta property="article:modified_time" content="2022-10-14T11:11:50.734Z">
 <meta property="article:author" content="阿花想养萨摩耶">
-<meta property="article:tag" content="计算机网络">
+<meta property="article:tag" content="Pytorch">
+<meta property="article:tag" content="计算机视觉">
+<meta property="article:tag" content="时序分析">
+<meta property="article:tag" content="LSTM">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://s2.loli.net/2022/09/27/EveAk8j4pChcowF.png">
+<meta name="twitter:image" content="https://pic4.zhimg.com/v2-03c41f0aaee75d920c1ba7bd756ae207.png">
 
-<link rel="canonical" href="http://example.com/2022/09/27/%E5%BC%82%E6%9E%84%E7%BD%91%E7%BB%9C/">
+<link rel="canonical" href="http://example.com/2022/10/14/LSTM%E5%88%9D%E6%8E%A2/">
 
 
 <script id="page-configurations">
@@ -46,7 +55,7 @@
   };
 </script>
 
-  <title>异构网络与同构网络 | 阿花的Blog</title>
+  <title>LSTM初探 | 阿花的Blog</title>
   
 
 
@@ -195,7 +204,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/09/27/%E5%BC%82%E6%9E%84%E7%BD%91%E7%BB%9C/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/10/14/LSTM%E5%88%9D%E6%8E%A2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -208,7 +217,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          异构网络与同构网络
+          LSTM初探
         </h1>
 
         <div class="post-meta">
@@ -219,7 +228,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2022-09-27 13:15:20 / 修改时间：13:22:43" itemprop="dateCreated datePublished" datetime="2022-09-27T13:15:20+08:00">2022-09-27</time>
+              <time title="创建时间：2022-10-14 19:12:17 / 修改时间：19:11:50" itemprop="dateCreated datePublished" datetime="2022-10-14T19:12:17+08:00">2022-10-14</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -227,7 +236,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
+                  <a href="/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">深度学习</span></a>
                 </span>
             </span>
 
@@ -242,12 +251,51 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p><img src="https://s2.loli.net/2022/09/27/EveAk8j4pChcowF.png" alt="img"></p>
+        <p><img src="https://pic4.zhimg.com/v2-03c41f0aaee75d920c1ba7bd756ae207.png" alt="preview" style="zoom:50%;" /></p>
+<p>长短期记忆（Long Short Term Memory）在一般的循环神经网络的基础上补充完善了对信息的记忆机制，对时序信息有更好的处理能力，不但在NLP任务中大放光彩，甚至在一些视频、医学重建任务中也能发挥作用。下面则是我对LSTM的一个学习记录。</p>
 <span id="more"></span>
-<p>Homogeneous networks are networks where all the nodes have the same function in the network. One user is interchangeable with the next in the basic function they perform. In a landline telephone network, for example, each node (telephone) performs basically the same function as any other, and people tend to get telephones for the same reasons. Telecommunications networks, in general, are often homogeneous.</p>
-<p>同构网络中的所有节点都具备相同的功能。一个用户可以与下一个用户通过基本功能交互。在固定电话网络中，每个节点（电话）基本上执行与其他任何节点相同的功能，并且人们出于相同的原因而使用电话。电信网络通常是同构网络。</p>
-<p>Heterogeneous networks are networks where there are two or more classes of nodes categorized by both function and utility. On the Honeybook market network, event planners behave differently than photographers, who behave differently from florists. Buyer nodes on eBay are on the network for fundamentally different reason from seller nodes.</p>
-<p>异构网络是指按功能和效用将节点分为两类或更多类的网络。对于一台机房，一些设备是Linux系统，一些设备是Windows系统，还有一些Unix系统的其他设备，如果把这些设备互联起来组成一个网络，那么就属于是异构网络。 在日常生活中，连接多个电脑通常会用到路由器或者交换机，他们两个之间有区别，比如交换机只能连接电脑，但是路由器可以连接电脑，也可以提供wifi给手机连接。那么由交换机组成的网络就属于同构网络，由路由器组成的网络就属于异构网络。区分异构网络和同构网络的本质，是看是否兼容不同的协议，上述手机和电脑之间的功能相似，但是他们分别使用不同的协议，因此属于是异构网络，Linux和Windows同理。</p>
+<h2 id="RNN的简单回顾"><a href="#RNN的简单回顾" class="headerlink" title="RNN的简单回顾"></a>RNN的简单回顾</h2><p>RNN的一般结构如下：</p>
+<p><img src="https://s2.loli.net/2022/10/14/BAHdpuG2mlFzkqc.jpg" alt="img" style="zoom: 50%;" /></p>
+<p>其中黑色方框的$x^t$为输入，$h^{t-1}$为上一次输入时隐藏层的输出信息，也可以理解为被高度抽象化的特征，$y^{t}$为目标输出，以及当前的隐藏层状态$h^{t}$输出。可以看到不管在哪个时刻的输入，都会有上一个输入产生的输出的影响$h^{t-1}$，理论上RNN是可以保留从第一次输入到当前输入这段时期的所有序列信息（对于第一次输入，我们可以将$h^{t_0}$设为全零），那么我们为什么还需要引入长短期记忆呢？</p>
+<p>答案很简单：因为不是过往所有的信息都是我们需要关心的。好比一个对话机器人bot，他不会去对用户一个月前的输入产生兴趣并揪着这个问题不断地询问用户。因此，我们需要一种“遗忘”的机制，以更加真实地去贴近人类处理时序信息地方式。</p>
+<p>另一个更细节的问题就是：输入是随机的，但是随机的信息也会作为一个输入存留在RNN里，它带来的问题不只是简单的像通信领域用滤波器滤掉噪声这么单纯，它还会带来梯度爆炸或者梯度消失的问题。这两个问题在上了很深的网络上无疑是致命的，所以我们需要对过往信息的处理，而处理的最好方式就是“遗忘”。</p>
+<h2 id="LSTM的引入"><a href="#LSTM的引入" class="headerlink" title="LSTM的引入"></a>LSTM的引入</h2><p>LSTM的基本结构如图所示，可以看出相比于一般的RNN，LSTM的输入中多了一个$c^{t-1}$变成了三个。</p>
+<p><img src="https://s2.loli.net/2022/10/14/9amJuXiEDCSTdPb.jpg" alt="img" style="zoom:50%;" /></p>
+<p>新加进来的这个的状态$c^t$叫做<code>cell state</code>，原来的$h^t$我们称为叫做<code>hidden state</code>。其中对于传递下去的$c^t$改变得很慢，通常输出的$c^t$是上一个状态传过来的 $c^{t-1}$加上一些数值，而$h^t$在不同节点下通常有很大区别。</p>
+<h3 id="LSTM的层次结构与功能关系"><a href="#LSTM的层次结构与功能关系" class="headerlink" title="LSTM的层次结构与功能关系"></a>LSTM的层次结构与功能关系</h3><p><img src="https://s2.loli.net/2022/10/14/YXLjJ1dcvhRbeAV.jpg" alt="img" style="zoom:50%;" /></p>
+<p>这张图比上一个图看上去更复杂点，但是其实它的本质还是一般的神经网络运算过程，和普通的MLP的单一$\mathrm y=\mathrm W \mathrm x+\mathrm b$区别在于多了几个需要运算的状态。我们先看看中间的$z$状态是怎么来的：</p>
+<center><img src = 'https://s2.loli.net/2022/10/14/X9bugtqRQGONCe5.webp' style = "zoom:35%"><img src = 'https://s2.loli.net/2022/10/14/NOZ3IwRkCmcbpVY.jpg' style = "zoom:35%"></center>
+
+<p>可以看到这四个玩意都是通过拼接两个输入状态然后与矩阵相乘后通过激活函数得到的。其中$\sigma$代表的是sigmoid函数（映射到(0,1)区间），把输入映射到<code>(0，1)</code>区间是一种类似门控的作用：</p>
+<script type="math/tex; mode=display">
+S(x)=\frac{1}{1+e^{-x}}</script><p>tanh代表的是双曲正切函数（映射到(1，1)区间），映射到<code>(-1,1)</code>理解成将其作为输入数据，而不是门控信息。：</p>
+<script type="math/tex; mode=display">
+tanh(x) = \frac{e^{x}-e^{-x}}{e^{x}+e^{-x}}</script><p>那么LSTM的工作如下所示：</p>
+<script type="math/tex; mode=display">
+c^t = z^f\odot c^{t-1} + z^i\odot z\\
+h^t = z^o\odot tanh(c^t)\\
+y^t =\sigma(W'h^t)</script><h3 id="LSTM运行原理"><a href="#LSTM运行原理" class="headerlink" title="LSTM运行原理"></a>LSTM运行原理</h3><p>LSTM内部有三个阶段：遗忘段、选择记忆段以及输出段。</p>
+<ul>
+<li><p>这个阶段主要是对上一个节点传进来的输入进行<strong>选择性</strong>忘记。简单来说就是会 “忘记不重要的，记住重要的”。</p>
+<p>具体来说是通过计算得到的 $z^f$（f表示forget）来作为忘记门控，来控制上一个状态的$c^{t-1}$哪些需要留哪些需要忘。</p>
+</li>
+<li><p>选择记忆阶段：这个阶段将这个阶段的输入有选择性地进行“记忆”。主要是会对输入$x^t$进行选择记忆。哪些重要则着重记录下来，哪些不重要，则少记一些。当前的输入内容由前面计算得到的$z$表示。而选择的门控信号则是由$z^i$（i代表information）来进行控制。把上述两个阶段的结果相加即可得到输出阶段需要的$c^t$，也就是上面的第一个公式。</p>
+</li>
+<li><p>这个阶段将决定哪些将会被当成当前状态的输出。主要是通过$z^o$来进行控制的。并且还对上一阶段得到的$c^0$进行了放缩（通过一个tanh激活函数进行变化）。</p>
+</li>
+</ul>
+<p>可以看到，在输出阶段$z^o$起到门限控制作用，对进行了映射后的融合信息$h^t$进行控制输出。</p>
+<h2 id="Pytorch中的LSTM使用"><a href="#Pytorch中的LSTM使用" class="headerlink" title="Pytorch中的LSTM使用"></a>Pytorch中的LSTM使用</h2><p><a target="_blank" rel="noopener" href="https://pytorch.org/docs/stable/generated/torch.nn.LSTM.html">官方文档</a>可以看到详细的参数设定。我们一般关注以下几个参数：</p>
+<ul>
+<li><code>input_size</code>：输入数据的特征维数。</li>
+<li><code>hidden_size</code>：LSTM中隐层的维度。</li>
+<li><code>num_layers</code>：循环神经网络的层数。</li>
+</ul>
+<p>把网络看成一个黑箱，我们在用是肯定是输入一个向量，然后网络处理后输出一个向量，所以我们必须要告诉网络输入的向量是多少维，输出的为多少维，因此前两个参数就决定了输入和输出向量的维度。当然，<code>hidden_size</code>只是指定从LSTM输出的向量的维度，并不是最后的维度，因为LSTM层之后可能还会接其他层，如全连接层（FC），因此<code>hidden_siz</code>e对应的维度也就是FC层的输入维度。第三个参数<code>num_layers</code>为隐藏层的层数，这个比较好理解，官方的例程里面建议一般设置为1或者2.</p>
+<p><img src="https://s2.loli.net/2022/10/14/vuUZE39CXFdTVxi.png" alt="image-20221014111604955" style="zoom: 50%;" /></p>
+<p>下面给出一个应用的案例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">lstm</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(lstm, self).__init__()</span><br><span class="line">        <span class="comment"># 定义LSTM</span></span><br><span class="line">        self.rnn = nn.LSTM(input_size, hidden_size, hidden_num_layers)</span><br><span class="line">        <span class="comment"># 定义回归层网络，输入的特征维度等于LSTM的输出，输出维度为1</span></span><br><span class="line">        self.reg = nn.Sequential(</span><br><span class="line">            nn.Linear(hidden_size, <span class="number">1</span>)</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        x, (ht,ct) = self.rnn(x)</span><br><span class="line">        seq_len, batch_size, hidden_size= x.shape</span><br><span class="line">        x = x.view(-<span class="number">1</span>, hidden_size)</span><br><span class="line">        x = self.reg(x)</span><br><span class="line">        x = x.view(seq_len, batch_size, -<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">output,(h_n,c_n) = lstm (x, [ht_1, ct_1])</span><br></pre></td></tr></table></figure>
 
     </div>
 
@@ -258,7 +306,10 @@
       <footer class="post-footer">
           
           <div class="post-tags">
-              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag"><i class="fa fa-tag"></i> 计算机网络</a>
+              <a href="/tags/Pytorch/" rel="tag"><i class="fa fa-tag"></i> Pytorch</a>
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89/" rel="tag"><i class="fa fa-tag"></i> 计算机视觉</a>
+              <a href="/tags/%E6%97%B6%E5%BA%8F%E5%88%86%E6%9E%90/" rel="tag"><i class="fa fa-tag"></i> 时序分析</a>
+              <a href="/tags/LSTM/" rel="tag"><i class="fa fa-tag"></i> LSTM</a>
           </div>
           <script type="text/javascript">
             var tagsall=document.getElementsByClassName("post-tags")
@@ -322,13 +373,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2022/09/26/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%20%E7%AC%AC%E4%BA%8C%E5%91%A8/" rel="prev" title="【学习记录】2022-09-19">
-      <i class="fa fa-chevron-left"></i> 【学习记录】2022-09-19
+    <a href="/2022/10/14/Segmentation%20Augmentation/" rel="prev" title="语义分割任务的数据增强方式">
+      <i class="fa fa-chevron-left"></i> 语义分割任务的数据增强方式
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2022/10/03/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%20%E7%AC%AC%E4%B8%89%E5%91%A8/" rel="next" title="【学习记录】2022-9-26">
-      【学习记录】2022-9-26 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -387,6 +435,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#RNN%E7%9A%84%E7%AE%80%E5%8D%95%E5%9B%9E%E9%A1%BE"><span class="nav-number">1.</span> <span class="nav-text">RNN的简单回顾</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LSTM%E7%9A%84%E5%BC%95%E5%85%A5"><span class="nav-number">2.</span> <span class="nav-text">LSTM的引入</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#LSTM%E7%9A%84%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84%E4%B8%8E%E5%8A%9F%E8%83%BD%E5%85%B3%E7%B3%BB"><span class="nav-number">2.1.</span> <span class="nav-text">LSTM的层次结构与功能关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LSTM%E8%BF%90%E8%A1%8C%E5%8E%9F%E7%90%86"><span class="nav-number">2.2.</span> <span class="nav-text">LSTM运行原理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pytorch%E4%B8%AD%E7%9A%84LSTM%E4%BD%BF%E7%94%A8"><span class="nav-number">3.</span> <span class="nav-text">Pytorch中的LSTM使用</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
