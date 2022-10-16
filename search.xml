@@ -675,7 +675,7 @@ y^t =\sigma(W'h^t)</script><h3 id="LSTM运行原理"><a href="#LSTM运行原理"
     <title>Python装饰器解析与使用场景</title>
     <url>/2022/10/15/Python%E8%A3%85%E9%A5%B0%E5%99%A8/</url>
     <content><![CDATA[<p><img src="https://s2.loli.net/2022/10/15/EwZH8YS1Nkt67mr.jpg" alt="img"></p>
-<p>如果你是开发人员，那装饰器对你开发调试有很大帮助。装饰器作为python这门语言特有的一个东西，和其他语言的东西很不一样，而且网上的例子又很让人退却三步，所以我看了一位B站up主的视频](<a href="https://www.bilibili.com/video/BV1Gu411Q7JV/?spm_id_from=333.999.0.0&amp;vd_source=ab34db443b112b108b42c31ac575fd1f)后就大概理清楚了，也推荐大家关注一下。">https://www.bilibili.com/video/BV1Gu411Q7JV/?spm_id_from=333.999.0.0&amp;vd_source=ab34db443b112b108b42c31ac575fd1f)后就大概理清楚了，也推荐大家关注一下。</a></p>
+<p>如果你是开发人员，那装饰器对你开发调试有很大帮助。装饰器作为python这门语言特有的一个东西，和其他语言的东西很不一样，而且网上的例子又很让人退却三步，所以我看了一位B站up主的<a href="https://www.bilibili.com/video/BV1Gu411Q7JV/?spm_id_from=333.999.0.0&amp;vd_source=ab34db443b112b108b42c31ac575fd1f">视频</a>后就大概理清楚了，也推荐大家关注一下。</p>
 <span id="more"></span>
 <h2 id="函数是什么"><a href="#函数是什么" class="headerlink" title="函数是什么"></a>函数是什么</h2><p>函数就是一段可以复用的代码段，这是每门语言都有的东西。但是python中的函数与其他语言中的函数的区别，或者说python这门语言和其他语言的本质区别就在于，python中的任何东西都是一个<code>object</code>：</p>
 <p><img src="https://s2.loli.net/2022/10/15/Fv1QB8wEZpCPKus.png" alt="image-20221015211022717"></p>
