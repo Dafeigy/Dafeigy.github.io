@@ -189,6 +189,87 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/07/29/%E4%B8%80%E7%A7%8D%E6%A0%85%E6%A0%BC%E5%9C%B0%E5%9B%BE%E7%9A%84%E7%94%9F%E6%88%90%E6%96%B9%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/07/29/%E4%B8%80%E7%A7%8D%E6%A0%85%E6%A0%BC%E5%9C%B0%E5%9B%BE%E7%9A%84%E7%94%9F%E6%88%90%E6%96%B9%E6%B3%95/" class="post-title-link" itemprop="url">一种用于路径规划的栅格地图简易生成方法</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-07-29 17:46:38" itemprop="dateCreated datePublished" datetime="2022-07-29T17:46:38+08:00">2022-07-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-21 16:51:57" itemprop="dateModified" datetime="2022-08-21T16:51:57+08:00">2022-08-21</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">强化学习</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>做机器人路径规划还有避碰方面的应该都离不开栅格地图环境。最近一个项目是要使用N*N大小的栅格地图生成可视障碍物，并要保证在动作空间$\mathcal A=\{up,down.left,right\}$时，从起点到终点有至少一条可行的道路。所有的障碍物用黑色表示，可行区域用白色表示。栅格地图的生成我看网上大多数的文章是基于matlab生成的，使用python的比较少，即使有也是使用gym这个强化学习测试平台进行搭建的，它是强化学习中一个公认的标准测试平台是，用户可以通过自定义环境或修改现有环境构建一个符合自己需要的模型，但是开发文档太长了…它的内核是pygame，有些规范化的东西其实我不太喜欢，而且代码也忒长了。我参考了这位<a target="_blank" rel="noopener" href="https://www.ihawo.com/archives/85.html">大佬的文章</a>尝试搭了一下，奈何发现修改起来太麻烦了。gym其实还有一个问题就是，它的环境是固定死的，也就是说你想调整栅格地图的大小和精度就必须重新编写程序，这样其实对需要做大量对比实验的人来说非常不友好，因此我构想了一种更快更容易修改的栅格地图生成法。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/07/29/%E4%B8%80%E7%A7%8D%E6%A0%85%E6%A0%BC%E5%9C%B0%E5%9B%BE%E7%9A%84%E7%94%9F%E6%88%90%E6%96%B9%E6%B3%95/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2022/07/29/DQN%20%E5%8E%9F%E5%A7%8B%E8%AE%BA%E6%96%87%E7%BF%BB%E8%AF%91/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -757,7 +838,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">36</span>
+          <span class="site-state-item-count">37</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -770,7 +851,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">55</span>
+        <span class="site-state-item-count">57</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -799,13 +880,13 @@
           <a href="/2023/02/28/23228/" title="2023&#x2F;02&#x2F;28&#x2F;23228&#x2F;">【学习记录】2023-02-28</a>
         </li>
         <li class="links-of-recent-posts-item">
+          <a href="/2023/02/18/Record/" title="2023&#x2F;02&#x2F;18&#x2F;Record&#x2F;">神经网络组合优化</a>
+        </li>
+        <li class="links-of-recent-posts-item">
           <a href="/2023/02/18/Embedding/" title="2023&#x2F;02&#x2F;18&#x2F;Embedding&#x2F;">Embedding的概念与实现</a>
         </li>
         <li class="links-of-recent-posts-item">
           <a href="/2023/02/18/CN-Intriguing%20properties%20of%20neural%20networks/" title="2023&#x2F;02&#x2F;18&#x2F;CN-Intriguing properties of neural networks&#x2F;">【文献翻译】神经网络的有趣特性</a>
-        </li>
-        <li class="links-of-recent-posts-item">
-          <a href="/2022/11/27/%E7%94%9C%E7%94%9C%E5%9C%88%E7%9A%84%E4%BC%98%E5%8C%96/" title="2022&#x2F;11&#x2F;27&#x2F;甜甜圈的优化&#x2F;">3D甜甜圈的计算优化</a>
         </li>
     </ul>
   </div>
