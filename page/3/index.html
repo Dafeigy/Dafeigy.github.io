@@ -189,6 +189,81 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/09/20/usrp/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/09/20/usrp/" class="post-title-link" itemprop="url">在Ubuntu20.04 LTS中配置USRP B210</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-09-20 23:09:58 / 修改时间：23:09:48" itemprop="dateCreated datePublished" datetime="2022-09-20T23:09:58+08:00">2022-09-20</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>从实验室白嫖了SDR，是USRP B210，准备用作UE放在Ubuntu搭建的核心网里，记录一下配置的过程。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/09/20/usrp/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2022/09/09/%E5%85%89%E6%A8%A1%E5%9D%97%E5%95%86%E7%94%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -911,91 +986,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/08/03/%E5%9B%BE%E5%83%8F%E5%8D%B7%E7%A7%AF/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="阿花想养萨摩耶">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="阿花的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/03/%E5%9B%BE%E5%83%8F%E5%8D%B7%E7%A7%AF/" class="post-title-link" itemprop="url">从一维卷积到二维卷积：浅析图像卷积</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-03 21:26:26" itemprop="dateCreated datePublished" datetime="2022-08-03T21:26:26+08:00">2022-08-03</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-19 19:59:27" itemprop="dateModified" datetime="2022-11-19T19:59:27+08:00">2022-11-19</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="什么是卷积"><a href="#什么是卷积" class="headerlink" title="什么是卷积"></a>什么是卷积</h2><p>首先先给出一维情况的卷积的定义。</p>
-<script type="math/tex; mode=display">
-f(x)*g(x)=\int_{-\infty}^{\infty}f(x)g(\tau-x)d\tau</script><p>这个式子很难从直观层面进行理解，因为它包含了乘积、翻转、积分三个部分的内容。如果你是信通学子，那么你肯定会知道两个函数的卷积结果可以看作是他们对应的傅里叶变换在频域的乘积的反变换，也就是说把一个函数作为输入信号，另一个函数作为描述系统的一个方程，当这个系统接收到输入信号后会做出响应，这个响应$y(t)$就是输入信号$x(t)$与系统函数$h(t)$卷积的结果：</p>
-<script type="math/tex; mode=display">
-y(t)=x(t)*h(t)=\mathcal F^{-1}[X(jw)H(jw)]</script><p>但很明显不是所有人都学过信号与系统，所以我想了个更<del>好</del>恶心的例子进行描述。
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/08/03/%E5%9B%BE%E5%83%8F%E5%8D%B7%E7%A7%AF/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1067,20 +1057,20 @@ y(t)=x(t)*h(t)=\mathcal F^{-1}[X(jw)H(jw)]</script><p>但很明显不是所有�
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-count">39</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-count">16</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">58</span>
+        <span class="site-state-item-count">59</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1106,6 +1096,9 @@ y(t)=x(t)*h(t)=\mathcal F^{-1}[X(jw)H(jw)]</script><p>但很明显不是所有�
     </div>
     <ul class="links-of-recent-posts-list">
         <li class="links-of-recent-posts-item">
+          <a href="/2023/03/07/ISAC/" title="2023&#x2F;03&#x2F;07&#x2F;ISAC&#x2F;">ISAC学习记录</a>
+        </li>
+        <li class="links-of-recent-posts-item">
           <a href="/2023/03/01/zwc/" title="2023&#x2F;03&#x2F;01&#x2F;zwc&#x2F;">PEPN3T</a>
         </li>
         <li class="links-of-recent-posts-item">
@@ -1113,9 +1106,6 @@ y(t)=x(t)*h(t)=\mathcal F^{-1}[X(jw)H(jw)]</script><p>但很明显不是所有�
         </li>
         <li class="links-of-recent-posts-item">
           <a href="/2023/02/18/Record/" title="2023&#x2F;02&#x2F;18&#x2F;Record&#x2F;">神经网络组合优化</a>
-        </li>
-        <li class="links-of-recent-posts-item">
-          <a href="/2023/02/18/Embedding/" title="2023&#x2F;02&#x2F;18&#x2F;Embedding&#x2F;">Embedding的概念与实现</a>
         </li>
     </ul>
   </div>
