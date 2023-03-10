@@ -15801,6 +15801,7 @@ s.t.\,\mathbb E(d(S,\hat S))\leq D</script><p>其中$P_X$代表了信道输入$X
 <script type="math/tex; mode=display">
 \min_\mathrm{X}\, \mathrm{tr}(\mathrm{R_X^{-1}})\,\mathrm{s.t.}||\mathrm{X}||_F^2 \leq LP_T,c_i(\mathrm{X}\odot C_i)</script></li>
 </ul>
+<p>妈的，一拳把地球打爆</p>
 ]]></content>
       <categories>
         <category>ISAC</category>
