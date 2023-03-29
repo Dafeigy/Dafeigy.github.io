@@ -15810,4 +15810,27 @@ s.t.\,\mathbb E(d(S,\hat S))\leq D</script><p>其中$P_X$代表了信道输入$X
         <tag>ISAC</tag>
       </tags>
   </entry>
+  <entry>
+    <title>OAI gNB构建</title>
+    <url>/2023/03/29/BUILDOAI/</url>
+    <content><![CDATA[<p>在Ubuntu 20.04中搭建OAI平台。</p>
+<span id="more"></span>
+<h2 id="前置条件"><a href="#前置条件" class="headerlink" title="前置条件"></a>前置条件</h2><p>先安装依赖包：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install net-tools</span><br><span class="line">sudo apt install git</span><br><span class="line">sudo apt install -y libboost-all-dev libusb-1.0-0-dev doxygen python3-docutils python3-mako python3-numpy python3-requests python3-ruamel.yaml python3-setuptools cmake build-essential</span><br></pre></td></tr></table></figure>
+<p>随后下载UHD镜像：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/EttusResearch/uhd.git ~/uhd</span><br><span class="line"><span class="built_in">cd</span> ~/uhd</span><br><span class="line">git checkout v4.4.0.0</span><br><span class="line"><span class="built_in">cd</span> host</span><br><span class="line"><span class="built_in">mkdir</span> build</span><br><span class="line"><span class="built_in">cd</span> build</span><br><span class="line">cmake ../</span><br><span class="line">make -j $(<span class="built_in">nproc</span>)</span><br><span class="line">make <span class="built_in">test</span> <span class="comment"># This step is optional</span></span><br><span class="line">sudo make install</span><br><span class="line">sudo ldconfig</span><br><span class="line">sudo uhd_images_downloader</span><br></pre></td></tr></table></figure>
+<p>下载完成后，接入USRP设备后可通过<code>uhd_find_devices</code>以及<code>uhd_usrp_probe</code>验证。</p>
+<h2 id="构建OAI-gNB"><a href="#构建OAI-gNB" class="headerlink" title="构建OAI gNB"></a>构建OAI gNB</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 获取源代码</span></span><br><span class="line">git <span class="built_in">clone</span> https://gitlab.eurecom.fr/oai/openairinterface5g.git ~/openairinterface5g</span><br><span class="line"><span class="built_in">cd</span> ~/openairinterface5g</span><br><span class="line">git checkout develop</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装OAI依赖</span></span><br><span class="line"><span class="built_in">cd</span> ~/openairinterface5g/cmake_targets</span><br><span class="line">./build_oai -I</span><br><span class="line"></span><br><span class="line"><span class="comment"># 构建OAI</span></span><br><span class="line"><span class="built_in">cd</span> ~/openairinterface5g</span><br><span class="line"><span class="built_in">source</span> oaienv</span><br><span class="line"><span class="built_in">cd</span> cmake_targets</span><br><span class="line">./build_oai -w USRP --ninja --gNB --build-lib <span class="string">&quot;nrscope&quot;</span> -c</span><br></pre></td></tr></table></figure>
+<h2 id="运行OAI-gNB"><a href="#运行OAI-gNB" class="headerlink" title="运行OAI gNB"></a>运行OAI gNB</h2><p>根据USRP的板型号的差异，选择不同的配置。</p>
+<h3 id="USRP-B210"><a href="#USRP-B210" class="headerlink" title="USRP B210"></a>USRP B210</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/openairinterface5g</span><br><span class="line"><span class="built_in">source</span> oaienv</span><br><span class="line"><span class="built_in">cd</span> cmake_targets/ran_build/build</span><br><span class="line">sudo ./nr-softmodem -O ../../../targets/PROJECTS/GENERIC-NR-5GC/CONF/gnb.sa.band78.fr1.106PRB.usrpb210.conf --sa -E --continuous-tx</span><br></pre></td></tr></table></figure>
+<h3 id="USRP-N300"><a href="#USRP-N300" class="headerlink" title="USRP N300"></a>USRP N300</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/openairinterface5g</span><br><span class="line"><span class="built_in">source</span> oaienv</span><br><span class="line"><span class="built_in">cd</span> cmake_targets/ran_build/build</span><br><span class="line">sudo ./nr-softmodem -O ../../../targets/PROJECTS/GENERIC-NR-5GC/CONF/gnb.sa.band77.fr1.273PRB.2x2.usrpn300.conf --sa --usrp-tx-thread-config 1</span><br></pre></td></tr></table></figure>
+<h3 id="USRP-X300"><a href="#USRP-X300" class="headerlink" title="USRP X300"></a>USRP X300</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/openairinterface5g</span><br><span class="line"><span class="built_in">source</span> oaienv</span><br><span class="line"><span class="built_in">cd</span> cmake_targets/ran_build/build</span><br><span class="line">sudo ./nr-softmodem -O ../../../targets/PROJECTS/GENERIC-NR-5GC/CONF/gnb.sa.band77.fr1.273PRB.2x2.usrpn300.conf --sa --usrp-tx-thread-config 1 -E --continuous-tx</span><br></pre></td></tr></table></figure>
+<h1 id=""><a href="#" class="headerlink" title=" "></a> </h1>]]></content>
+      <categories>
+        <category>学习记录</category>
+      </categories>
+      <tags>
+        <tag>OAI</tag>
+      </tags>
+  </entry>
 </search>
