@@ -16039,4 +16039,71 @@ u=(f_{gh}(n_{s,f}^{\mu},l')+n_{ID}^{SRS}) \mod 30</script></li>
         <tag>5GNR</tag>
       </tags>
   </entry>
+  <entry>
+    <title>NR参考信号学习（二）</title>
+    <url>/2023/04/17/5GNR-%E5%8F%82%E8%80%83%E4%BF%A1%E5%8F%B7%EF%BC%88%E4%BA%8C%EF%BC%89/</url>
+    <content><![CDATA[<p align="center">
+    <img src="https://s2.loli.net/2023/04/17/NOadov1XT46nl3r.png" alt="logo" style="zoom:90%" />
+</p>
+
+<p>首先想先介绍一下ZC序列以及它的一些特性，然后接下来会总结一下SRS到物理资源的映射过程和方式。</p>
+<span id="more"></span>
+<h2 id="为什么是ZC序列"><a href="#为什么是ZC序列" class="headerlink" title="为什么是ZC序列"></a>为什么是ZC序列</h2><h3 id="ZC序列的特性"><a href="#ZC序列的特性" class="headerlink" title="ZC序列的特性"></a>ZC序列的特性</h3><p>1962 年Zadoff提出的循环自相关为零的多相编码是一种用于无线通信中的序列编码技术。它的特点是具有循环自相关为零的性质，可以有效地降低多径干扰和频偏影响，提高系统的抗干扰性能和频谱利用效率。所谓自相关，此外，它还具有码长可变、相位连续可调、码间互不干扰等优点。然而，Zadoff序列的长度必须是质数，因此其码长受到限制。此外，由于其相位连续可调的特性，Zadoff序列在频域上存在较大的旁瓣，可能会对其他用户的信号造成干扰。因此，在实际应用中需要进行合理的设计和选择。</p>
+<blockquote>
+<p><strong>自相关：</strong>指一个信号与其自身在不同时间点上的相似程度。自相关函数（Autocorrelation Function，ACF）描述了信号在不同时间点上的自相关性，即信号在不同时间点上的相似程度。自相关函数的峰值表示信号的周期性，而自相关函数的宽度表示信号的带宽。</p>
+<p><strong>互相关：</strong>指两个信号之间的相似程度。互相关函数（Cross-correlation Function，CCF）描述了两个信号之间的相似程度，即它们在不同时间点上的相关性。互相关函数的峰值表示两个信号之间的时延，而互相关函数的宽度表示两个信号之间的带宽。</p>
+</blockquote>
+<p>Zadoff-Chu 序列一个关键特点是<strong>经过离散傅里叶变换，生成的新序列依然是 Zadoff-Chu 序列</strong>。Zadoff-Chu 序列的另一个特点是序列<strong>在时域和频域的幅度都是恒定的</strong>。时域信号的幅度恒定有助于提高功放效率。频域信号的幅度恒定意味着序列经过任意非零循环移位与原序列零相关。这就是说，同一个 Zadoff-Chu 序列在时域上经过不同的循环移位所产生的两个序列信号之间是正交的。时域的循环移位等效于在频域上进行连续的相位旋转。</p>
+<p><img src="https://s2.loli.net/2023/04/17/NOadov1XT46nl3r.png" alt="logo" style="zoom:90%" /></p>
+<p>Zadoff-Chu序列在随机接入过程中的preamble也有使用，我们可以看一下这种序列是如何使用的：</p>
+<p><img src="C:\Users\cybercolyce\AppData\Roaming\Typora\typora-user-images\image-20230417105349269.png" alt="image-20230417105349269"></p>
+<h3 id="ZC序列的生成"><a href="#ZC序列的生成" class="headerlink" title="ZC序列的生成"></a>ZC序列的生成</h3><p>Zadoff-Chu序列生成方法如下： 假设Zadoff-Chu序列的长度为N，相位因子（更广泛的说法是ZC序列的根Root，也用$R$表示）为$p$，则第$k$个元素可以表示为： <script type="math/tex">x_k = e^{-j\pi pk(k+1)/N}</script> 其中，$k$的取值范围为$0$到$N-1$。 Zadoff-Chu序列的生成过程可以通过以下步骤实现：</p>
+<ol>
+<li>选择一个质数N和一个整数p，满足N和p互质。 </li>
+<li>生成一个长度为N的序列，其中第k个元素为： <script type="math/tex">x_k = e^{-j\pi pk(k+1)/N}</script> </li>
+<li>如果需要将序列进行循环移位，则将序列循环移位k个位置，其中k为任意整数。 </li>
+<li>如果需要将序列进行相位旋转，则将序列中的每个元素乘以一个相位因子$e^{j\theta}$，其中$\theta$为任意实数。 通过以上步骤，可以生成一个循环自相关为零的Zadoff-Chu序列，用于无线通信中的序列编码和解码。</li>
+</ol>
+<p>虽然 Zadoff-Chu 序列具有以上优点，但它<strong>并不能直接在 LTE/NR 系统中被使用</strong>。一个原因是 <strong>SRS 序列长度并不是质数</strong>（见下文物理资源映射部分），另一个原因是 Zadoff-Chu<strong>序列长度较短时，没有足够的可用序列</strong>。<a href="https://marshallcomm.cn/2020/11/21/r15_sounding_reference_signal/#用于下行-csi-获取的-ue-探测过程">Marshall</a>在博客中说道：</p>
+<blockquote>
+<p>原始的 Zadoff-Chu 序列可以为任意长度，但人们往往关注ZC序列长度 $N_{ZC}$ 为质数的情况，因为质数长度会拥有最多可用的 Zadoff-Chu 序列。也就是说，在 Zadoff-Chu序列长度  $N_{ZC}$ 为质数的情况下，可以找到  $N_{ZC}-1$个不同的 Zadoff-Chu序列。因此 SRS 序列采用 Zadoff-Chu序列循环扩展，从长度  $N_{ZC}$ 扩展到长度  $M_{ZC}$。SRS 序列是频域序列，由于是在频域上扩展生成，所以依然保持了完美的循环自相关特性，但在时域上会破坏 Zadoff-Chu序列原有的幅度恒定特性，因此时域幅度上会产生波动。</p>
+</blockquote>
+<p>对于长度超过 36 的 SRS 序列，都会使用扩展 Zadoff-Chu 序列。对于长度小于 36 的 SRS 序列，NR 标准通过计算机穷举法，找到了一组合适的序列，这些频域上平坦的序列具有良好的时域包络特性。长度小于 36 的 SRS 序列不使用 Zadoff-Chu 序列，主要原因是找不到足够的可用 Zadoff-Chu 序列。</p>
+<p>ZC 序列具有零相关性是指，同一个基序列的不同循环移位得到任意两个序列之间的相关系数为零，另一方面，理论上两个不同的基序列（p不同，无循环移位）的互相关系数为 1/sqrt(N)。</p>
+<h3 id="ZC序列性质的简单研究（TODO）"><a href="#ZC序列性质的简单研究（TODO）" class="headerlink" title="ZC序列性质的简单研究（TODO）"></a>ZC序列性质的简单研究（TODO）</h3><p>matlab下进行数值计算：</p>
+<figure class="highlight matlab"><table><tr><td class="code"><pre><span class="line">N  = <span class="number">63</span>;</span><br><span class="line">M1 = <span class="number">61</span>;</span><br><span class="line">M2 = <span class="number">59</span>;</span><br><span class="line">m  = <span class="number">5</span>;</span><br><span class="line"> </span><br><span class="line"><span class="comment">% 1. Zadoff-Chu</span></span><br><span class="line">ak1 = <span class="built_in">zeros</span>(<span class="number">1</span>,N);</span><br><span class="line">bk1 = <span class="built_in">zeros</span>(<span class="number">1</span>,N);</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">0</span>:N<span class="number">-1</span></span><br><span class="line">    ak1(k+<span class="number">1</span>) = <span class="built_in">exp</span>(<span class="number">1</span><span class="built_in">j</span> * (M1 * <span class="built_in">pi</span> * k * (k+<span class="number">1</span>) / N));</span><br><span class="line">    bk1(k+<span class="number">1</span>) = <span class="built_in">exp</span>(<span class="number">1</span><span class="built_in">j</span> * (M2 * <span class="built_in">pi</span> * k * (k+<span class="number">1</span>) / N));</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"> </span><br><span class="line"><span class="comment">% 2. cyclic shift</span></span><br><span class="line">ak2 = [ak1(<span class="number">1</span>, m+<span class="number">1</span>:<span class="keyword">end</span>), ak1(<span class="number">1</span>, <span class="number">1</span>:m)];</span><br><span class="line"> </span><br><span class="line"><span class="comment">% 3. autocorrelation</span></span><br><span class="line">autoCorr = <span class="built_in">abs</span>(sum(ak1 .* <span class="built_in">conj</span>(ak2)) / N)</span><br><span class="line"> </span><br><span class="line"><span class="comment">% 4. cross correlation</span></span><br><span class="line">crossCorr = <span class="built_in">abs</span>(sum(ak1 .* <span class="built_in">conj</span>(bk1)) / N)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>输出结果为：</p>
+<figure class="highlight matlab"><table><tr><td class="code"><pre><span class="line">autoCorr =</span><br><span class="line"></span><br><span class="line">   <span class="number">4.4623e-14</span></span><br><span class="line"></span><br><span class="line">crossCorr =</span><br><span class="line"></span><br><span class="line">    <span class="number">0.1260</span></span><br><span class="line">    </span><br></pre></td></tr></table></figure>
+<h2 id="SRS到物理资源的映射"><a href="#SRS到物理资源的映射" class="headerlink" title="SRS到物理资源的映射"></a>SRS到物理资源的映射</h2><h3 id="频域资源"><a href="#频域资源" class="headerlink" title="频域资源"></a>频域资源</h3><p>对应 SRS 资源的每个 OFDM 符号$l’$和天线端口$p_i$，需要先将 SRS 序列 $r^{(p_i)}(n,l’)$ 乘以幅度扩展因子 $\beta_{SRS}$ 以符合 38.213 规定的传输功率。然后对每个天线端口$p_i$，从 $r^{(p_i)}(0,l’)$开始在一个时隙内根据下式映射到资源元素<strong>（Resource Element）</strong>$(k,l)$：</p>
+<p><img src="https://s2.loli.net/2023/04/17/W1l3QhAcFPLIUBr.png" alt="img"></p>
+<p>而SRS信号的长度是通过下式给定的：</p>
+<script type="math/tex; mode=display">
+M_{sc,b}^{SRS}=m_{SRS,b}N_{sc}^{RB}/(K_{TC}P_F)</script><p>其中$m_{SRS,b}$是通过下表中通过$b=B_{SRS}$对应得到的：</p>
+<p><img src="https://s2.loli.net/2023/04/17/yQ8qBGrvwMfFS3R.png" alt="image-20230417140047252"></p>
+<p>$B_{SRS}\in\{0,1,2,3\}$是由高层参数<code>freqHopping</code> 中的字段<code>b-SRS</code>给定，$C_{SRS}\in\{0,1,2,\dots,63\}$由高层参数<code>freqHopping</code> 中的字段<code>c-SRS</code>给定查表时通过 $C_{SRS}$选中某一行，再通过 $B_{SRS}$ 选中某一列，即可最终确定 SRS 的带宽信息。NR 系统支持 64 种 SRS 带宽配置方式，一个 SRS 资源可配置的最小带宽为 4 个 RB，最大带宽为 272 个RB；$K_{TC}$是之前说过的传输梳数，$P_F$是频率因子，默认为1，如果配置了高层参数的<code>FreqScalingFactor</code>后可以配置为$\{2,4\}$。当其被配置后，UE则会收到长度是6的倍数的SRS序列。</p>
+<p>确认完带宽信息后，还需要确定 SRS 的频域起始位置。起始位置$k_{0}^{(p_i)}$定义为：</p>
+<p><img src="https://s2.loli.net/2023/04/17/18pw9KVTLSNEAYa.png" alt="image-20230417163847159" style="zoom:80%;" /></p>
+<p>其中：</p>
+<p><img src="https://s2.loli.net/2023/04/17/SHvq8xluTcgWarM.png" alt="image-20230417172651677"></p>
+<p>且：</p>
+<ul>
+<li><p>$k_F\in \{0,1,\dots,P_F -1\}$由高层参数<code>StartRBIndex</code>配置，未配置时设为$k_F=0$</p>
+</li>
+<li><p>$k_{hop}$通过下表以及如下式子确定：</p>
+<p><img src="https://s2.loli.net/2023/04/17/fi3uhZEL4KPRxvD.png" alt="image-20230417164237549"></p>
+<p><img src="https://s2.loli.net/2023/04/17/D6tSC1RFjf5oZM4.png" alt="image-20230417164216348"></p>
+</li>
+</ul>
+<p>接下来则是和SRS跳频相关的内容。频域移位值$n_{shift}$用来调整 SRS 资源和 CRB 的 4 的倍数网格对齐，它包含在高层参数<code>freqDomainShift</code> 中。如果 $N_{BWP}^{start}\leq n_{shift}$，则 $k_{0}^{(pi)}=0$的参考点是 CRB 0 的子载波 0；如果$N_{BWP}^{start}&gt; n_{shift}$，则$k_{0}^{(pi)}=0$的参考点是 BWP 的最低编号的子载波。SRS 是否跳频由高层参数<code>freqHopping</code>中的字段<code>b-hop</code> 决定。$b_{hop}$ 取值范围为0~3。</p>
+<p><img src="https://s2.loli.net/2023/04/17/9W1MdkApflDiGxR.png" alt="image-20230417173401038" style="zoom:100%;" /></p>
+<h3 id="时域资源"><a href="#时域资源" class="headerlink" title="时域资源"></a>时域资源</h3><p>以时隙表示的 SRS 周期$T_{SRS}$和时隙偏移量$T_{offset}$根据高层参数 <code>periodicityAndOffset-p</code> 或 <code>periodicityAndOffset-sp</code> 确定。如果<code>resourceType = “periodic”</code>，则对应 <code>periodicityAndOffset-p</code>；如果<code>resourceType = “semi-persistent”</code>，则对应 <code>periodicityAndOffset-sp</code>。在配置的SRS资源中可用于 SRS 传输的候选时隙需要满足:</p>
+<script type="math/tex; mode=display">
+(N_{slot}^{frame,\mu}n_f+n_{s,f}^{\mu}-T_{offset})\mod T_{SRS}=0</script>]]></content>
+      <categories>
+        <category>ISAC</category>
+      </categories>
+      <tags>
+        <tag>5GNR</tag>
+      </tags>
+  </entry>
 </search>
