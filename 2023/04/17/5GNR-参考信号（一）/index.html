@@ -20,20 +20,23 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":5},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="NR-物理参考信号参考信号原则参考信号的设计规范：  避免持续发送的周期性信号。所谓持续发送，是指不经系统配置即发送，也无法关闭的信号，例如LTE的CRS。 物理信号占用的时频资源可灵活配置。 支持大规模波束赋形传输。  NR下行物理信号包括：  信道状态信息参考信号（Channel State Information Reference Signal，CSI-RS） 解调参考信号（DM-RS）">
+  <meta name="description" content="NR-物理参考信号参考信号设计原则参考信号的设计规范：  避免持续发送的周期性信号。所谓持续发送，是指不经系统配置即发送，也无法关闭的信号，例如LTE的CRS。 物理信号占用的时频资源可灵活配置。 支持大规模波束赋形传输。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="NR参考信号学习（一）">
-<meta property="og:url" content="http://example.com/2023/04/14/5GNR-%E5%8F%82%E8%80%83%E4%BF%A1%E5%8F%B7/index.html">
+<meta property="og:url" content="http://example.com/2023/04/17/5GNR-%E5%8F%82%E8%80%83%E4%BF%A1%E5%8F%B7%EF%BC%88%E4%B8%80%EF%BC%89/index.html">
 <meta property="og:site_name" content="阿花的Blog">
-<meta property="og:description" content="NR-物理参考信号参考信号原则参考信号的设计规范：  避免持续发送的周期性信号。所谓持续发送，是指不经系统配置即发送，也无法关闭的信号，例如LTE的CRS。 物理信号占用的时频资源可灵活配置。 支持大规模波束赋形传输。  NR下行物理信号包括：  信道状态信息参考信号（Channel State Information Reference Signal，CSI-RS） 解调参考信号（DM-RS）">
+<meta property="og:description" content="NR-物理参考信号参考信号设计原则参考信号的设计规范：  避免持续发送的周期性信号。所谓持续发送，是指不经系统配置即发送，也无法关闭的信号，例如LTE的CRS。 物理信号占用的时频资源可灵活配置。 支持大规模波束赋形传输。">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-04-14T10:38:02.748Z">
-<meta property="article:modified_time" content="2023-04-15T04:32:49.036Z">
+<meta property="og:image" content="https://s2.loli.net/2023/04/16/xIZ3eipjRtKAMkr.png">
+<meta property="og:image" content="https://s2.loli.net/2023/04/16/ElOkNYuyLcTVPS7.png">
+<meta property="article:published_time" content="2023-04-17T01:49:36.689Z">
+<meta property="article:modified_time" content="2023-04-17T01:52:16.664Z">
 <meta property="article:author" content="阿花想养萨摩耶">
 <meta property="article:tag" content="5GNR">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/04/16/xIZ3eipjRtKAMkr.png">
 
-<link rel="canonical" href="http://example.com/2023/04/14/5GNR-%E5%8F%82%E8%80%83%E4%BF%A1%E5%8F%B7/">
+<link rel="canonical" href="http://example.com/2023/04/17/5GNR-%E5%8F%82%E8%80%83%E4%BF%A1%E5%8F%B7%EF%BC%88%E4%B8%80%EF%BC%89/">
 
 
 <script id="page-configurations">
@@ -195,7 +198,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/04/14/5GNR-%E5%8F%82%E8%80%83%E4%BF%A1%E5%8F%B7/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/04/17/5GNR-%E5%8F%82%E8%80%83%E4%BF%A1%E5%8F%B7%EF%BC%88%E4%B8%80%EF%BC%89/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -217,16 +220,10 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2023-04-14 18:38:02" itemprop="dateCreated datePublished" datetime="2023-04-14T18:38:02+08:00">2023-04-14</time>
+              <time title="创建时间：2023-04-17 09:49:36 / 修改时间：09:52:16" itemprop="dateCreated datePublished" datetime="2023-04-17T09:49:36+08:00">2023-04-17</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-04-15 12:32:49" itemprop="dateModified" datetime="2023-04-15T12:32:49+08:00">2023-04-15</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -248,13 +245,14 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="NR-物理参考信号"><a href="#NR-物理参考信号" class="headerlink" title="NR-物理参考信号"></a>NR-物理参考信号</h2><h3 id="参考信号原则"><a href="#参考信号原则" class="headerlink" title="参考信号原则"></a>参考信号原则</h3><p>参考信号的设计规范：</p>
+        <h2 id="NR-物理参考信号"><a href="#NR-物理参考信号" class="headerlink" title="NR-物理参考信号"></a>NR-物理参考信号</h2><h3 id="参考信号设计原则"><a href="#参考信号设计原则" class="headerlink" title="参考信号设计原则"></a>参考信号设计原则</h3><p>参考信号的设计规范：</p>
 <ol>
 <li>避免持续发送的周期性信号。所谓持续发送，是指不经系统配置即发送，也无法关闭的信号，例如LTE的CRS。</li>
 <li>物理信号占用的时频资源可灵活配置。</li>
 <li>支持大规模波束赋形传输。</li>
 </ol>
-<p><strong>NR下行</strong>物理信号包括：</p>
+<span id="more"></span>
+<h3 id="现有参考信号"><a href="#现有参考信号" class="headerlink" title="现有参考信号"></a>现有参考信号</h3><p><strong>NR下行</strong>物理信号包括：</p>
 <ul>
 <li>信道状态信息参考信号（<strong>C</strong>hannel State <strong>I</strong>nformation <strong>R</strong>eference <strong>S</strong>ignal，CSI-RS）</li>
 <li>解调参考信号（DM-RS）</li>
@@ -270,12 +268,86 @@
 <li>相位噪声跟踪参考信号（PT-RS）等</li>
 </ul>
 <p>其中，上行DM-RS和PT-RS与下行的设计基本相同。</p>
-<h2 id="SRS信号"><a href="#SRS信号" class="headerlink" title="SRS信号"></a>SRS信号</h2><h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/401875663">5G NR的物理信号和物理信道 - 知乎 (zhihu.com)</a></p>
+<h2 id="SRS信号"><a href="#SRS信号" class="headerlink" title="SRS信号"></a>SRS信号</h2><p>SRS 用于上行信道信息获取、满足信道互易性时的下行信道信息获取以及上行波束管理。NR 定义了 3 种类型的 SRS 传输：周期性 SRS，半持续性 SRS 和非周期性 SRS，通过为 SRS 资源集和 SRS 资源配置关于时域类型的高层参数 resourceType 来实现。</p>
+<ul>
+<li><p>周期性 SRS。时域类型被配置为周期 SRS 资源的所有参数由高层信令配置，UE根据所配置的参数进行周期性发送。同一个 SRS 资源集内的所有 SRS 资源具有相同的周期性。考虑到 NR 系统支持各种子载波间隔，不同子载波间隔对应的时隙时长不同，周期 SRS 资源的周期以及周期内的偏移以时隙为单位进行配置。周期 SRS 资源可配置的最小周期为 1 个时隙，最大周期为 2560 个时隙。</p>
+</li>
+<li><p>半持续性 SRS。时域类型被配置为半持续 SRS 资源在激活期间也是周期性发送。它与周期性 SRS 的区别在于 UE 在接收到关于半持续 SRS 资源的高层信令配置后不发送 SRS，只有在接收到 MAC 层发送的关于半持续 SRS 资源的激活信令后才开始周期性地发送半持续 SRS 资源对应的 SRS ，在收到 MAC 层发送的半持续 SRS 资源的去激活命令后停止发送 SRS。因此，相对于周期性 SRS 资源，半持续 SRS 资源的配置以及激活、去激活相比高层信令（RRC信令）更快，更灵活，适用于要求时延较低的业务的快速传输。与周期性 SRS 资源类似，基站通过高层信令为半持续 SRS 资源配置周期和周期内的偏移，同一个 SRS 资源集内的所有SRS资源具有相同的周期性。</p>
+</li>
+<li><p>非周期性 SRS。时域类型被配置为非周期 SRS 资源通过 DCI 信令激活。UE 每接收到一次触发非周期 SRS 资源的 SRS 触发信令，UE 进行一次所触发的 SRS 资源对应的 SRS 发送。DCI 中的 SRS 触发信令包含 2 个比特（如表 Table 7.3.1.1.2-24 所示），2 个比特可表示的 4 个状态。其中中的 1 个状态表示不触发非周期 SRS 发送，其他 3 个状态分别表示触发第一、第二、第三个 SRS 资源组；一个状态可以触发一个或多个 SRS 资源集，一个状态对应的多个 SRS 资源集可以对应多个载波。</p>
+<p><img src="https://s2.loli.net/2023/04/16/xIZ3eipjRtKAMkr.png" alt="img"></p>
+</li>
+</ul>
+<h2 id="SRS资源定义"><a href="#SRS资源定义" class="headerlink" title="SRS资源定义"></a>SRS资源定义</h2><p>SRS资源是由<strong>“天线端口数目 $N_{ap}^{SRS}$，连续的 OFDM 符号数目$ N_{symb}^{SRS}$，时域起始符号 $l_0$ 和频域起始位置 $k_0$”</strong>四个信息共同确定。以下是详细的说明：</p>
+<ul>
+<li><p><strong>天线端口数 </strong>$N_{ap}^{SRS}$：$N_{ap}^{SRS}$的取值为$\{1,2,4\}$，天线端口索引表示为$\{p_i\}_{i=0}^{N_{ap}^{SRS}-1}$，其中$p_i=1000+i$。</p>
+<ul>
+<li>如果高层参数 SRS-ResourceSet 中的 <code>usage</code> 未配置为 <code>nonCodebook</code>，则$N_{ap}^{SRS}$ 由 <code>nrofSRS-Ports</code> 确定。</li>
+<li>如果高层参数 SRS-ResourceSet 中的<code>usage</code> 配置为 <code>nonCodebook</code>，则 $N_{ap}^{SRS}$取决于 section 5.2</li>
+</ul>
+</li>
+<li><p><strong>连续的 OFDM 符号数目</strong>$ N_{symb}^{SRS}$：由高层参数 resourceMapping 中的 <code>nrofSymbols</code> 确定。</p>
+</li>
+<li><p><strong>时域起始符号</strong>$l_0$：</p>
+<script type="math/tex; mode=display">
+l_0=N_{symb}^{slot}-1-l_{offset}</script><p>其中，$l_{offset}=\{0,1,\dots,5\}$且$l_{offset} \geq N_{symb} ^ {slot} -1$。</p>
+</li>
+<li><p><strong>频域起始位置</strong> $k_0$：SRS 的频域起始子载波。 </p>
+</li>
+</ul>
+<h2 id="SRS序列生成"><a href="#SRS序列生成" class="headerlink" title="SRS序列生成"></a>SRS序列生成</h2><p>基于Zadoff-Chu序列产生：</p>
+<script type="math/tex; mode=display">
+r^{(p_i)}(n,l')=r_{u,v}^{(\alpha_i,\delta)}(n)\\
+0\leq n \leq M_{sc,b}^{SRS}\\
+l'\in\{0,1m\dots, N_{symb}^{SRS}-1\}</script><p>$r_{u,v}^{(\alpha_i,\delta)}(n)$是<code>扩展 ZC 序列</code>（注：一种伪随机数序列），序列长度为$M_{sc,b}^{SRS}$，其中$\delta=\log_2(K_{TC})$，$\alpha_i$是对应于天线端口$p_i$的循环移位。$l’$是SRS资源的OFDM符号索引。传输梳齿数目$K_{TC}$由高层参数 <code>transmissionComb</code> 确定，循环移位$\alpha_i$由下式给出：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\alpha_i=&2\pi \frac{n_{SRS}^{cs,i}}{n_{SRS}^{cs,max}}\\
+n_{SRS}^{cs,i}=&(n_{SRS}^{cs}+\frac{n_{SRS}^{cs,max}(p_i-1000)}{N_{ap}^{SRS}})\mod n_{SRS}^{cs,max}
+\end{aligned}</script><p>$n_{SRS}^{cs}$是由高层参数<code>transmissionComb</code>给定的。传输梳齿数目$K_{TC}$和最大循环位移数$n_{SRS}^{cs,max}$的对应关系如下表所示。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$K_{TC}$</th>
+<th style="text-align:center">$n_{SRS}^{cs,max}$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">2</td>
+<td style="text-align:center">8</td>
+</tr>
+<tr>
+<td style="text-align:center">4</td>
+<td style="text-align:center">12</td>
+</tr>
+<tr>
+<td style="text-align:center">8</td>
+<td style="text-align:center">6</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>最下面的一行似乎是今年最新版本才加进来的。</strong>循环移位$\alpha_i$是$n_{SRS}^{cs}$和 $p_i$的函数，即使高层给定了 $n_{SRS}^{cs}$，不同的天线端口$p_i$也会使得循环移位$\alpha_i$不同。也就是说，同一个 UE 的不同天线端口所使用的 SRS 序列不同，每个天线端口对应的 SRS 序列是通过不同的循环移位得到的。低峰均比序列生成过程为$r_{u,v}^{(\alpha_i,\delta)}(n)=e^{j\alpha n}\overline r_{u,v}(n)$。其中$e^{j\alpha n}$表示对频域序列进行相位偏移，等效为时域的循环移位。一般会假定基序列$\overline r_{u,v}(n)$保持不变，则唯一变化的是相位偏移量 $e^{j\alpha n}$。尽管数学上称为频域的相位偏移，但 NR 标准统称为循环移位（cyclic shift）。引用一下<a target="_blank" rel="noopener" href="https://marshallcomm.cn/2020/11/21/r15_sounding_reference_signal/#用于下行-csi-获取的-ue-探测过程">Marshall大佬</a>总结的图：</p>
+<p><img src="https://s2.loli.net/2023/04/16/ElOkNYuyLcTVPS7.png" alt="img"></p>
+<p>为了干扰随机化，5G NR 系统支持 SRS 序列跳和序列组跳，是否开启这项功能由高层参数 <code>groupOrSequenceHopping</code> 决定。SRS 的基序列被分成若干组，每组包含若干序列。如果基站给终端配置为 <code>groupOrSequenceHopping = neither</code>，则<strong>每次终端发送的 SRS 序列不变</strong>；如果基站给终端配置为 <code>groupOrSequenceHopping = groupHopping or sequenceHopping</code>，则每次终端发送上行 SRS 时按照以下规则采用不同的序列：</p>
+<ul>
+<li><p>序列组号$u$:SRS 序列标识$n_{ID}^{SRS}$由高层参数 <code>sequenceId</code>给定，取值范围为 0~1023。</p>
+<script type="math/tex; mode=display">
+u=(f_{gh}(n_{s,f}^{\mu},l')+n_{ID}^{SRS}) \mod 30</script></li>
+<li><p>序列号$v$:</p>
+<p>取决于高层参数 <code>groupOrSequenceHopping</code> 的值。</p>
+</li>
+</ul>
+<p>在协议讨论阶段，RAN1#89 次会议同意使用 SRS sequence ID 来生成 SRS 序列。序列组号$u$是 SRS sequence ID 的函数，而 <strong>SRS sequence ID 是 UE 特定的信息</strong>。这意味着 <strong>NR SRS 序列本身带有 UE 信息，而 LTE SRS 序列的生成是不带有 UE 信息的。</strong>这样做的好处是，即使两个 UE 使用了完全相同的时频域资源发送 SRS，由于 SRS sequence ID 不同，又由于 <strong>ZC 序列良好的互相关特性，那么两个 SRS 序列也具有较好的正交性。</strong></p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/401875663">5G NR的物理信号和物理信道 - 知乎 (zhihu.com)</a></p>
 <p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/378006580">5G NR - 参考信号(Reference Signal)学习笔记1 - Overview - 知乎 (zhihu.com)</a></p>
 <p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/381267548">5G NR - 参考信号(Reference Signal)学习笔记2 - Antenna Port(天线端口)的概念 - 知乎 (zhihu.com)</a></p>
 <p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/381268009">5G NR - 参考信号(Reference Signal)学习笔记3 - QCL(准共址) Overview - 知乎 (zhihu.com)</a></p>
 <p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/384679680">5G NR - 参考信号(Reference Signal)学习笔记4 - QCL Type和各种组合 - 知乎 (zhihu.com)</a></p>
 <p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/385420380">5G NR - 参考信号(Reference Signal)学习笔记5 - TCI Framework overview - 知乎 (zhihu.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://marshallcomm.cn/2020/11/21/r15_sounding_reference_signal/">5G Sounding Reference Signal | Marshall (marshallcomm.cn)</a></p>
 
     </div>
 
@@ -350,13 +422,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2023/04/06/MIT%E7%B3%BB%E5%88%97/" rel="prev" title="">
-      <i class="fa fa-chevron-left"></i> 
+    <a href="/2023/04/15/Three.js/" rel="prev" title="Three.js 学习笔记（一）">
+      <i class="fa fa-chevron-left"></i> Three.js 学习笔记（一）
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2023/04/15/Three.js/" rel="next" title="Three.js 学习笔记（一）">
-      Three.js 学习笔记（一） <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -415,7 +484,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#NR-%E7%89%A9%E7%90%86%E5%8F%82%E8%80%83%E4%BF%A1%E5%8F%B7"><span class="nav-number">1.</span> <span class="nav-text">NR-物理参考信号</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E4%BF%A1%E5%8F%B7%E5%8E%9F%E5%88%99"><span class="nav-number">1.1.</span> <span class="nav-text">参考信号原则</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SRS%E4%BF%A1%E5%8F%B7"><span class="nav-number">2.</span> <span class="nav-text">SRS信号</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">2.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#NR-%E7%89%A9%E7%90%86%E5%8F%82%E8%80%83%E4%BF%A1%E5%8F%B7"><span class="nav-number">1.</span> <span class="nav-text">NR-物理参考信号</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E4%BF%A1%E5%8F%B7%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99"><span class="nav-number">1.1.</span> <span class="nav-text">参考信号设计原则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8E%B0%E6%9C%89%E5%8F%82%E8%80%83%E4%BF%A1%E5%8F%B7"><span class="nav-number">1.2.</span> <span class="nav-text">现有参考信号</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SRS%E4%BF%A1%E5%8F%B7"><span class="nav-number">2.</span> <span class="nav-text">SRS信号</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SRS%E8%B5%84%E6%BA%90%E5%AE%9A%E4%B9%89"><span class="nav-number">3.</span> <span class="nav-text">SRS资源定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SRS%E5%BA%8F%E5%88%97%E7%94%9F%E6%88%90"><span class="nav-number">4.</span> <span class="nav-text">SRS序列生成</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">5.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -470,10 +539,10 @@
     </div>
     <ul class="links-of-recent-posts-list">
         <li class="links-of-recent-posts-item">
-          <a href="/2023/04/15/Three.js/" title="2023&#x2F;04&#x2F;15&#x2F;Three.js&#x2F;">Three.js 学习笔记（一）</a>
+          <a href="/2023/04/17/5GNR-%E5%8F%82%E8%80%83%E4%BF%A1%E5%8F%B7%EF%BC%88%E4%B8%80%EF%BC%89/" title="2023&#x2F;04&#x2F;17&#x2F;5GNR-参考信号（一）&#x2F;">NR参考信号学习（一）</a>
         </li>
         <li class="links-of-recent-posts-item">
-          <a href="/2023/04/14/5GNR-%E5%8F%82%E8%80%83%E4%BF%A1%E5%8F%B7/" title="2023&#x2F;04&#x2F;14&#x2F;5GNR-参考信号&#x2F;">NR参考信号学习（一）</a>
+          <a href="/2023/04/15/Three.js/" title="2023&#x2F;04&#x2F;15&#x2F;Three.js&#x2F;">Three.js 学习笔记（一）</a>
         </li>
         <li class="links-of-recent-posts-item">
           <a href="/2023/04/06/MIT%E7%B3%BB%E5%88%97/" title="2023&#x2F;04&#x2F;06&#x2F;MIT系列&#x2F;"></a>
