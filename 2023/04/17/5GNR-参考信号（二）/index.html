@@ -36,9 +36,8 @@
 <meta property="og:image" content="https://s2.loli.net/2023/04/17/SHvq8xluTcgWarM.png">
 <meta property="og:image" content="https://s2.loli.net/2023/04/17/fi3uhZEL4KPRxvD.png">
 <meta property="og:image" content="https://s2.loli.net/2023/04/17/D6tSC1RFjf5oZM4.png">
-<meta property="og:image" content="https://s2.loli.net/2023/04/17/9W1MdkApflDiGxR.png">
 <meta property="article:published_time" content="2023-04-17T09:51:30.502Z">
-<meta property="article:modified_time" content="2023-04-17T09:51:01.937Z">
+<meta property="article:modified_time" content="2023-04-18T01:38:03.793Z">
 <meta property="article:author" content="阿花想养萨摩耶">
 <meta property="article:tag" content="5GNR">
 <meta name="twitter:card" content="summary">
@@ -228,10 +227,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2023-04-17 17:51:30 / 修改时间：17:51:01" itemprop="dateCreated datePublished" datetime="2023-04-17T17:51:30+08:00">2023-04-17</time>
+              <time title="创建时间：2023-04-17 17:51:30" itemprop="dateCreated datePublished" datetime="2023-04-17T17:51:30+08:00">2023-04-17</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-04-18 09:38:03" itemprop="dateModified" datetime="2023-04-18T09:38:03+08:00">2023-04-18</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -291,6 +296,8 @@
 <script type="math/tex; mode=display">
 M_{sc,b}^{SRS}=m_{SRS,b}N_{sc}^{RB}/(K_{TC}P_F)</script><p>其中$m_{SRS,b}$是通过下表中通过$b=B_{SRS}$对应得到的：</p>
 <p><img src="https://s2.loli.net/2023/04/17/yQ8qBGrvwMfFS3R.png" alt="image-20230417140047252"></p>
+<center><small>SRS信号带宽配置表</small></center>
+
 <p>$B_{SRS}\in\{0,1,2,3\}$是由高层参数<code>freqHopping</code> 中的字段<code>b-SRS</code>给定，$C_{SRS}\in\{0,1,2,\dots,63\}$由高层参数<code>freqHopping</code> 中的字段<code>c-SRS</code>给定查表时通过 $C_{SRS}$选中某一行，再通过 $B_{SRS}$ 选中某一列，即可最终确定 SRS 的带宽信息。NR 系统支持 64 种 SRS 带宽配置方式，一个 SRS 资源可配置的最小带宽为 4 个 RB，最大带宽为 272 个RB；$K_{TC}$是之前说过的传输梳数，$P_F$是频率因子，默认为1，如果配置了高层参数的<code>FreqScalingFactor</code>后可以配置为$\{2,4\}$。当其被配置后，UE则会收到长度是6的倍数的SRS序列。</p>
 <p>确认完带宽信息后，还需要确定 SRS 的频域起始位置。起始位置$k_{0}^{(p_i)}$定义为：</p>
 <p><img src="https://s2.loli.net/2023/04/17/18pw9KVTLSNEAYa.png" alt="image-20230417163847159" style="zoom:80%;" /></p>
@@ -306,8 +313,39 @@ M_{sc,b}^{SRS}=m_{SRS,b}N_{sc}^{RB}/(K_{TC}P_F)</script><p>其中$m_{SRS,b}$是�
 </li>
 </ul>
 <p>接下来则是和SRS跳频相关的内容。频域移位值$n_{shift}$用来调整 SRS 资源和 CRB 的 4 的倍数网格对齐，它包含在高层参数<code>freqDomainShift</code> 中。如果 $N_{BWP}^{start}\leq n_{shift}$，则 $k_{0}^{(pi)}=0$的参考点是 CRB 0 的子载波 0；如果$N_{BWP}^{start}&gt; n_{shift}$，则$k_{0}^{(pi)}=0$的参考点是 BWP 的最低编号的子载波。SRS 是否跳频由高层参数<code>freqHopping</code>中的字段<code>b-hop</code> 决定。$b_{hop}$ 取值范围为0~3。</p>
-<p><img src="https://s2.loli.net/2023/04/17/9W1MdkApflDiGxR.png" alt="image-20230417173401038" style="zoom:100%;" /></p>
-<h3 id="时域资源"><a href="#时域资源" class="headerlink" title="时域资源"></a>时域资源</h3><p>以时隙表示的 SRS 周期$T_{SRS}$和时隙偏移量$T_{offset}$根据高层参数 <code>periodicityAndOffset-p</code> 或 <code>periodicityAndOffset-sp</code> 确定。如果<code>resourceType = “periodic”</code>，则对应 <code>periodicityAndOffset-p</code>；如果<code>resourceType = “semi-persistent”</code>，则对应 <code>periodicityAndOffset-sp</code>。在配置的SRS资源中可用于 SRS 传输的候选时隙需要满足:</p>
+<p>如果$b_{hop}&gt;B_{SRS}$，则跳频关闭，频域位置索引$n_b$保持为常量（除非被重新配置）。此时，对于SRS资源中的全部$N_{symb}^{SRS}$个OFDM符号，$n_b$的定义为：</p>
+<script type="math/tex; mode=display">
+n_b=[\frac{4n_{}RRC}{m_{SRS,b}}]\mod N_b</script><p>其中$n_{RRC}$由高层参数<code>freqDomainPosition</code>给定。$m_{SRS,b}$和$N_b$的值通过给定的$C_{SRS}$和$b=B_{SRS}$查<code>SRS信号带宽配置表</code>得到。</p>
+<p>如果$b_{hop}&lt;B_{SRS}$，则SRS跳频打开，频域位置索引$n_b$由下式定义：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+n_b=\begin{cases}
+[\frac{4n_{}RRC}{m_{SRS,b}}]\mod N_b\qquad &b\leq b_{hop}\\
+(F_b(n_{SRS})+[[\frac{4n_{}RRC}{m_{SRS,b}}]\mod N_b])\mod N_b \qquad &otherwise
+\end{cases}
+\end{aligned}</script><p>其中$N_b$也是通过查询<code>SRS信号带宽配置表</code>得到。$F_b(n_{SRS})$则是通过下式得到：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+F_b(n_{SRS})=\begin{cases}
+(N_b/2)[\frac{n_{SRS}\mod \prod_{b'=b_{hop}}^{b}N_{b'}}{\prod_{b'=b_{hop}}^{b-1}N_{b'}}]+[\frac{n_{SRS}\mod \prod_{b'=b_{hop}}^{b}N_{b'}}{2\prod_{b'=b_{hop}}^{b-1}}]\quad &\mathrm{if} \, N_b\,\mathrm{even}\\
+[N_b/2][n_{SRS}/\prod_{b'=b_{hop}}^{b-1}N_{b'}]\quad &\mathrm{if} \, N_b\,\mathrm{odd}\\
+\end{cases}
+\end{aligned}</script><p>此时，不论$N_b$取值如何，$N_{b_{hop}}=1$。$n_{SRS}$是传输SRS信号的次数。如果高层参数 <code>resourceType</code> 被配置为 “aperiodic”，则在时隙内发送 $N_{symb}^{SRS}$ 个符号的 SRS 资源为$n_{SRS}=⌊\frac{l’}{n}⌋$。重复因子 $R\leq N_{symb}^{SRS}$ 由高层参数<code>resourceMapping</code>中的字段<code>repetitionFactor</code> 给定，如果没有配置的话则$R=N_{symb}^{SRS}$。</p>
+<p>如果在高层参数中配置了<code>resourceType</code>为”periodic”或”semi-persistent”的话，则SRS计数$n_{SRS}$通过下式得到：</p>
+<script type="math/tex; mode=display">
+n_{SRS}=
+\begin{bmatrix}
+N_{slot}^{frame,\mu}n_f + n_{s,f}^{\mu}-T_{offset}\\
+T_{SRS}
+\end{bmatrix}\cdot
+\begin{bmatrix}
+N_{symb}^{SRS}\\
+R
+\end{bmatrix}+
+\begin{bmatrix}
+l'\\
+R
+\end{bmatrix}</script><h3 id="时域资源"><a href="#时域资源" class="headerlink" title="时域资源"></a>时域资源</h3><p>以时隙表示的 SRS 周期$T_{SRS}$和时隙偏移量$T_{offset}$根据高层参数 <code>periodicityAndOffset-p</code> 或 <code>periodicityAndOffset-sp</code> 确定。如果<code>resourceType = “periodic”</code>，则对应 <code>periodicityAndOffset-p</code>；如果<code>resourceType = “semi-persistent”</code>，则对应 <code>periodicityAndOffset-sp</code>。在配置的SRS资源中可用于 SRS 传输的候选时隙需要满足:</p>
 <script type="math/tex; mode=display">
 (N_{slot}^{frame,\mu}n_f+n_{s,f}^{\mu}-T_{offset})\mod T_{SRS}=0</script>
     </div>
