@@ -29,7 +29,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://s2.loli.net/2023/04/17/NOadov1XT46nl3r.png">
 <meta property="og:image" content="https://s2.loli.net/2023/04/17/NOadov1XT46nl3r.png">
-<meta property="og:image" content="c:/Users/cybercolyce/AppData/Roaming/Typora/typora-user-images/image-20230417105349269.png">
+<meta property="og:image" content="https://s2.loli.net/2023/04/21/hjO12pRJPFfxNo9.png">
 <meta property="og:image" content="https://s2.loli.net/2023/04/17/W1l3QhAcFPLIUBr.png">
 <meta property="og:image" content="https://s2.loli.net/2023/04/17/yQ8qBGrvwMfFS3R.png">
 <meta property="og:image" content="https://s2.loli.net/2023/04/17/18pw9KVTLSNEAYa.png">
@@ -37,7 +37,7 @@
 <meta property="og:image" content="https://s2.loli.net/2023/04/17/fi3uhZEL4KPRxvD.png">
 <meta property="og:image" content="https://s2.loli.net/2023/04/17/D6tSC1RFjf5oZM4.png">
 <meta property="article:published_time" content="2023-04-17T09:51:30.502Z">
-<meta property="article:modified_time" content="2023-04-18T01:38:03.793Z">
+<meta property="article:modified_time" content="2023-04-21T09:57:08.288Z">
 <meta property="article:author" content="阿花想养萨摩耶">
 <meta property="article:tag" content="5GNR">
 <meta name="twitter:card" content="summary">
@@ -235,7 +235,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-04-18 09:38:03" itemprop="dateModified" datetime="2023-04-18T09:38:03+08:00">2023-04-18</time>
+                <time title="修改时间：2023-04-21 17:57:08" itemprop="dateModified" datetime="2023-04-21T17:57:08+08:00">2023-04-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -264,7 +264,7 @@
 
 <p>首先想先介绍一下ZC序列以及它的一些特性，然后接下来会总结一下SRS到物理资源的映射过程和方式。</p>
 <span id="more"></span>
-<h2 id="为什么是ZC序列"><a href="#为什么是ZC序列" class="headerlink" title="为什么是ZC序列"></a>为什么是ZC序列</h2><h3 id="ZC序列的特性"><a href="#ZC序列的特性" class="headerlink" title="ZC序列的特性"></a>ZC序列的特性</h3><p>1962 年Zadoff提出的循环自相关为零的多相编码是一种用于无线通信中的序列编码技术。它的特点是具有循环自相关为零的性质，可以有效地降低多径干扰和频偏影响，提高系统的抗干扰性能和频谱利用效率。所谓自相关，此外，它还具有码长可变、相位连续可调、码间互不干扰等优点。然而，Zadoff序列的长度必须是质数，因此其码长受到限制。此外，由于其相位连续可调的特性，Zadoff序列在频域上存在较大的旁瓣，可能会对其他用户的信号造成干扰。因此，在实际应用中需要进行合理的设计和选择。</p>
+<h2 id="为什么是ZC序列"><a href="#为什么是ZC序列" class="headerlink" title="为什么是ZC序列"></a>为什么是ZC序列</h2><h3 id="ZC序列的特性"><a href="#ZC序列的特性" class="headerlink" title="ZC序列的特性"></a>ZC序列的特性</h3><p>1962 年Zadoff提出的循环自相关为零的多相编码是一种用于无线通信中的序列编码技术。它的特点是具有循环自相关为零的性质，可以有效地降低多径干扰和频偏影响，提高系统的抗干扰性能和频谱利用效率,此外，它还具有码长可变、相位连续可调、码间互不干扰等优点。然而，Zadoff序列的长度必须是质数，因此其码长受到限制。此外，由于其相位连续可调的特性，Zadoff序列在频域上存在较大的旁瓣，可能会对其他用户的信号造成干扰。因此，在实际应用中需要进行合理的设计和选择。</p>
 <blockquote>
 <p><strong>自相关：</strong>指一个信号与其自身在不同时间点上的相似程度。自相关函数（Autocorrelation Function，ACF）描述了信号在不同时间点上的自相关性，即信号在不同时间点上的相似程度。自相关函数的峰值表示信号的周期性，而自相关函数的宽度表示信号的带宽。</p>
 <p><strong>互相关：</strong>指两个信号之间的相似程度。互相关函数（Cross-correlation Function，CCF）描述了两个信号之间的相似程度，即它们在不同时间点上的相关性。互相关函数的峰值表示两个信号之间的时延，而互相关函数的宽度表示两个信号之间的带宽。</p>
@@ -272,7 +272,7 @@
 <p>Zadoff-Chu 序列一个关键特点是<strong>经过离散傅里叶变换，生成的新序列依然是 Zadoff-Chu 序列</strong>。Zadoff-Chu 序列的另一个特点是序列<strong>在时域和频域的幅度都是恒定的</strong>。时域信号的幅度恒定有助于提高功放效率。频域信号的幅度恒定意味着序列经过任意非零循环移位与原序列零相关。这就是说，同一个 Zadoff-Chu 序列在时域上经过不同的循环移位所产生的两个序列信号之间是正交的。时域的循环移位等效于在频域上进行连续的相位旋转。</p>
 <p><img src="https://s2.loli.net/2023/04/17/NOadov1XT46nl3r.png" alt="logo" style="zoom:90%" /></p>
 <p>Zadoff-Chu序列在随机接入过程中的preamble也有使用，我们可以看一下这种序列是如何使用的：</p>
-<p><img src="C:\Users\cybercolyce\AppData\Roaming\Typora\typora-user-images\image-20230417105349269.png" alt="image-20230417105349269"></p>
+<p><img src="https://s2.loli.net/2023/04/21/hjO12pRJPFfxNo9.png" alt="image-20230417105349269"></p>
 <h3 id="ZC序列的生成"><a href="#ZC序列的生成" class="headerlink" title="ZC序列的生成"></a>ZC序列的生成</h3><p>Zadoff-Chu序列生成方法如下： 假设Zadoff-Chu序列的长度为N，相位因子（更广泛的说法是ZC序列的根Root，也用$R$表示）为$p$，则第$k$个元素可以表示为： <script type="math/tex">x_k = e^{-j\pi pk(k+1)/N}</script> 其中，$k$的取值范围为$0$到$N-1$。 Zadoff-Chu序列的生成过程可以通过以下步骤实现：</p>
 <ol>
 <li>选择一个质数N和一个整数p，满足N和p互质。 </li>
@@ -290,7 +290,7 @@
 <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">N  = <span class="number">63</span>;</span><br><span class="line">M1 = <span class="number">61</span>;</span><br><span class="line">M2 = <span class="number">59</span>;</span><br><span class="line">m  = <span class="number">5</span>;</span><br><span class="line"> </span><br><span class="line"><span class="comment">% 1. Zadoff-Chu</span></span><br><span class="line">ak1 = <span class="built_in">zeros</span>(<span class="number">1</span>,N);</span><br><span class="line">bk1 = <span class="built_in">zeros</span>(<span class="number">1</span>,N);</span><br><span class="line"><span class="keyword">for</span> k = <span class="number">0</span>:N<span class="number">-1</span></span><br><span class="line">    ak1(k+<span class="number">1</span>) = <span class="built_in">exp</span>(<span class="number">1</span><span class="built_in">j</span> * (M1 * <span class="built_in">pi</span> * k * (k+<span class="number">1</span>) / N));</span><br><span class="line">    bk1(k+<span class="number">1</span>) = <span class="built_in">exp</span>(<span class="number">1</span><span class="built_in">j</span> * (M2 * <span class="built_in">pi</span> * k * (k+<span class="number">1</span>) / N));</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"> </span><br><span class="line"><span class="comment">% 2. cyclic shift</span></span><br><span class="line">ak2 = [ak1(<span class="number">1</span>, m+<span class="number">1</span>:<span class="keyword">end</span>), ak1(<span class="number">1</span>, <span class="number">1</span>:m)];</span><br><span class="line"> </span><br><span class="line"><span class="comment">% 3. autocorrelation</span></span><br><span class="line">autoCorr = <span class="built_in">abs</span>(sum(ak1 .* <span class="built_in">conj</span>(ak2)) / N)</span><br><span class="line"> </span><br><span class="line"><span class="comment">% 4. cross correlation</span></span><br><span class="line">crossCorr = <span class="built_in">abs</span>(sum(ak1 .* <span class="built_in">conj</span>(bk1)) / N)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p>输出结果为：</p>
 <figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">autoCorr =</span><br><span class="line"></span><br><span class="line">   <span class="number">4.4623e-14</span></span><br><span class="line"></span><br><span class="line">crossCorr =</span><br><span class="line"></span><br><span class="line">    <span class="number">0.1260</span></span><br><span class="line">    </span><br></pre></td></tr></table></figure>
-<h2 id="SRS到物理资源的映射"><a href="#SRS到物理资源的映射" class="headerlink" title="SRS到物理资源的映射"></a>SRS到物理资源的映射</h2><h3 id="频域资源"><a href="#频域资源" class="headerlink" title="频域资源"></a>频域资源</h3><p>对应 SRS 资源的每个 OFDM 符号$l’$和天线端口$p_i$，需要先将 SRS 序列 $r^{(p_i)}(n,l’)$ 乘以幅度扩展因子 $\beta_{SRS}$ 以符合 38.213 规定的传输功率。然后对每个天线端口$p_i$，从 $r^{(p_i)}(0,l’)$开始在一个时隙内根据下式映射到资源元素<strong>（Resource Element）</strong>$(k,l)$：</p>
+<h2 id="SRS到物理资源的映射"><a href="#SRS到物理资源的映射" class="headerlink" title="SRS到物理资源的映射"></a>SRS到物理资源的映射</h2><h3 id="频域资源"><a href="#频域资源" class="headerlink" title="频域资源"></a>频域资源</h3><p>对应 SRS 资源的每个 OFDM 符号$l’$和天线端口$p_i$，需要先将 SRS 序列 $r^{(p_i)}(n,l’)$ 乘以幅度扩展因子 $\beta_{SRS}$ 以符合 TS 38.213 规定的传输功率。然后对每个天线端口$p_i$，从 $r^{(p_i)}(0,l’)$开始在一个时隙内根据下式映射到资源元素<strong>（Resource Element）</strong>$(k,l)$：</p>
 <p><img src="https://s2.loli.net/2023/04/17/W1l3QhAcFPLIUBr.png" alt="img"></p>
 <p>而SRS信号的长度是通过下式给定的：</p>
 <script type="math/tex; mode=display">
