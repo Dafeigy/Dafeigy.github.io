@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>NR参考信号学习（三）</title>
+      <link href="/2023/04/21/5GNR-%E5%8F%82%E8%80%83%E4%BF%A1%E5%8F%B7%EF%BC%88%E4%B8%89%EF%BC%89/"/>
+      <url>/2023/04/21/5GNR-%E5%8F%82%E8%80%83%E4%BF%A1%E5%8F%B7%EF%BC%88%E4%B8%89%EF%BC%89/</url>
+      
+        <content type="html"><![CDATA[<p>本节主要介绍物理资源快等相关概念。</p><span id="more"></span><h2 id="逻辑资源块"><a href="#逻辑资源块" class="headerlink" title="逻辑资源块"></a>逻辑资源块</h2><h3 id="频域资源基本概念"><a href="#频域资源基本概念" class="headerlink" title="频域资源基本概念"></a>频域资源基本概念</h3><p>我们先介绍两种基本概念，然后引出资源栅格。</p><ul><li><p><strong>RE: Resource Element</strong></p><p>是物理层最小粒度的资源。对应的是频域1个子载波，时域1个OFDM符号。资源单元RE定义为资源网格上的单元，是最小的资源单位。每个RE在频域上占用1个子载波，在时域上占用1个OFDM符号，并由$ (k,l)_{p,\mu}$唯一标识，如图1所示。其中$k$表示频域索引，$l$表示时域上相对于某一参考点的OFDM符号位置，$p$表示天线端口，$\mu$表示子载波间隔配置</p></li><li><p><strong>RB: Resource Block</strong></p><p>数据信道资源分配的频域基本调度单位。频域上是12个子载波，是一个频域概念，没有定义时域。</p></li></ul><p>和LTE类似，对于任意子载波间隔配置$\mu$，NR中1个RB定义为频域上$N_{SC}^{RB}= 12 $ 个连续的子载波【TS38.211 -4.4.4.1】。</p><p><img src="https://s2.loli.net/2023/04/21/wmj4kz9Lfv1Ir25.png" alt="image-20230421104601750"></p><p>下面介绍资源栅格。如图1所示是一个资源栅格（Resource Grid）它由：</p><ul><li>频域上的$N_{SC}^{RB}\times N_{RB}^{\mu}$个子载波，其中的$N_{SC}^{RB}= 12 $表示每个RB由频域上12个连续子载波组成，$N_{grid,RB}^{size,\mu}$表示资源栅格的大小或者说载波带宽，即当子载波间隔配置为$\mu$时的RB数量。</li><li>时域上的$N_{symb}^{subframe,\mu}$个OFDM符号，其中$N_{symb}^{subframe,\mu}$是1个子帧内OFDM符号数。</li></ul><p>组成。<strong>在时域上，最小的资源粒度是一个OFDM符号，在频域上，最小的粒度是一个子载波。</strong>一个OFDM符号与一个子载波组成的一个时频资源单元即为RE，物理层在进行资源映射的时候，是以RE为基本单位的。每个RE$(k,l)_{p,\mu}$对应一个物理资源和复数值$a_{k,l}^{(p,\mu)}$ ，这就是后续将逻辑功能映射到物理功能的桥梁。<strong>对于相同带宽但不同子载波间隔配置的资源网格，其在频域上占用的子载波或者RB数，以及在时域上占用的OFDM符号数是不同的，但是其包含的RE数是相同的</strong>。例如，18 MHz的带宽，当子载波间隔配置$\mu =0$（SCS=15 kHz）时，频域上有100个PRB（1200个子载波），1个子帧上有14个OFDM符号，资源网格上共有16800个RE；当子载波间隔配置$\mu =1$（SCS=30 kHz）时，频域上有50个PRB（600个子载波），1个子帧上有28个OFDM符号，资源网格上也是共有16800个RE。</p><p><strong>另外需要注意的是，对于每个天线端口$p$，子载波间隔配置$\mu$和传输方向，都有一个资源网格。</strong></p><h2 id="NR引入的新概念-TODO"><a href="#NR引入的新概念-TODO" class="headerlink" title="NR引入的新概念(TODO)"></a>NR引入的新概念(TODO)</h2><p>和LTE不同的是，由于NR在同一个载波上支持多个参数集（Numerology），不同参数集的RB在频域上占用的长度是不同的，因此为了保证不同参数集RB的对齐，NR引入了<strong>Point A、公共资源块（Common Resource Block，CRB）、物理资源块（Physical Resource Block，PRB）、虚拟资源块（Virtual Resource Block，VRB）</strong>等概念 。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> ISAC </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 5GNR </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>NR参考信号学习（二）</title>
       <link href="/2023/04/17/5GNR-%E5%8F%82%E8%80%83%E4%BF%A1%E5%8F%B7%EF%BC%88%E4%BA%8C%EF%BC%89/"/>
       <url>/2023/04/17/5GNR-%E5%8F%82%E8%80%83%E4%BF%A1%E5%8F%B7%EF%BC%88%E4%BA%8C%EF%BC%89/</url>
