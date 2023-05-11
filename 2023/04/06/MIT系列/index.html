@@ -20,18 +20,19 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":5},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="MIT那一伙人做的射频-人体姿态的系列文章RF poseRFpose这篇文章原名是 监控摄像头+RF信号，同步采集，手工标注2000张RGB图像。可见RFpose 的AP 62.4 %。Vision based的方法是 68.8%。不可见AP情况下准确度是58.1%，而用skelton去识别多用户可达83%准确率。 RF是用Bottom-up的方法去做，即先检测keypoints，然后聚类。 自底">
+  <meta name="description" content="RF poseRFpose这篇文章原名是 监控摄像头+RF信号，同步采集，手工标注2000张RGB图像。可见RFpose 的AP 62.4 %。Vision based的方法是 68.8%。不可见AP情况下准确度是58.1%，而用skelton去识别多用户可达83%准确率。 RF是用Bottom-up的方法去做，即先检测keypoints，然后聚类。 自底向上的方法：首先从射频信号图像中学习检测出">
 <meta property="og:type" content="article">
 <meta property="og:title" content="阿花的Blog">
 <meta property="og:url" content="http://example.com/2023/04/06/MIT%E7%B3%BB%E5%88%97/index.html">
 <meta property="og:site_name" content="阿花的Blog">
-<meta property="og:description" content="MIT那一伙人做的射频-人体姿态的系列文章RF poseRFpose这篇文章原名是 监控摄像头+RF信号，同步采集，手工标注2000张RGB图像。可见RFpose 的AP 62.4 %。Vision based的方法是 68.8%。不可见AP情况下准确度是58.1%，而用skelton去识别多用户可达83%准确率。 RF是用Bottom-up的方法去做，即先检测keypoints，然后聚类。 自底">
+<meta property="og:description" content="RF poseRFpose这篇文章原名是 监控摄像头+RF信号，同步采集，手工标注2000张RGB图像。可见RFpose 的AP 62.4 %。Vision based的方法是 68.8%。不可见AP情况下准确度是58.1%，而用skelton去识别多用户可达83%准确率。 RF是用Bottom-up的方法去做，即先检测keypoints，然后聚类。 自底向上的方法：首先从射频信号图像中学习检测出">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://s2.loli.net/2023/03/31/9vgEw6URfGC1Dmu.png">
 <meta property="og:image" content="https://s2.loli.net/2023/03/31/NCxyUDk6clebjsS.png">
 <meta property="og:image" content="https://s2.loli.net/2023/03/31/QbNHX28VIzDqJ4a.png">
+<meta property="og:image" content="https://s2.loli.net/2023/05/10/Dwup2YSN1TZ9zlo.png">
 <meta property="article:published_time" content="2023-04-06T02:47:28.675Z">
-<meta property="article:modified_time" content="2023-04-06T02:47:23.316Z">
+<meta property="article:modified_time" content="2023-05-10T07:30:23.221Z">
 <meta property="article:author" content="阿花想养萨摩耶">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://s2.loli.net/2023/03/31/9vgEw6URfGC1Dmu.png">
@@ -220,10 +221,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2023-04-06 10:47:28 / 修改时间：10:47:23" itemprop="dateCreated datePublished" datetime="2023-04-06T10:47:28+08:00">2023-04-06</time>
+              <time title="创建时间：2023-04-06 10:47:28" itemprop="dateCreated datePublished" datetime="2023-04-06T10:47:28+08:00">2023-04-06</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-05-10 15:30:23" itemprop="dateModified" datetime="2023-05-10T15:30:23+08:00">2023-05-10</time>
+              </span>
 
           
 
@@ -236,7 +243,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="MIT那一伙人做的射频-人体姿态的系列文章"><a href="#MIT那一伙人做的射频-人体姿态的系列文章" class="headerlink" title="MIT那一伙人做的射频-人体姿态的系列文章"></a>MIT那一伙人做的射频-人体姿态的系列文章</h1><h2 id="RF-pose"><a href="#RF-pose" class="headerlink" title="RF pose"></a>RF pose</h2><p>RFpose这篇文章原名是</p>
+        <h2 id="RF-pose"><a href="#RF-pose" class="headerlink" title="RF pose"></a>RF pose</h2><p>RFpose这篇文章原名是</p>
 <p>监控摄像头+RF信号，同步采集，手工标注2000张RGB图像。可见RFpose 的AP 62.4 %。Vision based的方法是 68.8%。不可见AP情况下准确度是58.1%，而用skelton去识别多用户可达83%准确率。</p>
 <p>RF是用Bottom-up的方法去做，即先检测keypoints，然后聚类。</p>
 <p><strong>自底向上的方法：</strong>首先从<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=射频&amp;spm=1001.2101.3001.7020">射频</a>信号图像中学习检测出姿态的所有关键点，然后使用后处理来关联属于同一个人的关键点。但区别在于RFpose用的是RF信号作为输入。最终用一个跨模态-师生网络解决。</p>
@@ -266,6 +273,36 @@ L(\mathrm{T,S})=-\sum_c\sum_{i,j}\mathrm{S}_{i,j}^{c}\log \mathrm{T}_{i,j}^{c}+(
 <p>OKS在0.7左右的时候是性能最好，和视觉模型对比好在没有海报之类的误报。之后的精读就下降了，这是因为RF信号本身的低空间分辨率的原因。RFpose的关键点定位能力是由于不完美的热力图于真实图片的同步产生的。表二分析了身体部分的AP，在头部和颈部、臀部的性能表现较好，四肢部分表现较差，这是因为肢体大小的原因。（头部的反射空间更大、动作幅度较小），另外还有一些比OpenPose性能好的原因可能是RFpose观察的是一段序列，而openpose是观察单张图片。</p>
 <p><img src="https://s2.loli.net/2023/03/31/QbNHX28VIzDqJ4a.png" alt="image-20230331170557927" style="zoom:50%;" /></p>
 <h2 id="RF-Capture"><a href="#RF-Capture" class="headerlink" title="RF-Capture"></a>RF-Capture</h2><p>RF-capture</p>
+<h2 id="RFpose3D"><a href="#RFpose3D" class="headerlink" title="RFpose3D"></a>RFpose3D</h2><p>《RF-Based 3D Skeletons》</p>
+<p>首个从RF信号中推断人体三维骨架的工作（2018年），穿墙、多人场景都可实现。使用了一个新型的CNN架构，首先先放大聚焦场景中的个体，然后对每一个个体定位他们的身体部位，在空间上的平均误差为4.2cm,4.0cm以及4.9cm（x,y,z轴）。</p>
+<p>文章旨在通过从人体反射的信号进行挖掘场景的任务丰富细节信息，而不仅仅是单纯的定位。3D的识别是很难的，关键在于建模观测的波形和人体，同时也要考虑不同人体部位的位置和动作。采取FMCW波作为输入，滑动窗口时间为3秒，产生一个连续的3D场景人体骨架运动图，骨架的关键点有14个，对应neck, shoulders, elbows, wrists, hip, knees, and feet。</p>
+<h3 id="网络的设计"><a href="#网络的设计" class="headerlink" title="网络的设计"></a>网络的设计</h3><p>输入的RF信号是四维的，包含了空间和时间的信息。因此使用了四维卷积层（自行搭建），考虑到分解特性和计算I/O的问题etc.，将四维的数据拆分成在两个平面（纵向和水平）和时间维度上的三维卷积。同时CNN的训练和推理也在这两个平面上进行，方法经实验验证有效并且和四维卷积等价。CNN部分的介绍直接跳过，FMCW部分的内容如下：</p>
+<p>天线阵列和FMCW的组合可以测量三维空间中的每一个体素，本文使用的布局是一根发送天线，两个一维接收天线阵列。从$(x,y,z)$反射的信号可被计算如下：</p>
+<script type="math/tex; mode=display">
+a(x,y,z,t)=\sum_k \sum_is_{k,i}^{t}\cdot e^{j2\pi \frac{d_k(x,y,z)}{\lambda_i}}</script><p>其中$s_{k,i}^{t}$是在时刻$t$下第$k$个接收天线第$i$个FMCW的扫描样本。$\lambda_i$是这一样本对应的扫描波长，$d_k(x,y,z)$是发射天线到空间点$(x,y,z)$并返回到第$k$根接收天线的round-trip距离。</p>
+<p>网络由RPN和CNN两部分组成，前者用于产生定位框，后者用于生成骨架。</p>
+<h3 id="多人场景的尺度变换"><a href="#多人场景的尺度变换" class="headerlink" title="多人场景的尺度变换"></a>多人场景的尺度变换</h3><p>多人场景下需要一个可以将人区分开来的元素。可选方法有：</p>
+<ul>
+<li>先定位然后对每一定位结果的位置进行信号放大，随后进行骨架的推理，但是：<ul>
+<li>定位错误将导致后续的一系列错误</li>
+<li>多径效应会引入假象</li>
+</ul>
+</li>
+<li>使用神经网络直接学习这个过程，但不是对定位到的方向进行信号放大，而是先将RF信号转换到一个融合多样相关信息的“抽象的域”，然后在这个域区分不同个体。</li>
+</ul>
+<blockquote>
+<p>其实本质是Embedding，可能18年的时候这个词还没流行起来吧。这个逻辑是说得通的，因为Embedding的过程可以建模成过滤噪声+聚类，相比于直接的定位确实可能有一定降低false-alarm的效果。</p>
+</blockquote>
+<h3 id="网络的训练"><a href="#网络的训练" class="headerlink" title="网络的训练"></a>网络的训练</h3><p>训练数据由12个相机在不同角度进行拍摄，然后拍摄的3秒的video clip通过一个多视角的几何重建的优化问题来找到人体的关键点。当然<strong>相机只用来产生训练数据的标签，并没有参与到网络的输入。</strong>数据很多，由超过一百人的不同室内动作组成，并在新环境下测试算法的性能。</p>
+<p><img src="https://s2.loli.net/2023/05/10/Dwup2YSN1TZ9zlo.png" alt="image-20230510101436108"></p>
+<p>小总结：定位的误差在三个方向上的中值误差在1.7cm，2.8cm以及2.3cm，关键点的误差在水平方向是6.5cm，纵向的误差是4.0cm。</p>
+<h3 id="问题建模"><a href="#问题建模" class="headerlink" title="问题建模"></a>问题建模</h3><p>关键点的定位问题建模成分类问题，然后用CNN求解。空间中的所有体素将会被划分到不同的类别，最终的目的是确认每一个关键点对应体素的空间位置。特别的，对于关键点的定位，CNN输出不同类别的得分$s\in\{s_v\}_{v\in V}$，其中$v\in V$是空间中的所有体素，目标体素$v^\star$是其中包含关键点的那个体素。损失函数为Softmaxloss$L_{\mathrm{Softmax}}(s, v^\star)$。使用单个CNN去输出14个关键点的分数而非对每一个单独类别使用CNN去输出分数，以期望可以学习到遮挡场景时借助其他关键点对遮挡的关键点进行检测。</p>
+<blockquote>
+<p>目标：找到每个关键点的位置-&gt;找到关键点对应的体素-&gt;对体素进行分类。</p>
+</blockquote>
+<p>损失函数此时就是所有组件的加和：</p>
+<script type="math/tex; mode=display">
+L_{pose}=\sum_kL_{\mathrm{Softmax}} (s^k,v^{k^*})</script><p>其中的k是某一个关键点。推理输出结果取最高的分数对应的那个类别，$\arg \max s_v^k$即可。</p>
 
     </div>
 
@@ -346,7 +383,7 @@ L(\mathrm{T,S})=-\sum_c\sum_{i,j}\mathrm{S}_{i,j}^{c}\log \mathrm{T}_{i,j}^{c}+(
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MIT%E9%82%A3%E4%B8%80%E4%BC%99%E4%BA%BA%E5%81%9A%E7%9A%84%E5%B0%84%E9%A2%91-%E4%BA%BA%E4%BD%93%E5%A7%BF%E6%80%81%E7%9A%84%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0"><span class="nav-number">1.</span> <span class="nav-text">MIT那一伙人做的射频-人体姿态的系列文章</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#RF-pose"><span class="nav-number">1.1.</span> <span class="nav-text">RF pose</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E6%B5%81%E7%A8%8B"><span class="nav-number">1.1.1.</span> <span class="nav-text">算法流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A9%BF%E9%80%8F%E5%BD%B1%E5%93%8D%EF%BC%9A"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">穿透影响：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%B6%E7%A9%BA%E5%BD%B1%E5%93%8D%EF%BC%9A"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">时空影响：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E6%96%B9%E6%B3%95%EF%BC%9A"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">输出方法：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%AD%E7%BB%83%E7%BB%86%E8%8A%82"><span class="nav-number">1.1.2.</span> <span class="nav-text">训练细节</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C"><span class="nav-number">1.1.3.</span> <span class="nav-text">实验结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RF-Capture"><span class="nav-number">1.2.</span> <span class="nav-text">RF-Capture</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#RF-pose"><span class="nav-number">1.</span> <span class="nav-text">RF pose</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E6%B5%81%E7%A8%8B"><span class="nav-number">1.1.</span> <span class="nav-text">算法流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A9%BF%E9%80%8F%E5%BD%B1%E5%93%8D%EF%BC%9A"><span class="nav-number">1.1.1.</span> <span class="nav-text">穿透影响：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%B6%E7%A9%BA%E5%BD%B1%E5%93%8D%EF%BC%9A"><span class="nav-number">1.1.2.</span> <span class="nav-text">时空影响：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E6%96%B9%E6%B3%95%EF%BC%9A"><span class="nav-number">1.1.3.</span> <span class="nav-text">输出方法：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%AD%E7%BB%83%E7%BB%86%E8%8A%82"><span class="nav-number">1.2.</span> <span class="nav-text">训练细节</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C"><span class="nav-number">1.3.</span> <span class="nav-text">实验结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RF-Capture"><span class="nav-number">2.</span> <span class="nav-text">RF-Capture</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RFpose3D"><span class="nav-number">3.</span> <span class="nav-text">RFpose3D</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E7%9A%84%E8%AE%BE%E8%AE%A1"><span class="nav-number">3.1.</span> <span class="nav-text">网络的设计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E4%BA%BA%E5%9C%BA%E6%99%AF%E7%9A%84%E5%B0%BA%E5%BA%A6%E5%8F%98%E6%8D%A2"><span class="nav-number">3.2.</span> <span class="nav-text">多人场景的尺度变换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E7%9A%84%E8%AE%AD%E7%BB%83"><span class="nav-number">3.3.</span> <span class="nav-text">网络的训练</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%BB%BA%E6%A8%A1"><span class="nav-number">3.4.</span> <span class="nav-text">问题建模</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -362,7 +399,7 @@ L(\mathrm{T,S})=-\sum_c\sum_{i,j}\mathrm{S}_{i,j}^{c}\log \mathrm{T}_{i,j}^{c}+(
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-count">51</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -375,7 +412,7 @@ L(\mathrm{T,S})=-\sum_c\sum_{i,j}\mathrm{S}_{i,j}^{c}\log \mathrm{T}_{i,j}^{c}+(
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">71</span>
+        <span class="site-state-item-count">73</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -401,6 +438,9 @@ L(\mathrm{T,S})=-\sum_c\sum_{i,j}\mathrm{S}_{i,j}^{c}\log \mathrm{T}_{i,j}^{c}+(
     </div>
     <ul class="links-of-recent-posts-list">
         <li class="links-of-recent-posts-item">
+          <a href="/2023/05/11/Asynicio/" title="2023&#x2F;05&#x2F;11&#x2F;Asynicio&#x2F;">Python协程：Asyncio入门</a>
+        </li>
+        <li class="links-of-recent-posts-item">
           <a href="/2023/05/05/SRS-devlog/" title="2023&#x2F;05&#x2F;05&#x2F;SRS-devlog&#x2F;">Type your title here</a>
         </li>
         <li class="links-of-recent-posts-item">
@@ -408,9 +448,6 @@ L(\mathrm{T,S})=-\sum_c\sum_{i,j}\mathrm{S}_{i,j}^{c}\log \mathrm{T}_{i,j}^{c}+(
         </li>
         <li class="links-of-recent-posts-item">
           <a href="/2023/05/03/C++%E6%8C%87%E9%92%88%E5%AD%A6%E4%B9%A0/" title="2023&#x2F;05&#x2F;03&#x2F;C++指针学习&#x2F;">C/C++核心语法学习（一）</a>
-        </li>
-        <li class="links-of-recent-posts-item">
-          <a href="/2023/05/03/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/" title="2023&#x2F;05&#x2F;03&#x2F;内网穿透&#x2F;">使用FRP和一台公网IP服务器进行内网穿透</a>
         </li>
     </ul>
   </div>
