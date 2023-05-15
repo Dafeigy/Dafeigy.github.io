@@ -20,24 +20,28 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":5},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="RF poseRFpose这篇文章原名是 监控摄像头+RF信号，同步采集，手工标注2000张RGB图像。可见RFpose 的AP 62.4 %。Vision based的方法是 68.8%。不可见AP情况下准确度是58.1%，而用skelton去识别多用户可达83%准确率。 RF是用Bottom-up的方法去做，即先检测keypoints，然后聚类。 自底向上的方法：首先从射频信号图像中学习检测出">
+  <meta name="description" content="本文系MIT实验室的一系列文章的笔记，主要有RF-pose，RF-capture以及RFpose3D。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="阿花的Blog">
-<meta property="og:url" content="http://example.com/2023/04/06/MIT%E7%B3%BB%E5%88%97/index.html">
+<meta property="og:title" content="MIT-RF系列论文">
+<meta property="og:url" content="http://example.com/2023/05/12/MIT%E7%B3%BB%E5%88%97/index.html">
 <meta property="og:site_name" content="阿花的Blog">
-<meta property="og:description" content="RF poseRFpose这篇文章原名是 监控摄像头+RF信号，同步采集，手工标注2000张RGB图像。可见RFpose 的AP 62.4 %。Vision based的方法是 68.8%。不可见AP情况下准确度是58.1%，而用skelton去识别多用户可达83%准确率。 RF是用Bottom-up的方法去做，即先检测keypoints，然后聚类。 自底向上的方法：首先从射频信号图像中学习检测出">
+<meta property="og:description" content="本文系MIT实验室的一系列文章的笔记，主要有RF-pose，RF-capture以及RFpose3D。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://s2.loli.net/2023/03/31/9vgEw6URfGC1Dmu.png">
 <meta property="og:image" content="https://s2.loli.net/2023/03/31/NCxyUDk6clebjsS.png">
 <meta property="og:image" content="https://s2.loli.net/2023/03/31/QbNHX28VIzDqJ4a.png">
 <meta property="og:image" content="https://s2.loli.net/2023/05/10/Dwup2YSN1TZ9zlo.png">
-<meta property="article:published_time" content="2023-04-06T02:47:28.675Z">
-<meta property="article:modified_time" content="2023-05-10T07:30:23.221Z">
+<meta property="og:image" content="https://s2.loli.net/2023/05/12/3ZLRiQaUMxlqhJD.png">
+<meta property="article:published_time" content="2023-05-12T01:14:05.380Z">
+<meta property="article:modified_time" content="2023-05-15T07:24:16.249Z">
 <meta property="article:author" content="阿花想养萨摩耶">
+<meta property="article:tag" content="MIT">
+<meta property="article:tag" content="姿态识别">
+<meta property="article:tag" content="RF signal">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://s2.loli.net/2023/03/31/9vgEw6URfGC1Dmu.png">
 
-<link rel="canonical" href="http://example.com/2023/04/06/MIT%E7%B3%BB%E5%88%97/">
+<link rel="canonical" href="http://example.com/2023/05/12/MIT%E7%B3%BB%E5%88%97/">
 
 
 <script id="page-configurations">
@@ -50,7 +54,7 @@
   };
 </script>
 
-  <title> | 阿花的Blog</title>
+  <title>MIT-RF系列论文 | 阿花的Blog</title>
   
 
 
@@ -199,7 +203,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/04/06/MIT%E7%B3%BB%E5%88%97/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/05/12/MIT%E7%B3%BB%E5%88%97/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -212,7 +216,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          
+          MIT-RF系列论文
         </h1>
 
         <div class="post-meta">
@@ -222,15 +226,24 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2023-04-06 10:47:28" itemprop="dateCreated datePublished" datetime="2023-04-06T10:47:28+08:00">2023-04-06</time>
+              <time title="创建时间：2023-05-12 09:14:05" itemprop="dateCreated datePublished" datetime="2023-05-12T09:14:05+08:00">2023-05-12</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-05-10 15:30:23" itemprop="dateModified" datetime="2023-05-10T15:30:23+08:00">2023-05-10</time>
+                <time title="修改时间：2023-05-15 15:24:16" itemprop="dateModified" datetime="2023-05-15T15:24:16+08:00">2023-05-15</time>
               </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
+                </span>
+            </span>
 
           
 
@@ -243,7 +256,9 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="RF-pose"><a href="#RF-pose" class="headerlink" title="RF pose"></a>RF pose</h2><p>RFpose这篇文章原名是</p>
+        <p>本文系MIT实验室的一系列文章的笔记，主要有RF-pose，RF-capture以及RFpose3D。</p>
+<span id="more"></span>
+<h2 id="RF-pose"><a href="#RF-pose" class="headerlink" title="RF pose"></a>RF pose</h2><p>RFpose这篇文章原名是</p>
 <p>监控摄像头+RF信号，同步采集，手工标注2000张RGB图像。可见RFpose 的AP 62.4 %。Vision based的方法是 68.8%。不可见AP情况下准确度是58.1%，而用skelton去识别多用户可达83%准确率。</p>
 <p>RF是用Bottom-up的方法去做，即先检测keypoints，然后聚类。</p>
 <p><strong>自底向上的方法：</strong>首先从<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=射频&amp;spm=1001.2101.3001.7020">射频</a>信号图像中学习检测出姿态的所有关键点，然后使用后处理来关联属于同一个人的关键点。但区别在于RFpose用的是RF信号作为输入。最终用一个跨模态-师生网络解决。</p>
@@ -272,7 +287,7 @@ L(\mathrm{T,S})=-\sum_c\sum_{i,j}\mathrm{S}_{i,j}^{c}\log \mathrm{T}_{i,j}^{c}+(
 <p><img src="https://s2.loli.net/2023/03/31/NCxyUDk6clebjsS.png" alt="image-20230331165548606"></p>
 <p>OKS在0.7左右的时候是性能最好，和视觉模型对比好在没有海报之类的误报。之后的精读就下降了，这是因为RF信号本身的低空间分辨率的原因。RFpose的关键点定位能力是由于不完美的热力图于真实图片的同步产生的。表二分析了身体部分的AP，在头部和颈部、臀部的性能表现较好，四肢部分表现较差，这是因为肢体大小的原因。（头部的反射空间更大、动作幅度较小），另外还有一些比OpenPose性能好的原因可能是RFpose观察的是一段序列，而openpose是观察单张图片。</p>
 <p><img src="https://s2.loli.net/2023/03/31/QbNHX28VIzDqJ4a.png" alt="image-20230331170557927" style="zoom:50%;" /></p>
-<h2 id="RF-Capture"><a href="#RF-Capture" class="headerlink" title="RF-Capture"></a>RF-Capture</h2><p>RF-capture</p>
+<h2 id="RF-Capture（待补充）"><a href="#RF-Capture（待补充）" class="headerlink" title="RF-Capture（待补充）"></a>RF-Capture（待补充）</h2><p>RF-capture</p>
 <h2 id="RFpose3D"><a href="#RFpose3D" class="headerlink" title="RFpose3D"></a>RFpose3D</h2><p>《RF-Based 3D Skeletons》</p>
 <p>首个从RF信号中推断人体三维骨架的工作（2018年），穿墙、多人场景都可实现。使用了一个新型的CNN架构，首先先放大聚焦场景中的个体，然后对每一个个体定位他们的身体部位，在空间上的平均误差为4.2cm,4.0cm以及4.9cm（x,y,z轴）。</p>
 <p>文章旨在通过从人体反射的信号进行挖掘场景的任务丰富细节信息，而不仅仅是单纯的定位。3D的识别是很难的，关键在于建模观测的波形和人体，同时也要考虑不同人体部位的位置和动作。采取FMCW波作为输入，滑动窗口时间为3秒，产生一个连续的3D场景人体骨架运动图，骨架的关键点有14个，对应neck, shoulders, elbows, wrists, hip, knees, and feet。</p>
@@ -303,6 +318,31 @@ a(x,y,z,t)=\sum_k \sum_is_{k,i}^{t}\cdot e^{j2\pi \frac{d_k(x,y,z)}{\lambda_i}}<
 <p>损失函数此时就是所有组件的加和：</p>
 <script type="math/tex; mode=display">
 L_{pose}=\sum_kL_{\mathrm{Softmax}} (s^k,v^{k^*})</script><p>其中的k是某一个关键点。推理输出结果取最高的分数对应的那个类别，$\arg \max s_v^k$即可。</p>
+<h3 id="多人的识别"><a href="#多人的识别" class="headerlink" title="多人的识别"></a>多人的识别</h3><p>类似目标识别任务，最简单的办法就是将原始的RF信号经由RPN输出可能的region，然后对每一个region使用CNN进行识别分类。作者从最后一部分中分离了CNN模型，并使RPN在中间层的输出（即特征图）上运行，因为该层被压缩过的信息的语义信息更为丰富。原始RF信号混乱，并受到多径效应的影响。因此，在要求RPN裁剪特定区域之前，使用一些卷积层来压缩信息并消除混乱；其次，当有多个人在场时，他们可能会彼此从RF设备中遮挡，从而导致被遮挡的人丢失反射。因此，进行4D时空卷积以组合跨时空的信息，以允许RPN检测到暂时被遮挡的人。</p>
+<p>单人网络总共包含18个卷积层。我们将前12层划分为特征网络（FN），将其余6层划分为姿态估计网络（PEN）。在何处分割不是唯一的，但是通常FN应该具有足够的层来聚合后续RPN和PEN的空间和时间信息。</p>
+<h3 id="RPN"><a href="#RPN" class="headerlink" title="RPN"></a>RPN</h3><blockquote>
+<p>RPN使用在Faster-RCNN时直接生成检测框，效率比较高。RPN包含以下部分：</p>
+<ul>
+<li>生成锚框anchor boxes</li>
+<li>判断每个anchor box为foreground和background两部分，二分类</li>
+<li>边界框回归bounding box regression对anchor box进行微调，使得positive anchor和ground truth box更接近</li>
+</ul>
+</blockquote>
+<p>RPN将FN输出的特征图作为输入，并输出一组矩形区域建议，每个区域建议都有一个分数来描述包含人的区域的概率。作者使用的是二维的bounding box，因为人体大致都位于同一个平面。</p>
+<p>我们知道输出的特征图有H x W个结果，我们随机取一点，它跟原图肯定是有个一一映射关系的，由于原图和特征图大小不同，所以特征图上的一个点对应原图肯定是一个框，然而这个框很小，比如说8 x 8，这里8是指原图和特征图的比例，所以这个并不是我们想要的框，那我们不妨把框的左上角或者框的中心作为锚点（Anchor），然后想象出一堆框，具体多少，聪明的读者肯定已经猜到，K个，这也就是图中所说的K anchor boxes（由锚点产生的K个框）；换句话说，H x W个点，每个点对应原图有K个框，那么就有H x W x k个框默默的在原图上，那RPN的结果其实就是判断这些框是不是物体以及他们的偏移；那么K个框到底有多大，长宽比是多少？这里是预先设定好的，共有9种组合，所以k等于9，最后我们的结果是针对这9种组合的，所以有H x W x 9个结果，也就是18个分数和36个坐标。</p>
+<p>RPN被实现为标准的CNN。滑动窗口可以用3x3的卷积完成实现，最后的两个输出分数和坐标位置也可以用1x1的卷积，所以全都用卷积来实现了。训练RPN的一种方法是尝试所有可能的区域，并且如果每个区域都紧密围绕场景中的真实人物，则将其分类为正确的。由于存在许多可能的区域，因此此方法非常慢。相反，我们使用滑动窗口对潜在区域进行采样。对于每个采样窗口，我们使用分类器检查它与真实人的交点是否合理。如果是这样，RPN会尝试调整该窗口的边界以使其更合适。为每个训练窗口分配一个二进制标签，以指示其是否包含一个人。要设置标签，我们使用一个简单的交并集（IoU）指标，其定义为：</p>
+<script type="math/tex; mode=display">
+\mathrm{IoU=\frac{Area\, of\,Intersection}{Area\,of\,Union}}</script><p>因此，（1）将与任何地面真实区域（即，对应于真实人物的区域）重叠大于0.7IoU的窗口设置为正；（2）将与所有地面真相重叠的窗口小于0.3设置为负；对于不满足以上两个条件的其他窗口，我们在训练阶段将其忽略。</p>
+<p>参考：<a target="_blank" rel="noopener" href="https://blog.csdn.net/lanran2/article/details/54376126">(83条消息) RPN 解析_懒人元的博客-CSDN博客</a></p>
+<h3 id="3D标签的生成"><a href="#3D标签的生成" class="headerlink" title="3D标签的生成"></a>3D标签的生成</h3><p>用的树莓派，12个camera</p>
+<p><img src="https://s2.loli.net/2023/05/12/3ZLRiQaUMxlqhJD.png" alt="image-20230512094908182"></p>
+<p>多相机系统：系统有12个相机节点，每个节点都由Raspberry Pi，电池和相机模块板组成。我们的节点小巧，轻巧，并且通过将其附着在墙上而易于部署。摄像机节点通过NTP同步，并使用标准的多摄像机校准技术相对于一个全局坐标系进行校准。部署后，摄像头会从不同的角度对人成像。</p>
+<p>2D骨骼生成：接下来，我们的系统使用摄像机捕获的图像生成2D骨骼。为此，我们利用了称为OpenPose 的计算机视觉系统，该系统给出的图像返回其中的人的2D骨骼，如图7所示。理想情况下，我们希望相同的骨骼出现在图像中。全部12台摄像机。但是，由于遮挡和放置12个摄像头以覆盖不同区域的事实，每个摄像头可能会看到不同的人或同一人的不同关键点。</p>
+<p>2D骨骼关联：接下来，我们确定同一个人的2D骨骼，并将它们关联在一起，如图7所示。要判断一对2D骨骼是否来自同一个人，我们查看它们之间的几何关系。具体而言，给定2D关键点（例如头部），原始3D关键点必须位于3D空间中与摄像机视图垂直的线上，并在2D关键点处与之相交。直觉是，当一对2D骨骼都来自同一个人时，对应于特定关键点潜在位置的那两条线将在3D空间中相交。另一方面，如果这对2D骨骼来自两个不同的人，则3D空间中的这两条线将具有较大的距离且没有相交。基于这种直觉，我们将与各个关键点相对应的3D线之间的平均距离用作两个2D骨架的距离度量，并使用层次聚类对来自同一个人的2D骨架进行聚类。</p>
+<p>三角剖分3D骨架：一旦我们从同一个人获得了多个2D骨架，就可以对它们的关键点进行三角剖分，以生成相应的3D骨架。我们以特定关键点p的2D投影$p_i$作为空间中的点来估计特定关键点p的3D位置，其投影使与所有此类2D投影的距离之和最小化，即：</p>
+<script type="math/tex; mode=display">
+\mathcal p=\arg\min_\mathcal{p}\sum_{i\in I}||\mathcal{C_i p-p^i}||_2</script><p>$C_i$是将矩阵坐标转换为摄像机$i$视角中的图像坐标的校准矩阵。</p>
+<h3 id="实际测试"><a href="#实际测试" class="headerlink" title="实际测试"></a>实际测试</h3><p>FMCW扫频范围为5.4至7.2 GHz。传输功率小于一毫瓦。使用标准FMCW和天线阵列方程对RF信号进行处理，以每秒生成30个垂直和水平热图，然后将其与摄像头帧同步。摄像机使用网络时间协议（NTP）进行同步。使用本地NTP服务器时，时钟同步错误平均小于1ms。在实验期间，我们为所有RF热图和视频帧加上时间戳，并根据它们的时间戳同步不同的流。同步后，所有RF和视频流的FPS为30</p>
 
     </div>
 
@@ -311,6 +351,67 @@ L_{pose}=\sum_kL_{\mathrm{Softmax}} (s^k,v^{k^*})</script><p>其中的k是某一
     
 
       <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/MIT/" rel="tag"><i class="fa fa-tag"></i> MIT</a>
+              <a href="/tags/%E5%A7%BF%E6%80%81%E8%AF%86%E5%88%AB/" rel="tag"><i class="fa fa-tag"></i> 姿态识别</a>
+              <a href="/tags/RF-signal/" rel="tag"><i class="fa fa-tag"></i> RF signal</a>
+          </div>
+          <script type="text/javascript">
+            var tagsall=document.getElementsByClassName("post-tags")
+            for (var i = tagsall.length - 1; i >= 0; i--){
+                var tags=tagsall[i].getElementsByTagName("a");
+                for (var j = tags.length - 1; j >= 0; j--) {
+                    var golden_ratio = 0.618033988749895;
+                    var s = 0.5;
+                    var v = 0.999;
+                    var h = golden_ratio + Math.random()*0.8 - 0.5;
+                    var h_i = parseInt(h * 6);
+                    var f = h * 6 - h_i;
+                    var p = v * (1 - s);
+                    var q = v * (1 - f * s);
+                    var t = v * (1 - (1 - f) * s);
+                    var r, g, b;
+                    switch (h_i) {
+                        case 0:
+                            r = v;
+                            g = t;
+                            b = p;
+                            break;
+                        case 1:
+                            r = q;
+                            g = v;
+                            b = p;
+                            break;
+                        case 2:
+                            r = p;
+                            g = v;
+                            b = t;
+                            break;
+                        case 3 :
+                            r = p;
+                            g = q;
+                            b = v;
+                            break;
+                        case 4:
+                            r = t;
+                            g = p;
+                            b = v;
+                            break;
+                        case 5:
+                            r = v;
+                            g = p;
+                            b = q;
+                            break;
+                        default:
+                            r = 1;
+                            g = 1;
+                            b = 1;
+                      }
+                    tags[j].style.background = "rgba("+parseInt(r*255)+","+parseInt(g*255)+","+parseInt(b*255)+","+0.5+")";
+                }
+            }                        
+            </script>
 
         
 
@@ -318,12 +419,12 @@ L_{pose}=\sum_kL_{\mathrm{Softmax}} (s^k,v^{k^*})</script><p>其中的k是某一
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2023/03/29/BUILDOAI/" rel="prev" title="OAI gNB构建">
-      <i class="fa fa-chevron-left"></i> OAI gNB构建
+    <a href="/2023/05/11/Asynicio/" rel="prev" title="Python协程：Asyncio入门">
+      <i class="fa fa-chevron-left"></i> Python协程：Asyncio入门
     </a></div>
       <div class="post-nav-item">
-    <a href="/2023/04/15/Three.js/" rel="next" title="Three.js 学习笔记（一）">
-      Three.js 学习笔记（一） <i class="fa fa-chevron-right"></i>
+    <a href="/2023/05/15/5G%E6%89%8B%E6%9C%BA%E6%8E%A5%E5%85%A5%E5%85%A5%E7%BD%91%E6%B5%81%E7%A8%8B/" rel="next" title="UE手机入网流程">
+      UE手机入网流程 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -383,7 +484,7 @@ L_{pose}=\sum_kL_{\mathrm{Softmax}} (s^k,v^{k^*})</script><p>其中的k是某一
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#RF-pose"><span class="nav-number">1.</span> <span class="nav-text">RF pose</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E6%B5%81%E7%A8%8B"><span class="nav-number">1.1.</span> <span class="nav-text">算法流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A9%BF%E9%80%8F%E5%BD%B1%E5%93%8D%EF%BC%9A"><span class="nav-number">1.1.1.</span> <span class="nav-text">穿透影响：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%B6%E7%A9%BA%E5%BD%B1%E5%93%8D%EF%BC%9A"><span class="nav-number">1.1.2.</span> <span class="nav-text">时空影响：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E6%96%B9%E6%B3%95%EF%BC%9A"><span class="nav-number">1.1.3.</span> <span class="nav-text">输出方法：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%AD%E7%BB%83%E7%BB%86%E8%8A%82"><span class="nav-number">1.2.</span> <span class="nav-text">训练细节</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C"><span class="nav-number">1.3.</span> <span class="nav-text">实验结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RF-Capture"><span class="nav-number">2.</span> <span class="nav-text">RF-Capture</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RFpose3D"><span class="nav-number">3.</span> <span class="nav-text">RFpose3D</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E7%9A%84%E8%AE%BE%E8%AE%A1"><span class="nav-number">3.1.</span> <span class="nav-text">网络的设计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E4%BA%BA%E5%9C%BA%E6%99%AF%E7%9A%84%E5%B0%BA%E5%BA%A6%E5%8F%98%E6%8D%A2"><span class="nav-number">3.2.</span> <span class="nav-text">多人场景的尺度变换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E7%9A%84%E8%AE%AD%E7%BB%83"><span class="nav-number">3.3.</span> <span class="nav-text">网络的训练</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%BB%BA%E6%A8%A1"><span class="nav-number">3.4.</span> <span class="nav-text">问题建模</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#RF-pose"><span class="nav-number">1.</span> <span class="nav-text">RF pose</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E6%B5%81%E7%A8%8B"><span class="nav-number">1.1.</span> <span class="nav-text">算法流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A9%BF%E9%80%8F%E5%BD%B1%E5%93%8D%EF%BC%9A"><span class="nav-number">1.1.1.</span> <span class="nav-text">穿透影响：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%B6%E7%A9%BA%E5%BD%B1%E5%93%8D%EF%BC%9A"><span class="nav-number">1.1.2.</span> <span class="nav-text">时空影响：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E6%96%B9%E6%B3%95%EF%BC%9A"><span class="nav-number">1.1.3.</span> <span class="nav-text">输出方法：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%AD%E7%BB%83%E7%BB%86%E8%8A%82"><span class="nav-number">1.2.</span> <span class="nav-text">训练细节</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C"><span class="nav-number">1.3.</span> <span class="nav-text">实验结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RF-Capture%EF%BC%88%E5%BE%85%E8%A1%A5%E5%85%85%EF%BC%89"><span class="nav-number">2.</span> <span class="nav-text">RF-Capture（待补充）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RFpose3D"><span class="nav-number">3.</span> <span class="nav-text">RFpose3D</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E7%9A%84%E8%AE%BE%E8%AE%A1"><span class="nav-number">3.1.</span> <span class="nav-text">网络的设计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E4%BA%BA%E5%9C%BA%E6%99%AF%E7%9A%84%E5%B0%BA%E5%BA%A6%E5%8F%98%E6%8D%A2"><span class="nav-number">3.2.</span> <span class="nav-text">多人场景的尺度变换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E7%9A%84%E8%AE%AD%E7%BB%83"><span class="nav-number">3.3.</span> <span class="nav-text">网络的训练</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%BB%BA%E6%A8%A1"><span class="nav-number">3.4.</span> <span class="nav-text">问题建模</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E4%BA%BA%E7%9A%84%E8%AF%86%E5%88%AB"><span class="nav-number">3.5.</span> <span class="nav-text">多人的识别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RPN"><span class="nav-number">3.6.</span> <span class="nav-text">RPN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3D%E6%A0%87%E7%AD%BE%E7%9A%84%E7%94%9F%E6%88%90"><span class="nav-number">3.7.</span> <span class="nav-text">3D标签的生成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%99%85%E6%B5%8B%E8%AF%95"><span class="nav-number">3.8.</span> <span class="nav-text">实际测试</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -399,20 +500,20 @@ L_{pose}=\sum_kL_{\mathrm{Softmax}} (s^k,v^{k^*})</script><p>其中的k是某一
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">51</span>
+          <span class="site-state-item-count">52</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-count">18</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">73</span>
+        <span class="site-state-item-count">78</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -438,16 +539,16 @@ L_{pose}=\sum_kL_{\mathrm{Softmax}} (s^k,v^{k^*})</script><p>其中的k是某一
     </div>
     <ul class="links-of-recent-posts-list">
         <li class="links-of-recent-posts-item">
+          <a href="/2023/05/15/5G%E6%89%8B%E6%9C%BA%E6%8E%A5%E5%85%A5%E5%85%A5%E7%BD%91%E6%B5%81%E7%A8%8B/" title="2023&#x2F;05&#x2F;15&#x2F;5G手机接入入网流程&#x2F;">UE手机入网流程</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2023/05/12/MIT%E7%B3%BB%E5%88%97/" title="2023&#x2F;05&#x2F;12&#x2F;MIT系列&#x2F;">MIT-RF系列论文</a>
+        </li>
+        <li class="links-of-recent-posts-item">
           <a href="/2023/05/11/Asynicio/" title="2023&#x2F;05&#x2F;11&#x2F;Asynicio&#x2F;">Python协程：Asyncio入门</a>
         </li>
         <li class="links-of-recent-posts-item">
           <a href="/2023/05/05/SRS-devlog/" title="2023&#x2F;05&#x2F;05&#x2F;SRS-devlog&#x2F;">Type your title here</a>
-        </li>
-        <li class="links-of-recent-posts-item">
-          <a href="/2023/05/04/C++%E7%BB%93%E6%9E%84%E4%BD%93%E5%AD%A6%E4%B9%A0/" title="2023&#x2F;05&#x2F;04&#x2F;C++结构体学习&#x2F;">C/C++核心语法学习（二）</a>
-        </li>
-        <li class="links-of-recent-posts-item">
-          <a href="/2023/05/03/C++%E6%8C%87%E9%92%88%E5%AD%A6%E4%B9%A0/" title="2023&#x2F;05&#x2F;03&#x2F;C++指针学习&#x2F;">C/C++核心语法学习（一）</a>
         </li>
     </ul>
   </div>
@@ -531,6 +632,59 @@ L_{pose}=\sum_kL_{\mathrm{Softmax}} (s^k,v^{k^*})</script><p>其中的k是某一
   
 
   
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
 
   
 

@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":5},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="在分析UE接入OAI的gNB基站中经常出现连接不稳定的情况，因此对手机接入的流程进行了分析。在5G中的UE入网流程如上图所示，下面将会对每个部分详细展开。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UE手机入网流程">
+<meta property="og:url" content="http://example.com/2023/05/15/5G%E6%89%8B%E6%9C%BA%E6%8E%A5%E5%85%A5%E5%85%A5%E7%BD%91%E6%B5%81%E7%A8%8B/index.html">
+<meta property="og:site_name" content="阿花的Blog">
+<meta property="og:description" content="在分析UE接入OAI的gNB基站中经常出现连接不稳定的情况，因此对手机接入的流程进行了分析。在5G中的UE入网流程如上图所示，下面将会对每个部分详细展开。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2023/05/15/B8yrLFs3e1jWmdX.png">
+<meta property="og:image" content="https://s2.loli.net/2023/05/15/6t21zexZrf8uQcN.png">
+<meta property="og:image" content="https://s2.loli.net/2023/05/15/HZhU8zjeNDsCtVd.png">
+<meta property="og:image" content="https://s2.loli.net/2023/05/15/gadpQDNJ9FOePMt.png">
+<meta property="article:published_time" content="2023-05-15T07:23:22.591Z">
+<meta property="article:modified_time" content="2023-05-15T07:23:08.888Z">
+<meta property="article:author" content="阿花想养萨摩耶">
+<meta property="article:tag" content="5G">
+<meta property="article:tag" content="UE">
+<meta property="article:tag" content="入网">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/05/15/B8yrLFs3e1jWmdX.png">
+
+<link rel="canonical" href="http://example.com/2023/05/15/5G%E6%89%8B%E6%9C%BA%E6%8E%A5%E5%85%A5%E5%85%A5%E7%BD%91%E6%B5%81%E7%A8%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>UE手机入网流程 | 阿花的Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">阿花的Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/05/15/5G%E6%89%8B%E6%9C%BA%E6%8E%A5%E5%85%A5%E5%85%A5%E7%BD%91%E6%B5%81%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          UE手机入网流程
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-05-15 15:23:22 / 修改时间：15:23:08" itemprop="dateCreated datePublished" datetime="2023-05-15T15:23:22+08:00">2023-05-15</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/5G/" itemprop="url" rel="index"><span itemprop="name">5G</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p align="center">
+    <img src="https://s2.loli.net/2023/05/15/B8yrLFs3e1jWmdX.png" alt="logo"/>
+</p>
+
+
+<p>在分析UE接入OAI的gNB基站中经常出现连接不稳定的情况，因此对手机接入的流程进行了分析。在5G中的UE入网流程如上图所示，下面将会对每个部分详细展开。</p>
+<span id="more"></span>
+<h2 id="开机"><a href="#开机" class="headerlink" title="开机"></a>开机</h2><p>我们这里说的开机是系统初始化，此时UE会读取自身的SIM卡中存储的信息，判断有没有存储先验信息，该信息用于PLMN的选择。</p>
+<h2 id="PLMN选择"><a href="#PLMN选择" class="headerlink" title="PLMN选择"></a>PLMN选择</h2><h3 id="前置概念"><a href="#前置概念" class="headerlink" title="前置概念"></a>前置概念</h3><p><strong>PLMN</strong>（Public Land Mobile Network，陆上公用移动通信网），由政府或它所批准的经营者，为了公众提供陆地移动通信业务目的而建立和经营的网络。<strong>PLMN = MCC + MNC = 移动国家码 + 移动网络码</strong>。例如中国移动为46000，中国联通为46001，我们实验室使用的是46692。</p>
+<p><strong>IMSI</strong>（International Mobile Subscriber Identification Number），国际移动用户识别码，用于区别移动用户的标志，存储在SIM卡中，总长度不超过15位。<strong>IMSI = MCC + MNC + MSIN</strong> ，实验室常用的是466920000000001。</p>
+<h3 id="PLMN分类"><a href="#PLMN分类" class="headerlink" title="PLMN分类"></a>PLMN分类</h3><p>PLMN选择有两种模式，<strong>自动选择和手动选择</strong>。选网过程按照PLMN选择类型，包括<strong>开机选网</strong>、用户重选网、OOS选网、高优先级选网等。（本文主要介绍开机选网）。如下是一些PLMN的分类：</p>
+<ul>
+<li><p><strong>RPLMN</strong>：注册成功、已登记的PLMN。 是终端在上次关机或脱网前登记上的PLMN。</p>
+</li>
+<li><p><strong>EPLMN</strong>：等效PLMN。为与终端当前所选择的PLMN处于同等地位的PLMN，其优先级相同。</p>
+</li>
+<li><p><strong>HPLMN</strong>：Home PLMN，归属PLMN。 是终端用户归属的PLMN，终端USIM卡上的IMSI号包含的MCC和MNC与HPLMN上的一致，对某一用户来说，归属PLMN只有一个。</p>
+</li>
+<li><p><strong>EHPLMN</strong>：等效本地PLMN，为与终端当前所选择的PLMN处于同等地位的本地PLMN。与HPLMN等效，但彼此之间有优先级。</p>
+</li>
+<li><p><strong>VPLMN</strong>：访问PLMN。为终端用户访问的PLMN，其和在SIM卡中IMSI的MCC、MNC不完全相同。当终端丢失覆盖后，一个VPLMN将被选择。</p>
+</li>
+<li><p><strong>UPLMN</strong>：用户控制PLMN。是储存在USIM卡上的一个与PLMN选择有关的参数。</p>
+</li>
+<li><p><strong>OPLMN</strong>：运营商控制PLMN。是储存在USIM卡上的一个与PLMN选择有关的参数。</p>
+</li>
+<li><p><strong>FPLMN</strong>：被禁止接入的PLMN。通常终端尝试接入某个PLMN被拒绝后，会将其加到本列表中。</p>
+</li>
+<li><p><strong>APLMN</strong>：可捕获PLMN。为终端能在其上找到至少一个小区，并能读出其PLMN标识信息的PLMN。</p>
+<p>在进行PLMN选择时，优先级为：<strong>RPLMN</strong>&gt;EPLMN&gt;HPLMN&gt;EHPLMN&gt;UPLMN&gt;OPLMN&gt;其他PLMN</p>
+</li>
+</ul>
+<h3 id="PLMN识别流程"><a href="#PLMN识别流程" class="headerlink" title="PLMN识别流程"></a>PLMN识别流程</h3><p>UE开机选小区，它不知道其用的SIM卡是哪个PLMN的（无先验信息），手机开机后先对所以频点进行扫描，哪个频点信号最好就选哪个，这时候不管是哪家运营商的，它都<strong>先听该频点的FCCH</strong>（频率校正信道，用于终端调到相应的频率上），<strong>再听SCH（</strong>同步信道，用于实现时间同步），<strong>接着听BCCH</strong>（广播控制信道，用于传输通用信息），BCCH里有BSIC（基站识别码），BSIC里面的NCC（网络色码，用来识别相邻的PLMN网）就是区别该频点是哪家运营商的，要是不合适就选信号次强的频点继续完成上述步骤。</p>
+<h3 id="PLMN选择过程"><a href="#PLMN选择过程" class="headerlink" title="PLMN选择过程"></a>PLMN选择过程</h3><p>PLMN选择过程分为两种情况，<strong>即在UE无先验信息的情况下，UE将进行全频段搜索</strong>，在<strong>每一个频点上搜索最强的小区报告给UE NAS层</strong>（UE的非接入层功能模块），由NAS层来决定PLMN搜索是否继续进行。<strong>若UE存储有先验信息，则NAS层指示AS层按照先验信息的参数来进行PLMN搜索，并把结果上报给NAS层</strong>。</p>
+<p>终端在开机或脱网时，<strong>首先由PLMN选择过程通过自动或手动方式选择一个PLMN</strong>，然后搜索属于该PLMN的小区，如果在该PLMN下无法捕捉到合适的小区，则将在小区搜索过程中得到的可捕获PLMN列表报告给PLMN选择过程，由其重新选择PLMN，启动新一轮小区捕获过程。</p>
+<p><strong>自动选择</strong>：UE启动后会自动根据PLMN的优先级，选择优先级最高的PLMN。</p>
+<p><strong>手动选择</strong>：该模式下，开机只能去注册RPLMN，不能自动搜索注册高优先级的网络，手动选网模式会先搜索到当前可用的PLMN，只有当用户选择了其中一个PLMN后，UE才会尝试从该网络上获得服务。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p><img src="https://s2.loli.net/2023/05/15/6t21zexZrf8uQcN.png" alt="img"></p>
+<p>PLMN有两种选择模式，手动选择和自动选择，但无论哪种选择模式，UE AS层都需要能够将网络中现有的PLMN列表报告给UE NAS层，为此，（无先验信息情况下）UE AS根据自身的能力和设置, 进行全频段的搜索, 在每一个频点上搜索信号最强的小区, 读取其系统信息, 报告给UE NAS层，由NAS层来决定PLMN搜索是否继续进行。如果有先验信息，如载波频率、小区参数等，则PLMN的搜索过程可以得到优化, NAS层指示AS层按照先验信息的参数来进行PLMN搜索，并把结果上报给NAS层。</p>
+<h2 id="小区搜索"><a href="#小区搜索" class="headerlink" title="小区搜索"></a>小区搜索</h2><p>PLMN选定以后，要进行小区选择，目的是选择属于这个PLMN中信号最好的小区。一般书中介绍初始接入从此处开始，初始接入过程包括<strong>小区搜索、系统信息传递和随机接入</strong>等阶段。5G终端在能够通过通信网络传送数据前首先得通过gNB接入网络，为此就必须先进行小区搜索（Cell Search）。小区搜索包括了终端查找新小区的功能和过程，<strong>即无论在初始接入阶段或者在系统内移动时，都会有小区搜索的操作。</strong></p>
+<h3 id="下行同步"><a href="#下行同步" class="headerlink" title="下行同步"></a>下行同步</h3><p>小区搜索是终端取得小区下行方向的频率和时间同步并进而检测小区识别号（Cell ID）的过程。<strong>SSB</strong>（Synchronization Signal/PBCH Block，同步信号块）是实现小区搜索的基础。同步信号包括两部分，<strong>PSS</strong>（Primary Synchronization Signal，主同步信号）和<strong>SSS</strong>（Secondary Synchronization Signal，辅同步信号），<strong>PSS/SSS和PBCH</strong>（Physical Broadcast Channel，物理广播信道）一起，称为同步信号块<strong>SSB</strong>。终端需要进行小区搜索的最常见情况是用户新开机和小区切换的需要。小区搜索主要达到的主要目的有3个：</p>
+<ol>
+<li>完成下行同步，包括频率、符号和帧同步；<strong>（PSS做的事情）</strong></li>
+<li>获得当前小区的识别符；<strong>（SSS做的事情）</strong></li>
+<li>接收并解码广播信道BCH上的系统信息，与小区建立正常联系。<strong>（PBCH做的事情）</strong></li>
+</ol>
+<blockquote>
+<p>需要指出一点的是：<strong>小区搜索在正常连接时也会触发</strong>，如：为了支持终端的移动性要求，终端需要不断地搜索并估计相邻小区的接收信号质量，并且通过评估相邻小区与当前小区信号接收质量的关系，决定是否应该进行小区切换（相对于处在RRC_CONNECTED状态中的终端）或者小区重选（相对于处在RRC_IDLE状态中的终端）。</p>
+</blockquote>
+<p><strong>终端先搜索PSS</strong>，同步到PSS周期，可以使用网络的发送作为产生内部频率的参考，从而很大程度上消除了终端和网络之间的频率差。<strong>终端一旦检测到PSS，也就知道了SSS的发送定时</strong>，通过检测SSS，终端可以确定该小区的<strong>PCI</strong>（Physical Cell Identity，物理小区标识）。</p>
+<p><strong>PSS和SSS是有着特定结构的物理信号，而PBCH则是更为传统的物理信道。</strong>PBCH上承载着<strong>MIB</strong>（Master Information Block，主系统信息块，周期80ms），MIB上有很少部分信息，终端通过这些信息获取网络广播的其余系统信息（<strong>SIB1</strong>，周期160ms，重复周期20ms）。<strong>SIB1</strong>有时也称<strong>RMSI</strong>（Remaining Minimum System Information，剩余最小系统信息），包含了终端在接入系统前需要获知的系统信息。SIB1的重要任务是提供初始<strong>随机接入</strong>所需的信息。其余SIB信息不需要在接入系统前获知。</p>
+<blockquote>
+<p>系统信息是终端在网络中正常工作所需的全部公共信息的统称。通常系统信息由不同的SIB（System Information Block，系统信息块）来承载，每个块包含不同类型的系统信息。</p>
+</blockquote>
+<p>我觉得问题应该是出在这里了。</p>
+<h2 id="随机接入"><a href="#随机接入" class="headerlink" title="随机接入"></a>随机接入</h2><p>在小区搜索过程完成后，UE和小区就取得了下行同步，并获得了发起随机接入所需要的系统信息。但是此时UE在网络侧并没有完成初始的注册，另外，由于无线信道传输延迟（Delay Spread）的关系，上行链路的精确时间也不确定，并没有实现接入该小区。这时候，UE就必须通过随机接入过程与网络侧取得上行同步。在完成随机接入过程后，UE才能进行正常的上下行数据传输。</p>
+<p><strong>随机接入设计的主要目的是使UE获取上行时间同步</strong>，并在UE建立初始无线链路（即UE从RRC_IDLE状态转换到RRC_CONNECTED状态）时，可以通过随机接入过程获取用户标识—<strong>小区无线网络临时标识</strong>（Cell Radio Network Temporary Identifier，<strong>C-RNTI</strong>）信息。</p>
+<p>随机接入过程具有两种不同的形式：① 基于竞争的（Contention Based）随机接入；② 基于非竞争的（Non-contention Based）随机接入。</p>
+<p>NR初始接入时是竞争随机接入，过程分成四步：</p>
+<ol>
+<li><p>上行Message 1，终端在<strong>PRACH</strong>（Physical Random-Access Channel，物理随机接入信道）发送一个<strong>前导码</strong>（preamble）。</p>
+<blockquote>
+<p>在进行随机接入过程之前，UE通过SIB1消息获得SSB索引的集合、PRACH时频资源、PRACH Preamble格式和PRACH Preamble序列集合的参数，然后UE根据所获得的信息，生成PRACH Preamble序列，并在选定的PRACH时频资源上发送随机接入Preamble序列。</p>
+</blockquote>
+</li>
+<li><p>下行Message 2，网络在<strong>PDCCH/PDSCH</strong>（Physical Downlink Control/Sharing Channel，物理下行控制信道/物理下行共享信道）上发送<strong>RAR</strong>（Random Access Response，随机接入响应）表明收到了前导码。</p>
+<blockquote>
+<p>基站针对Preamble序列进行检测，如果基站检测到Preamble序列，则在PDCCH/PDSCH上反馈相应的随机接入响应（RAR）信息。<br>UE在发送Preamble序列之后，在一个RAR时间窗口内检测下行PDCCH/PDSCH反馈的RAR消息。如果检测到了相应的RAR消息，则说明该UE发送的Preamble序列已被基站检测到。RAR信息中还包含该UE的上行定时提前调整量和调度该UE的消息3传输的上行调度许可。</p>
+</blockquote>
+</li>
+<li><p>上行Message 3，UE在<strong>PUSCH上发送RRC请求</strong>（第三四步是为了防止多个终端发送前导码导致的冲突）</p>
+<blockquote>
+<p>UE根据该上行定时提前调整量获得上行同步，并根据上行调度许可在PUSCH上发送消息3。</p>
+</blockquote>
+</li>
+<li><p>下行Message 4，网络在PDSCH上发送竞争解决和连接建立</p>
+<blockquote>
+<p>基站接收并解析Message 3包含的UE标识之后，在PDSCH上发送消息4。</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="附着流程"><a href="#附着流程" class="headerlink" title="附着流程"></a>附着流程</h2><p>随机接入完成后，进行完整的附着流程，能最终完成上网功能，其中包括<strong>信令接入流程</strong>和<strong>数据接入流程</strong>。信令接入流程包括：SA（独立组网）初始接入和NSA（非独立组网）初始接入。</p>
+<h3 id="信令接入流程"><a href="#信令接入流程" class="headerlink" title="信令接入流程"></a>信令接入流程</h3><p>SA初始接入信令流程包括<strong>RRC连接流程、上下文建立流程、PDU会话流程</strong>。</p>
+<h4 id="RRC连接流程"><a href="#RRC连接流程" class="headerlink" title="RRC连接流程"></a>RRC连接流程</h4><p>RRC连接流程包括UE和gNodeB之间的RRC连接建立、重配、释放、重建过程，以及上行失步管理、UE不活动性管理。有关RRC连接管理的详细描述，见下方信令流程：</p>
+<p><img src="https://s2.loli.net/2023/05/15/HZhU8zjeNDsCtVd.png" alt="img"></p>
+<p>RRC建立流程：正常RRC建立三步：</p>
+<ol>
+<li>UE向gNodeB发送<strong>RRCSetupRequest</strong>消息（在初始的随机接入中，Message 3传输的是RRCSetupRequest消息），RRCSetupRequest消息携带RRC建立原因和UE标识。（承载在SRB0上，在CCCH上）</li>
+<li>gNodeB为UE建立上下文并进行SRB1资源的准入和资源分配。而后向UE回复<strong>RRCSetup</strong>消息，消息中携带SRB1资源配置的详细信息。（信令承载在SRB0上，在CCCH上）</li>
+<li>UE根据RRCSetup消息指示的SRB1资源信息，进行无线资源配置，然后发送<strong>RRCSetupComplete</strong>消息给gNodeB，消息中携带<strong>selectedPLMN-Identity、registeredAMF、snssai-list和NAS</strong>，RRC连接建立完成。（<strong>UE建立SRB1</strong>，信令承载在SRB1上，在DCCH上）</li>
+</ol>
+<h4 id="上下文建立流程"><a href="#上下文建立流程" class="headerlink" title="上下文建立流程"></a>上下文建立流程</h4><p>gNB先触发NG-c连接建立，核心网AMF发起上下文建立请求<font color="green"><strong>（步骤6）</strong></font>，激活安全模式，对UE能力查询，然后UE建立SRB2和DRB，gDB向AMF回复上下文建立回复。接下来是：</p>
+<ol>
+<li>gNodeB为UE分配专用的<strong>RAN-UE-NGAP-ID</strong>，gNodeB根据selectedPLMNIdentity、registeredAMF、s-nssai-list<strong>选择AMF节点</strong>，然后将<strong>RRCSetupComplete</strong>消息中携带的NAS（是第一条Nas信息）<strong>通过INITIAL UE MESSAGE发送给AMF，触发NG-C连接建立。</strong></li>
+<li>gNodeB透传UE和AMF之间的NAS直传消息，完成IDENTITY查询、鉴权、NAS安全模式和注册过程等。</li>
+<li>AMF向gNodeB发送<strong>INITIAL CONTEXT SETUP REQUEST（初始UE上下文建立请求）消息</strong>，启动初始上下文建立过程。</li>
+<li>gNodeB向UE<strong>发送SecurityModeCommand消息，通知UE启动完整性保护和加密过程</strong>。此后，启动下行加密。</li>
+<li>UE根据<strong>SecurityModeCommand</strong>消息指示的完整性保护和加密算法，派生出密钥，然后向gNodeB回复<strong>SecurityModeComplete</strong>消息。此后，启动上行加密。</li>
+<li>gNodeB向UE发送<strong>UECapabilityEnquiry</strong>消息，发起UE能力查询过程。</li>
+<li>UE向gNodeB回复<strong>UECapabilityInformation</strong>消息，携带UE能力信息。</li>
+<li>gNodeB向AMF发送<strong>UE RADIO CAPABILITY INFO INDICATION消息，透传UE能力</strong>。</li>
+<li>gNodeB向UE下发<strong>RRCReconfiguration</strong>消息，指示建立SRB2和DRB。在专用NG-C连接建立过程中的加密与完整性保护执行完之后，<strong>gNodeB向UE发送携带srb-ToAddModList信元的RRCReconfiguration消息</strong>，指示UE建立SRB2和DRB（数据无线承载）。（信令承载在SRB1上，DCCH上）</li>
+<li>UE收到RRCReconfiguration消息后，开始<strong>建立SRB2和DRB</strong>（如果初始UE上下文建立请求要求建立DRB的话）。SRB2和DRB建立成功后，UE向gNodeB回复<strong>RRCReconfigurationComplete</strong>消息。（UE建立SRB2和DRB，RRCReconfigurationComplete承载在SRB1上，DCCH上）</li>
+<li>gNodeB向AMF回复INITIAL CONTEXT SETUP RESPONSE消息。</li>
+</ol>
+<h3 id="数据接入流程"><a href="#数据接入流程" class="headerlink" title="数据接入流程"></a>数据接入流程</h3><h4 id="PDU建立流程"><a href="#PDU建立流程" class="headerlink" title="PDU建立流程"></a>PDU建立流程</h4><p>初始接入流程到上面就算完成了，PDU建立流程属于初始接入完成后，要做其他业务的流程，可参考<a target="_blank" rel="noopener" href="https://cybercolyce.cn/2022/08/28/PDU会话/#more">PDU会话过程的建立过程 </a>这篇之前的笔记。AMF向gNB发送PDU建立请求，gNB向UE发送RRC重配置信令（携带DRB建立配置等信息），UE建立DRB，向gNB回复RRC重配置完成，gNB向AMF回复PDU建立回复。最终实现数据交互。</p>
+<ol>
+<li>AMF向gNodeB发送<strong>PDU SESSION RESOURCE SETUP REQUEST</strong>消息。消息中携带了需要建立的PDU会话列表、每个PDU会话的QoS Flow列表、以及每个QoSFlow的质量属性等。</li>
+<li>gNodeB根据QoS Flow的质量属性和MML界面配置的策略，将QoS Flow映射到DRB，向UE发送<strong>RRCReconfiguration</strong>消息，发起DRB建立请求。</li>
+<li>RRCReconfiguration消息中包含了drb-ToAddModList，UE根据消息指示建立，UE完成DRB建立后，向gNodeB回复<strong>RRCReconfigurationComplete</strong>消息。（UE建立DRB）</li>
+<li>gNodeB向AMF发送PDU SESSION RESOURCE SETUP RESPONSE消息，PDU会话建立成功。</li>
+</ol>
+<h2 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h2><p>整体的信令流程如下：</p>
+<ol>
+<li>UE向gNB-DU发送RRC连接请求消息。</li>
+<li>gNB-DU包括RRC消息，并且如果UE被允许，则在F1AP INITIAL UL RRC MESSAGE TRANSFER消息中包括用于UE的相应低层配置，并且传输到gNB-CU。 初始UL RRC消息传输消息包括由gNB-DU分配的C-RNTI。</li>
+<li>gNB-CU为UE分配gNB-CU UE F1AP ID，并向UE生成RRC CONNECTION SETUP消息。 RRC消息被封装在F1AP DL RRC MESSAGE TRANSFER消息中。</li>
+<li>gNB-DU向UE发送RRC CONNECTION SETUP消息。</li>
+<li>UE将RRC CONNECTION SETUP COMPLETE消息发送到gNB-DU。</li>
+<li>gNB-DU将RRC消息封装在F1AP UL RRC MESSAGE TRANSFER消息中并将其发送到gNB-CU。</li>
+<li>gNB-CU将INITIAL UE MESSAGE消息发送到AMF。</li>
+<li>AMF将初始UE上下文建立请求消息发送到gNB-CU。</li>
+<li>gNB-CU发送UE上下文建立请求消息以在gNB-DU中建立UE上下文。 在该消息中，它还可以封装RRC SECURITY MODE COMMAND消息。</li>
+<li>gNB-DU向UE发送RRC SECURITY MODE COMMAND消息。</li>
+<li>gNB-DU将UE CONTEXT SETUP RESPONSE消息发送给gNB-CU。</li>
+<li>UE以RRC SECURITY MODE COMPLETE消息进行响应</li>
+<li>gNB-DU将RRC消息封装在F1AP UL RRC MESSAGE TRANSFER消息中并将其发送到gNB-CU。</li>
+<li>gNB-CU生成RRC CONNECTION RECONFIGURATION消息并将其封装在F1AP DL RRC MESSAGE TRANSFER消息中</li>
+<li>gNB-DU向UE发送RRC CONNECTION RECONFIGURATION消息。</li>
+<li>UE向gNB-DU发送RRC CONNECTION RECONFIGURATION COMPLETE消息。</li>
+<li>gNB-DU将RRC消息封装在F1AP UL RRC MESSAGE TRANSFER消息中并将其发送到gNB-CU。</li>
+<li>gNB-CU向AMF发送INITIAL UE CONTEXT SETUP RESPONSE消息。</li>
+</ol>
+<p><img src="https://s2.loli.net/2023/05/15/gadpQDNJ9FOePMt.png" alt="5GUE入网整体信令流程"></p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/baidu_41616132/article/details/88894357">NR 5G UE初始接入流程_华夏山河雪的博客-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43727672/article/details/107669321">5G学习]00-UE手机入网流程_5g终端入网流程_雾里赏花的博客-CSDN博客</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/5G/" rel="tag"><i class="fa fa-tag"></i> 5G</a>
+              <a href="/tags/UE/" rel="tag"><i class="fa fa-tag"></i> UE</a>
+              <a href="/tags/%E5%85%A5%E7%BD%91/" rel="tag"><i class="fa fa-tag"></i> 入网</a>
+          </div>
+          <script type="text/javascript">
+            var tagsall=document.getElementsByClassName("post-tags")
+            for (var i = tagsall.length - 1; i >= 0; i--){
+                var tags=tagsall[i].getElementsByTagName("a");
+                for (var j = tags.length - 1; j >= 0; j--) {
+                    var golden_ratio = 0.618033988749895;
+                    var s = 0.5;
+                    var v = 0.999;
+                    var h = golden_ratio + Math.random()*0.8 - 0.5;
+                    var h_i = parseInt(h * 6);
+                    var f = h * 6 - h_i;
+                    var p = v * (1 - s);
+                    var q = v * (1 - f * s);
+                    var t = v * (1 - (1 - f) * s);
+                    var r, g, b;
+                    switch (h_i) {
+                        case 0:
+                            r = v;
+                            g = t;
+                            b = p;
+                            break;
+                        case 1:
+                            r = q;
+                            g = v;
+                            b = p;
+                            break;
+                        case 2:
+                            r = p;
+                            g = v;
+                            b = t;
+                            break;
+                        case 3 :
+                            r = p;
+                            g = q;
+                            b = v;
+                            break;
+                        case 4:
+                            r = t;
+                            g = p;
+                            b = v;
+                            break;
+                        case 5:
+                            r = v;
+                            g = p;
+                            b = q;
+                            break;
+                        default:
+                            r = 1;
+                            g = 1;
+                            b = 1;
+                      }
+                    tags[j].style.background = "rgba("+parseInt(r*255)+","+parseInt(g*255)+","+parseInt(b*255)+","+0.5+")";
+                }
+            }                        
+            </script>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/05/12/MIT%E7%B3%BB%E5%88%97/" rel="prev" title="MIT-RF系列论文">
+      <i class="fa fa-chevron-left"></i> MIT-RF系列论文
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E6%9C%BA"><span class="nav-number">1.</span> <span class="nav-text">开机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PLMN%E9%80%89%E6%8B%A9"><span class="nav-number">2.</span> <span class="nav-text">PLMN选择</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E7%BD%AE%E6%A6%82%E5%BF%B5"><span class="nav-number">2.1.</span> <span class="nav-text">前置概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PLMN%E5%88%86%E7%B1%BB"><span class="nav-number">2.2.</span> <span class="nav-text">PLMN分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PLMN%E8%AF%86%E5%88%AB%E6%B5%81%E7%A8%8B"><span class="nav-number">2.3.</span> <span class="nav-text">PLMN识别流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PLMN%E9%80%89%E6%8B%A9%E8%BF%87%E7%A8%8B"><span class="nav-number">2.4.</span> <span class="nav-text">PLMN选择过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">2.5.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E5%8C%BA%E6%90%9C%E7%B4%A2"><span class="nav-number">3.</span> <span class="nav-text">小区搜索</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8B%E8%A1%8C%E5%90%8C%E6%AD%A5"><span class="nav-number">3.1.</span> <span class="nav-text">下行同步</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9A%8F%E6%9C%BA%E6%8E%A5%E5%85%A5"><span class="nav-number">4.</span> <span class="nav-text">随机接入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%99%84%E7%9D%80%E6%B5%81%E7%A8%8B"><span class="nav-number">5.</span> <span class="nav-text">附着流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%A1%E4%BB%A4%E6%8E%A5%E5%85%A5%E6%B5%81%E7%A8%8B"><span class="nav-number">5.1.</span> <span class="nav-text">信令接入流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#RRC%E8%BF%9E%E6%8E%A5%E6%B5%81%E7%A8%8B"><span class="nav-number">5.1.1.</span> <span class="nav-text">RRC连接流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8A%E4%B8%8B%E6%96%87%E5%BB%BA%E7%AB%8B%E6%B5%81%E7%A8%8B"><span class="nav-number">5.1.2.</span> <span class="nav-text">上下文建立流程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%8E%A5%E5%85%A5%E6%B5%81%E7%A8%8B"><span class="nav-number">5.2.</span> <span class="nav-text">数据接入流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#PDU%E5%BB%BA%E7%AB%8B%E6%B5%81%E7%A8%8B"><span class="nav-number">5.2.1.</span> <span class="nav-text">PDU建立流程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93-1"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">7.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="阿花想养萨摩耶"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">阿花想养萨摩耶</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">78</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dafeigy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dafeigy" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1070642765@qq.com" title="E-Mail → mailto:1070642765@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/2659883291" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;2659883291" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+  </div>
+
+
+
+  <div class="links-of-recent-posts motion-element">
+    <div class="links-of-recent-posts-title">
+      <i class="fa fa-history fa-fw"></i>
+      最近文章
+    </div>
+    <ul class="links-of-recent-posts-list">
+        <li class="links-of-recent-posts-item">
+          <a href="/2023/05/15/5G%E6%89%8B%E6%9C%BA%E6%8E%A5%E5%85%A5%E5%85%A5%E7%BD%91%E6%B5%81%E7%A8%8B/" title="2023&#x2F;05&#x2F;15&#x2F;5G手机接入入网流程&#x2F;">UE手机入网流程</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2023/05/12/MIT%E7%B3%BB%E5%88%97/" title="2023&#x2F;05&#x2F;12&#x2F;MIT系列&#x2F;">MIT-RF系列论文</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2023/05/11/Asynicio/" title="2023&#x2F;05&#x2F;11&#x2F;Asynicio&#x2F;">Python协程：Asyncio入门</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2023/05/05/SRS-devlog/" title="2023&#x2F;05&#x2F;05&#x2F;SRS-devlog&#x2F;">Type your title here</a>
+        </li>
+    </ul>
+  </div>
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">阿花</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>
