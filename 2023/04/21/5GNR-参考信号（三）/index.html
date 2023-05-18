@@ -20,16 +20,17 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":5},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="本节主要介绍物理资源快等相关概念。">
+  <meta name="description" content="本节主要介绍物理资源块等相关概念，以及SRS的配置方式。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="NR参考信号学习（三）">
 <meta property="og:url" content="http://example.com/2023/04/21/5GNR-%E5%8F%82%E8%80%83%E4%BF%A1%E5%8F%B7%EF%BC%88%E4%B8%89%EF%BC%89/index.html">
 <meta property="og:site_name" content="阿花的Blog">
-<meta property="og:description" content="本节主要介绍物理资源快等相关概念。">
+<meta property="og:description" content="本节主要介绍物理资源块等相关概念，以及SRS的配置方式。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://s2.loli.net/2023/04/21/wmj4kz9Lfv1Ir25.png">
+<meta property="og:image" content="https://s2.loli.net/2023/04/21/wmj4kz9Lfv1Ir25.png">
 <meta property="article:published_time" content="2023-04-21T03:02:40.110Z">
-<meta property="article:modified_time" content="2023-05-15T07:34:50.439Z">
+<meta property="article:modified_time" content="2023-05-17T05:21:02.613Z">
 <meta property="article:author" content="阿花想养萨摩耶">
 <meta property="article:tag" content="5GNR">
 <meta name="twitter:card" content="summary">
@@ -227,7 +228,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-05-15 15:34:50" itemprop="dateModified" datetime="2023-05-15T15:34:50+08:00">2023-05-15</time>
+                <time title="修改时间：2023-05-17 13:21:02" itemprop="dateModified" datetime="2023-05-17T13:21:02+08:00">2023-05-17</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -254,7 +255,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>本节主要介绍物理资源快等相关概念。</p>
+        <p>本节主要介绍物理资源块等相关概念，以及SRS的配置方式。</p>
 <span id="more"></span>
 <h2 id="逻辑资源块"><a href="#逻辑资源块" class="headerlink" title="逻辑资源块"></a>逻辑资源块</h2><h3 id="频域资源基本概念"><a href="#频域资源基本概念" class="headerlink" title="频域资源基本概念"></a>频域资源基本概念</h3><p>我们先介绍两种基本概念，然后引出资源栅格。</p>
 <ul>
@@ -274,6 +275,13 @@
 </ul>
 <p>组成。<strong>在时域上，最小的资源粒度是一个OFDM符号，在频域上，最小的粒度是一个子载波。</strong>一个OFDM符号与一个子载波组成的一个时频资源单元即为RE，物理层在进行资源映射的时候，是以RE为基本单位的。每个RE$(k,l)_{p,\mu}$对应一个物理资源和复数值$a_{k,l}^{(p,\mu)}$ ，这就是后续将逻辑功能映射到物理功能的桥梁。<strong>对于相同带宽但不同子载波间隔配置的资源网格，其在频域上占用的子载波或者RB数，以及在时域上占用的OFDM符号数是不同的，但是其包含的RE数是相同的</strong>。例如，18 MHz的带宽，当子载波间隔配置$\mu =0$（SCS=15 kHz）时，频域上有100个PRB（1200个子载波），1个子帧上有14个OFDM符号，资源网格上共有16800个RE；当子载波间隔配置$\mu =1$（SCS=30 kHz）时，频域上有50个PRB（600个子载波），1个子帧上有28个OFDM符号，资源网格上也是共有16800个RE。</p>
 <p><strong>另外需要注意的是，对于每个天线端口$p$，子载波间隔配置$\mu$和传输方向，都有一个资源网格。</strong></p>
+<h2 id="SRS的资源配置"><a href="#SRS的资源配置" class="headerlink" title="SRS的资源配置"></a>SRS的资源配置</h2><p>其实资源配置的内容在前面也有提及。这里再重新明确一下对应关系。配置SRS其实就是在传输的资源栅格中放入SRS资源。一个SRS对应的就是一个资源粒子。</p>
+<p><img src="https://s2.loli.net/2023/04/21/wmj4kz9Lfv1Ir25.png" alt="image-20230421104601750"></p>
+<p>NR中网络可以为终端配置一个或多个SRS资源集，多个资源集的目的可能是为了上下行多天线预编码，也有可能是为了上下行波束管理。一个SRS资源集内可以包含一个或多个SRS资源，每个SRS资源占用的时频域资源为：</p>
+<ul>
+<li>时域上占用slot中最后6个符号中的连续1、2或4个符号。</li>
+<li>频域上可以占用4-272个RB，这里是因为NR中BWP的最大带宽是275个RB，SRS总要有将全部BWP带宽sounding完的能力，再考虑到SRS带宽最好是4的整数倍，所以SRS带宽支持4-272个RB的范围，最大272个RB的SRS带宽导致会有3个RB sounding不到的情况，但性能损失几乎可以忽略不计。</li>
+</ul>
 <h2 id="NR引入的新概念-TODO"><a href="#NR引入的新概念-TODO" class="headerlink" title="NR引入的新概念(TODO)"></a>NR引入的新概念(TODO)</h2><p>和LTE不同的是，由于NR在同一个载波上支持多个参数集（Numerology），不同参数集的RB在频域上占用的长度是不同的，因此为了保证不同参数集RB的对齐，NR引入了<strong>Point A、公共资源块（Common Resource Block，CRB）、物理资源块（Physical Resource Block，PRB）、虚拟资源块（Virtual Resource Block，VRB）</strong>等概念 。</p>
 
     </div>
@@ -414,7 +422,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%BB%E8%BE%91%E8%B5%84%E6%BA%90%E5%9D%97"><span class="nav-number">1.</span> <span class="nav-text">逻辑资源块</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%91%E5%9F%9F%E8%B5%84%E6%BA%90%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">1.1.</span> <span class="nav-text">频域资源基本概念</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NR%E5%BC%95%E5%85%A5%E7%9A%84%E6%96%B0%E6%A6%82%E5%BF%B5-TODO"><span class="nav-number">2.</span> <span class="nav-text">NR引入的新概念(TODO)</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%BB%E8%BE%91%E8%B5%84%E6%BA%90%E5%9D%97"><span class="nav-number">1.</span> <span class="nav-text">逻辑资源块</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%91%E5%9F%9F%E8%B5%84%E6%BA%90%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">1.1.</span> <span class="nav-text">频域资源基本概念</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SRS%E7%9A%84%E8%B5%84%E6%BA%90%E9%85%8D%E7%BD%AE"><span class="nav-number">2.</span> <span class="nav-text">SRS的资源配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NR%E5%BC%95%E5%85%A5%E7%9A%84%E6%96%B0%E6%A6%82%E5%BF%B5-TODO"><span class="nav-number">3.</span> <span class="nav-text">NR引入的新概念(TODO)</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -430,7 +438,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">53</span>
+          <span class="site-state-item-count">54</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -469,6 +477,9 @@
     </div>
     <ul class="links-of-recent-posts-list">
         <li class="links-of-recent-posts-item">
+          <a href="/2023/05/18/free5gc%20+%20OAI%20gNB%20+%20OAI%20nrUE/" title="2023&#x2F;05&#x2F;18&#x2F;free5gc + OAI gNB + OAI nrUE&#x2F;">free5gc+OAI gNB + OAI nrUE</a>
+        </li>
+        <li class="links-of-recent-posts-item">
           <a href="/2023/05/15/ChartGPT/" title="2023&#x2F;05&#x2F;15&#x2F;ChartGPT&#x2F;">使用自然语言配合GPT生成图表</a>
         </li>
         <li class="links-of-recent-posts-item">
@@ -476,9 +487,6 @@
         </li>
         <li class="links-of-recent-posts-item">
           <a href="/2023/05/12/MIT%E7%B3%BB%E5%88%97/" title="2023&#x2F;05&#x2F;12&#x2F;MIT系列&#x2F;">MIT-RF系列论文</a>
-        </li>
-        <li class="links-of-recent-posts-item">
-          <a href="/2023/05/11/Asynicio/" title="2023&#x2F;05&#x2F;11&#x2F;Asynicio&#x2F;">Python协程：Asyncio入门</a>
         </li>
     </ul>
   </div>
