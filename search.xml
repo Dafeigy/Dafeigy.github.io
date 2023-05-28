@@ -17027,4 +17027,35 @@ c'\\s'
         <tag>游记</tag>
       </tags>
   </entry>
+  <entry>
+    <title>Vue3学习记录</title>
+    <url>/2023/05/28/vue%E5%AD%A6%E4%B9%A0%EF%BC%881%EF%BC%89/</url>
+    <content><![CDATA[<p><img src="https://s2.loli.net/2023/05/28/TdPjxktvKYD9rJC.png" alt="image-20230528212216596"></p>
+<p>Vue3学习记录。本篇为第一篇，记录配置与创建Vue3项目。</p>
+<span id="more"></span>
+<h2 id="两种API"><a href="#两种API" class="headerlink" title="两种API"></a>两种API</h2><p>组合式API和选项是API：都能覆盖大部分的应用场景。选项式是在组合式API基础上实现的。</p>
+<p><strong>在生产生项目中，</strong></p>
+<ul>
+<li>当不需要使用构建工具，或打算在低复杂度场景中使用Vue，例如渐进增强的应用场景推荐使用选项式API；</li>
+<li>当打算用Vue构建完整的单页应用，推荐采用组合式API+单文件组件<strong>（一般推荐使用这种）</strong></li>
+</ul>
+<h2 id="开发前准备"><a href="#开发前准备" class="headerlink" title="开发前准备"></a>开发前准备</h2><p><code>npm</code>版本大于15.0即可。使用<code>node -V</code>即可产看版本。随后就是下载并初始化脚手架：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm init vue@latest</span><br></pre></td></tr></table></figure>
+<p><img src="https://s2.loli.net/2023/05/28/x2zDR1bt5UHSZeE.png" alt="image-20230528210847282"></p>
+<p>在创建项目名称时<strong>不要有大写！</strong>随后一路回车即可。项目创建完成后，开始运行项目：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> vue-project</span><br><span class="line">npm install</span><br></pre></td></tr></table></figure>
+<p>通过<code>npm run dev</code>即可运行：</p>
+<p><img src="https://s2.loli.net/2023/05/28/TMCsbl5EearzBdq.png" alt="image-20230528211200582"></p>
+<p><img src="https://s2.loli.net/2023/05/28/uL5shn8wRpDMYmN.png" alt="image-20230528211221020"></p>
+<h2 id="VScode中的开发配置"><a href="#VScode中的开发配置" class="headerlink" title="VScode中的开发配置"></a>VScode中的开发配置</h2><p>需要添加一个插件<code>volar</code>:</p>
+<p><img src="https://s2.loli.net/2023/05/28/aq1Seb4oHvtEn6Y.png" alt="image-20230528211443953"></p>
+<h2 id="Vue项目目录结构"><a href="#Vue项目目录结构" class="headerlink" title="Vue项目目录结构"></a>Vue项目目录结构</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">vscode								--- vSCode工具的配置文件</span><br><span class="line">node_modules						--- Vue项目的运行依赖文件夹</span><br><span class="line">public								--- 资源文件夹(浏览器图标)</span><br><span class="line">src									--- 源码文件夹，我们主要操作的对象</span><br><span class="line">.gitignore							--- git忽略文件</span><br><span class="line">index.html							--- 入口html文件</span><br><span class="line">package.json						--- 信息描述文件</span><br><span class="line">README.md							--- 说明文件</span><br><span class="line">vite.config.js						--- Vue配置文件，跨域，打包之类的</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>学习记录</category>
+      </categories>
+      <tags>
+        <tag>vue3</tag>
+      </tags>
+  </entry>
 </search>
