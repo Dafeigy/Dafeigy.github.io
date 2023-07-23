@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":5},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="5GNR-CSI RSCSI-RS的一些简要概述如下：   它是一种特殊的参考信号，由gNB传输给UE，用于估计下行无线信道质量。 在LTE中，CRS（小区参考信号）通常用于此目的，但NR没有CRS。我们可以将NR中的CSI RS视为LTE中CRS的对应部分。 CRS（LTE）和CSI RS（NR）的主要区别在于，CSI-RS应由RRC配置传输（意味着它不是强制性信号），而CRS始终在传输。 另一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSI-RS详解">
+<meta property="og:url" content="http://example.com/2023/07/23/Technote-CSIRS/index.html">
+<meta property="og:site_name" content="阿花的Blog">
+<meta property="og:description" content="5GNR-CSI RSCSI-RS的一些简要概述如下：   它是一种特殊的参考信号，由gNB传输给UE，用于估计下行无线信道质量。 在LTE中，CRS（小区参考信号）通常用于此目的，但NR没有CRS。我们可以将NR中的CSI RS视为LTE中CRS的对应部分。 CRS（LTE）和CSI RS（NR）的主要区别在于，CSI-RS应由RRC配置传输（意味着它不是强制性信号），而CRS始终在传输。 另一">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.sharetechnote.com/html/5G/image/NR_CSI_RS_Sequence_ResourceMap_01.png">
+<meta property="og:image" content="https://www.sharetechnote.com/html/5G/image/38_2_1_Table_7_4_1_5_3_1.png">
+<meta property="og:image" content="https://www.sharetechnote.com/html/5G/image/NR_CSI_RS_RE_Mapping_Table_01.png">
+<meta property="og:image" content="https://www.sharetechnote.com/html/5G/image/5G_CSI_RS_CDM_Table_01.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/18/uKO4dHnGRBhveL2.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/17/rjMXJ4P9ugdswbp.png">
+<meta property="og:image" content="https://www.sharetechnote.com/html/5G/image/NR_CSI_RS_kbar_lbar_01.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/17/qFEoR5M3KwiWjZn.png">
+<meta property="og:image" content="https://www.sharetechnote.com/html/5G/image/NR_CSI_RS_Resource_Determination_Ex01.png">
+<meta property="og:image" content="https://www.sharetechnote.com/html/5G/image/NR_CSI_RS_Table_Header.png">
+<meta property="og:image" content="https://www.sharetechnote.com/html/5G/image/NR_CSI_RS_Table_Row1.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/17/NzM3ZmyQHRhnBGe.png">
+<meta property="og:image" content="https://www.sharetechnote.com/html/5G/image/CSI_RS_TransmissionTiming_01.png">
+<meta property="article:published_time" content="2023-07-23T15:43:49.186Z">
+<meta property="article:modified_time" content="2023-07-23T15:43:27.447Z">
+<meta property="article:author" content="阿花想养萨摩耶">
+<meta property="article:tag" content="5GNR">
+<meta property="article:tag" content="参考信号">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.sharetechnote.com/html/5G/image/NR_CSI_RS_Sequence_ResourceMap_01.png">
+
+<link rel="canonical" href="http://example.com/2023/07/23/Technote-CSIRS/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>CSI-RS详解 | 阿花的Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">阿花的Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/07/23/Technote-CSIRS/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          CSI-RS详解
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-07-23 23:43:49 / 修改时间：23:43:27" itemprop="dateCreated datePublished" datetime="2023-07-23T23:43:49+08:00">2023-07-23</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="5GNR-CSI-RS"><a href="#5GNR-CSI-RS" class="headerlink" title="5GNR-CSI RS"></a>5GNR-CSI RS</h1><p>CSI-RS的一些简要概述如下：</p>
+<blockquote>
+<ul>
+<li>它是一种特殊的参考信号，由gNB传输给UE，用于估计下行无线信道质量。</li>
+<li>在LTE中，CRS（小区参考信号）通常用于此目的，但NR没有CRS。我们可以将NR中的CSI RS视为LTE中CRS的对应部分。</li>
+<li>CRS（LTE）和CSI RS（NR）的主要区别在于，CSI-RS应由RRC配置传输（意味着它不是强制性信号），而CRS始终在传输。</li>
+<li>另一个区别是NR CSI-RS在设计时考虑了波束成形。</li>
+<li>CSI RS端口数有多种选择：1,2,4,8,16,24,32。</li>
+<li>单端口配置（p1）主要用于TRS（跟踪参考信号），多端口配置（如p2或更高）主要用于CSI测量。</li>
+<li>CSI RS可以在任何OFDM符号和子载波中传输，传输方式几乎是任意的（<strong>不是100%任意，而是超级灵活的</strong>），它将在RRC报文中进行配置。</li>
+</ul>
+</blockquote>
+<p>与LTE CSI一样，NR中的CSI（信道状态信息）是UE测量各种无线信道质量并将结果报告给网络（gNB）的机制。CSI操作涉及的因素相当复杂，但在这里将重点介绍CSI信号生成和资源映射。其他CSI操作步骤将在其他页面进行说明。</p>
+<p>在大多数LTE情况下，我们不需要任何特殊的CSI信号，因为我们使用的是小区专用参考信号。然而，从LTE TM9开始，我们开始为CSI使用特殊的参考信号。因此，如果对TM9或更高版本的LTE CSI参考信号有一定的了解，那么即使NR CSI RS（参考信号）的构造比LTE CSI RS更复杂，也会相对更容易理解本页内容。</p>
+<span id="more"></span>
+<p>在开始前有必要再阐述一下CSI-RS的主要功能：</p>
+<ul>
+<li><strong>汇报CQI(Channel Quality Indication，信道质量指示)</strong>，这是用于UE向网络侧指示下行测量，UE所感知到的下行链路的信干扰噪声比(SINR)，反映下行PDSCH的信道质量。用0~15来表示PDSCH的信道质量。0表示信道质量最差，15表示信道质量最好。</li>
+<li><strong>汇报PMI(Precoding Matrix Indicator，预编码矩阵指示)</strong>，这是用于指示码本集合的index。PMI用于指示发送端应该使用哪个预编码矩阵来编码数据，以最大化接收端的信号质量。</li>
+<li><strong>汇报RI(rank indication，秩指示)</strong>，用于指示无线信道中可以支持的最大MIMO（Multiple-Input Multiple-Output）等级或天线数量。它告知接收端，在当前的信道条件下，可以支持的最大天线数量。RI的取值范围通常是1到4，表示支持的天线数量。也就是说，尽管可能配置了MIMO，但是RI如果依然指示为单天线的话那依然只有单天线。</li>
+<li><strong>汇报RSRP(Reference Signal Received Power，参考信号接收功率)</strong>，主要是用于波束管理，比如说波束的方向之类的。</li>
+<li><strong>时频跟踪</strong>，精确测量频偏和时偏，通过TRS实现。</li>
+<li>速率匹配，主要用于用ZP-CSI-RS实现对PDSCH的RE级别的速率匹配。ZP是Zero-Power的意思，不需要映射到RE上面。</li>
+<li><strong>CSI-IM</strong>，用于干扰测量。发送的CSI-RS为0的部分，UE如果接收到的不是0，那么说明有干扰。</li>
+</ul>
+<h2 id="序列生成与资源映射"><a href="#序列生成与资源映射" class="headerlink" title="序列生成与资源映射"></a>序列生成与资源映射</h2><p>如下式所示，NR CSI基于伪随机序列。然后，该序列在时域和频域通过各自设计的加权序列进行乘法运算，并通过功率缩放因子进行缩放。然后将该序列映射到资源网格中的一组特定资源元素。所有这些过程可总结如下，在此过程中涉及许多因素。<br>如果您不是需要实现这部分功能的物理层开发人员，您不需要了解全部细节，但关注一下这个过程中涉及的各种参数（尤其是RRC参数）将会对您有所帮助。</p>
+<p><img src="https://www.sharetechnote.com/html/5G/image/NR_CSI_RS_Sequence_ResourceMap_01.png" alt="img"></p>
+<p>通过这位@<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV18M411z7ZS/?vd_source=ab34db443b112b108b42c31ac575fd1f"><strong>MJstudio小麦</strong></a>Up主的分享，我会进行一定的补充。前面说到NR-CSI是基于伪随机序列的，但是从伪随机到真正发出去的CSI-RS还需要经过三步：频域的正交序列化、时域的正交序列化以及功率的倍数调整。</p>
+<h2 id="资源粒子映射表格"><a href="#资源粒子映射表格" class="headerlink" title="资源粒子映射表格"></a>资源粒子映射表格</h2><p><img src="https://www.sharetechnote.com/html/5G/image/38_2_1_Table_7_4_1_5_3_1.png" alt="img"></p>
+<p><img src="https://www.sharetechnote.com/html/5G/image/NR_CSI_RS_RE_Mapping_Table_01.png" alt="img"></p>
+<p>CSI-RS在时域的参考位置由RRC层确定，如下所示:</p>
+<ul>
+<li>$l_0$：<code>firstOFDMSymbolInTimeDomain</code>确定。</li>
+<li>$l_1$= <code>firstOFDMSymbolInTimeDomain2</code>确定。</li>
+</ul>
+<p>CSI-RS在频域的参考位置<code>（k1,k2,k3）</code>由RRC层确定，如下所示：</p>
+<ul>
+<li>$[b_3\cdots b_0],k_i=f(i)$</li>
+<li>$[b_{11}\cdots b_0],k_i=f(i)$</li>
+<li>$[b_{2}\cdots b_0],k_i=4f(i)$</li>
+<li>$[b_{5}\cdots b_0],k_i=2f(i)$</li>
+</ul>
+<p>$f(i)$是<code>frequencyDomainAllocation</code>中设置为1的第<code>i</code>位的位号，比如给定的bitmap为 $[1010]$则第一个i为从右往左数的第2位，也就是<code>1</code>号位；第二个1为从右往左数的第4位，对应的是<code>3</code>号位，每<code>1/density</code>重复一次。</p>
+<p>端口(Ports)，密度(Density)还有cdm-type通过如下的RRC参数配置：</p>
+<ul>
+<li><code>Ports</code>=<code>nrofPorts</code></li>
+<li><code>cdm-Type</code>=<code>cdm-Type</code></li>
+<li><code>Density</code>=<code>density</code></li>
+</ul>
+<h2 id="CDM序列生成表格"><a href="#CDM序列生成表格" class="headerlink" title="CDM序列生成表格"></a>CDM序列生成表格</h2><p>CDM表用于生成CSI-RS信号，如下图所示。</p>
+<p><img src="https://www.sharetechnote.com/html/5G/image/5G_CSI_RS_CDM_Table_01.png" alt="img"></p>
+<p>这里其实是将多个端口的数据映射到一个分组的resource里面。我们需要关心的是 $(\overline k, \overline l)$是每一个分组的CSI-RS的起始位置即可。每x个端口映射到同一个时频资源里，但是他们之间通过$w_f$和 $w_t$的编码矩阵映射。</p>
+<p>CDM 中的正交序列矩阵定义如下：</p>
+<center><big><b>cdm-Type:"noCDM"</b></big></center>
+
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">index</th>
+<th style="text-align:center">$w_f(0)$</th>
+<th style="text-align:center">$w_t(0)$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<center><big><b>cdm-Type:"fd-CDM2"</b></big></center>
+
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">index</th>
+<th style="text-align:center">$[w_f(0)\qquad w_f(1)]$</th>
+<th style="text-align:center">$[w_t(0)\qquad w_t(1)]$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">$[+1 \quad +1]$</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">$[+1 \quad -1]$</td>
+<td style="text-align:center">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<center><big><b>cdm-Type:"cdm4-FD2-TD2"</b></big></center>
+
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">index</th>
+<th style="text-align:center">$[w_f(0)\qquad w_f(1)]$</th>
+<th style="text-align:center">$w_t(0)$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">$[+1 \quad +1]$</td>
+<td style="text-align:center">$[+1 \quad +1]$</td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">$[+1 \quad -1]$</td>
+<td style="text-align:center">$[+1 \quad +1]$</td>
+</tr>
+<tr>
+<td style="text-align:center">2</td>
+<td style="text-align:center">$[+1 \quad +1]$</td>
+<td style="text-align:center">$[+1 \quad -1]$</td>
+</tr>
+<tr>
+<td style="text-align:center">3</td>
+<td style="text-align:center">$[+1 \quad -1]$</td>
+<td style="text-align:center">$[+1 \quad -1]$</td>
+</tr>
+</tbody>
+</table>
+</div>
+<center><big><b>cdm-Type:"cdm8-FD2-TD4"</b></big></center>
+
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">index</th>
+<th style="text-align:center">$[w_f(0)\qquad w_f(1)]$</th>
+<th style="text-align:center">$[w_t(0)\quad w_t(1) \quad w_t(2) \quad w_t(3)]$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">$[+1 \quad +1]$</td>
+<td style="text-align:center">$[+1 \quad +1 \quad +1 \quad +1]$</td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">$[+1 \quad -1]$</td>
+<td style="text-align:center">$[+1 \quad +1 \quad +1 \quad +1]$</td>
+</tr>
+<tr>
+<td style="text-align:center">2</td>
+<td style="text-align:center">$[+1 \quad +1]$</td>
+<td style="text-align:center">$[+1 \quad -1 \quad +1 \quad -1]$</td>
+</tr>
+<tr>
+<td style="text-align:center">3</td>
+<td style="text-align:center">$[+1 \quad -1]$</td>
+<td style="text-align:center">$[+1 \quad -1 \quad +1 \quad -1]$</td>
+</tr>
+<tr>
+<td style="text-align:center">4</td>
+<td style="text-align:center">$[+1 \quad +1]$</td>
+<td style="text-align:center">$[+1 \quad +1 \quad +1 \quad +1]$</td>
+</tr>
+<tr>
+<td style="text-align:center">5</td>
+<td style="text-align:center">$[+1 \quad -1]$</td>
+<td style="text-align:center">$[+1 \quad +1 \quad +1 \quad +1]$</td>
+</tr>
+<tr>
+<td style="text-align:center">6</td>
+<td style="text-align:center">$[+1 \quad +1]$</td>
+<td style="text-align:center">$[+1 \quad -1 \quad +1 \quad -1]$</td>
+</tr>
+<tr>
+<td style="text-align:center">7</td>
+<td style="text-align:center">$[+1 \quad -1]$</td>
+<td style="text-align:center">$[+1 \quad -1 \quad +1 \quad -1]$</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>使用CDM其实就是复用RE，举个例子，如图所示：</p>
+<p><img src="https://s2.loli.net/2023/07/18/uKO4dHnGRBhveL2.png" alt="image-20230718150836259"></p>
+<p>假设现在有两个符号 $S=[a,b]$，nrofPorts为2，对其进行正交编码：</p>
+<script type="math/tex; mode=display">
+S*W = 
+\begin{bmatrix}
+a,b
+\end{bmatrix}
+*
+\begin{bmatrix}
+W_0\\
+W_1
+\end{bmatrix}
+=aW_0+bW_1</script><p>则实际的RE映射值为：</p>
+<script type="math/tex; mode=display">
+\alpha_0=
+\begin{bmatrix}
+a,b
+\end{bmatrix}
+*
+\begin{bmatrix}
++1\\
++1
+\end{bmatrix}
+=a+b\\
+\alpha_1=
+\begin{bmatrix}
+a,b
+\end{bmatrix}
+*
+\begin{bmatrix}
++1\\
+-1
+\end{bmatrix}
+=a-b\\</script><p>最后UE那边对接收到不同的RE信号进行联合正交解码，从而获得原始的Port信号。本质上其实是解方程组。</p>
+<h2 id="RRC参数：NZP-CSI-RS资源"><a href="#RRC参数：NZP-CSI-RS资源" class="headerlink" title="RRC参数：NZP-CSI-RS资源"></a>RRC参数：NZP-CSI-RS资源</h2><p>本页几乎所有内容都是关于IE（信息元素）资源映射的。如下所示，IE resourceMapping是NZP-CSI-RS-Resource的一部分。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">NZP-CSI-RS-Resource ::= SEQUENCE &#123;</span><br><span class="line"></span><br><span class="line">   nzp-CSI-RS-ResourceId      NZP-CSI-RS-ResourceId,</span><br><span class="line"></span><br><span class="line">   resourceMapping            CSI-RS-ResourceMapping,</span><br><span class="line"></span><br><span class="line">   powerControlOffset         INTEGER (-8..15),</span><br><span class="line"></span><br><span class="line">   powerControlOffsetSS       ENUMERATED&#123;db-3, db0, db3, db6&#125; OPTIONAL, -- Need R</span><br><span class="line"></span><br><span class="line">   scramblingID               ScramblingId,</span><br><span class="line"></span><br><span class="line">   periodicityAndOffset       CSI-ResourcePeriodicityAndOffset OPTIONAL,-</span><br><span class="line"></span><br><span class="line">   qcl-InfoPeriodicCSI-RS     TCI-StateId OPTIONAL, -- Cond Periodic</span><br><span class="line"></span><br><span class="line">   ...</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<font color="  #3CB371">**resourceMapping** </font>：详见[CSI-RS资源映射](#UE如何分辨网络中使用的CSI-RS？)节。
+
+<font color=" #3CB371">**powerControlOffset** </font>：PDSCH的资源粒子到NZP CSI-RS资源粒子功率偏移，以dB为单位。
+
+<font color=" #3CB371">**powerControlOffsetSS** </font>：NZP 的CSI-RS资源粒子到SSS资源粒子的功率偏移，以dB为单位。
+
+<font color=" #3CB371">**qcl-InfoPeriodicCSI-RS** </font>：对于目标周期性CSI-RS，包含对TCI-States中的一个TCI-State的引用，以提供QCL源和QCL类型。对于周期性CSI-RS，源可以是SSB或另一个周期性CSI-RS。参考具有tci-StateId值为此值的TCI-State，该值在与服务小区对应的BWP下行链路中的PDSCH-Config中的tci-StatesToAddModList中定义，并且与资源所属的DL BWP相对应。
+
+> For a target periodic CSI-RS, contains a reference to one TCI-State in TCI-States for providing the QCL source and QCL type. For periodic CSI-RS, the source can be SSB or another periodic-CSI-RS. Refers to the TCI-State which has this value for tci-StateId and is defined in tci-StatesToAddModList in the PDSCH-Config included in the BWPDownlink corresponding to the serving cell and to the DL BWP to which the resource belongs to.
+
+简而言之，**这指示该 CSI-RS 被 QCL 到的 tci-StateId。**
+
+## UE如何分辨网络中使用的CSI-RS？
+
+当网络分配 CSI-RS 时，它会从 38.211-表 7.4.1.5.3-1 中选择特定行，并用特定信号填充一组资源元素。这部分很简单。难理解的部分是 UE 如何确定 gNB（网络）正在使用哪个 CSI-RS。答案是网络通过RRC消息通知UE CSI-RS的所有细节，我们来看看这个过程中涉及了哪些RRC参数：
+
+#### <font color=" #3CB371">如何确定CSI-RS端口和cdm（通过38.211-Table 7.4.1.5.3-1的行号）？</font>
+
+<p>: 其实通过CSI-RS-ResourceMapping中的 <code>nrofPorts</code>和 <code>cdm-Type</code>配置。</p>
+<p><img src="https://s2.loli.net/2023/07/17/rjMXJ4P9ugdswbp.png" alt="image-20230717145705515"></p>
+<h4 id="如何为选择的CSI-RS确定REs？"><a href="#如何为选择的CSI-RS确定REs？" class="headerlink" title="如何为选择的CSI-RS确定REs？"></a><font color=" #3CB371">如何为选择的CSI-RS确定REs？</font></h4><p>: 这是由 CSI-RS-ResourceMapping 的 (k_bar, l_bar) 列以及FrequencyDomainAllocation 和firstOFDMSymbolInTimeDomain 配置的，如下所示。</p>
+<p><img src="https://www.sharetechnote.com/html/5G/image/NR_CSI_RS_kbar_lbar_01.png" alt="img"></p>
+<p><img src="https://s2.loli.net/2023/07/17/qFEoR5M3KwiWjZn.png" alt="image-20230717145936850"></p>
+<font color=" #3CB371">**startingRB** </font>：此 CSI 资源相对于公共资源块网格上的公共资源块 #0 (CRB#0) 开始的 PRB。<font color='red'>只允许使用 4 的倍数（0, 4, ...）</font>。
+
+<font color=" #3CB371">**nrofRBs** </font>：该CSI资源跨越的PRB数量。<font color='red'>只允许 4 的倍数</font>。最小可配置数是 24 和相关 BWP 宽度的最小值。<font color="#DAA520">如果配置值大于相应 BWP 的宽度，则 UE 应将实际 CSI-RS 带宽设置为等于 BWP 的宽度。</font>
+
+<p>好了，结合上面的两部分内容，我们可以给出一个配置的例子啦：</p>
+<p><img src="https://www.sharetechnote.com/html/5G/image/NR_CSI_RS_Resource_Determination_Ex01.png" alt="img"></p>
+<h4 id="网络在使用时怎么知道当前使用的-逻辑-天线配置信息呢"><a href="#网络在使用时怎么知道当前使用的-逻辑-天线配置信息呢" class="headerlink" title="网络在使用时怎么知道当前使用的(逻辑)天线配置信息呢?"></a><font color="#3CB371">网络在使用时怎么知道当前使用的(逻辑)天线配置信息呢?</font></h4><p>这是个比较复杂的问题，我们会在<a target="_blank" rel="noopener" href="https://www.sharetechnote.com/html/5G/5G_CSI_RS_Codebook.html">这里</a>讲述。</p>
+<h2 id="CSI-RS资源映射的例子"><a href="#CSI-RS资源映射的例子" class="headerlink" title="CSI-RS资源映射的例子"></a>CSI-RS资源映射的例子</h2><h3 id="Example1："><a href="#Example1：" class="headerlink" title="Example1："></a>Example1：</h3><p>给定如下RRC配置信息：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">density = three</span><br><span class="line">nrofPorts = p1</span><br><span class="line">cdm-Type = noCDM</span><br><span class="line">frequencyDomainAllocation.row1 = 0001</span><br><span class="line">firstOFDMSymbolinTimeDomain = 4</span><br></pre></td></tr></table></figure>
+<p><center>根据38.211-Table 7.4.1.5.3-1</center><br><img src="https://www.sharetechnote.com/html/5G/image/NR_CSI_RS_Table_Header.png" alt="img"></p>
+<p><img src="https://www.sharetechnote.com/html/5G/image/NR_CSI_RS_Table_Row1.png" alt="img"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">k prime = &#123;0&#125; ==&gt; k prime[0] = 0</span><br><span class="line">l prime = &#123;0&#125;  ==&gt; l prime[0] = 0</span><br></pre></td></tr></table></figure>
+<p>通过如上的参数给定，RRC参数为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">k0 = 0 (0001，首位1出现在index=0的位置)</span><br><span class="line">l0 = 4(firstOFDMSymbolinTimeDomain = 4给定)</span><br></pre></td></tr></table></figure>
+<p>再通过查表38.211-Table 7.4.1.5.3-1以及如上的所有信息，可以知道：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+(k,l) = &(k0+kprim[0],l0+lprim[0]) ,(k0+4+kprim[0],l0+lprim[0]) ,(k0+8+kprim[0],l0+lprim[0])\\
+= &(0+0,4+0) ,(0+4+0,4+0) ,(0+8+0,4+0)\\
+= &(0,4) ,(4,4) ,(8,4)
+\end{aligned}</script><p><img src="https://s2.loli.net/2023/07/17/NzM3ZmyQHRhnBGe.png" alt="image-20230717152835560"></p>
+<h2 id="CSI-RS传输时间"><a href="#CSI-RS传输时间" class="headerlink" title="CSI-RS传输时间"></a>CSI-RS传输时间</h2><p>通过如下式子确定：</p>
+<p><img src="https://www.sharetechnote.com/html/5G/image/CSI_RS_TransmissionTiming_01.png" alt="img"></p>
+<h2 id="干扰测量的资源（CSI-IM）"><a href="#干扰测量的资源（CSI-IM）" class="headerlink" title="干扰测量的资源（CSI-IM）"></a>干扰测量的资源（CSI-IM）</h2><h2 id="追踪参考信号（TRS）"><a href="#追踪参考信号（TRS）" class="headerlink" title="追踪参考信号（TRS）"></a>追踪参考信号（TRS）</h2><h2 id="零功率（ZP）CSI-RS"><a href="#零功率（ZP）CSI-RS" class="headerlink" title="零功率（ZP）CSI-RS"></a>零功率（ZP）CSI-RS</h2><h3 id="为什么是零功率CSI-RS"><a href="#为什么是零功率CSI-RS" class="headerlink" title="为什么是零功率CSI-RS"></a>为什么是零功率CSI-RS</h3><h4 id="专家解答"><a href="#专家解答" class="headerlink" title="专家解答"></a>专家解答</h4><h4 id="文章参考"><a href="#文章参考" class="headerlink" title="文章参考"></a>文章参考</h4><h2 id="CSI-RS的RRC参数设置"><a href="#CSI-RS的RRC参数设置" class="headerlink" title="CSI-RS的RRC参数设置"></a>CSI-RS的RRC参数设置</h2><h2 id="RRC配置举例"><a href="#RRC配置举例" class="headerlink" title="RRC配置举例"></a>RRC配置举例</h2><h2 id="如何避免其他信号？"><a href="#如何避免其他信号？" class="headerlink" title="如何避免其他信号？"></a>如何避免其他信号？</h2>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/5GNR/" rel="tag"><i class="fa fa-tag"></i> 5GNR</a>
+              <a href="/tags/%E5%8F%82%E8%80%83%E4%BF%A1%E5%8F%B7/" rel="tag"><i class="fa fa-tag"></i> 参考信号</a>
+          </div>
+          <script type="text/javascript">
+            var tagsall=document.getElementsByClassName("post-tags")
+            for (var i = tagsall.length - 1; i >= 0; i--){
+                var tags=tagsall[i].getElementsByTagName("a");
+                for (var j = tags.length - 1; j >= 0; j--) {
+                    var golden_ratio = 0.618033988749895;
+                    var s = 0.5;
+                    var v = 0.999;
+                    var h = golden_ratio + Math.random()*0.8 - 0.5;
+                    var h_i = parseInt(h * 6);
+                    var f = h * 6 - h_i;
+                    var p = v * (1 - s);
+                    var q = v * (1 - f * s);
+                    var t = v * (1 - (1 - f) * s);
+                    var r, g, b;
+                    switch (h_i) {
+                        case 0:
+                            r = v;
+                            g = t;
+                            b = p;
+                            break;
+                        case 1:
+                            r = q;
+                            g = v;
+                            b = p;
+                            break;
+                        case 2:
+                            r = p;
+                            g = v;
+                            b = t;
+                            break;
+                        case 3 :
+                            r = p;
+                            g = q;
+                            b = v;
+                            break;
+                        case 4:
+                            r = t;
+                            g = p;
+                            b = v;
+                            break;
+                        case 5:
+                            r = v;
+                            g = p;
+                            b = q;
+                            break;
+                        default:
+                            r = 1;
+                            g = 1;
+                            b = 1;
+                      }
+                    tags[j].style.background = "rgba("+parseInt(r*255)+","+parseInt(g*255)+","+parseInt(b*255)+","+0.5+")";
+                }
+            }                        
+            </script>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/07/02/%E7%8C%AB%E7%9C%BC%E7%94%B5%E5%BD%B1/" rel="prev" title="猫眼电影爬虫&简单数据分析">
+      <i class="fa fa-chevron-left"></i> 猫眼电影爬虫&简单数据分析
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#5GNR-CSI-RS"><span class="nav-number">1.</span> <span class="nav-text">5GNR-CSI RS</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%8F%E5%88%97%E7%94%9F%E6%88%90%E4%B8%8E%E8%B5%84%E6%BA%90%E6%98%A0%E5%B0%84"><span class="nav-number">1.1.</span> <span class="nav-text">序列生成与资源映射</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B5%84%E6%BA%90%E7%B2%92%E5%AD%90%E6%98%A0%E5%B0%84%E8%A1%A8%E6%A0%BC"><span class="nav-number">1.2.</span> <span class="nav-text">资源粒子映射表格</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CDM%E5%BA%8F%E5%88%97%E7%94%9F%E6%88%90%E8%A1%A8%E6%A0%BC"><span class="nav-number">1.3.</span> <span class="nav-text">CDM序列生成表格</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RRC%E5%8F%82%E6%95%B0%EF%BC%9ANZP-CSI-RS%E8%B5%84%E6%BA%90"><span class="nav-number">1.4.</span> <span class="nav-text">RRC参数：NZP-CSI-RS资源</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E4%B8%BA%E9%80%89%E6%8B%A9%E7%9A%84CSI-RS%E7%A1%AE%E5%AE%9AREs%EF%BC%9F"><span class="nav-number">1.4.0.1.</span> <span class="nav-text">如何为选择的CSI-RS确定REs？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E5%9C%A8%E4%BD%BF%E7%94%A8%E6%97%B6%E6%80%8E%E4%B9%88%E7%9F%A5%E9%81%93%E5%BD%93%E5%89%8D%E4%BD%BF%E7%94%A8%E7%9A%84-%E9%80%BB%E8%BE%91-%E5%A4%A9%E7%BA%BF%E9%85%8D%E7%BD%AE%E4%BF%A1%E6%81%AF%E5%91%A2"><span class="nav-number">1.4.0.2.</span> <span class="nav-text">网络在使用时怎么知道当前使用的(逻辑)天线配置信息呢?</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CSI-RS%E8%B5%84%E6%BA%90%E6%98%A0%E5%B0%84%E7%9A%84%E4%BE%8B%E5%AD%90"><span class="nav-number">1.5.</span> <span class="nav-text">CSI-RS资源映射的例子</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Example1%EF%BC%9A"><span class="nav-number">1.5.1.</span> <span class="nav-text">Example1：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CSI-RS%E4%BC%A0%E8%BE%93%E6%97%B6%E9%97%B4"><span class="nav-number">1.6.</span> <span class="nav-text">CSI-RS传输时间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B2%E6%89%B0%E6%B5%8B%E9%87%8F%E7%9A%84%E8%B5%84%E6%BA%90%EF%BC%88CSI-IM%EF%BC%89"><span class="nav-number">1.7.</span> <span class="nav-text">干扰测量的资源（CSI-IM）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%BD%E8%B8%AA%E5%8F%82%E8%80%83%E4%BF%A1%E5%8F%B7%EF%BC%88TRS%EF%BC%89"><span class="nav-number">1.8.</span> <span class="nav-text">追踪参考信号（TRS）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%B6%E5%8A%9F%E7%8E%87%EF%BC%88ZP%EF%BC%89CSI-RS"><span class="nav-number">1.9.</span> <span class="nav-text">零功率（ZP）CSI-RS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF%E9%9B%B6%E5%8A%9F%E7%8E%87CSI-RS"><span class="nav-number">1.9.1.</span> <span class="nav-text">为什么是零功率CSI-RS</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%93%E5%AE%B6%E8%A7%A3%E7%AD%94"><span class="nav-number">1.9.1.1.</span> <span class="nav-text">专家解答</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E7%AB%A0%E5%8F%82%E8%80%83"><span class="nav-number">1.9.1.2.</span> <span class="nav-text">文章参考</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CSI-RS%E7%9A%84RRC%E5%8F%82%E6%95%B0%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.10.</span> <span class="nav-text">CSI-RS的RRC参数设置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RRC%E9%85%8D%E7%BD%AE%E4%B8%BE%E4%BE%8B"><span class="nav-number">1.11.</span> <span class="nav-text">RRC配置举例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E9%81%BF%E5%85%8D%E5%85%B6%E4%BB%96%E4%BF%A1%E5%8F%B7%EF%BC%9F"><span class="nav-number">1.12.</span> <span class="nav-text">如何避免其他信号？</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="阿花想养萨摩耶"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">阿花想养萨摩耶</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">61</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">87</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dafeigy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dafeigy" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1070642765@qq.com" title="E-Mail → mailto:1070642765@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/2659883291" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;2659883291" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+  </div>
+
+
+
+  <div class="links-of-recent-posts motion-element">
+    <div class="links-of-recent-posts-title">
+      <i class="fa fa-history fa-fw"></i>
+      最近文章
+    </div>
+    <ul class="links-of-recent-posts-list">
+        <li class="links-of-recent-posts-item">
+          <a href="/2023/07/23/Technote-CSIRS/" title="2023&#x2F;07&#x2F;23&#x2F;Technote-CSIRS&#x2F;">CSI-RS详解</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2023/07/02/%E7%8C%AB%E7%9C%BC%E7%94%B5%E5%BD%B1/" title="2023&#x2F;07&#x2F;02&#x2F;猫眼电影&#x2F;">猫眼电影爬虫&简单数据分析</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2023/06/27/CSI-RS%E4%BD%9C%E7%94%A8/" title="2023&#x2F;06&#x2F;27&#x2F;CSI-RS作用&#x2F;">CSI-RS 作用</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2023/05/31/Free5GC+OAI%20gNB+COTSUE/" title="2023&#x2F;05&#x2F;31&#x2F;Free5GC+OAI gNB+COTSUE&#x2F;"></a>
+        </li>
+    </ul>
+  </div>
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">阿花</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>

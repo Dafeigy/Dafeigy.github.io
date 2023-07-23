@@ -17284,4 +17284,287 @@ r = (Σ(Xi - X̄)(Yi - Ȳ)) / √(Σ(Xi - X̄)²Σ(Yi - Ȳ)²)</script><p>在本
 <p>使用弹性布局和绝对大小进行绘制，绘制的结果保存在<code>final.html</code>中。</p>
 ]]></content>
   </entry>
+  <entry>
+    <title>CSI-RS详解</title>
+    <url>/2023/07/23/Technote-CSIRS/</url>
+    <content><![CDATA[<h1 id="5GNR-CSI-RS"><a href="#5GNR-CSI-RS" class="headerlink" title="5GNR-CSI RS"></a>5GNR-CSI RS</h1><p>CSI-RS的一些简要概述如下：</p>
+<blockquote>
+<ul>
+<li>它是一种特殊的参考信号，由gNB传输给UE，用于估计下行无线信道质量。</li>
+<li>在LTE中，CRS（小区参考信号）通常用于此目的，但NR没有CRS。我们可以将NR中的CSI RS视为LTE中CRS的对应部分。</li>
+<li>CRS（LTE）和CSI RS（NR）的主要区别在于，CSI-RS应由RRC配置传输（意味着它不是强制性信号），而CRS始终在传输。</li>
+<li>另一个区别是NR CSI-RS在设计时考虑了波束成形。</li>
+<li>CSI RS端口数有多种选择：1,2,4,8,16,24,32。</li>
+<li>单端口配置（p1）主要用于TRS（跟踪参考信号），多端口配置（如p2或更高）主要用于CSI测量。</li>
+<li>CSI RS可以在任何OFDM符号和子载波中传输，传输方式几乎是任意的（<strong>不是100%任意，而是超级灵活的</strong>），它将在RRC报文中进行配置。</li>
+</ul>
+</blockquote>
+<p>与LTE CSI一样，NR中的CSI（信道状态信息）是UE测量各种无线信道质量并将结果报告给网络（gNB）的机制。CSI操作涉及的因素相当复杂，但在这里将重点介绍CSI信号生成和资源映射。其他CSI操作步骤将在其他页面进行说明。</p>
+<p>在大多数LTE情况下，我们不需要任何特殊的CSI信号，因为我们使用的是小区专用参考信号。然而，从LTE TM9开始，我们开始为CSI使用特殊的参考信号。因此，如果对TM9或更高版本的LTE CSI参考信号有一定的了解，那么即使NR CSI RS（参考信号）的构造比LTE CSI RS更复杂，也会相对更容易理解本页内容。</p>
+<span id="more"></span>
+<p>在开始前有必要再阐述一下CSI-RS的主要功能：</p>
+<ul>
+<li><strong>汇报CQI(Channel Quality Indication，信道质量指示)</strong>，这是用于UE向网络侧指示下行测量，UE所感知到的下行链路的信干扰噪声比(SINR)，反映下行PDSCH的信道质量。用0~15来表示PDSCH的信道质量。0表示信道质量最差，15表示信道质量最好。</li>
+<li><strong>汇报PMI(Precoding Matrix Indicator，预编码矩阵指示)</strong>，这是用于指示码本集合的index。PMI用于指示发送端应该使用哪个预编码矩阵来编码数据，以最大化接收端的信号质量。</li>
+<li><strong>汇报RI(rank indication，秩指示)</strong>，用于指示无线信道中可以支持的最大MIMO（Multiple-Input Multiple-Output）等级或天线数量。它告知接收端，在当前的信道条件下，可以支持的最大天线数量。RI的取值范围通常是1到4，表示支持的天线数量。也就是说，尽管可能配置了MIMO，但是RI如果依然指示为单天线的话那依然只有单天线。</li>
+<li><strong>汇报RSRP(Reference Signal Received Power，参考信号接收功率)</strong>，主要是用于波束管理，比如说波束的方向之类的。</li>
+<li><strong>时频跟踪</strong>，精确测量频偏和时偏，通过TRS实现。</li>
+<li>速率匹配，主要用于用ZP-CSI-RS实现对PDSCH的RE级别的速率匹配。ZP是Zero-Power的意思，不需要映射到RE上面。</li>
+<li><strong>CSI-IM</strong>，用于干扰测量。发送的CSI-RS为0的部分，UE如果接收到的不是0，那么说明有干扰。</li>
+</ul>
+<h2 id="序列生成与资源映射"><a href="#序列生成与资源映射" class="headerlink" title="序列生成与资源映射"></a>序列生成与资源映射</h2><p>如下式所示，NR CSI基于伪随机序列。然后，该序列在时域和频域通过各自设计的加权序列进行乘法运算，并通过功率缩放因子进行缩放。然后将该序列映射到资源网格中的一组特定资源元素。所有这些过程可总结如下，在此过程中涉及许多因素。<br>如果您不是需要实现这部分功能的物理层开发人员，您不需要了解全部细节，但关注一下这个过程中涉及的各种参数（尤其是RRC参数）将会对您有所帮助。</p>
+<p><img src="https://www.sharetechnote.com/html/5G/image/NR_CSI_RS_Sequence_ResourceMap_01.png" alt="img"></p>
+<p>通过这位@<a href="https://www.bilibili.com/video/BV18M411z7ZS/?vd_source=ab34db443b112b108b42c31ac575fd1f"><strong>MJstudio小麦</strong></a>Up主的分享，我会进行一定的补充。前面说到NR-CSI是基于伪随机序列的，但是从伪随机到真正发出去的CSI-RS还需要经过三步：频域的正交序列化、时域的正交序列化以及功率的倍数调整。</p>
+<h2 id="资源粒子映射表格"><a href="#资源粒子映射表格" class="headerlink" title="资源粒子映射表格"></a>资源粒子映射表格</h2><p><img src="https://www.sharetechnote.com/html/5G/image/38_2_1_Table_7_4_1_5_3_1.png" alt="img"></p>
+<p><img src="https://www.sharetechnote.com/html/5G/image/NR_CSI_RS_RE_Mapping_Table_01.png" alt="img"></p>
+<p>CSI-RS在时域的参考位置由RRC层确定，如下所示:</p>
+<ul>
+<li>$l_0$：<code>firstOFDMSymbolInTimeDomain</code>确定。</li>
+<li>$l_1$= <code>firstOFDMSymbolInTimeDomain2</code>确定。</li>
+</ul>
+<p>CSI-RS在频域的参考位置<code>（k1,k2,k3）</code>由RRC层确定，如下所示：</p>
+<ul>
+<li>$[b_3\cdots b_0],k_i=f(i)$</li>
+<li>$[b_{11}\cdots b_0],k_i=f(i)$</li>
+<li>$[b_{2}\cdots b_0],k_i=4f(i)$</li>
+<li>$[b_{5}\cdots b_0],k_i=2f(i)$</li>
+</ul>
+<p>$f(i)$是<code>frequencyDomainAllocation</code>中设置为1的第<code>i</code>位的位号，比如给定的bitmap为 $[1010]$则第一个i为从右往左数的第2位，也就是<code>1</code>号位；第二个1为从右往左数的第4位，对应的是<code>3</code>号位，每<code>1/density</code>重复一次。</p>
+<p>端口(Ports)，密度(Density)还有cdm-type通过如下的RRC参数配置：</p>
+<ul>
+<li><code>Ports</code>=<code>nrofPorts</code></li>
+<li><code>cdm-Type</code>=<code>cdm-Type</code></li>
+<li><code>Density</code>=<code>density</code></li>
+</ul>
+<h2 id="CDM序列生成表格"><a href="#CDM序列生成表格" class="headerlink" title="CDM序列生成表格"></a>CDM序列生成表格</h2><p>CDM表用于生成CSI-RS信号，如下图所示。</p>
+<p><img src="https://www.sharetechnote.com/html/5G/image/5G_CSI_RS_CDM_Table_01.png" alt="img"></p>
+<p>这里其实是将多个端口的数据映射到一个分组的resource里面。我们需要关心的是 $(\overline k, \overline l)$是每一个分组的CSI-RS的起始位置即可。每x个端口映射到同一个时频资源里，但是他们之间通过$w_f$和 $w_t$的编码矩阵映射。</p>
+<p>CDM 中的正交序列矩阵定义如下：</p>
+<center><big><b>cdm-Type:"noCDM"</b></big></center>
+
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">index</th>
+<th style="text-align:center">$w_f(0)$</th>
+<th style="text-align:center">$w_t(0)$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<center><big><b>cdm-Type:"fd-CDM2"</b></big></center>
+
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">index</th>
+<th style="text-align:center">$[w_f(0)\qquad w_f(1)]$</th>
+<th style="text-align:center">$[w_t(0)\qquad w_t(1)]$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">$[+1 \quad +1]$</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">$[+1 \quad -1]$</td>
+<td style="text-align:center">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<center><big><b>cdm-Type:"cdm4-FD2-TD2"</b></big></center>
+
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">index</th>
+<th style="text-align:center">$[w_f(0)\qquad w_f(1)]$</th>
+<th style="text-align:center">$w_t(0)$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">$[+1 \quad +1]$</td>
+<td style="text-align:center">$[+1 \quad +1]$</td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">$[+1 \quad -1]$</td>
+<td style="text-align:center">$[+1 \quad +1]$</td>
+</tr>
+<tr>
+<td style="text-align:center">2</td>
+<td style="text-align:center">$[+1 \quad +1]$</td>
+<td style="text-align:center">$[+1 \quad -1]$</td>
+</tr>
+<tr>
+<td style="text-align:center">3</td>
+<td style="text-align:center">$[+1 \quad -1]$</td>
+<td style="text-align:center">$[+1 \quad -1]$</td>
+</tr>
+</tbody>
+</table>
+</div>
+<center><big><b>cdm-Type:"cdm8-FD2-TD4"</b></big></center>
+
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">index</th>
+<th style="text-align:center">$[w_f(0)\qquad w_f(1)]$</th>
+<th style="text-align:center">$[w_t(0)\quad w_t(1) \quad w_t(2) \quad w_t(3)]$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">$[+1 \quad +1]$</td>
+<td style="text-align:center">$[+1 \quad +1 \quad +1 \quad +1]$</td>
+</tr>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">$[+1 \quad -1]$</td>
+<td style="text-align:center">$[+1 \quad +1 \quad +1 \quad +1]$</td>
+</tr>
+<tr>
+<td style="text-align:center">2</td>
+<td style="text-align:center">$[+1 \quad +1]$</td>
+<td style="text-align:center">$[+1 \quad -1 \quad +1 \quad -1]$</td>
+</tr>
+<tr>
+<td style="text-align:center">3</td>
+<td style="text-align:center">$[+1 \quad -1]$</td>
+<td style="text-align:center">$[+1 \quad -1 \quad +1 \quad -1]$</td>
+</tr>
+<tr>
+<td style="text-align:center">4</td>
+<td style="text-align:center">$[+1 \quad +1]$</td>
+<td style="text-align:center">$[+1 \quad +1 \quad +1 \quad +1]$</td>
+</tr>
+<tr>
+<td style="text-align:center">5</td>
+<td style="text-align:center">$[+1 \quad -1]$</td>
+<td style="text-align:center">$[+1 \quad +1 \quad +1 \quad +1]$</td>
+</tr>
+<tr>
+<td style="text-align:center">6</td>
+<td style="text-align:center">$[+1 \quad +1]$</td>
+<td style="text-align:center">$[+1 \quad -1 \quad +1 \quad -1]$</td>
+</tr>
+<tr>
+<td style="text-align:center">7</td>
+<td style="text-align:center">$[+1 \quad -1]$</td>
+<td style="text-align:center">$[+1 \quad -1 \quad +1 \quad -1]$</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>使用CDM其实就是复用RE，举个例子，如图所示：</p>
+<p><img src="https://s2.loli.net/2023/07/18/uKO4dHnGRBhveL2.png" alt="image-20230718150836259"></p>
+<p>假设现在有两个符号 $S=[a,b]$，nrofPorts为2，对其进行正交编码：</p>
+<script type="math/tex; mode=display">
+S*W = 
+\begin{bmatrix}
+a,b
+\end{bmatrix}
+*
+\begin{bmatrix}
+W_0\\
+W_1
+\end{bmatrix}
+=aW_0+bW_1</script><p>则实际的RE映射值为：</p>
+<script type="math/tex; mode=display">
+\alpha_0=
+\begin{bmatrix}
+a,b
+\end{bmatrix}
+*
+\begin{bmatrix}
++1\\
++1
+\end{bmatrix}
+=a+b\\
+\alpha_1=
+\begin{bmatrix}
+a,b
+\end{bmatrix}
+*
+\begin{bmatrix}
++1\\
+-1
+\end{bmatrix}
+=a-b\\</script><p>最后UE那边对接收到不同的RE信号进行联合正交解码，从而获得原始的Port信号。本质上其实是解方程组。</p>
+<h2 id="RRC参数：NZP-CSI-RS资源"><a href="#RRC参数：NZP-CSI-RS资源" class="headerlink" title="RRC参数：NZP-CSI-RS资源"></a>RRC参数：NZP-CSI-RS资源</h2><p>本页几乎所有内容都是关于IE（信息元素）资源映射的。如下所示，IE resourceMapping是NZP-CSI-RS-Resource的一部分。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">NZP-CSI-RS-Resource ::= SEQUENCE &#123;</span><br><span class="line"></span><br><span class="line">   nzp-CSI-RS-ResourceId      NZP-CSI-RS-ResourceId,</span><br><span class="line"></span><br><span class="line">   resourceMapping            CSI-RS-ResourceMapping,</span><br><span class="line"></span><br><span class="line">   powerControlOffset         INTEGER (-8..15),</span><br><span class="line"></span><br><span class="line">   powerControlOffsetSS       ENUMERATED&#123;db-3, db0, db3, db6&#125; OPTIONAL, -- Need R</span><br><span class="line"></span><br><span class="line">   scramblingID               ScramblingId,</span><br><span class="line"></span><br><span class="line">   periodicityAndOffset       CSI-ResourcePeriodicityAndOffset OPTIONAL,-</span><br><span class="line"></span><br><span class="line">   qcl-InfoPeriodicCSI-RS     TCI-StateId OPTIONAL, -- Cond Periodic</span><br><span class="line"></span><br><span class="line">   ...</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<font color="  #3CB371">**resourceMapping** </font>：详见[CSI-RS资源映射](#UE如何分辨网络中使用的CSI-RS？)节。
+
+<font color=" #3CB371">**powerControlOffset** </font>：PDSCH的资源粒子到NZP CSI-RS资源粒子功率偏移，以dB为单位。
+
+<font color=" #3CB371">**powerControlOffsetSS** </font>：NZP 的CSI-RS资源粒子到SSS资源粒子的功率偏移，以dB为单位。
+
+<font color=" #3CB371">**qcl-InfoPeriodicCSI-RS** </font>：对于目标周期性CSI-RS，包含对TCI-States中的一个TCI-State的引用，以提供QCL源和QCL类型。对于周期性CSI-RS，源可以是SSB或另一个周期性CSI-RS。参考具有tci-StateId值为此值的TCI-State，该值在与服务小区对应的BWP下行链路中的PDSCH-Config中的tci-StatesToAddModList中定义，并且与资源所属的DL BWP相对应。
+
+> For a target periodic CSI-RS, contains a reference to one TCI-State in TCI-States for providing the QCL source and QCL type. For periodic CSI-RS, the source can be SSB or another periodic-CSI-RS. Refers to the TCI-State which has this value for tci-StateId and is defined in tci-StatesToAddModList in the PDSCH-Config included in the BWPDownlink corresponding to the serving cell and to the DL BWP to which the resource belongs to.
+
+简而言之，**这指示该 CSI-RS 被 QCL 到的 tci-StateId。**
+
+## UE如何分辨网络中使用的CSI-RS？
+
+当网络分配 CSI-RS 时，它会从 38.211-表 7.4.1.5.3-1 中选择特定行，并用特定信号填充一组资源元素。这部分很简单。难理解的部分是 UE 如何确定 gNB（网络）正在使用哪个 CSI-RS。答案是网络通过RRC消息通知UE CSI-RS的所有细节，我们来看看这个过程中涉及了哪些RRC参数：
+
+#### <font color=" #3CB371">如何确定CSI-RS端口和cdm（通过38.211-Table 7.4.1.5.3-1的行号）？</font>
+
+<p>: 其实通过CSI-RS-ResourceMapping中的 <code>nrofPorts</code>和 <code>cdm-Type</code>配置。</p>
+<p><img src="https://s2.loli.net/2023/07/17/rjMXJ4P9ugdswbp.png" alt="image-20230717145705515"></p>
+<h4 id="如何为选择的CSI-RS确定REs？"><a href="#如何为选择的CSI-RS确定REs？" class="headerlink" title="如何为选择的CSI-RS确定REs？"></a><font color=" #3CB371">如何为选择的CSI-RS确定REs？</font></h4><p>: 这是由 CSI-RS-ResourceMapping 的 (k_bar, l_bar) 列以及FrequencyDomainAllocation 和firstOFDMSymbolInTimeDomain 配置的，如下所示。</p>
+<p><img src="https://www.sharetechnote.com/html/5G/image/NR_CSI_RS_kbar_lbar_01.png" alt="img"></p>
+<p><img src="https://s2.loli.net/2023/07/17/qFEoR5M3KwiWjZn.png" alt="image-20230717145936850"></p>
+<font color=" #3CB371">**startingRB** </font>：此 CSI 资源相对于公共资源块网格上的公共资源块 #0 (CRB#0) 开始的 PRB。<font color='red'>只允许使用 4 的倍数（0, 4, ...）</font>。
+
+<font color=" #3CB371">**nrofRBs** </font>：该CSI资源跨越的PRB数量。<font color='red'>只允许 4 的倍数</font>。最小可配置数是 24 和相关 BWP 宽度的最小值。<font color="#DAA520">如果配置值大于相应 BWP 的宽度，则 UE 应将实际 CSI-RS 带宽设置为等于 BWP 的宽度。</font>
+
+<p>好了，结合上面的两部分内容，我们可以给出一个配置的例子啦：</p>
+<p><img src="https://www.sharetechnote.com/html/5G/image/NR_CSI_RS_Resource_Determination_Ex01.png" alt="img"></p>
+<h4 id="网络在使用时怎么知道当前使用的-逻辑-天线配置信息呢"><a href="#网络在使用时怎么知道当前使用的-逻辑-天线配置信息呢" class="headerlink" title="网络在使用时怎么知道当前使用的(逻辑)天线配置信息呢?"></a><font color="#3CB371">网络在使用时怎么知道当前使用的(逻辑)天线配置信息呢?</font></h4><p>这是个比较复杂的问题，我们会在<a href="https://www.sharetechnote.com/html/5G/5G_CSI_RS_Codebook.html">这里</a>讲述。</p>
+<h2 id="CSI-RS资源映射的例子"><a href="#CSI-RS资源映射的例子" class="headerlink" title="CSI-RS资源映射的例子"></a>CSI-RS资源映射的例子</h2><h3 id="Example1："><a href="#Example1：" class="headerlink" title="Example1："></a>Example1：</h3><p>给定如下RRC配置信息：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">density = three</span><br><span class="line">nrofPorts = p1</span><br><span class="line">cdm-Type = noCDM</span><br><span class="line">frequencyDomainAllocation.row1 = 0001</span><br><span class="line">firstOFDMSymbolinTimeDomain = 4</span><br></pre></td></tr></table></figure>
+<p><center>根据38.211-Table 7.4.1.5.3-1</center><br><img src="https://www.sharetechnote.com/html/5G/image/NR_CSI_RS_Table_Header.png" alt="img"></p>
+<p><img src="https://www.sharetechnote.com/html/5G/image/NR_CSI_RS_Table_Row1.png" alt="img"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">k prime = &#123;0&#125; ==&gt; k prime[0] = 0</span><br><span class="line">l prime = &#123;0&#125;  ==&gt; l prime[0] = 0</span><br></pre></td></tr></table></figure>
+<p>通过如上的参数给定，RRC参数为：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">k0 = 0 (0001，首位1出现在index=0的位置)</span><br><span class="line">l0 = 4(firstOFDMSymbolinTimeDomain = 4给定)</span><br></pre></td></tr></table></figure>
+<p>再通过查表38.211-Table 7.4.1.5.3-1以及如上的所有信息，可以知道：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+(k,l) = &(k0+kprim[0],l0+lprim[0]) ,(k0+4+kprim[0],l0+lprim[0]) ,(k0+8+kprim[0],l0+lprim[0])\\
+= &(0+0,4+0) ,(0+4+0,4+0) ,(0+8+0,4+0)\\
+= &(0,4) ,(4,4) ,(8,4)
+\end{aligned}</script><p><img src="https://s2.loli.net/2023/07/17/NzM3ZmyQHRhnBGe.png" alt="image-20230717152835560"></p>
+<h2 id="CSI-RS传输时间"><a href="#CSI-RS传输时间" class="headerlink" title="CSI-RS传输时间"></a>CSI-RS传输时间</h2><p>通过如下式子确定：</p>
+<p><img src="https://www.sharetechnote.com/html/5G/image/CSI_RS_TransmissionTiming_01.png" alt="img"></p>
+<h2 id="干扰测量的资源（CSI-IM）"><a href="#干扰测量的资源（CSI-IM）" class="headerlink" title="干扰测量的资源（CSI-IM）"></a>干扰测量的资源（CSI-IM）</h2><h2 id="追踪参考信号（TRS）"><a href="#追踪参考信号（TRS）" class="headerlink" title="追踪参考信号（TRS）"></a>追踪参考信号（TRS）</h2><h2 id="零功率（ZP）CSI-RS"><a href="#零功率（ZP）CSI-RS" class="headerlink" title="零功率（ZP）CSI-RS"></a>零功率（ZP）CSI-RS</h2><h3 id="为什么是零功率CSI-RS"><a href="#为什么是零功率CSI-RS" class="headerlink" title="为什么是零功率CSI-RS"></a>为什么是零功率CSI-RS</h3><h4 id="专家解答"><a href="#专家解答" class="headerlink" title="专家解答"></a>专家解答</h4><h4 id="文章参考"><a href="#文章参考" class="headerlink" title="文章参考"></a>文章参考</h4><h2 id="CSI-RS的RRC参数设置"><a href="#CSI-RS的RRC参数设置" class="headerlink" title="CSI-RS的RRC参数设置"></a>CSI-RS的RRC参数设置</h2><h2 id="RRC配置举例"><a href="#RRC配置举例" class="headerlink" title="RRC配置举例"></a>RRC配置举例</h2><h2 id="如何避免其他信号？"><a href="#如何避免其他信号？" class="headerlink" title="如何避免其他信号？"></a>如何避免其他信号？</h2>]]></content>
+      <categories>
+        <category>学习记录</category>
+      </categories>
+      <tags>
+        <tag>5GNR</tag>
+        <tag>参考信号</tag>
+      </tags>
+  </entry>
 </search>
