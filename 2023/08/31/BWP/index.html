@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":5},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="BWP其实是(Bandwidth Part)的缩写，中文译名为部分带宽。这是5G区别于4G的最关键概念之一，可谓无线资源的“切片”，可使5G灵活支持各种场景的各类终端。那么具体是怎样的呢？我们先从它的出现说起，然后再详细的从3GPP标准中一探究竟。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="5G中的BWP">
+<meta property="og:url" content="http://example.com/2023/08/31/BWP/index.html">
+<meta property="og:site_name" content="阿花的Blog">
+<meta property="og:description" content="BWP其实是(Bandwidth Part)的缩写，中文译名为部分带宽。这是5G区别于4G的最关键概念之一，可谓无线资源的“切片”，可使5G灵活支持各种场景的各类终端。那么具体是怎样的呢？我们先从它的出现说起，然后再详细的从3GPP标准中一探究竟。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2023/08/02/GvSsNT6Xk8oexhF.jpg">
+<meta property="og:image" content="https://pic3.zhimg.com/80/v2-e17ba3e13dd377f8774b973b12417bf2_720w.webp">
+<meta property="og:image" content="https://pic1.zhimg.com/80/v2-033effa9449f12290829d2bbb92bc994_720w.webp">
+<meta property="og:image" content="https://s2.loli.net/2023/08/03/VGwfnUdACLJqXOg.png">
+<meta property="og:image" content="https://s2.loli.net/2023/08/03/mKO49osAXbcjp8i.png">
+<meta property="og:image" content="c:/Users/10706/AppData/Roaming/Typora/typora-user-images/image-20230803170211711.png">
+<meta property="og:image" content="https://s2.loli.net/2023/08/03/OeNusRyB69mbGY2.png">
+<meta property="og:image" content="https://s2.loli.net/2023/08/03/s7WXiqxU3lMmNdp.png">
+<meta property="article:published_time" content="2023-08-31T14:43:13.513Z">
+<meta property="article:modified_time" content="2023-08-29T13:21:51.541Z">
+<meta property="article:author" content="阿花想养萨摩耶">
+<meta property="article:tag" content="5G">
+<meta property="article:tag" content="BWP">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/08/02/GvSsNT6Xk8oexhF.jpg">
+
+<link rel="canonical" href="http://example.com/2023/08/31/BWP/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>5G中的BWP | 阿花的Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">阿花的Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/08/31/BWP/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          5G中的BWP
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-08-31 22:43:13" itemprop="dateCreated datePublished" datetime="2023-08-31T22:43:13+08:00">2023-08-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-08-29 21:21:51" itemprop="dateModified" datetime="2023-08-29T21:21:51+08:00">2023-08-29</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>BWP其实是(Bandwidth Part)的缩写，中文译名为部分带宽。这是5G区别于4G的最关键概念之一，可谓无线资源的“切片”，可使5G灵活支持各种场景的各类终端。那么具体是怎样的呢？我们先从它的出现说起，然后再详细的从3GPP标准中一探究竟。</p>
+<span id="more"></span>
+<h2 id="为什么需要BWP？"><a href="#为什么需要BWP？" class="headerlink" title="为什么需要BWP？"></a>为什么需要BWP？</h2><p>BWP是5G引入的新概念，而引入这个新的概念是因为4G中有做得不够完善的地方，所以需要5G补充完善。这个不完善的地方是什么呢？在3GPP R8协议中，规定了4G的载波带宽最大是20MHz；在R10引入了载波聚合，最大支持5个载波，把4G的最大工作带宽扩展到了100MHz。按理说这个带宽已经很大了，轻轻松松就可以支持1Gbps的峰值下载速率，然而3GPP还是不满足，在其LTE Advanced Pro版本里面，又把最大载波聚合数量提升到了32，这下4G一共需要支持640MHz的带宽！</p>
+<p>但是我们需要考虑一个问题，基站作为强悍的系统设备，支持这么大的带宽倒是问题不大，可是用户终端UE的发射功率只有0.2瓦，还要控制发热保障续航，非常难支持这么多载波和这么大的带宽。所以，截止现在，即使是高端的4G手机，也就支持到5载波聚合，最大100MHz带宽。随着5G的到来，4G已成为明日黄花，人老珠黄，奔冷宫而去，自然没人愿意再给4G投资升级了，最大支持32载波也只能停留在纸面上。</p>
+<p>但是到了5G就不一样了。Sub6G频谱<strong>每载波最大需要支持100MHz</strong>，毫米波甚至<strong>每载波达到了400MHz</strong>，协议还规定5G可以<strong>支持最多16个载波聚合</strong>！说人话就是，<strong>5G中最大需要支持1.6GHz到6.4GHz的超大频谱带宽</strong>！这样一来，别说用户终端受不了了，连基站要支持起来也费劲。</p>
+<p>另外一个问题，则是设备升级的问题。我们看看5G的三大应用场景：</p>
+<p><img src="https://s2.loli.net/2023/08/02/GvSsNT6Xk8oexhF.jpg" alt="5G三大应用场景" style="zoom:50%;" /></p>
+<p>注意，超大频谱带宽，只使用于<code>eMBB</code>场景，而<code>mMTC</code>和<code>uRLLC</code>这样的物联网垂直行业场景，往往并不需要太高的速率，也就不需要太大的带宽。在这种情况下，强制让所有的终端（注意，手机只是5G的诸多类型的终端之一）都支持大带宽，搞一刀切这样的粗放管理是非常不经济的。那我们该怎么办呢？轮到我们的主角出场了：BWP。说白了，BWP就是让频谱资源在不同的用户终端上得到更好的分配。</p>
+<h2 id="BWP有什么用？"><a href="#BWP有什么用？" class="headerlink" title="BWP有什么用？"></a>BWP有什么用？</h2><p>BWP相当于把5G的频谱在一定的时间内划分成了很多的小块，每个BWP可以使用不同的参数集，其带宽，子载波间隔，以及其他控制参数都可以不同，相当于在5G小区内部又划分出了若干个配置不同的子小区，以适应不同类型的终端及业务类型。</p>
+<p><img src="https://pic3.zhimg.com/80/v2-e17ba3e13dd377f8774b973b12417bf2_720w.webp" alt="img" style="zoom: 67%;" /></p>
+<p>上图直观地表达了一个BWP分配的例子。其中蓝色的矩形表示BWP1，带宽大，但持续的时间短；绿色的矩形表示BWP2，其带宽小，但持续的时间长；橙色的矩形表示BWP3。</p>
+<p>第一个时刻，手机正在下载游戏安装包文件，需要较高的速率，因此系统给手机配置了一个大带宽的BWP（BWP1）；</p>
+<p>第二时刻，手机在进行在线游戏，需要的流量较小，因此系统给手机配置了一个小带宽的BWP（BWP2），满足其游戏的上下行速率需求即可；</p>
+<p>第三时刻，系统发现BWP1所在带宽内遭遇了很强的突发性外部干扰，信号质量急剧恶化，无法满足手机的上网需求了，于是紧急给UE配置了一段新的带宽（BWP3）。</p>
+<p>一个终端最大可以支持4个BWP，但同时只能有一个处于激活状态。这样一来就实现了频谱资源的按需使用，不必像4G一样，手机必须在整个载波带宽上工作，更加灵活，也更加省电。</p>
+<p>BWP本质上属于5G在空口资源的切片，上面例子中是一个终端内部的BWP的切换，实际上，由于不同BWP的参数集可以不同，它们可以用于完全不同的场景，如下图所示。</p>
+<p><img src="https://pic1.zhimg.com/80/v2-033effa9449f12290829d2bbb92bc994_720w.webp" alt="img" style="zoom: 67%;" /></p>
+<p>看起来铁板一块的5G载波，实际在内部可以进行灵活的BWP分配来实现切片，灵活支持eMBB，mMTC和uRLLC这三种最为典型的5G业务。如果看到这你已经了解了BWP的相关概念的话，接下来的内容就是枯燥乏味的标准文件的阅读了。</p>
+<h2 id="在BWP前，学习一下PointA"><a href="#在BWP前，学习一下PointA" class="headerlink" title="在BWP前，学习一下PointA"></a>在BWP前，学习一下PointA</h2><p>PointA的概念是在38.211里面定义的。它是公共物理资源块0 (Common Reference Resource Block 0) 的子载波起始位置，即CRB0的子载波0的中心频点。PointA在TDD模式下上下行是一样的，但对于FDD或SUL的场景则是分别对上下行进行定义。它其实就是一个基准参考点。 我们举个例子：</p>
+<p><img src="https://s2.loli.net/2023/08/03/VGwfnUdACLJqXOg.png" alt="image-20230802190245392" style="zoom: 50%;" /></p>
+<p>我们可以看到，SSB和CRB他们是没有对齐的，这是因为SSB遵循的是广播信道栅格，而CRB遵循的是信道栅格。所以他们之间有一定的差别，这个差值就是所谓的$k_{SSB}$，另外CRB之间的间隔是在MIB中的一个名为<code>subCarrierSpacingCommon</code>定义的。<code>offsetToPointA</code>是和SSB重合的CRB下边缘到PointA的距离，以RB作为衡量，可用于配置PointA的位置，该项放在<code>SIB</code>内。</p>
+<p>另一种定义PointA的方式则是通过<code>absoluteFrequencyPointA</code>进行设定，视情况在FrequencyInfoDL或（与）FrequencyInfoUL中的absoluteFrequencyPointA配置。这种情况是载波聚合的情况，这个时候配置了CA的SCell，我们需要告知UE其中SCell的位置。</p>
+<p>注意：PointA的起始位置并不是小区配置的带宽的起始位置，小区载波的下沿相对于PointA的位置和小区总带宽还需要通过SIB1的<code>SCS-SpecificCarrier</code>确定。我们举个例子：</p>
+<p><img src="https://s2.loli.net/2023/08/03/mKO49osAXbcjp8i.png" alt="image-20230803164914570"></p>
+<p>在这里我们定义两个Carrier，其中<code>Carrier0</code>是100MHz-273PRB，子载波间隔为30kHz。它的起始位置直接和CRB0的子载波0的中心位置重合（注意，并不是子载波0的起点位置，MJ的图有问题），也就是PointA所在的位置，此时<code>offsetToCarrier</code>为0；另外一个载波则是50MHz-270PRB，子载波间隔为15kHz，此时offsetToCarrier的长度为这一段的RB个数乘以<code>Carrier1</code>的子载波间隔15kHz然后再乘以12（对应的是一个RB中的子载波个数）。</p>
+<p>好了前面铺垫了这么多，我们做个总结吧！再次回到这张图：</p>
+<p><img src="C:\Users\10706\AppData\Roaming\Typora\typora-user-images\image-20230803170211711.png" alt="image-20230803170211711" style="zoom: 33%;" /></p>
+<p>NR中的SSB可以在传输载波的任何位置，SSB的位置服从的是同步栅格，而PDCCH/PDSCH的载波的中心频率服从信道栅格，SSB子载波0的位置甚至不与物理资源块对齐。就如上图这样子，SSB的子载波0与CRB0的偏移等于offsetToPointA (单位是RB) + $k_{SSB}$。</p>
+<blockquote>
+<p>OAI中pointA的相关配置</p>
+<p>在OAI中，pointA是在基站的配置文件中<code>dl_absoluteFrequencyPointA</code>配置的，代表的是pointA的绝对频点。</p>
+</blockquote>
+<h2 id="正式开始BWP啦！"><a href="#正式开始BWP啦！" class="headerlink" title="正式开始BWP啦！"></a>正式开始BWP啦！</h2><p>BWP其实是在整个载波里面划分出一部分的区域作为一段这段频谱中的子集，而UE只会在划分的这一段频谱中进行业务，而不会在其它地方进行业务，如图，$RB_{start}$和 $L_BWP$定义了载波中的BWP位置和长度信息。</p>
+<p><img src="https://s2.loli.net/2023/08/03/OeNusRyB69mbGY2.png" alt="image-20230803171459518" style="zoom: 50%;" /></p>
+<p>在前面我们说过了，BWP的提出就是为了<strong>节能</strong>，这是为了照顾一些功率有限的终端的资源消耗</p>
+<h3 id="BWP的使用场景"><a href="#BWP的使用场景" class="headerlink" title="BWP的使用场景"></a>BWP的使用场景</h3><p>BWP一共有四种使用场景，如图所示：</p>
+<p><img src="https://s2.loli.net/2023/08/03/s7WXiqxU3lMmNdp.png" alt="image-20230803174449518" style="zoom:67%;" /></p>
+<p>图1非常好理解，这里不再多赘述了；图2就是分配两段BWP，并且只有在进行大业务的时候才使用BWP#1以降低手机的功耗；图3就是支持不同子载波间隔的BWP，图4就是抗干扰，蓝色的部分可能性能比较差，那么在分配BWP的时候就可以将其避开，让UE在稍微好一点的频段中工作。</p>
+<h3 id="BWP的位置"><a href="#BWP的位置" class="headerlink" title="BWP的位置"></a>BWP的位置</h3><p>我们前面讨论了PointA和与之相关的位置的概念，现在轮到BWP的位置了。BWP的起始位置是这样定义的：</p>
+<script type="math/tex; mode=display">
+N_{BWP,i}^{start}=O_{carrier}+RB_{start}</script><p>其中 $O_{carrier}$指的是<code>offsetCarrier</code>。在实际中，为了节约存储使用了一个RIV（resource indicator value）进行指示RB的起始位置与长度。计算公式如下：</p>
+<script type="math/tex; mode=display">
+RIV=\begin{cases}
+N_{BWP}^{size}(L_{RBs}-1)+RB_{start}\qquad \quad if\,L_{RBs}-1\leq[N_{BWP}/2]\\
+N_{BWP} \cdot(N_{BWP}-L_{RBs} +1) + (N_{BWP} -1 -RB_{start})\quad else
+\end{cases}</script><p>其中，$N_{BWP}$是一个常数=275，表示的是BWP支持的最大长度。</p>
+<h3 id="BWP的配置"><a href="#BWP的配置" class="headerlink" title="BWP的配置"></a>BWP的配置</h3><h4 id="下行"><a href="#下行" class="headerlink" title="下行"></a>下行</h4><ul>
+<li>可以<strong>分配最多4个BWP，但不包括初始BWP</strong>。</li>
+<li>BWP的带宽要大于等于SSB的带宽，但可以选择包含或不包含SSB。</li>
+<li>在同一时刻，只有一个BWP可以被激活</li>
+<li>UE不希望在激活的BWP外收到一些下行的数据，比如说PDSCH，PDCCH，CSI-RS或者TRS。</li>
+<li>每一个下行的BWP至少要有一个用户搜索空间的对应的CORESET</li>
+<li>在一个主载波内，下行的BWP需要包含至少一个公共的搜索空间（CSS）的CORESET</li>
+</ul>
+<h4 id="上行"><a href="#上行" class="headerlink" title="上行"></a>上行</h4><ul>
+<li>可以<strong>分配最多4个BWP，但不包括初始BWP</strong>。</li>
+<li>在同一时刻，只有一个BWP可以被激活</li>
+<li>对于纯上行  (Supplementary uplink) 的：<ul>
+<li>可以再额外配置多4个BWP</li>
+<li>在同一时刻，只有一个BWP可以被激活</li>
+</ul>
+</li>
+<li>UE不能在一个激活的BWP外传输PUSCH或者PUCCH</li>
+</ul>
+<h2 id="BWP的类型"><a href="#BWP的类型" class="headerlink" title="BWP的类型"></a>BWP的类型</h2><ul>
+<li>初始BWP。这是用于在初始的随机接入时比如说解调SIB时，它包含了像RMSI (Requested Minimum System Information) ，CORESET（某一段PDCCH的时频资源范围）和RMSI Frequency location/Bandwith/SCS的参数信息。它可以配置为24~96个PRB的大小。</li>
+<li>激活的BWP。这就是手机进行业务的BWP，一般通过RRC 重配或者RRC建立配置。手机得到了这些信息后可以不定时的激活某一个BWP。</li>
+<li>默认BWP。UE不进行业务的时候要回到的状态。它同样通过RRC重配或者RRC建立及逆行配置，如果不进行配置的话，则初始BWP就是默认的BWP。</li>
+</ul>
+<p>BWP有一个定时器，叫做<code>BWP Timer</code>，当定时器超时，手机没有业务，那么则会回到默认的BWP，所以我们会至少配备一个初始的BWP用于小区接入。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/5G/" rel="tag"><i class="fa fa-tag"></i> 5G</a>
+              <a href="/tags/BWP/" rel="tag"><i class="fa fa-tag"></i> BWP</a>
+          </div>
+          <script type="text/javascript">
+            var tagsall=document.getElementsByClassName("post-tags")
+            for (var i = tagsall.length - 1; i >= 0; i--){
+                var tags=tagsall[i].getElementsByTagName("a");
+                for (var j = tags.length - 1; j >= 0; j--) {
+                    var golden_ratio = 0.618033988749895;
+                    var s = 0.5;
+                    var v = 0.999;
+                    var h = golden_ratio + Math.random()*0.8 - 0.5;
+                    var h_i = parseInt(h * 6);
+                    var f = h * 6 - h_i;
+                    var p = v * (1 - s);
+                    var q = v * (1 - f * s);
+                    var t = v * (1 - (1 - f) * s);
+                    var r, g, b;
+                    switch (h_i) {
+                        case 0:
+                            r = v;
+                            g = t;
+                            b = p;
+                            break;
+                        case 1:
+                            r = q;
+                            g = v;
+                            b = p;
+                            break;
+                        case 2:
+                            r = p;
+                            g = v;
+                            b = t;
+                            break;
+                        case 3 :
+                            r = p;
+                            g = q;
+                            b = v;
+                            break;
+                        case 4:
+                            r = t;
+                            g = p;
+                            b = v;
+                            break;
+                        case 5:
+                            r = v;
+                            g = p;
+                            b = q;
+                            break;
+                        default:
+                            r = 1;
+                            g = 1;
+                            b = 1;
+                      }
+                    tags[j].style.background = "rgba("+parseInt(r*255)+","+parseInt(g*255)+","+parseInt(b*255)+","+0.5+")";
+                }
+            }                        
+            </script>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/07/23/Technote-CSIRS/" rel="prev" title="CSI-RS详解">
+      <i class="fa fa-chevron-left"></i> CSI-RS详解
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81BWP%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">为什么需要BWP？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BWP%E6%9C%89%E4%BB%80%E4%B9%88%E7%94%A8%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">BWP有什么用？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8BWP%E5%89%8D%EF%BC%8C%E5%AD%A6%E4%B9%A0%E4%B8%80%E4%B8%8BPointA"><span class="nav-number">3.</span> <span class="nav-text">在BWP前，学习一下PointA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A3%E5%BC%8F%E5%BC%80%E5%A7%8BBWP%E5%95%A6%EF%BC%81"><span class="nav-number">4.</span> <span class="nav-text">正式开始BWP啦！</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#BWP%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">4.1.</span> <span class="nav-text">BWP的使用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BWP%E7%9A%84%E4%BD%8D%E7%BD%AE"><span class="nav-number">4.2.</span> <span class="nav-text">BWP的位置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BWP%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="nav-number">4.3.</span> <span class="nav-text">BWP的配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8B%E8%A1%8C"><span class="nav-number">4.3.1.</span> <span class="nav-text">下行</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8A%E8%A1%8C"><span class="nav-number">4.3.2.</span> <span class="nav-text">上行</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BWP%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="nav-number">5.</span> <span class="nav-text">BWP的类型</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="阿花想养萨摩耶"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">阿花想养萨摩耶</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">88</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dafeigy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dafeigy" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1070642765@qq.com" title="E-Mail → mailto:1070642765@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/2659883291" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;2659883291" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+  </div>
+
+
+
+  <div class="links-of-recent-posts motion-element">
+    <div class="links-of-recent-posts-title">
+      <i class="fa fa-history fa-fw"></i>
+      最近文章
+    </div>
+    <ul class="links-of-recent-posts-list">
+        <li class="links-of-recent-posts-item">
+          <a href="/2023/08/31/BWP/" title="2023&#x2F;08&#x2F;31&#x2F;BWP&#x2F;">5G中的BWP</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2023/07/23/Technote-CSIRS/" title="2023&#x2F;07&#x2F;23&#x2F;Technote-CSIRS&#x2F;">CSI-RS详解</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2023/07/02/%E7%8C%AB%E7%9C%BC%E7%94%B5%E5%BD%B1/" title="2023&#x2F;07&#x2F;02&#x2F;猫眼电影&#x2F;">猫眼电影爬虫&简单数据分析</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2023/06/27/CSI-RS%E4%BD%9C%E7%94%A8/" title="2023&#x2F;06&#x2F;27&#x2F;CSI-RS作用&#x2F;">CSI-RS 作用</a>
+        </li>
+    </ul>
+  </div>
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">阿花</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
