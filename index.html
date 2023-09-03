@@ -189,6 +189,139 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/09/03/SSB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/09/03/SSB/" class="post-title-link" itemprop="url">5GNR SSB</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-09-03 15:08:20 / 修改时间：15:08:25" itemprop="dateCreated datePublished" datetime="2023-09-03T15:08:20+08:00">2023-09-03</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>SSB（Synchronization Signal/PBCH, 同步广播块）是5G中使用的最重要的导频信道之一，其作用关系到UE接入小区的很多方面，如小区搜索、波束测量、波束选择、波束恢复等。SSB是由基站发出的，在进行一定的数量配置后，基站会使用不同方向的波束发送SSB，这其实就包含了一定的UE到gNB的角度信息。下面将介绍SSB的基本组成以及配置，以及OAI中nrUE中的<code>--ssb</code>参数的配置。</p>
+<!-- mroe -->
+<h2 id="SSB时频结构"><a href="#SSB时频结构" class="headerlink" title="SSB时频结构"></a>SSB时频结构</h2><p>在5G中，SSB包括同步信号和广播信号，具体同步信号包括<strong>PSS</strong>（Primary Synchronization Signal，主同步信号）和<strong>SSS</strong>（Secondary Synchronization Signal，辅同步信号）；广播信号包括<strong>PBCH Data</strong>和<strong>PBCH DMRS</strong>信号。具体SSB的时频域结构如下图所示，SSB在时域占据4个OFDM符号，在频域占据20个RB。</p>
+<p><img src="https://s2.loli.net/2023/09/01/IPd8MzG4F1C7mwq.png" alt="image-20230901103453540" style="zoom: 33%;" /></p>
+<p>所有有颜色的色块构成的就是SSB。如上图所示，PSS和SSS分别位于SSB的sym0和sym2，频域上均占用127个RE，而对于sym0和sym2上20RB以内的<strong>其他空闲RE，则不能调度其他信道信号</strong>。PBCH数据和DMRS信号均位于SSB后三个符号，其中在sym2时，SSS的上下两端与PBCH分别间隔9个和8个RE，<strong>这样设计是为了在SSS和PBCH信号间留有一定的保护间隔，抑制子载波间干扰。</strong>注意，上图只是为了说明时频结构，SSB的具体位置还需要参考38.211的如下表格：</p>
+<p><img src="https://s2.loli.net/2023/09/01/4Poj3ZOVmIry8tL.png" alt="image-20230901104848894"></p>
+<h2 id="SSB时域传输"><a href="#SSB时域传输" class="headerlink" title="SSB时域传输"></a>SSB时域传输</h2><p>我们在上面已经大致了解了SSB所处的位置，以及它的组成结构。下面我们将应用SSB，将其在无线NR中传输。</p>
+<h3 id="SSB周期"><a href="#SSB周期" class="headerlink" title="SSB周期"></a>SSB周期</h3><p>与LTE中PSS/SSS的传输周期固定为5 ms不同，<strong>NR中SSB的传输周期从5 ms到160 ms不等</strong>。NR中，SSB的周期可以配置为5 ms、10 ms、20 ms、40 ms、80 ms和160 ms，由高层参数<code>ssb-periodicityServingCell</code>给出。但是，当U<strong>E在进行初始小区搜索，以及在空闲状态下作小区搜索以作移动时，UE可以假设SSB的传输周期为20 ms</strong>。这样，UE就可以知道在某个频率上搜索SSB需要停留的时间。如果UE在这段时间内没有搜索到PSS/SSS，则UE会转换到同步栅格上的下一个频率上继续搜索。</p>
+<blockquote>
+<p>关于同步栅格的概念，可参考5G频段相关术语一文。</p>
+</blockquote>
+<p>较长的SSB周期可以使基站处于深度睡眠状态，从而可以达到降低基站功耗以节能的目的，也有利于节约OFDM符号等系统开销。缺点是会导致UE长时间停留在某个频率上以搜索SSB，即会增加UE开机后的搜索复杂度及搜索时间。</p>
+<p>但是，SSB周期的增加不一定会影响用户的体验，一是因为现在终端的开关机频次较低，开机搜索复杂度和时间的适当增加并不一定会严重影响用户的体验；二是NR使用了比LTE更稀疏的同步栅格，这在一定程度上抵消了由于SSB周期增加所导致的搜索复杂度的增加。</p>
+<p>在实际网络部署的时候，可以根据基站类型、业务类型等设置SSB周期。例如，宏基站覆盖范围大，接入用户多，因此可以设置较短的SSB周期以便快速同步和接入；而微基站覆盖范围小，接入用户少，因此可以设置较长的SSB周期以节约系统开销和基站功耗。再例如，对于时延要求高的uRLLC业务，可以设置较短的SSB周期；而对于时延要求不高的mMTC业务，则可以设置较长的SSB周期</p>
+<h3 id="SSB突发集合概念"><a href="#SSB突发集合概念" class="headerlink" title="SSB突发集合概念"></a>SSB突发集合概念</h3><blockquote>
+<p><em>SSB突发集合</em>这一术语源于3GPP早期的讨论。在3GPP早期讨论中，假设SSB组成SSB突发，而SSB突发又组成SSB突发集合。但是，中间的<em>SSB突发</em>这一术语最终并未被使用，而<em>SSB突发集合</em>这一术语被保留了下来</p>
+</blockquote>
+<p>NR中，SSB通过波束扫描的方式传输，即通过时分复用的方式在不同的波束上传输SSB。<strong>一个波束扫描内SSB的集合就称作SSB突发集合（SS Burst Set）</strong>。需要指出的是，上面一节所说的<strong>SSB周期其实是指SSB突发集合的传输周期</strong>。但在<strong>每个SSB周期内，SSB突发集合总是被限制在5 ms的时间间隔内</strong>，要么在每个帧的前一个半帧内，要么在每个帧的后一个半帧内，如下图所示。如果对帧、子帧、时隙的概念比较模糊的话，可以参考之前的文章。</p>
+<p><img src="https://s2.loli.net/2023/09/01/76p5OqlNacEQLSX.png" alt="在这里插入图片描述"></p>
+<h3 id="SSB图样"><a href="#SSB图样" class="headerlink" title="SSB图样"></a>SSB图样</h3><p>每个SSB突发集合内的最大SSB数因频带不同而不同。SSB在每个SSB突发集合（长度为半帧）内可能的位置（因此此处的SSB称作候选SSB），即<strong>SSB图样</strong>（Pattern），具体有如下A、B、C、D、E、F、G共7种情况，38.213中有详细定义。</p>
+<p><img src="https://s2.loli.net/2023/09/01/47cEqVfWnDzUM5Y.png" alt="image-20230901114124886"></p>
+<blockquote>
+<p>需要注意，在3GPP演进过程中，CaseC的定义被修改过多次。</p>
+</blockquote>
+<p>这里涉及的情况比较多，我拿OAI的默认配置作为解释，至于其他的Case可参考<a target="_blank" rel="noopener" href="https://blog.csdn.net/Graduate2015/article/details/118613213?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_baidulandingword~default-0-118613213-blog-113067577.235^v38^pc_relevant_anti_vip&amp;spm=1001.2101.3001.4242.1&amp;utm_relevant_index=3">这位博主的文章</a>。在OAI 中，我们使用的是band78以及子载波间隔为30kHz，对应的是<code>Case C</code>的情况。此时我们一个帧有20个时隙，一个时隙是0.5ms，因此有：</p>
+<p><img src="https://s2.loli.net/2023/09/01/I96hogxkSWUBYLe.png" alt="img"></p>
+<blockquote>
+<p>在5GNR中，允许SSB与数据和控制信道使用不同的子载波间隔，这样的设计可以保证，无论数据及其相应的控制信道使用的是SCS＝15 kHz还是SCS = 30 kHz，都可以最大程度降低由于SSB的传输导致的对数据传输的影响。</p>
+</blockquote>
+<p>解释一下<code>OFDM Symbol(s)</code>那里的公式：<code>&#123;2，8&#125;</code>是在每个时隙中的位置，每一个<code>n</code>的取值其实是SSB的标号。因此我们可以看到，在Case C中，最多可以配置8个SSB。</p>
+<h3 id="SSB激活"><a href="#SSB激活" class="headerlink" title="SSB激活"></a>SSB激活</h3><p>接下来的问题就是，我是如何控制配置的SSB数量呢？SSB图样给出的是在SSB突发集合内，SSB可能的候选位置以及SSB的最大值$L_{\max}$，基站通过系统消息SIB1或UE专用的RRC信令的高层参数<code>ssb-PositionsInBurst</code>通知给UE具体是哪些SSB被激活使用这个配置在OAI里：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ssb_PositionsInBurs_BitmapPR</span></span><br><span class="line"><span class="comment"># 1=short, 2=medium, 3=long</span></span><br><span class="line">      ssb_PositionsInBurst_PR                                       = 2;</span><br><span class="line">      ssb_PositionsInBurst_Bitmap                                   = 1;</span><br></pre></td></tr></table></figure>
+<p><code>short</code>/<code>medium</code>/<code>long</code>的字段，分别对应的是下方的Bitmap的长短。<code>Short</code>表示Bitmap只按照4位比特读取，比如说<code>1010</code>,<code>0101</code>,<code>0001</code>等等，开启对应位置的SSB。不可以不配置SSB的哈~如果是<code>Medium</code>的话，最多是8位比特；如果是<code>long</code>那么则是64位比特，一般会以十六进制数进行保存，比如说<code>0xff00000000000000</code>。</p>
+<blockquote>
+<p>SSB突发集合内的SSB数量与天线的波束宽度密切相关。天线发射的波束越窄，需要配置的SSB数量越多，而波束的宽度与载波频率和天线增益有关。对于定向天线，频率越高、增益越大、波束越窄，因此需要配置的SSB数量越多。宏基站需要通过较大的天线增益和较窄的波束实现较大的覆盖范围，因此需要配置的SSB数量较多；而微基站由于覆盖范围较小，波束较窄、波束较少，因此配置的SSB数量也较少。波束数量较多的优点是可以通过波束扫描获得较大的覆盖增益，缺点是增加了系统复杂性和开销；波束较少的情况则相反。</p>
+<p>对于配置了载波聚合的小区，SSB的数量还与小区类型有关。由于UE是在主服务小区（PCell）上进行小区搜索和随机接入，为了较少系统开销，辅小区可以不配置SSB，UE通过同一组小区内的主服务小区或主辅服务小区（PSCell）的SSB获得时间和频率同步。</p>
+</blockquote>
+<h2 id="OAI中nrUE的-ssb参数计算"><a href="#OAI中nrUE的-ssb参数计算" class="headerlink" title="OAI中nrUE的--ssb参数计算"></a>OAI中nrUE的<code>--ssb</code>参数计算</h2><p>这部分要感谢我的好Bro 冰老师。UE里面涉及到频点配置的有2个参数：</p>
+<ul>
+<li><code>-C</code> ：中心频点</li>
+<li><code>--ssb</code>：ssb的最底的子载波到pointA的<strong>距离</strong>（子载波个数）</li>
+</ul>
+<p>冰老师给了个例子，我们来看看：</p>
+<h3 id="例子1"><a href="#例子1" class="headerlink" title="例子1"></a>例子1</h3><p><strong>已知</strong>：</p>
+<ol>
+<li>带宽为106 RB </li>
+<li><code>dl_absoluteFrequencyPointA = 620040</code></li>
+</ol>
+<p>pointA的ARFCN是620040对应的频率是3300.6MHz。这个计算如果你偷懒的话，可以使用<a target="_blank" rel="noopener" href="https://5g-tools.com/5g-nr-gscn-calculator/">这个工具</a>进行换算：</p>
+<p><img src="https://s2.loli.net/2023/09/01/82OasI4gfzM3E7G.png" alt="image-20230901143034289" style="zoom:67%;" /></p>
+<p>带宽是106RB ，中心频点 = 53RB + pointA的频率 = 53*12*30k + 3300.6M = <code>3319.68e6</code>，因此在输入<code>-C</code>的时候需要输入<code>3319680000</code>。然后，我们将中心频点转换到ARFCN：</p>
+<p><img src="https://s2.loli.net/2023/09/01/VH3XflIhZWJ5iyK.png" alt="image-20230901143300463" style="zoom:67%;" /></p>
+<p>当前SSB的绝对频点也就是621312；（这里走了狗屎运，正好带宽中心频点可以配置成SSB的中心频点）此时，计算<code>--ssb</code>参数要计算SSB的最底子载波到pointA的子载波个数，因为SSB的中心频点到最底子载波还有10个RB，所以就是：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+&((3319.68-3300.6)\times 10^6)/(30*10^3)-10\times12\\
+=&636子载波-120子载波\\
+=&516
+\end{aligned}</script><h3 id="例子2"><a href="#例子2" class="headerlink" title="例子2"></a>例子2</h3><p>冰老师截的图咯：</p>
+<p><img src="https://s2.loli.net/2023/09/01/mZPi5y7nYcIavFJ.jpg" alt="f3f89838c01c81a47b044aaa7c3ecd5" style="zoom:33%;" /></p>
+<p>SSB的频率为3408.96，pointA的ARFCN是626724。使用工具可计算PointA的频率为3400.86。因此，<code>--ssb</code>计算为：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+&((3408.96-3400.86)\times 10^6)/(30*10^3)-10\times12\\
+=&270-120\\
+=&150
+\end{aligned}</script>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2023/08/31/BWP/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -868,85 +1001,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/05/15/ChartGPT/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="阿花想养萨摩耶">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="阿花的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/05/15/ChartGPT/" class="post-title-link" itemprop="url">使用自然语言配合GPT生成图表</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2023-05-15 15:49:33 / 修改时间：15:49:20" itemprop="dateCreated datePublished" datetime="2023-05-15T15:49:33+08:00">2023-05-15</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%91%B8%E9%B1%BC%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">摸鱼记录</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p align="center">
-    <img src="https://s2.loli.net/2023/05/10/LDUpFzo7VJiOshd.png" alt="ChartGPT logo" width=200 height=200 />
-</p>
-
-<p>使用自然语言描述生成ECharts图表。使用了Flask作为后端，并使用了Ajax进行数据的前后端交互，不涉及数据库，是Flask和前端js的一个简单学习。该摸鱼产品受启发于ChartGenie，并在此基础上对常用的Web小产品开发进行了实践，也算是这一段时间做的比较有意思的东西。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/05/15/ChartGPT/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1018,7 +1072,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-count">63</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1031,7 +1085,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">88</span>
+        <span class="site-state-item-count">90</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1057,6 +1111,9 @@
     </div>
     <ul class="links-of-recent-posts-list">
         <li class="links-of-recent-posts-item">
+          <a href="/2023/09/03/SSB/" title="2023&#x2F;09&#x2F;03&#x2F;SSB&#x2F;">5GNR SSB</a>
+        </li>
+        <li class="links-of-recent-posts-item">
           <a href="/2023/08/31/BWP/" title="2023&#x2F;08&#x2F;31&#x2F;BWP&#x2F;">5G中的BWP</a>
         </li>
         <li class="links-of-recent-posts-item">
@@ -1064,9 +1121,6 @@
         </li>
         <li class="links-of-recent-posts-item">
           <a href="/2023/07/02/%E7%8C%AB%E7%9C%BC%E7%94%B5%E5%BD%B1/" title="2023&#x2F;07&#x2F;02&#x2F;猫眼电影&#x2F;">猫眼电影爬虫&简单数据分析</a>
-        </li>
-        <li class="links-of-recent-posts-item">
-          <a href="/2023/06/27/CSI-RS%E4%BD%9C%E7%94%A8/" title="2023&#x2F;06&#x2F;27&#x2F;CSI-RS作用&#x2F;">CSI-RS 作用</a>
         </li>
     </ul>
   </div>
