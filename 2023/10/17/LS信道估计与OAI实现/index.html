@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":5},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="所谓信道估计，就是从接收数据中将假定的某个信道模型的模型参数出来的过程。如果信道是线性的话，那么信道估计就是对系统冲激响应进行估计。需强调的是信道估计是信道对输入信号影响的一种数学表示，而“好”的信道估计则是使得某种估计误差最小化的估计算法。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LS信道估计与OAI代码工程优化">
+<meta property="og:url" content="http://example.com/2023/10/17/LS%E4%BF%A1%E9%81%93%E4%BC%B0%E8%AE%A1%E4%B8%8EOAI%E5%AE%9E%E7%8E%B0/index.html">
+<meta property="og:site_name" content="阿花的Blog">
+<meta property="og:description" content="所谓信道估计，就是从接收数据中将假定的某个信道模型的模型参数出来的过程。如果信道是线性的话，那么信道估计就是对系统冲激响应进行估计。需强调的是信道估计是信道对输入信号影响的一种数学表示，而“好”的信道估计则是使得某种估计误差最小化的估计算法。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-10-17T15:16:21.577Z">
+<meta property="article:modified_time" content="2023-10-17T15:16:21.577Z">
+<meta property="article:author" content="阿花想养萨摩耶">
+<meta property="article:tag" content="OAI">
+<meta property="article:tag" content="信道估计">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2023/10/17/LS%E4%BF%A1%E9%81%93%E4%BC%B0%E8%AE%A1%E4%B8%8EOAI%E5%AE%9E%E7%8E%B0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>LS信道估计与OAI代码工程优化 | 阿花的Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">阿花的Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/10/17/LS%E4%BF%A1%E9%81%93%E4%BC%B0%E8%AE%A1%E4%B8%8EOAI%E5%AE%9E%E7%8E%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          LS信道估计与OAI代码工程优化
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-10-17 23:16:21" itemprop="dateCreated datePublished" datetime="2023-10-17T23:16:21+08:00">2023-10-17</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>所谓信道估计，就是从接收数据中将假定的某个信道模型的模型参数出来的过程。如果信道是线性的话，那么信道估计就是对系统冲激响应进行估计。需强调的是<strong>信道估计是信道对输入信号影响的一种数学表示</strong>，而“好”的信道估计则是<strong>使得某种估计误差最小化的估计算法</strong>。</p>
+<span id="more"></span>
+<h2 id="信道估计分类"><a href="#信道估计分类" class="headerlink" title="信道估计分类"></a>信道估计分类</h2><h3 id="基于训练序列的估计"><a href="#基于训练序列的估计" class="headerlink" title="基于训练序列的估计"></a>基于训练序列的估计</h3><p>这种方法的原理就是在发射数据符号外，还需要发射前导（Preamble）或导频（pilot）信号；如最小二乘LS、最小均方误差MMSE等基于训练序列的信道估计算法被广泛应用于信道估计；</p>
+<ul>
+<li><p>优点：训练符号能够提供较好的性能；</p>
+</li>
+<li><p>缺点：由于除了发射数据符号外，还需要发射前导或导频信号，由此训练序列过长会降低频谱效率；</p>
+</li>
+</ul>
+<h3 id="盲-半盲信道估计"><a href="#盲-半盲信道估计" class="headerlink" title="盲/半盲信道估计"></a>盲/半盲信道估计</h3><p>从接收信号的结构和统计信息中获取信道状态信息CSI (channel state information)或均衡器系数，无需或很少训练序列。</p>
+<ul>
+<li><p>优点：资源的开销较少；</p>
+</li>
+<li><p>缺点：性能比基于训练序列的信道估计算法差；</p>
+</li>
+</ul>
+<h2 id="LS信道估计"><a href="#LS信道估计" class="headerlink" title="LS信道估计"></a>LS信道估计</h2><p>“LS”是最小二乘(Least Square)的意思，从字面意思不难看出，它是通过最小化发射和接收信号的距离平方的一种信道估计方法。这种信道估计的模型构建如下：</p>
+<script type="math/tex; mode=display">
+\mathrm{Y=HX}</script><p>我们现在已知的数据有发射的 $X$和 接收到的$Y$，我们需要得到 $H$的估计 $\hat H$，根据上面的优化目标不难写出需要最小化的损失函数：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+J(\hat H) =&\mathrm{||Y-X \hat H||^2}\\
+=&\mathrm{(Y-X\hat H)^{H}(Y-X\hat H)}\\
+=&\mathrm{Y^H Y-Y^H X\hat H - \hat H^H X^H Y+\hat H^H X^H X\hat H }
+\end{aligned}</script><p>因为要通过改变$\hat H$使损失最小，故令$J(\hat H)$对$\hat H$的偏导为0，得：</p>
+<script type="math/tex; mode=display">
+\frac{dJ(\hat H)}{d\hat H}=0</script><p>此时可得：</p>
+<script type="math/tex; mode=display">
+\mathrm{\hat H=(X^H X)^{-1}X^H Y=X^{-1}Y}</script><h2 id="OAI的LS实现"><a href="#OAI的LS实现" class="headerlink" title="OAI的LS实现"></a>OAI的LS实现</h2><p>在上面我们已经知道LS估计的核心公式了。在OFDM系统中，LS估计是以子载波为单位进行估计的。设 $N$为子载波个数，则有：</p>
+<script type="math/tex; mode=display">
+\mathrm{\hat H_{LS}}[k]=\mathrm{\frac{Y[k]}{X[k]}},k=0,1,2,\dots,N-1</script><p>具体点的，如果信号的形式为$a+bi$，那么每一个子载波的估计结果就为：</p>
+<script type="math/tex; mode=display">
+\hat H_{LS}[k]=\frac{a_r+b_ri}{a_g+b_gi}\\
+=\frac{(a_r+b_ri)(a_g-b_gi)}{a_g^2+b_g^2}\\
+=\frac{a_ra_g+b_rb_g}{a_g^2+b_g^2}+i\frac{a_gb_r-a_rb_g}{a_g^2+b_g^2}</script><p>OK接下来我们以SRS信道估计部分的代码作为例子看看OAI是怎么实现的。在<code>openair1/PHY/NR_ESTIMATION/nr_ul_channel_estimation.c</code>中的<code>nr_srs_channel_estimation()</code>函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// We know that nr_srs_info-&gt;srs_generated_signal_bits bits are enough to represent the generated_real and generated_imag.</span></span><br><span class="line">            <span class="comment">// So we only need a nr_srs_info-&gt;srs_generated_signal_bits shift to ensure that the result fits into 16 bits.</span></span><br><span class="line">            ls_estimated[<span class="number">0</span>] += (<span class="type">int16_t</span>)(((<span class="type">int32_t</span>)generated_real*received_real + (<span class="type">int32_t</span>)generated_imag*received_imag)&gt;&gt;nr_srs_info-&gt;srs_generated_signal_bits);</span><br><span class="line">            ls_estimated[<span class="number">1</span>] += (<span class="type">int16_t</span>)(((<span class="type">int32_t</span>)generated_real*received_imag - (<span class="type">int32_t</span>)generated_imag*received_real)&gt;&gt;nr_srs_info-&gt;srs_generated_signal_bits);</span><br></pre></td></tr></table></figure>
+<p>注意到OAI实现的过程中没有用除法，而是进行了位移操作。OAI得到的数据的实部和虚部都是整数，因此支持这样的位移操作，即将分母用右移操作替代了。另外一个重要原因是SRS序列是恒模的因此分母部分是恒定的，因此这是个非常巧妙的工程实现。</p>
+<h2 id="LS估计的性能"><a href="#LS估计的性能" class="headerlink" title="LS估计的性能"></a>LS估计的性能</h2><p>LS信道估计的均方误差为：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+MSE_LS=&E\mathrm{[(H-\hat H_{LS})^H(H-\hat H_{LS})]}\\
+=&E\mathrm{[(H-\hat X^{-1}Y)^H(H-\hat X^{-1}Y)]}\\
+=&E\mathrm{[(X^{-1}Z)^H(X^{-1}Z)]}\\
+=&E\mathrm{[Z^H(XX^H)^{-1}Z]}\\
+=&\frac{\sigma_z^2}{\sigma_x^2}
+\end{aligned}</script><p>上式中，$\mathrm Z$为噪声向量，$\mathrm{Z}=[Z[0],Z[1],\dots,Z[N-1]]^T$满足 $E[Z[k]]=0,Var[Z[k]]=\sigma_z^2$。可以观察到LS估计算法的MSE和信噪比成反比，这意味着LS估计增强了噪声，在信道深度衰落时更严重。然而由于LS信道估计算法的简单性而广泛地应用于信道估计中,，比如在OFDM系统中和单载波频域均衡SC-FDE系统中会经常用到LS信道估计算法。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/OAI/" rel="tag"><i class="fa fa-tag"></i> OAI</a>
+              <a href="/tags/%E4%BF%A1%E9%81%93%E4%BC%B0%E8%AE%A1/" rel="tag"><i class="fa fa-tag"></i> 信道估计</a>
+          </div>
+          <script type="text/javascript">
+            var tagsall=document.getElementsByClassName("post-tags")
+            for (var i = tagsall.length - 1; i >= 0; i--){
+                var tags=tagsall[i].getElementsByTagName("a");
+                for (var j = tags.length - 1; j >= 0; j--) {
+                    var golden_ratio = 0.618033988749895;
+                    var s = 0.5;
+                    var v = 0.999;
+                    var h = golden_ratio + Math.random()*0.8 - 0.5;
+                    var h_i = parseInt(h * 6);
+                    var f = h * 6 - h_i;
+                    var p = v * (1 - s);
+                    var q = v * (1 - f * s);
+                    var t = v * (1 - (1 - f) * s);
+                    var r, g, b;
+                    switch (h_i) {
+                        case 0:
+                            r = v;
+                            g = t;
+                            b = p;
+                            break;
+                        case 1:
+                            r = q;
+                            g = v;
+                            b = p;
+                            break;
+                        case 2:
+                            r = p;
+                            g = v;
+                            b = t;
+                            break;
+                        case 3 :
+                            r = p;
+                            g = q;
+                            b = v;
+                            break;
+                        case 4:
+                            r = t;
+                            g = p;
+                            b = v;
+                            break;
+                        case 5:
+                            r = v;
+                            g = p;
+                            b = q;
+                            break;
+                        default:
+                            r = 1;
+                            g = 1;
+                            b = 1;
+                      }
+                    tags[j].style.background = "rgba("+parseInt(r*255)+","+parseInt(g*255)+","+parseInt(b*255)+","+0.5+")";
+                }
+            }                        
+            </script>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/09/03/SSB/" rel="prev" title="5GNR SSB">
+      <i class="fa fa-chevron-left"></i> 5GNR SSB
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%A1%E9%81%93%E4%BC%B0%E8%AE%A1%E5%88%86%E7%B1%BB"><span class="nav-number">1.</span> <span class="nav-text">信道估计分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E8%AE%AD%E7%BB%83%E5%BA%8F%E5%88%97%E7%9A%84%E4%BC%B0%E8%AE%A1"><span class="nav-number">1.1.</span> <span class="nav-text">基于训练序列的估计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B2-%E5%8D%8A%E7%9B%B2%E4%BF%A1%E9%81%93%E4%BC%B0%E8%AE%A1"><span class="nav-number">1.2.</span> <span class="nav-text">盲&#x2F;半盲信道估计</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LS%E4%BF%A1%E9%81%93%E4%BC%B0%E8%AE%A1"><span class="nav-number">2.</span> <span class="nav-text">LS信道估计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OAI%E7%9A%84LS%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.</span> <span class="nav-text">OAI的LS实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LS%E4%BC%B0%E8%AE%A1%E7%9A%84%E6%80%A7%E8%83%BD"><span class="nav-number">4.</span> <span class="nav-text">LS估计的性能</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="阿花想养萨摩耶"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">阿花想养萨摩耶</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">64</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">91</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dafeigy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dafeigy" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1070642765@qq.com" title="E-Mail → mailto:1070642765@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/2659883291" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;2659883291" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+  </div>
+
+
+
+  <div class="links-of-recent-posts motion-element">
+    <div class="links-of-recent-posts-title">
+      <i class="fa fa-history fa-fw"></i>
+      最近文章
+    </div>
+    <ul class="links-of-recent-posts-list">
+        <li class="links-of-recent-posts-item">
+          <a href="/2023/10/17/LS%E4%BF%A1%E9%81%93%E4%BC%B0%E8%AE%A1%E4%B8%8EOAI%E5%AE%9E%E7%8E%B0/" title="2023&#x2F;10&#x2F;17&#x2F;LS信道估计与OAI实现&#x2F;">LS信道估计与OAI代码工程优化</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2023/09/03/SSB/" title="2023&#x2F;09&#x2F;03&#x2F;SSB&#x2F;">5GNR SSB</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2023/08/31/BWP/" title="2023&#x2F;08&#x2F;31&#x2F;BWP&#x2F;">5G中的BWP</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2023/07/23/Technote-CSIRS/" title="2023&#x2F;07&#x2F;23&#x2F;Technote-CSIRS&#x2F;">CSI-RS详解</a>
+        </li>
+    </ul>
+  </div>
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">阿花</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
