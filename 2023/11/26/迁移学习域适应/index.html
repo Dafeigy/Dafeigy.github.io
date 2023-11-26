@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":5},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="域适应的概念源于2015年ICML的论文“Unsupervised Domain Adaptation by Backpropagation”。深度域自适应属于迁移学习的一种，也是目前解决标签严重缺失情况下不同数据集之间模型迁移的主要思路。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="域适应初探">
+<meta property="og:url" content="http://example.com/2023/11/26/%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E5%9F%9F%E9%80%82%E5%BA%94/index.html">
+<meta property="og:site_name" content="阿花的Blog">
+<meta property="og:description" content="域适应的概念源于2015年ICML的论文“Unsupervised Domain Adaptation by Backpropagation”。深度域自适应属于迁移学习的一种，也是目前解决标签严重缺失情况下不同数据集之间模型迁移的主要思路。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2023/11/24/GgSA3kIwYX5WHCK.png">
+<meta property="og:image" content="https://s2.loli.net/2023/11/24/ZLEM38SOXQnGcxv.png">
+<meta property="article:published_time" content="2023-11-26T15:14:17.187Z">
+<meta property="article:modified_time" content="2023-11-26T15:14:48.864Z">
+<meta property="article:author" content="阿花想养萨摩耶">
+<meta property="article:tag" content="AI">
+<meta property="article:tag" content="迁移学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/11/24/GgSA3kIwYX5WHCK.png">
+
+<link rel="canonical" href="http://example.com/2023/11/26/%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E5%9F%9F%E9%80%82%E5%BA%94/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>域适应初探 | 阿花的Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">阿花的Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/11/26/%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E5%9F%9F%E9%80%82%E5%BA%94/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          域适应初探
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-11-26 23:14:17 / 修改时间：23:14:48" itemprop="dateCreated datePublished" datetime="2023-11-26T23:14:17+08:00">2023-11-26</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>域适应的概念源于2015年ICML的论文“Unsupervised Domain Adaptation by Backpropagation”。深度域自适应属于迁移学习的一种，也是目前解决标签严重缺失情况下不同数据集之间模型迁移的主要思路。</p>
+<span id="more"></span>
+<h2 id="引入"><a href="#引入" class="headerlink" title="引入"></a>引入</h2><p>这部分我们将捋一下一些必要的相关概念以更好地理解域适应。首先是迁移学习。域适应属于迁移学习的一种，迁移学习就是<strong>利用已有的先验知识</strong>让算法来<strong>学习新的知识</strong>，也就是说要<strong>找到先验知识与新知识之间的相似性</strong>。在迁移学习和深度域自适应中，已有的先验知识的数据集称为<strong>源域(source domain)</strong>，需要算法学习的新知识的数据集叫<strong>目标域(target domain)</strong>。通常情况下，源域和目标与之间存在较大差异即数据分布不完全相同但是肯定有有所关联。</p>
+<p>在<strong>目标域与源域的数据分布不同但任务相同下的迁移学习</strong>就是<strong>域自适应（领域自适应、Domain Adaptation）</strong>。也就是说域自适应的主要任务就是减小源域和目标域的数据分布差异，进而实现知识的迁移。</p>
+<h2 id="深度域适应神经网络DANN"><a href="#深度域适应神经网络DANN" class="headerlink" title="深度域适应神经网络DANN"></a>深度域适应神经网络DANN</h2><p><img src="https://s2.loli.net/2023/11/24/GgSA3kIwYX5WHCK.png" alt="img"></p>
+<p>这张图就是DANN的结构。它有三部分组成，分别是：</p>
+<ul>
+<li>绿色部分G：特征提取，共享特征</li>
+<li>蓝色部分B：源域训练，论文里是分类任务</li>
+<li>粉色区域P：二分类区，区分源域和目标域</li>
+</ul>
+<p>在DANN的图像输入 $x\in X$ ,其中 $X$ 代表图像输入空间，图像分类标签 $y\in Y$ ，其中 $Y(Y=\{1,2,3,\dots,k\})$ 代表图像分类标签空间。在DANN中假定有两种数据分布：源域数据分布 $\mathcal S(x,y)$ 和目标域数据分布 $\mathcal T(x,y)$ 。<strong>DANN的目标就是准确预测目标域输入图像的分类标签</strong>。</p>
+<p>假定训练样本为 $\{x_1,x_2,\dots,x_N\}$ 分别来自源域和目标域的边缘分布 $\mathcal S(x)$ 和 $\mathcal T(x)$ 。同时我们定义 $d_i$ 为第 $i$ 个训练样本的域标签，其中 $d_i\in \{0,1\}$ 。若 $d_i=0$ 则 $x_i\sim \mathcal S(x)$ ，反之 则 $x_i\sim \mathcal T(x)$。</p>
+<p>DANN的图像输入 $x$ 在训练阶段首先会经过特征提取网络 $f=G_f(x;\theta_f)$ 的映射转换为一个 $D$ 维的特征向量，即 $f\in \mathbb R^D$ 。然后DANN会分成两个分支即图像分类预测网络 $G_y(x;\theta_y)$ 和域分类网络 $G_d(x;\theta_d)$ 。源域数据输入对应的特征向量则会经过 $G_y(x;\theta_y)$ 的映射获得对应图像分类标签预测结果。同时不管是源域输入还是目标域输入的特征向量都会经过 $G_d(x;\theta_d)$ 得到每个输入的域分类结果。</p>
+<h2 id="怎么去训练这么个结构的网络"><a href="#怎么去训练这么个结构的网络" class="headerlink" title="怎么去训练这么个结构的网络"></a>怎么去训练这么个结构的网络</h2><p>DANN训练时，网络的输入为<strong>带图像分类标签的源域数据集与不带图像分类标签的目标域数据集</strong>，<strong>以及源域与目标域数据集的域分类标签</strong>。即我们知道源域数据集的图像分类标签，无目标域数据集的图像分类标签。</p>
+<p>虽然在进行图像分类的过程中，DANN只能对源域数据集数据进行图像分类，那么要想实现目标域的数据集的分类任务就必须让DANN把目标域数据看做成源域数据。</p>
+<p><strong>那么在训练阶段我们要做的是如下两个任务，第一个则是实现源域数据集准确分类，实现现图像分类误差的最小化；第二个任务则是要混淆源域数据集和目标域数据集，实现域分类误差的最大化，混淆目标域数据集与源域数据集</strong>。那么DANN的损失函数即可以定义成如下式(1)所示：</p>
+<p><img src="https://s2.loli.net/2023/11/24/ZLEM38SOXQnGcxv.png" alt="image-20231124132538112" style="zoom: 33%;" /></p>
+<p>那么DANN的相关参数的最优值可以表示如下式所示：</p>
+<script type="math/tex; mode=display">
+(\hat \theta_f,\hat \theta_y)=\arg \min_{\theta_f,\theta_y}E(\theta_f,\theta_y,\hat \theta_d)\\
+\hat \theta_d=\arg \max_{\theta_d}E(\hat \theta_f, \hat \theta_y,\theta_d)</script><p>从上式我们也可以看出DANN的参数求解过程与GAN的参数求解过程及其相似。<strong>DANN中域分类器的作用和GAN的判别器作用十分相似</strong>。也可以说，DANN的设计思路采用了对抗学习的思想，<strong>图像分类器与域分类器在训练过程中相互对抗实现最终实现了图像分类损失与域分类损失之间的相互平衡。</strong></p>
+<p>为了避免像GAN那样分别固定生成器与鉴别器参数的方式进行分阶段训练，这也使得代码编写出现较大困难，为了编程方便，并实现真正意义上的端到端训练，DANN结构中提出了全新的<strong>梯度反转层（Gradient Reversal Layer, GRL）</strong>, 使得在反向传播过程中梯度方向自动取反，在前向传播过程中实现恒等变换，相关数学表示如下式所示：</p>
+<script type="math/tex; mode=display">
+R_\lambda(x)=x\\
+\frac{dR_\lambda}{dx}=-\lambda I</script><p>梯度反转层主要同在特征提取器与域分类器之间，那么在反向传播过程中，域分类器的域分类损失的梯度反向传播到特征提取器的参数之前会自动取反，进而实现了类似与GAN的对抗损失。那么式(1)所表示的损失函数也可以写如下式所示：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+E(\theta_f,\theta_y,\theta_d)&=\sum_{i=1,\dots,N}^{d_i=0}L_y(G_y(G_f(x_i;\theta_f);\theta_y),d_i)\\&+\sum_{i=1,\dots,N}L_d(G_d(R_\lambda(G_f(x_i;\theta_f));\theta_d),d_i)
+\end{aligned}</script><p>在GRL中，参数 $\lambda$并不是固定的，二十变化的：</p>
+<script type="math/tex; mode=display">
+\lambda_p = \frac{2}{1+\exp (-\gamma \cdot p)}-1</script><p>其中$p$代表迭代进程相对值，即当前迭代次数与总迭代次数的比率，$\gamma$为常数10。同时，在DANN架构中学习率也是随着迭代进程变换的，学习率的变化如下：</p>
+<script type="math/tex; mode=display">
+\mu_p = \frac{\mu_0}{(1+\alpha \cdot p)^\beta}</script><p>其中， $\mu_0$为初始学习率，论文设置为0.01，$p$代表迭代进程相对值，$\alpha,\beta$为超参数，论文里设置为 $\alpha=10,\beta =0.75$。</p>
+<h2 id="一些思考"><a href="#一些思考" class="headerlink" title="一些思考"></a>一些思考</h2><p>在G的部分，我们需要得到一个供B和P共享的feature，这个feature有两个目标：<strong>最小化目标loss</strong>（帮助B）；让P分辨不出输入来自哪个域。我们期望对于不同域的输入，提取到的feature对于两个不同的域是自适应的，所以我们的这个feature尽可能让两个域区分不开，feature自己不就渐渐趋于域自适应了。</p>
+<p>另外一个问题是，为什么需要经过 $R_\lambda$处理 $L_d$，而不是直接将域分类器取一个负号直接和分类器的结果相加呢？我是这么理解的：梯度反转只发生在G的部分，也就是说P部分依然需要保证其是一个有效的分类器，依然是在最小化其二元分类的Loss，只不过其对应的梯度信息在和G连接的时候发生了反转，这样一来整体的Loss可以保证优化的方向，同时也能保证那个分类器可以正确的进行分类。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/AI/" rel="tag"><i class="fa fa-tag"></i> AI</a>
+              <a href="/tags/%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 迁移学习</a>
+          </div>
+          <script type="text/javascript">
+            var tagsall=document.getElementsByClassName("post-tags")
+            for (var i = tagsall.length - 1; i >= 0; i--){
+                var tags=tagsall[i].getElementsByTagName("a");
+                for (var j = tags.length - 1; j >= 0; j--) {
+                    var golden_ratio = 0.618033988749895;
+                    var s = 0.5;
+                    var v = 0.999;
+                    var h = golden_ratio + Math.random()*0.8 - 0.5;
+                    var h_i = parseInt(h * 6);
+                    var f = h * 6 - h_i;
+                    var p = v * (1 - s);
+                    var q = v * (1 - f * s);
+                    var t = v * (1 - (1 - f) * s);
+                    var r, g, b;
+                    switch (h_i) {
+                        case 0:
+                            r = v;
+                            g = t;
+                            b = p;
+                            break;
+                        case 1:
+                            r = q;
+                            g = v;
+                            b = p;
+                            break;
+                        case 2:
+                            r = p;
+                            g = v;
+                            b = t;
+                            break;
+                        case 3 :
+                            r = p;
+                            g = q;
+                            b = v;
+                            break;
+                        case 4:
+                            r = t;
+                            g = p;
+                            b = v;
+                            break;
+                        case 5:
+                            r = v;
+                            g = p;
+                            b = q;
+                            break;
+                        default:
+                            r = 1;
+                            g = 1;
+                            b = 1;
+                      }
+                    tags[j].style.background = "rgba("+parseInt(r*255)+","+parseInt(g*255)+","+parseInt(b*255)+","+0.5+")";
+                }
+            }                        
+            </script>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/11/14/OAI%20dev-brouche/" rel="prev" title="">
+      <i class="fa fa-chevron-left"></i> 
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%95%E5%85%A5"><span class="nav-number">1.</span> <span class="nav-text">引入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%B1%E5%BA%A6%E5%9F%9F%E9%80%82%E5%BA%94%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9CDANN"><span class="nav-number">2.</span> <span class="nav-text">深度域适应神经网络DANN</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%8E%E4%B9%88%E5%8E%BB%E8%AE%AD%E7%BB%83%E8%BF%99%E4%B9%88%E4%B8%AA%E7%BB%93%E6%9E%84%E7%9A%84%E7%BD%91%E7%BB%9C"><span class="nav-number">3.</span> <span class="nav-text">怎么去训练这么个结构的网络</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E6%80%9D%E8%80%83"><span class="nav-number">4.</span> <span class="nav-text">一些思考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="阿花想养萨摩耶"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">阿花想养萨摩耶</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">66</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">93</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dafeigy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dafeigy" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1070642765@qq.com" title="E-Mail → mailto:1070642765@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/2659883291" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;2659883291" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+  </div>
+
+
+
+  <div class="links-of-recent-posts motion-element">
+    <div class="links-of-recent-posts-title">
+      <i class="fa fa-history fa-fw"></i>
+      最近文章
+    </div>
+    <ul class="links-of-recent-posts-list">
+        <li class="links-of-recent-posts-item">
+          <a href="/2023/11/26/%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E5%9F%9F%E9%80%82%E5%BA%94/" title="2023&#x2F;11&#x2F;26&#x2F;迁移学习域适应&#x2F;">域适应初探</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2023/11/14/OAI%20dev-brouche/" title="2023&#x2F;11&#x2F;14&#x2F;OAI dev-brouche&#x2F;"></a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2023/10/17/LS%E4%BF%A1%E9%81%93%E4%BC%B0%E8%AE%A1%E4%B8%8EOAI%E5%AE%9E%E7%8E%B0/" title="2023&#x2F;10&#x2F;17&#x2F;LS信道估计与OAI实现&#x2F;">LS信道估计与OAI代码工程优化</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2023/09/03/SSB/" title="2023&#x2F;09&#x2F;03&#x2F;SSB&#x2F;">5GNR SSB</a>
+        </li>
+    </ul>
+  </div>
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">阿花</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
