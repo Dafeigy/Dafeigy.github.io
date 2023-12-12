@@ -189,6 +189,156 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/05/31/Free5GC+OAI%20gNB+COTSUE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/05/31/Free5GC+OAI%20gNB+COTSUE/" class="post-title-link" itemprop="url">未命名</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-05-31 23:21:42 / 修改时间：23:22:01" itemprop="dateCreated datePublished" datetime="2023-05-31T23:21:42+08:00">2023-05-31</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="Free5GC-OAI-gNB-COTS-UE"><a href="#Free5GC-OAI-gNB-COTS-UE" class="headerlink" title="Free5GC+OAI gNB+COTS UE"></a>Free5GC+OAI gNB+COTS UE</h2><p>Free5GC和OAI gNB的安装见前文。下面主要是配置：</p>
+<h3 id="核心网配置"><a href="#核心网配置" class="headerlink" title="核心网配置"></a>核心网配置</h3><p>在执行<code>./run.sh</code>，命令前需要设置转发：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo sysctl -w net.ipv4.ip_forward=1</span><br><span class="line">sudo iptables -t nat -A POSTROUTING -o &lt;上网网卡名称&gt; -j MASQUERADE</span><br><span class="line">sudo systemctl stop ufw</span><br><span class="line">sudo iptables -I FORWARD 1 -j ACCEPT</span><br></pre></td></tr></table></figure>
+<p>上网网卡名称通过<code>ifconfig</code>命令查看。</p>
+<h3 id="gNB侧配置"><a href="#gNB侧配置" class="headerlink" title="gNB侧配置"></a>gNB侧配置</h3><p>在运行前需要添加网络路由：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">route -n <span class="comment"># 查看路由</span></span><br><span class="line">sudo route add -net 10.60.0.0 netmask 255.255.255.0 gw 192.168.0.131</span><br><span class="line">						^									^</span><br><span class="line">				 核心网分配UE的IP网段					运行核心网主机IP地址</span><br><span class="line">sudo route add -net 10.61.0.0 netmask 255.255.255.0 gw 192.168.0.131</span><br><span class="line">						^									^</span><br><span class="line">				 核心网分配UE的IP网段					运行核心网主机IP地址</span><br></pre></td></tr></table></figure>
+<p>gNB在运行前需要修改基站配置信息中的<code>PLMN</code>相关信息和<code>amf</code>地址的信息，如下：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">amf_ip_address</span>      <span class="string">=</span> <span class="string">(</span> &#123; <span class="string">ipv4</span>       <span class="string">=</span> <span class="string">&quot;192.168.0.133&quot;</span><span class="string">;</span>	<span class="comment"># 修改成运行核心网主机的IP地址</span></span><br><span class="line">                              <span class="string">ipv6</span>       <span class="string">=</span> <span class="string">&quot;192:168:30::17&quot;</span><span class="string">;</span></span><br><span class="line">                              <span class="string">active</span>     <span class="string">=</span> <span class="string">&quot;yes&quot;</span><span class="string">;</span></span><br><span class="line">                              <span class="string">preference</span> <span class="string">=</span> <span class="string">&quot;ipv4&quot;</span><span class="string">;</span></span><br><span class="line">                            &#125;</span><br><span class="line">                          <span class="string">);</span></span><br><span class="line"><span class="attr">NETWORK_INTERFACES :</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">GNB_INTERFACE_NAME_FOR_NG_AMF</span>            <span class="string">=</span> <span class="string">&quot;eno1&quot;</span><span class="string">;</span>				<span class="comment"># 修改成运行gNB的主机上网的网卡名称</span></span><br><span class="line">        <span class="string">GNB_IPV4_ADDRESS_FOR_NG_AMF</span>              <span class="string">=</span> <span class="string">&quot;192.168.0.140/24&quot;</span><span class="string">;</span>	<span class="comment"># 修改成运行gNB的主机的IP</span></span><br><span class="line">        <span class="string">GNB_INTERFACE_NAME_FOR_NGU</span>               <span class="string">=</span> <span class="string">&quot;eno1&quot;</span><span class="string">;</span>				<span class="comment"># 修改成运行gNB的主机上网的网卡名称</span></span><br><span class="line">        <span class="string">GNB_IPV4_ADDRESS_FOR_NGU</span>                 <span class="string">=</span> <span class="string">&quot;192.168.0.140/24&quot;</span><span class="string">;</span>  <span class="comment"># 修改成运行gNB的主机的IP</span></span><br><span class="line">        <span class="string">GNB_PORT_FOR_S1U</span>                         <span class="string">=</span> <span class="number">2152</span><span class="string">;</span> <span class="comment"># Spec 2152</span></span><br><span class="line">    &#125;<span class="string">;</span></span><br></pre></td></tr></table></figure>
+<h3 id="手机侧"><a href="#手机侧" class="headerlink" title="手机侧"></a>手机侧</h3><p>手机首先需要先锁网，然后打开sim卡设置，点开烧录好的卡，在接入点进行设置：</p>
+<center><img src="C:\Users\10706\AppData\Roaming\Typora\typora-user-images\image-20230531130734178.png" alt="image-20230531130734178" style="zoom:50%;" /><img src="C:\Users\10706\AppData\Roaming\Typora\typora-user-images\image-20230531130955075.png" alt="image-20230531130955075" style="zoom:50%;" /></center>
+
+<p>核心网用Free5GC的话，APN是<code>internet</code>，如果是OAI的核心网则是<code>ctnet</code>。连上就可以进行业务了，比如说抖音和测速啥的：</p>
+<center><img src="C:\Users\10706\AppData\Roaming\Typora\typora-user-images\image-20230531131527149.png" alt="image-20230531131527149" style="zoom:50%;" /><img src="C:\Users\10706\AppData\Roaming\Typora\typora-user-images\image-20230531131636260.png" alt="image-20230531131636260" style="zoom:50%;" /></center>
+
+
+
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/05/28/vue%E5%AD%A6%E4%B9%A0%EF%BC%881%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/05/28/vue%E5%AD%A6%E4%B9%A0%EF%BC%881%EF%BC%89/" class="post-title-link" itemprop="url">Vue3学习记录</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-05-28 21:22:43 / 修改时间：21:22:22" itemprop="dateCreated datePublished" datetime="2023-05-28T21:22:43+08:00">2023-05-28</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><img src="https://s2.loli.net/2023/05/28/TdPjxktvKYD9rJC.png" alt="image-20230528212216596"></p>
+<p>Vue3学习记录。本篇为第一篇，记录配置与创建Vue3项目。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/05/28/vue%E5%AD%A6%E4%B9%A0%EF%BC%881%EF%BC%89/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2023/05/27/%E4%B8%8A%E6%B5%B7%E7%B4%A2%E5%B0%BC%EF%BC%88%E6%9C%AA%E5%AE%8C%E6%88%90%EF%BC%89/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -841,178 +991,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/05/04/C++%E7%BB%93%E6%9E%84%E4%BD%93%E5%AD%A6%E4%B9%A0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="阿花想养萨摩耶">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="阿花的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/05/04/C++%E7%BB%93%E6%9E%84%E4%BD%93%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">C/C++核心语法学习（二）</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-05-04 13:27:48" itemprop="dateCreated datePublished" datetime="2023-05-04T13:27:48+08:00">2023-05-04</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-05-15 15:34:24" itemprop="dateModified" datetime="2023-05-15T15:34:24+08:00">2023-05-15</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><img src="https://s2.loli.net/2023/05/03/aNE6XkqKnSY2oQM.jpg" alt="banner"></p>
-<p>本篇主要是结构体的介绍与使用。通过实现一个链表的结构，学习存储期的概念以及全局与局部的更深一层的理解。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/05/04/C++%E7%BB%93%E6%9E%84%E4%BD%93%E5%AD%A6%E4%B9%A0/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/05/03/C++%E6%8C%87%E9%92%88%E5%AD%A6%E4%B9%A0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="阿花想养萨摩耶">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="阿花的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/05/03/C++%E6%8C%87%E9%92%88%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">C/C++核心语法学习（一）</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-05-03 16:01:51" itemprop="dateCreated datePublished" datetime="2023-05-03T16:01:51+08:00">2023-05-03</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-05-15 15:34:31" itemprop="dateModified" datetime="2023-05-15T15:34:31+08:00">2023-05-15</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><img src="https://s2.loli.net/2023/05/03/aNE6XkqKnSY2oQM.jpg" alt="COde"></p>
-<p>本篇主要是部分C/C++的指针学习。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/05/03/C++%E6%8C%87%E9%92%88%E5%AD%A6%E4%B9%A0/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1084,7 +1062,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">66</span>
+          <span class="site-state-item-count">68</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1123,16 +1101,16 @@
     </div>
     <ul class="links-of-recent-posts-list">
         <li class="links-of-recent-posts-item">
+          <a href="/2023/12/12/NES%20%E5%B9%B3%E5%8F%B0/" title="2023&#x2F;12&#x2F;12&#x2F;NES 平台&#x2F;"></a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2023/12/12/CPU%E6%A8%A1%E6%8B%9F/" title="2023&#x2F;12&#x2F;12&#x2F;CPU模拟&#x2F;"></a>
+        </li>
+        <li class="links-of-recent-posts-item">
           <a href="/2023/11/26/%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E5%9F%9F%E9%80%82%E5%BA%94/" title="2023&#x2F;11&#x2F;26&#x2F;迁移学习域适应&#x2F;">域适应初探</a>
         </li>
         <li class="links-of-recent-posts-item">
           <a href="/2023/11/14/OAI%20dev-brouche/" title="2023&#x2F;11&#x2F;14&#x2F;OAI dev-brouche&#x2F;"></a>
-        </li>
-        <li class="links-of-recent-posts-item">
-          <a href="/2023/10/17/LS%E4%BF%A1%E9%81%93%E4%BC%B0%E8%AE%A1%E4%B8%8EOAI%E5%AE%9E%E7%8E%B0/" title="2023&#x2F;10&#x2F;17&#x2F;LS信道估计与OAI实现&#x2F;">LS信道估计与OAI代码工程优化</a>
-        </li>
-        <li class="links-of-recent-posts-item">
-          <a href="/2023/09/03/SSB/" title="2023&#x2F;09&#x2F;03&#x2F;SSB&#x2F;">5GNR SSB</a>
         </li>
     </ul>
   </div>

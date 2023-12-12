@@ -17893,4 +17893,114 @@ E(\theta_f,\theta_y,\theta_d)&=\sum_{i=1,\dots,N}^{d_i=0}L_y(G_y(G_f(x_i;\theta_
         <tag>迁移学习</tag>
       </tags>
   </entry>
+  <entry>
+    <title></title>
+    <url>/2023/12/12/CPU%E6%A8%A1%E6%8B%9F/</url>
+    <content><![CDATA[<h2 id="CPU-模拟"><a href="#CPU-模拟" class="headerlink" title="CPU 模拟"></a>CPU 模拟</h2><p>本章的主要目标是将我们的第一个NES游戏跑起来。我们将要游玩贪吃蛇，源代码可以在<a href="https://gist.github.com/wkjagt/9043907">这里</a>找到。</p>
+<p><img src="https://bugzmanov.github.io/nes_ebook/images/ch3/snk_logo.png" alt="img" style="zoom: 25%;" /></p>
+<p><img src="https://bugzmanov.github.io/nes_ebook/images/ch3/snk_game.gif" alt="img"></p>
+<p>CPU是任何计算机系统的心脏。CPU的工作是运行程序指令，协调所有可用的硬件模块，以提供完整的体验。尽管PPU和APU运行着各自独立的电路，但它们仍然要在CPU的节拍下行进，执行CPU发出的命令。</p>
+<p>在我们跳到实现部分的工作前，我们需要简要地讨论下哪些资源是CPU用于完成工作的可用资源。只有两种类型：内存映射和CPU寄存器。从编程的角度来看，内存映射只是一个1字节单元的连续数组。NES CPU使用16位内存寻址，这意味着它可以寻址65536（$2^6$）个不同的内存单元。</p>
+<p>正如我们之前所见，NES平台只有和CPU直连的2KiB的RAM：</p>
+<p><img src="https://bugzmanov.github.io/nes_ebook/images/ch3/cpu_registers_memory.png" alt="img" style="zoom: 33%;" /></p>
+<ul>
+<li><p>RAM可以通过 <strong>[0x0000 … 0x2000]</strong>的地址空间来访问。</p>
+</li>
+<li><p><strong>[0x2000…0x4020</strong>]将会重导向导其他可用的NES平台的硬件模块：PPU,APU,游戏手柄部分之类的。</p>
+</li>
+<li><strong>[0x4020 .. 0x6000]</strong>是一块特殊的空间，不同世代的卡带将会根据世代的不同占用不同的部分。它可以被映射到RAM，ROM或者什么都没做。这一块空间是被称作“mapper”的东西——卡带上的特殊电路来控制的。我们会忽略这部分的内容。</li>
+<li><strong>[0x6000 .. 0x8000]</strong> 是卡带的RAM的保留空间，如果卡带有RAM的话。他曾经被用于像塞尔达一类的游戏来存储和检索游戏的状态。我们也会忽略这部分的内容。</li>
+<li><strong>[0x8000 … 0x10000]</strong> 的空间将会映射到卡带的PRG ROM。</li>
+</ul>
+<p>内存访问相对较慢，NES的CPU有一些称为寄存器的内部内存插槽，访问延迟明显较低。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">CPU 操作类型</th>
+<th style="text-align:center">执行时间（CPU周期）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">寄存器寻址</td>
+<td style="text-align:center">2</td>
+</tr>
+<tr>
+<td style="text-align:center">RAM前255字节寻址</td>
+<td style="text-align:center">3</td>
+</tr>
+<tr>
+<td style="text-align:center">RAM255字节后寻址</td>
+<td style="text-align:center">4-7</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>NES有六个寄存器：</p>
+<ul>
+<li>Program Counter (<em>PC</em>) - 程序计数器，保存下一条执行机器语言指令的地址。</li>
+<li>Stack Pointer - 堆栈指针，内存空间中的[0x0100…0x1FF]是用于堆栈的构建。 堆栈指针保存了该空间顶部的地址。NES堆栈(和所有堆栈一样)从上到下增长：当一个字节被压入堆栈时，SP寄存器递减。当从堆栈中检索到一个字节时，SP寄存器递增。</li>
+<li>累加寄存器 (<em>A</em>) - 用于存放逻辑、计算和内存访问的操作结果。它用于某些操作的输入参数。</li>
+<li>索引寄存器X <em>(X)</em> -在特定的存储器寻址模式中用作偏移量(稍后将详细介绍)。可用于辅助存储需求(保存温度值，用作计数器等。)</li>
+<li>索引寄存器Y (<em>Y</em>) - 功能类似索引寄存器X。</li>
+<li>处理器状态(P) - 8位寄存器代表7个状态标志，可以根据最后执行的指令的结果设置或取消设置(例如，如果操作结果为0，则设置Z标志<code>1</code>，否则取消设置/擦除<code>0</code>)。</li>
+</ul>
+<p>每个CPU都有一个预定义的硬连线指令集，它定义了CPU可以做的一切。CPU从应用层接收机器代码形式的指令。你可以把机器语言想象成连接软件和硬件的薄层。6502芯片的完整指令集可以在下面查到：</p>
+<ul>
+<li><a href="https://www.nesdev.org/obelisk-6502-guide/reference.html">https://www.nesdev.org/obelisk-6502-guide/reference.html</a></li>
+<li><a href="http://www.6502.org/tutorials/6502opcodes.html">http://www.6502.org/tutorials/6502opcodes.html</a></li>
+</ul>
+<p>我倾向于使用这两个链接。这些页面提供了可用CPU特性的完整规格及其机器代码。在我们继续前，我强烈建议阅读 <a href="https://skilldrick.github.io/easy6502/">interactive tutorial on 6502 instructions</a>这篇文章。</p>
+<p><img src="https://bugzmanov.github.io/nes_ebook/images/ch3/image_4_opcodes.png" alt="img" style="zoom:33%;" /></p>
+<p>6502芯片是比较简单的CPU它只支持六种类型的命令和大约64种独特的命令。因为一些指令对于不同的存储器寻址模式有多个版本，这导致我们要实现大约150个机器代码操作。</p>
+<blockquote>
+<p><strong>注意</strong>：NES控制台使用的是基于6503的定制芯片2A03，但他们有很大的差别：</p>
+<ul>
+<li>除了官方的机器指令之外，它还有大约110个非官方的附加操作码(幸运的是，其中大约三分之一是空操作)</li>
+<li>拥有板载的APU模块</li>
+<li>不支持十进制算数</li>
+</ul>
+</blockquote>
+<p>为了简单起见，我们需要实现对256种不同机器指令的支持。好消息是指令之间有很多相似之处。一旦我们有了合适的基础，我们将不断地重用它们来实现整个集合。</p>
+]]></content>
+  </entry>
+  <entry>
+    <title></title>
+    <url>/2023/12/12/NES%20%E5%B9%B3%E5%8F%B0/</url>
+    <content><![CDATA[<h2 id="NES-平台"><a href="#NES-平台" class="headerlink" title="NES 平台"></a>NES 平台</h2><h3 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h3><p>软硬件交互的一个简要交互架构如图所示：</p>
+<p><img src="https://bugzmanov.github.io/nes_ebook/images/ch2/image_1_computer_arch.png" alt="img" style="zoom: 50%;" /></p>
+<p>从顶部到底部分别是：</p>
+<ul>
+<li>应用运行着逻辑代码，并通过操作系统（Operating System）与硬件进行交互</li>
+<li>操作系统使用机器语言与硬件进行通信</li>
+<li>在硬件层，每一个设备都被看做存储元件、处理单元或者二者的结合体。基于这个观点，NES joypad不过就是一个包含8个1-bit元素的数组，每一个元素对应的就是joypad上的按钮被按下/释放的状态而已。</li>
+<li>在ALU层以下的层以及存储层并非我们关注的重点。从硬件的角度来看，他们无非就是逻辑门以及对应的变种组合。</li>
+</ul>
+<blockquote>
+<p>如果你想获得更多的计算机组成原理的知识，我强烈建议你阅读这本由Noam Nisan和Shimon Schocken 编写的<a href="https://www.goodreads.com/book/show/910789.The_Elements_of_Computing_Systems">“The Elements of Computing Systems. Building a Modern Computer from First Principles”</a>.</p>
+</blockquote>
+<p>幸运的是，NES并没有操作系统。这意味着我们的应用层(Gamezzz)直接通过机器语言与硬件进行通信。因此简化后的架构类似下图：</p>
+<p><img src="https://bugzmanov.github.io/nes_ebook/images/ch2/image_2_nes_emul_arch.png" alt="img" style="zoom: 50%;" /></p>
+<p>如你所见，机器语言是我们的模拟器和NES游戏的接口。在我们接下来要构建的模拟器中，我们需要实现NES的计算机架构，算术逻辑单元以及内存。使用高级的编程语言，我们不需要关心布尔运算和时序逻辑的问题，我们仅需要使用现有的Rust特性和语言结构即可。</p>
+<h3 id="NES-平台主要组件"><a href="#NES-平台主要组件" class="headerlink" title="NES 平台主要组件"></a>NES 平台主要组件</h3><p><img src="https://bugzmanov.github.io/nes_ebook/images/ch2/image_3_nes_components.png" alt="img"></p>
+<p>精简版的NES的主要硬件组成如下：</p>
+<ul>
+<li>中央处理单元(CPU) - NES的2A03是<a href="https://en.wikipedia.org/wiki/MOS_Technology_6502">6502 芯片</a>的一个“魔改版”。不管是什么型号的CPU，该模块的作用就是去执行主程序的指令。</li>
+<li>图像处理单元(PPU) - 也是上面的CPU制造商Ricoh的产品，基于2C02芯片。这个模块的主要目标就是绘制当前游戏状态并将其在一块TV’屏幕上进行展示。</li>
+<li>CPU和PPU都需要从随机接入内存(Random Access Memory,RAM)中获得2 KiB(2046 字节)的空间。</li>
+<li>音频处理单元(APU) - 这是2A03芯片的一部分，它负责生成特定的5通道的音频（chiptune，也就是目前广为人知的8-bit音乐）。</li>
+<li>卡带(Cartridges) - 是平台的一个重要组件。由于NES的控制台并没有操作系统，每个卡带至少携带两个大的ROM芯片：角色ROM(CHR ROM)和程序ROM(PRG ROM)。前者用于存储游戏的视觉图像信息，后者则存储CPU的指令集——也就是游戏的代码（事实上，当卡带插入卡槽时，CHR ROM直接就和PPU进行连接，而PRG ROM则直接和CPU连接）。之后版本的卡带携带了额外的硬件（RAM和ROM），这些硬件可以通过一种称为“映射器 (mappers)”的东西进行访问。这也就解释了为何不升级游戏平台，但后续的游戏也可以获得更好的游玩和视觉体验，</li>
+</ul>
+<p><img src="https://bugzmanov.github.io/nes_ebook/images/ch2/image_4_cartridge.png" alt="img" style="zoom:50%;" /></p>
+<ul>
+<li>游戏手柄 - 用于获取玩家的输入并将其转换为可行的游戏逻辑。我们随后可以认识到，游戏手柄在8-bit的平台中仅仅有8个按钮并不是一个巧合。</li>
+</ul>
+<p>有意思的是，CPU、PPU、APU是相互独立的。这一事实使得NES成为一个分布式系统，其中独立的组件必须协调才能生成一个无缝的游戏体验。我们可以用一张图来描述一下NES 的主要组件，并将其作为我们后面的模拟器编写的提纲：</p>
+<p><img src="https://bugzmanov.github.io/nes_ebook/images/ch2/image_6_impl_plan.png" alt="img" style="zoom:50%;" /></p>
+<p>我们必须对所有这些模块进行模拟，我们的目标是尽快地可以在模拟器上能“玩”到些什么。使用迭代方法，我们将逐渐增加特性来实现这个目标。粗略地估计了一下每个组件的实现难度，PPU将会是最困难的，而BUS则是最简单。</p>
+<p>编写一个完美模拟器是一个永无止境的挑战。但千里之行始于足下，我们马上就会通过编写一个CPU的模拟程序。</p>
+<p><img src="https://bugzmanov.github.io/nes_ebook/images/ch2/image_5_motherboard.png" alt="img"></p>
+]]></content>
+  </entry>
 </search>
