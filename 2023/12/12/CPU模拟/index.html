@@ -20,20 +20,24 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":5},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="CPU 模拟本章的主要目标是将我们的第一个NES游戏跑起来。我们将要游玩贪吃蛇，源代码可以在这里找到。   CPU是任何计算机系统的心脏。CPU的工作是运行程序指令，协调所有可用的硬件模块，以提供完整的体验。尽管PPU和APU运行着各自独立的电路，但它们仍然要在CPU的节拍下行进，执行CPU发出的命令。 在我们跳到实现部分的工作前，我们需要简要地讨论下哪些资源是CPU用于完成工作的可用资源。只有两">
+  <meta name="description" content="本章的主要目标是将我们的第一个NES游戏跑起来。我们将要游玩贪吃蛇，源代码可以在这里找到。   CPU是任何计算机系统的心脏。CPU的工作是运行程序指令，协调所有可用的硬件模块，以提供完整的体验。尽管PPU和APU运行着各自独立的电路，但它们仍然要在CPU的节拍下行进，执行CPU发出的命令。 在我们跳到实现部分的工作前，我们需要简要地讨论下哪些资源是CPU用于完成工作的可用资源。只有两种类型：内存">
 <meta property="og:type" content="article">
-<meta property="og:title" content="阿花的Blog">
+<meta property="og:title" content="CPU模拟">
 <meta property="og:url" content="http://example.com/2023/12/12/CPU%E6%A8%A1%E6%8B%9F/index.html">
 <meta property="og:site_name" content="阿花的Blog">
-<meta property="og:description" content="CPU 模拟本章的主要目标是将我们的第一个NES游戏跑起来。我们将要游玩贪吃蛇，源代码可以在这里找到。   CPU是任何计算机系统的心脏。CPU的工作是运行程序指令，协调所有可用的硬件模块，以提供完整的体验。尽管PPU和APU运行着各自独立的电路，但它们仍然要在CPU的节拍下行进，执行CPU发出的命令。 在我们跳到实现部分的工作前，我们需要简要地讨论下哪些资源是CPU用于完成工作的可用资源。只有两">
+<meta property="og:description" content="本章的主要目标是将我们的第一个NES游戏跑起来。我们将要游玩贪吃蛇，源代码可以在这里找到。   CPU是任何计算机系统的心脏。CPU的工作是运行程序指令，协调所有可用的硬件模块，以提供完整的体验。尽管PPU和APU运行着各自独立的电路，但它们仍然要在CPU的节拍下行进，执行CPU发出的命令。 在我们跳到实现部分的工作前，我们需要简要地讨论下哪些资源是CPU用于完成工作的可用资源。只有两种类型：内存">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://bugzmanov.github.io/nes_ebook/images/ch3/snk_logo.png">
 <meta property="og:image" content="https://bugzmanov.github.io/nes_ebook/images/ch3/snk_game.gif">
 <meta property="og:image" content="https://bugzmanov.github.io/nes_ebook/images/ch3/cpu_registers_memory.png">
 <meta property="og:image" content="https://bugzmanov.github.io/nes_ebook/images/ch3/image_4_opcodes.png">
 <meta property="article:published_time" content="2023-12-12T12:35:06.854Z">
-<meta property="article:modified_time" content="2023-12-12T12:35:06.855Z">
+<meta property="article:modified_time" content="2023-12-16T04:52:08.681Z">
 <meta property="article:author" content="阿花想养萨摩耶">
+<meta property="article:tag" content="NES">
+<meta property="article:tag" content="模拟器">
+<meta property="article:tag" content="Rust">
+<meta property="article:tag" content="CPU架构">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://bugzmanov.github.io/nes_ebook/images/ch3/snk_logo.png">
 
@@ -50,7 +54,7 @@
   };
 </script>
 
-  <title> | 阿花的Blog</title>
+  <title>CPU模拟 | 阿花的Blog</title>
   
 
 
@@ -212,7 +216,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          
+          CPU模拟
         </h1>
 
         <div class="post-meta">
@@ -223,6 +227,22 @@
               <span class="post-meta-item-text">发表于</span>
 
               <time title="创建时间：2023-12-12 20:35:06" itemprop="dateCreated datePublished" datetime="2023-12-12T20:35:06+08:00">2023-12-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-12-16 12:52:08" itemprop="dateModified" datetime="2023-12-16T12:52:08+08:00">2023-12-16</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9D%82%E9%A1%B9/" itemprop="url" rel="index"><span itemprop="name">杂项</span></a>
+                </span>
             </span>
 
           
@@ -236,7 +256,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="CPU-模拟"><a href="#CPU-模拟" class="headerlink" title="CPU 模拟"></a>CPU 模拟</h2><p>本章的主要目标是将我们的第一个NES游戏跑起来。我们将要游玩贪吃蛇，源代码可以在<a target="_blank" rel="noopener" href="https://gist.github.com/wkjagt/9043907">这里</a>找到。</p>
+        <p>本章的主要目标是将我们的第一个NES游戏跑起来。我们将要游玩贪吃蛇，源代码可以在<a target="_blank" rel="noopener" href="https://gist.github.com/wkjagt/9043907">这里</a>找到。</p>
 <p><img src="https://bugzmanov.github.io/nes_ebook/images/ch3/snk_logo.png" alt="img" style="zoom: 25%;" /></p>
 <p><img src="https://bugzmanov.github.io/nes_ebook/images/ch3/snk_game.gif" alt="img"></p>
 <p>CPU是任何计算机系统的心脏。CPU的工作是运行程序指令，协调所有可用的硬件模块，以提供完整的体验。尽管PPU和APU运行着各自独立的电路，但它们仍然要在CPU的节拍下行进，执行CPU发出的命令。</p>
@@ -311,6 +331,68 @@
     
 
       <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/NES/" rel="tag"><i class="fa fa-tag"></i> NES</a>
+              <a href="/tags/%E6%A8%A1%E6%8B%9F%E5%99%A8/" rel="tag"><i class="fa fa-tag"></i> 模拟器</a>
+              <a href="/tags/Rust/" rel="tag"><i class="fa fa-tag"></i> Rust</a>
+              <a href="/tags/CPU%E6%9E%B6%E6%9E%84/" rel="tag"><i class="fa fa-tag"></i> CPU架构</a>
+          </div>
+          <script type="text/javascript">
+            var tagsall=document.getElementsByClassName("post-tags")
+            for (var i = tagsall.length - 1; i >= 0; i--){
+                var tags=tagsall[i].getElementsByTagName("a");
+                for (var j = tags.length - 1; j >= 0; j--) {
+                    var golden_ratio = 0.618033988749895;
+                    var s = 0.5;
+                    var v = 0.999;
+                    var h = golden_ratio + Math.random()*0.8 - 0.5;
+                    var h_i = parseInt(h * 6);
+                    var f = h * 6 - h_i;
+                    var p = v * (1 - s);
+                    var q = v * (1 - f * s);
+                    var t = v * (1 - (1 - f) * s);
+                    var r, g, b;
+                    switch (h_i) {
+                        case 0:
+                            r = v;
+                            g = t;
+                            b = p;
+                            break;
+                        case 1:
+                            r = q;
+                            g = v;
+                            b = p;
+                            break;
+                        case 2:
+                            r = p;
+                            g = v;
+                            b = t;
+                            break;
+                        case 3 :
+                            r = p;
+                            g = q;
+                            b = v;
+                            break;
+                        case 4:
+                            r = t;
+                            g = p;
+                            b = v;
+                            break;
+                        case 5:
+                            r = v;
+                            g = p;
+                            b = q;
+                            break;
+                        default:
+                            r = 1;
+                            g = 1;
+                            b = 1;
+                      }
+                    tags[j].style.background = "rgba("+parseInt(r*255)+","+parseInt(g*255)+","+parseInt(b*255)+","+0.5+")";
+                }
+            }                        
+            </script>
 
         
 
@@ -322,8 +404,8 @@
       <i class="fa fa-chevron-left"></i> 域适应初探
     </a></div>
       <div class="post-nav-item">
-    <a href="/2023/12/12/NES%20%E5%B9%B3%E5%8F%B0/" rel="next" title="">
-       <i class="fa fa-chevron-right"></i>
+    <a href="/2023/12/12/NES%20%E5%B9%B3%E5%8F%B0/" rel="next" title="NES 平台">
+      NES 平台 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -383,7 +465,6 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU-%E6%A8%A1%E6%8B%9F"><span class="nav-number">1.</span> <span class="nav-text">CPU 模拟</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -399,7 +480,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">68</span>
+          <span class="site-state-item-count">69</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -412,7 +493,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">93</span>
+        <span class="site-state-item-count">97</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -438,16 +519,16 @@
     </div>
     <ul class="links-of-recent-posts-list">
         <li class="links-of-recent-posts-item">
-          <a href="/2023/12/12/NES%20%E5%B9%B3%E5%8F%B0/" title="2023&#x2F;12&#x2F;12&#x2F;NES 平台&#x2F;"></a>
+          <a href="/2023/12/16/3.1/" title="2023&#x2F;12&#x2F;16&#x2F;3.1&#x2F;">指令集构建</a>
         </li>
         <li class="links-of-recent-posts-item">
-          <a href="/2023/12/12/CPU%E6%A8%A1%E6%8B%9F/" title="2023&#x2F;12&#x2F;12&#x2F;CPU模拟&#x2F;"></a>
+          <a href="/2023/12/12/NES%20%E5%B9%B3%E5%8F%B0/" title="2023&#x2F;12&#x2F;12&#x2F;NES 平台&#x2F;">NES 平台</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2023/12/12/CPU%E6%A8%A1%E6%8B%9F/" title="2023&#x2F;12&#x2F;12&#x2F;CPU模拟&#x2F;">CPU模拟</a>
         </li>
         <li class="links-of-recent-posts-item">
           <a href="/2023/11/26/%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E5%9F%9F%E9%80%82%E5%BA%94/" title="2023&#x2F;11&#x2F;26&#x2F;迁移学习域适应&#x2F;">域适应初探</a>
-        </li>
-        <li class="links-of-recent-posts-item">
-          <a href="/2023/11/14/OAI%20dev-brouche/" title="2023&#x2F;11&#x2F;14&#x2F;OAI dev-brouche&#x2F;"></a>
         </li>
     </ul>
   </div>
