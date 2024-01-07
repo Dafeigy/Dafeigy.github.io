@@ -17901,6 +17901,7 @@ E(\theta_f,\theta_y,\theta_d)&=\sum_{i=1,\dots,N}^{d_i=0}L_y(G_y(G_f(x_i;\theta_
 <p><img src="https://bugzmanov.github.io/nes_ebook/images/ch3/snk_game.gif" alt="img"></p>
 <p>CPU是任何计算机系统的心脏。CPU的工作是运行程序指令，协调所有可用的硬件模块，以提供完整的体验。尽管PPU和APU运行着各自独立的电路，但它们仍然要在CPU的节拍下行进，执行CPU发出的命令。</p>
 <p>在我们跳到实现部分的工作前，我们需要简要地讨论下哪些资源是CPU用于完成工作的可用资源。只有两种类型：内存映射和CPU寄存器。从编程的角度来看，内存映射只是一个1字节单元的连续数组。NES CPU使用16位内存寻址，这意味着它可以寻址65536（$2^6$）个不同的内存单元。</p>
+<span id="more"></span>
 <p>正如我们之前所见，NES平台只有和CPU直连的2KiB的RAM：</p>
 <p><img src="https://bugzmanov.github.io/nes_ebook/images/ch3/cpu_registers_memory.png" alt="img" style="zoom: 33%;" /></p>
 <ul>
@@ -18105,7 +18106,8 @@ f_{Dr}\approx - \frac{2v_t \cos \theta_t}{c}f_s</script><p>从CSI中提取到的
 H(f,t)=(\sum_{i=1}^{I}a_i(f,t)e^{-j2\pi\frac{d_i(t)}})e^{-j2\theta_o}</script><p>其中 $I$是径的数量，$a_i$和 $d_i$是信号的衰减和第 $i$ 条路径的传播距离，$\lambda$是频率为 $f$的子载波的波长，$\theta_o$是由中心频偏引起的相位误差、频率偏移以及包边界检测的不确定性的部分。</p>
 <p>一般的情况下，我们假设只有一条反射径对应目标的动作，因此CSI可以被如此转换：</p>
 <script type="math/tex; mode=display">
-H(f,t) = (H_s(f)+a(t)e^{-j2\pi \frac{d_0+v_pt}{\lambda}})e^{-j\theta_o}</script><p>其中的 $H_s$是所有静态信号的综合，它包含了如LoS信号的零多普勒频偏，$d_0$是初始的被目标物反射动态信号的路径长， $v_p$是反射路径长度改变时导致的非零多普勒频偏的速度。注意反射路径长度的变化 $v_p$ 并非真实的人类速度。</p>
+H(f,t) = (H_s(f)+a(t)e^{-j2\pi \frac{d_0+v_pt}{\lambda}})e^{-j\theta_o}</script><span id="more"></span>
+<p>其中的 $H_s$是所有静态信号的综合，它包含了如LoS信号的零多普勒频偏，$d_0$是初始的被目标物反射动态信号的路径长， $v_p$是反射路径长度改变时导致的非零多普勒频偏的速度。注意反射路径长度的变化 $v_p$ 并非真实的人类速度。</p>
 <p><img src="https://s2.loli.net/2024/01/05/VZ5Dj16mtEXIvnu.png" alt="image-20240105111729005" style="zoom:50%;" /></p>
 <p>建立一个椭圆系，并将真实速度 $v_h$按照椭圆的切线和垂直切线的方向进行划分成 $v_n$和$v_t$两部分，这样只有$v_n$才能改变传输路径的长度。因此CSI可表示为：</p>
 <script type="math/tex; mode=display">

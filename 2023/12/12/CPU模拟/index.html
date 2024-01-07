@@ -32,7 +32,7 @@
 <meta property="og:image" content="https://bugzmanov.github.io/nes_ebook/images/ch3/cpu_registers_memory.png">
 <meta property="og:image" content="https://bugzmanov.github.io/nes_ebook/images/ch3/image_4_opcodes.png">
 <meta property="article:published_time" content="2023-12-12T12:35:06.854Z">
-<meta property="article:modified_time" content="2023-12-16T04:52:08.681Z">
+<meta property="article:modified_time" content="2024-01-07T16:03:27.148Z">
 <meta property="article:author" content="阿花想养萨摩耶">
 <meta property="article:tag" content="NES">
 <meta property="article:tag" content="模拟器">
@@ -233,7 +233,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-12-16 12:52:08" itemprop="dateModified" datetime="2023-12-16T12:52:08+08:00">2023-12-16</time>
+                <time title="修改时间：2024-01-08 00:03:27" itemprop="dateModified" datetime="2024-01-08T00:03:27+08:00">2024-01-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -261,6 +261,7 @@
 <p><img src="https://bugzmanov.github.io/nes_ebook/images/ch3/snk_game.gif" alt="img"></p>
 <p>CPU是任何计算机系统的心脏。CPU的工作是运行程序指令，协调所有可用的硬件模块，以提供完整的体验。尽管PPU和APU运行着各自独立的电路，但它们仍然要在CPU的节拍下行进，执行CPU发出的命令。</p>
 <p>在我们跳到实现部分的工作前，我们需要简要地讨论下哪些资源是CPU用于完成工作的可用资源。只有两种类型：内存映射和CPU寄存器。从编程的角度来看，内存映射只是一个1字节单元的连续数组。NES CPU使用16位内存寻址，这意味着它可以寻址65536（$2^6$）个不同的内存单元。</p>
+<span id="more"></span>
 <p>正如我们之前所见，NES平台只有和CPU直连的2KiB的RAM：</p>
 <p><img src="https://bugzmanov.github.io/nes_ebook/images/ch3/cpu_registers_memory.png" alt="img" style="zoom: 33%;" /></p>
 <ul>
