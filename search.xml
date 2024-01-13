@@ -18101,7 +18101,7 @@ f_r= f_s\frac{c-v\cos \theta}{\sqrt{c^2-v^2}}</script><p>其中$f_s$是源频率
 <script type="math/tex; mode=display">
 f_D = f_r-f_s\approx-\frac{v\cos \theta}{c} f_s</script><p>对于感知系统，收发机的位置是静止固定的，当被检测物体以 $v_t$的速度在LOS径往 $\theta_t$方向移动时，DFS在这种co-located的感知系统中和接收端以双倍的速度往 $\theta_t$方向移动等价。因此引入的DFS可以建模为：</p>
 <script type="math/tex; mode=display">
-f_{Dr}\approx - \frac{2v_t \cos \theta_t}{c}f_s</script><p>从CSI中提取到的室内多径的频率特征可表示为：</p>
+f_{Dr}\approx - \frac{2v_t \cos \theta_t}{c} f_s</script><p>从CSI中提取到的室内多径的频率特征可表示为：</p>
 <script type="math/tex; mode=display">
 H(f,t)=(\sum_{i=1}^{I}a_i(f,t)e^{-j2\pi\frac{d_i(t)}})e^{-j2\theta_o}</script><p>其中 $I$是径的数量，$a_i$和 $d_i$是信号的衰减和第 $i$ 条路径的传播距离，$\lambda$是频率为 $f$的子载波的波长，$\theta_o$是由中心频偏引起的相位误差、频率偏移以及包边界检测的不确定性的部分。</p>
 <p>一般的情况下，我们假设只有一条反射径对应目标的动作，因此CSI可以被如此转换：</p>
@@ -18177,6 +18177,16 @@ f_d = \frac{-r v_h \sin(\theta - \alpha)}{\lambda}=\frac{-rv_h \sin (\theta-\alp
         <tag>ISAC</tag>
         <tag>WiFi</tag>
         <tag>CSI</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ITX-Lancer L1 Mesh</title>
+    <url>/2024/01/13/%E8%A3%85%E6%9C%BA/</url>
+    <content><![CDATA[<p>装了一台ITX主机，用于开发~</p>
+]]></content>
+      <tags>
+        <tag>ITX</tag>
+        <tag>装机</tag>
       </tags>
   </entry>
 </search>
