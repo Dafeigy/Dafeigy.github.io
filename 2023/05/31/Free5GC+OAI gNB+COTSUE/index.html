@@ -20,22 +20,19 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":5},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="Free5GC+OAI gNB+COTS UEFree5GC和OAI gNB的安装见前文。下面主要是配置： 核心网配置在执行.&#x2F;run.sh，命令前需要设置转发： 1234sudo sysctl -w net.ipv4.ip_forward&#x3D;1sudo iptables -t nat -A POSTROUTING -o &lt;上网网卡名称&gt; -j MASQUERADEsudo system">
+  <meta name="description" content="Free5GC和OAI gNB的安装见前文。下面主要是配置： 核心网配置在执行.&#x2F;run.sh，命令前需要设置转发： 1234sudo sysctl -w net.ipv4.ip_forward&#x3D;1sudo iptables -t nat -A POSTROUTING -o &lt;上网网卡名称&gt; -j MASQUERADEsudo systemctl stop ufwsudo iptabl">
 <meta property="og:type" content="article">
-<meta property="og:title" content="阿花的Blog">
+<meta property="og:title" content="Free5GC+OAI gNB+COTS UE">
 <meta property="og:url" content="http://example.com/2023/05/31/Free5GC+OAI%20gNB+COTSUE/index.html">
 <meta property="og:site_name" content="阿花的Blog">
-<meta property="og:description" content="Free5GC+OAI gNB+COTS UEFree5GC和OAI gNB的安装见前文。下面主要是配置： 核心网配置在执行.&#x2F;run.sh，命令前需要设置转发： 1234sudo sysctl -w net.ipv4.ip_forward&#x3D;1sudo iptables -t nat -A POSTROUTING -o &lt;上网网卡名称&gt; -j MASQUERADEsudo system">
+<meta property="og:description" content="Free5GC和OAI gNB的安装见前文。下面主要是配置： 核心网配置在执行.&#x2F;run.sh，命令前需要设置转发： 1234sudo sysctl -w net.ipv4.ip_forward&#x3D;1sudo iptables -t nat -A POSTROUTING -o &lt;上网网卡名称&gt; -j MASQUERADEsudo systemctl stop ufwsudo iptabl">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="c:/Users/10706/AppData/Roaming/Typora/typora-user-images/image-20230531130734178.png">
-<meta property="og:image" content="c:/Users/10706/AppData/Roaming/Typora/typora-user-images/image-20230531130955075.png">
-<meta property="og:image" content="c:/Users/10706/AppData/Roaming/Typora/typora-user-images/image-20230531131527149.png">
-<meta property="og:image" content="c:/Users/10706/AppData/Roaming/Typora/typora-user-images/image-20230531131636260.png">
 <meta property="article:published_time" content="2023-05-31T15:21:42.735Z">
-<meta property="article:modified_time" content="2023-05-31T15:22:01.500Z">
+<meta property="article:modified_time" content="2024-03-23T10:56:51.925Z">
 <meta property="article:author" content="阿花想养萨摩耶">
+<meta property="article:tag" content="OAI">
+<meta property="article:tag" content="配置">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="c:/Users/10706/AppData/Roaming/Typora/typora-user-images/image-20230531130734178.png">
 
 <link rel="canonical" href="http://example.com/2023/05/31/Free5GC+OAI%20gNB+COTSUE/">
 
@@ -50,7 +47,7 @@
   };
 </script>
 
-  <title> | 阿花的Blog</title>
+  <title>Free5GC+OAI gNB+COTS UE | 阿花的Blog</title>
   
 
 
@@ -212,7 +209,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          
+          Free5GC+OAI gNB+COTS UE
         </h1>
 
         <div class="post-meta">
@@ -221,10 +218,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2023-05-31 23:21:42 / 修改时间：23:22:01" itemprop="dateCreated datePublished" datetime="2023-05-31T23:21:42+08:00">2023-05-31</time>
+              <time title="创建时间：2023-05-31 23:21:42" itemprop="dateCreated datePublished" datetime="2023-05-31T23:21:42+08:00">2023-05-31</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-03-23 18:56:51" itemprop="dateModified" datetime="2024-03-23T18:56:51+08:00">2024-03-23</time>
+              </span>
 
           
 
@@ -237,7 +240,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="Free5GC-OAI-gNB-COTS-UE"><a href="#Free5GC-OAI-gNB-COTS-UE" class="headerlink" title="Free5GC+OAI gNB+COTS UE"></a>Free5GC+OAI gNB+COTS UE</h2><p>Free5GC和OAI gNB的安装见前文。下面主要是配置：</p>
+        <p>Free5GC和OAI gNB的安装见前文。下面主要是配置：</p>
 <h3 id="核心网配置"><a href="#核心网配置" class="headerlink" title="核心网配置"></a>核心网配置</h3><p>在执行<code>./run.sh</code>，命令前需要设置转发：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo sysctl -w net.ipv4.ip_forward=1</span><br><span class="line">sudo iptables -t nat -A POSTROUTING -o &lt;上网网卡名称&gt; -j MASQUERADE</span><br><span class="line">sudo systemctl stop ufw</span><br><span class="line">sudo iptables -I FORWARD 1 -j ACCEPT</span><br></pre></td></tr></table></figure>
 <p>上网网卡名称通过<code>ifconfig</code>命令查看。</p>
@@ -245,14 +248,7 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">route -n <span class="comment"># 查看路由</span></span><br><span class="line">sudo route add -net 10.60.0.0 netmask 255.255.255.0 gw 192.168.0.131</span><br><span class="line">						^									^</span><br><span class="line">				 核心网分配UE的IP网段					运行核心网主机IP地址</span><br><span class="line">sudo route add -net 10.61.0.0 netmask 255.255.255.0 gw 192.168.0.131</span><br><span class="line">						^									^</span><br><span class="line">				 核心网分配UE的IP网段					运行核心网主机IP地址</span><br></pre></td></tr></table></figure>
 <p>gNB在运行前需要修改基站配置信息中的<code>PLMN</code>相关信息和<code>amf</code>地址的信息，如下：</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">amf_ip_address</span>      <span class="string">=</span> <span class="string">(</span> &#123; <span class="string">ipv4</span>       <span class="string">=</span> <span class="string">&quot;192.168.0.133&quot;</span><span class="string">;</span>	<span class="comment"># 修改成运行核心网主机的IP地址</span></span><br><span class="line">                              <span class="string">ipv6</span>       <span class="string">=</span> <span class="string">&quot;192:168:30::17&quot;</span><span class="string">;</span></span><br><span class="line">                              <span class="string">active</span>     <span class="string">=</span> <span class="string">&quot;yes&quot;</span><span class="string">;</span></span><br><span class="line">                              <span class="string">preference</span> <span class="string">=</span> <span class="string">&quot;ipv4&quot;</span><span class="string">;</span></span><br><span class="line">                            &#125;</span><br><span class="line">                          <span class="string">);</span></span><br><span class="line"><span class="attr">NETWORK_INTERFACES :</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">GNB_INTERFACE_NAME_FOR_NG_AMF</span>            <span class="string">=</span> <span class="string">&quot;eno1&quot;</span><span class="string">;</span>				<span class="comment"># 修改成运行gNB的主机上网的网卡名称</span></span><br><span class="line">        <span class="string">GNB_IPV4_ADDRESS_FOR_NG_AMF</span>              <span class="string">=</span> <span class="string">&quot;192.168.0.140/24&quot;</span><span class="string">;</span>	<span class="comment"># 修改成运行gNB的主机的IP</span></span><br><span class="line">        <span class="string">GNB_INTERFACE_NAME_FOR_NGU</span>               <span class="string">=</span> <span class="string">&quot;eno1&quot;</span><span class="string">;</span>				<span class="comment"># 修改成运行gNB的主机上网的网卡名称</span></span><br><span class="line">        <span class="string">GNB_IPV4_ADDRESS_FOR_NGU</span>                 <span class="string">=</span> <span class="string">&quot;192.168.0.140/24&quot;</span><span class="string">;</span>  <span class="comment"># 修改成运行gNB的主机的IP</span></span><br><span class="line">        <span class="string">GNB_PORT_FOR_S1U</span>                         <span class="string">=</span> <span class="number">2152</span><span class="string">;</span> <span class="comment"># Spec 2152</span></span><br><span class="line">    &#125;<span class="string">;</span></span><br></pre></td></tr></table></figure>
-<h3 id="手机侧"><a href="#手机侧" class="headerlink" title="手机侧"></a>手机侧</h3><p>手机首先需要先锁网，然后打开sim卡设置，点开烧录好的卡，在接入点进行设置：</p>
-<center><img src="C:\Users\10706\AppData\Roaming\Typora\typora-user-images\image-20230531130734178.png" alt="image-20230531130734178" style="zoom:50%;" /><img src="C:\Users\10706\AppData\Roaming\Typora\typora-user-images\image-20230531130955075.png" alt="image-20230531130955075" style="zoom:50%;" /></center>
-
-<p>核心网用Free5GC的话，APN是<code>internet</code>，如果是OAI的核心网则是<code>ctnet</code>。连上就可以进行业务了，比如说抖音和测速啥的：</p>
-<center><img src="C:\Users\10706\AppData\Roaming\Typora\typora-user-images\image-20230531131527149.png" alt="image-20230531131527149" style="zoom:50%;" /><img src="C:\Users\10706\AppData\Roaming\Typora\typora-user-images\image-20230531131636260.png" alt="image-20230531131636260" style="zoom:50%;" /></center>
-
-
-
+<h3 id="手机侧"><a href="#手机侧" class="headerlink" title="手机侧"></a>手机侧</h3><p>设置APN。</p>
 
     </div>
 
@@ -261,6 +257,66 @@
     
 
       <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/OAI/" rel="tag"><i class="fa fa-tag"></i> OAI</a>
+              <a href="/tags/%E9%85%8D%E7%BD%AE/" rel="tag"><i class="fa fa-tag"></i> 配置</a>
+          </div>
+          <script type="text/javascript">
+            var tagsall=document.getElementsByClassName("post-tags")
+            for (var i = tagsall.length - 1; i >= 0; i--){
+                var tags=tagsall[i].getElementsByTagName("a");
+                for (var j = tags.length - 1; j >= 0; j--) {
+                    var golden_ratio = 0.618033988749895;
+                    var s = 0.5;
+                    var v = 0.999;
+                    var h = golden_ratio + Math.random()*0.8 - 0.5;
+                    var h_i = parseInt(h * 6);
+                    var f = h * 6 - h_i;
+                    var p = v * (1 - s);
+                    var q = v * (1 - f * s);
+                    var t = v * (1 - (1 - f) * s);
+                    var r, g, b;
+                    switch (h_i) {
+                        case 0:
+                            r = v;
+                            g = t;
+                            b = p;
+                            break;
+                        case 1:
+                            r = q;
+                            g = v;
+                            b = p;
+                            break;
+                        case 2:
+                            r = p;
+                            g = v;
+                            b = t;
+                            break;
+                        case 3 :
+                            r = p;
+                            g = q;
+                            b = v;
+                            break;
+                        case 4:
+                            r = t;
+                            g = p;
+                            b = v;
+                            break;
+                        case 5:
+                            r = v;
+                            g = p;
+                            b = q;
+                            break;
+                        default:
+                            r = 1;
+                            g = 1;
+                            b = 1;
+                      }
+                    tags[j].style.background = "rgba("+parseInt(r*255)+","+parseInt(g*255)+","+parseInt(b*255)+","+0.5+")";
+                }
+            }                        
+            </script>
 
         
 
@@ -333,7 +389,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Free5GC-OAI-gNB-COTS-UE"><span class="nav-number">1.</span> <span class="nav-text">Free5GC+OAI gNB+COTS UE</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E7%BD%91%E9%85%8D%E7%BD%AE"><span class="nav-number">1.1.</span> <span class="nav-text">核心网配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gNB%E4%BE%A7%E9%85%8D%E7%BD%AE"><span class="nav-number">1.2.</span> <span class="nav-text">gNB侧配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%8B%E6%9C%BA%E4%BE%A7"><span class="nav-number">1.3.</span> <span class="nav-text">手机侧</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E7%BD%91%E9%85%8D%E7%BD%AE"><span class="nav-number">1.</span> <span class="nav-text">核心网配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gNB%E4%BE%A7%E9%85%8D%E7%BD%AE"><span class="nav-number">2.</span> <span class="nav-text">gNB侧配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%8B%E6%9C%BA%E4%BE%A7"><span class="nav-number">3.</span> <span class="nav-text">手机侧</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -349,20 +405,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">71</span>
+          <span class="site-state-item-count">65</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-count">21</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">101</span>
+        <span class="site-state-item-count">96</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -394,10 +450,10 @@
           <a href="/2024/01/07/%E7%9B%AE%E6%A0%87%E4%BD%8D%E7%BD%AE-CSI%E4%BF%A1%E5%8F%B7%E9%A2%91%E7%8E%87%E5%BD%B1%E5%93%8D%E6%8E%A2%E7%A9%B6/" title="2024&#x2F;01&#x2F;07&#x2F;目标位置-CSI信号频率影响探究&#x2F;">【论文笔记】Understanding  WiFi Signal Frequency Features for Position-Independent Gesture Sensing</a>
         </li>
         <li class="links-of-recent-posts-item">
-          <a href="/2023/12/16/3.1/" title="2023&#x2F;12&#x2F;16&#x2F;3.1&#x2F;">指令集构建</a>
+          <a href="/2023/11/26/%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E5%9F%9F%E9%80%82%E5%BA%94/" title="2023&#x2F;11&#x2F;26&#x2F;迁移学习域适应&#x2F;">域适应初探</a>
         </li>
         <li class="links-of-recent-posts-item">
-          <a href="/2023/12/12/NES%20%E5%B9%B3%E5%8F%B0/" title="2023&#x2F;12&#x2F;12&#x2F;NES 平台&#x2F;">NES 平台</a>
+          <a href="/2023/11/14/OAI%20dev-brouche/" title="2023&#x2F;11&#x2F;14&#x2F;OAI dev-brouche&#x2F;"></a>
         </li>
     </ul>
   </div>

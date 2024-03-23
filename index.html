@@ -360,322 +360,6 @@ H(f,t) = (H_s(f)+a(t)e^{-j2\pi \frac{d_0+v_pt}{\lambda}})e^{-j\theta_o}</script>
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/12/16/3.1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="阿花想养萨摩耶">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="阿花的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/12/16/3.1/" class="post-title-link" itemprop="url">指令集构建</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2023-12-16 12:52:47 / 修改时间：12:52:31" itemprop="dateCreated datePublished" datetime="2023-12-16T12:52:47+08:00">2023-12-16</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%9D%82%E9%A1%B9/" itemprop="url" rel="index"><span itemprop="name">杂项</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="开始"><a href="#开始" class="headerlink" title="开始~"></a>开始~</h1><p><img src="https://s2.loli.net/2023/12/14/Nc78DUAfuzRemjS.png" alt="img" style="zoom:50%;" /></p>
-<p>我们先尝试一下翻译一些我们的第一个程序。这段程序长这样：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a9 c0 aa e8 00</span><br></pre></td></tr></table></figure>
-<p>这看上去像某种加密的密文，也不太不适合人类阅读了。但是我们可以用<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Assembly_language">汇编代码</a>的形式将其翻译出来：</p>
-<p><img src="https://s2.loli.net/2023/12/14/waZi1cm9gGbePrL.png" alt="img" style="zoom: 50%;" /></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">LDA #$c0 	;	a9	c0</span><br><span class="line">TAX			;	aa</span><br><span class="line">INX			;	e8</span><br><span class="line">BRK			;	00</span><br></pre></td></tr></table></figure>
-<p>现在他看上去稍微可读一点了。它包含四个指令，并且第一条指令包含了一个参数。我们查看一下<a target="_blank" rel="noopener" href="https://www.nesdev.org/obelisk-6502-guide/reference.html">6502 指令集参考</a>来看看到底发生了什么事情吧！</p>
-<p><img src="https://s2.loli.net/2023/12/14/TFhvQEgb1XpOZLd.png" alt="img" style="zoom:50%;" /></p>
-<p>看上去这条指令将一个十六进制的值<code>0xc0</code>加载到存储CPU寄存器里。同时，他也更新了状态处理寄存器P的若干个比特（即bit1设为0，bit7设为负）。</p>
-<blockquote>
-<p><strong>LDA</strong> spec显示操作码<strong>0xA9</strong>有一个参数。指令大小为2个字节:一个字节用于操作码本身(所有NES CPU操作码的标准)，另一个字节用于参数。 NES操作码可以没有显式参数，也可以有一个显式参数。对于某些操作，显式参数可能需要2个字节。在这种情况下，机器指令将占用3个字节。 值得一提的是，有些操作使用CPU寄存器作为隐式参数。</p>
-</blockquote>
-<p>让我们从高层次的角度勾勒出我们的CPU的样子：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">CPU</span> &#123;</span><br><span class="line">   <span class="keyword">pub</span> register_a: <span class="type">u8</span>,</span><br><span class="line">   <span class="keyword">pub</span> status: <span class="type">u8</span>,</span><br><span class="line">   <span class="keyword">pub</span> program_counter: <span class="type">u16</span>,</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">CPU</span> &#123;</span><br><span class="line">   <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">new</span>() <span class="punctuation">-&gt;</span> <span class="keyword">Self</span> &#123;</span><br><span class="line">       CPU &#123;</span><br><span class="line">           register_a: <span class="number">0</span>,</span><br><span class="line">           status: <span class="number">0</span>,</span><br><span class="line">           program_counter: <span class="number">0</span>,</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line"> </span><br><span class="line">   <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">interpret</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>, program: <span class="type">Vec</span>&lt;<span class="type">u8</span>&gt;) &#123;</span><br><span class="line">       todo!(<span class="string">&quot;&quot;</span>)</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>注意，我们引入了一个程序计数器寄存器，它将帮助我们跟踪我们在程序中的当前位置。另外，请注意，解释方法采用了对self的可变引用，因为我们知道在执行过程中需要修改<strong>register_a</strong>。</p>
-<p>我们的CPU以恒定的周期进行循环：</p>
-<ul>
-<li>从指令存储器中取出下一条执行指令</li>
-<li>解码指令</li>
-<li>执行指令</li>
-<li>重复循环</li>
-</ul>
-<p>我们将其用代码实现：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">interpret</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>, program: <span class="type">Vec</span>&lt;<span class="type">u8</span>&gt;) &#123;</span><br><span class="line">    <span class="keyword">self</span>.program_counter = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">loop</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">opscode</span> = program[<span class="keyword">self</span>.program_counter <span class="keyword">as</span> <span class="type">usize</span>];</span><br><span class="line">        <span class="keyword">self</span>.program_counter += <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">match</span> opscode &#123;</span><br><span class="line">            _ =&gt; todo!()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>到目前为止都很棒~但是那个无尽的循环…? 放心这样是没事滴~我们现在来实现一<strong>LDA (0xA9)</strong> 操作:</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">match</span> opscode &#123;</span><br><span class="line">    <span class="number">0xA9</span> =&gt; &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">param</span> = program[<span class="keyword">self</span>.program_counter <span class="keyword">as</span> <span class="type">usize</span>];</span><br><span class="line">        <span class="keyword">self</span>.program_counter +=<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">self</span>.register_a = param;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">self</span>.register_a == <span class="number">0</span> &#123;</span><br><span class="line">            <span class="keyword">self</span>.status = <span class="keyword">self</span>.status | <span class="number">0b0000_0010</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">self</span>.status = <span class="keyword">self</span>.status &amp; <span class="number">0b1111_1101</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">self</span>.register_a &amp; <span class="number">0b1000_0000</span> != <span class="number">0</span> &#123;</span><br><span class="line">            <span class="keyword">self</span>.status = <span class="keyword">self</span>.status | <span class="number">0b1000_0000</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">self</span>.status = <span class="keyword">self</span>.status &amp; <span class="number">0b0111_1111</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    _ =&gt; todo!()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>我们不会在这里乱搞一些疯狂的东西，我们只是遵循规范并使用Rust将其完成二进制的运算。</p>
-<p>由于我们的循环是无限的，我们没法测试这项功能。在我们更进一步之前，我们先实现<strong>BRK(0x00)</strong>操作码吧：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">match</span> opcode &#123;</span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line">    <span class="number">0x00</span> =&gt; &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    _ =&gt; todo!()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>现在我们来写一些测试吧！</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[cfg(test)]</span></span><br><span class="line"><span class="keyword">mod</span> test &#123;</span><br><span class="line">   <span class="keyword">use</span> super::*;</span><br><span class="line"> </span><br><span class="line">   <span class="meta">#[test]</span></span><br><span class="line">   <span class="keyword">fn</span> <span class="title function_">test_0xa9_lda_immediate_load_data</span>() &#123;</span><br><span class="line">       <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">cpu</span> = CPU::<span class="title function_ invoke__">new</span>();</span><br><span class="line">       cpu.<span class="title function_ invoke__">interpret</span>(<span class="built_in">vec!</span>[<span class="number">0xa9</span>, <span class="number">0x05</span>, <span class="number">0x00</span>]);</span><br><span class="line">       <span class="built_in">assert_eq!</span>(cpu.register_a, <span class="number">0x05</span>);</span><br><span class="line">       <span class="built_in">assert!</span>(cpu.status &amp; <span class="number">0b0000_0010</span> == <span class="number">0b00</span>);</span><br><span class="line">       <span class="built_in">assert!</span>(cpu.status &amp; <span class="number">0b1000_0000</span> == <span class="number">0</span>);</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">#[test]</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">test_0xa9_lda_zero_flag</span>() &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">cpu</span> = CPU::<span class="title function_ invoke__">new</span>();</span><br><span class="line">        cpu.<span class="title function_ invoke__">interpret</span>(<span class="built_in">vec!</span>[<span class="number">0xa9</span>, <span class="number">0x00</span>, <span class="number">0x00</span>]);</span><br><span class="line">        <span class="built_in">assert!</span>(cpu.status &amp; <span class="number">0b0000_0010</span> == <span class="number">0b10</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>你觉得这样够了吗？还需要再检查些什么呢？</p>
-</blockquote>
-<p>接下来我们再来实现另一个操作码吧！</p>
-<p><img src="https://s2.loli.net/2023/12/14/OGSNplLr1Vf9FTU.png" alt="img" style="zoom:50%;" /></p>
-<p>这个操作码也非常只管：将一个值从A拷贝岛X，并且更新状态寄存器。</p>
-<p>We need to introduce <strong>register_x</strong> in our CPU struct, then we can implement the <strong>TAX (0xAA)</strong> opcode:</p>
-<p>我们需要再我们的CPU结构中引入<code>register_x</code>，这样我们就可以实现我们的<strong>TAX(0xAA</strong>操作码了：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">CPU</span> &#123;</span><br><span class="line"><span class="comment">//...</span></span><br><span class="line">   <span class="keyword">pub</span> register_x: <span class="type">u8</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">CPU</span> &#123;</span><br><span class="line"><span class="comment">// ...    </span></span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">interpret</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>, program: <span class="type">Vec</span>&lt;<span class="type">u8</span>&gt;) &#123;</span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line">        <span class="keyword">match</span> opscode &#123;</span><br><span class="line">            <span class="comment">//...  </span></span><br><span class="line">            <span class="number">0xAA</span> =&gt;  &#123;</span><br><span class="line">                <span class="keyword">self</span>.register_x = <span class="keyword">self</span>.register_a;</span><br><span class="line">            </span><br><span class="line">                <span class="keyword">if</span> <span class="keyword">self</span>.register_x == <span class="number">0</span> &#123;</span><br><span class="line">                    <span class="keyword">self</span>.status = <span class="keyword">self</span>.status | <span class="number">0b0000_0010</span>;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">self</span>.status = <span class="keyword">self</span>.status &amp; <span class="number">0b1111_1101</span>;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> <span class="keyword">self</span>.register_x &amp; <span class="number">0b1000_0000</span> != <span class="number">0</span> &#123;</span><br><span class="line">                    <span class="keyword">self</span>.status = <span class="keyword">self</span>.status | <span class="number">0b1000_0000</span>;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">self</span>.status = <span class="keyword">self</span>.status &amp; <span class="number">0b0111_1111</span>;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>同时别忘了也要写测试代码噢：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[test]</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">test_0xaa_tax_move_a_to_x</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">cpu</span> = CPU::<span class="title function_ invoke__">new</span>();</span><br><span class="line">    cpu.register_a = <span class="number">10</span>;</span><br><span class="line">    cpu.<span class="title function_ invoke__">interpret</span>(<span class="built_in">vec!</span>[<span class="number">0xaa</span>, <span class="number">0x00</span>]);</span><br><span class="line"> </span><br><span class="line">    <span class="built_in">assert_eq!</span>(cpu.register_x, <span class="number">10</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在我们继续实现下一个操作码前，我们需要承认我们的代码实在是太复杂了：</p>
-<ul>
-<li>转译的方法已经够复杂了，而且它还要做很多任务</li>
-<li><strong>TAX</strong> 和<strong>LDA</strong> 的实现方式明显有重复的地方</li>
-</ul>
-<p>我们修补一下吧：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ... </span></span><br><span class="line">  <span class="keyword">fn</span> <span class="title function_">lda</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>, value: <span class="type">u8</span>) &#123;</span><br><span class="line">       <span class="keyword">self</span>.register_a = value;</span><br><span class="line">       <span class="keyword">self</span>.<span class="title function_ invoke__">update_zero_and_negative_flags</span>(<span class="keyword">self</span>.register_a);</span><br><span class="line">   &#125;</span><br><span class="line"> </span><br><span class="line">   <span class="keyword">fn</span> <span class="title function_">tax</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>) &#123;</span><br><span class="line">       <span class="keyword">self</span>.register_x = <span class="keyword">self</span>.register_a;</span><br><span class="line">       <span class="keyword">self</span>.<span class="title function_ invoke__">update_zero_and_negative_flags</span>(<span class="keyword">self</span>.register_x);</span><br><span class="line">   &#125;</span><br><span class="line">  </span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">update_zero_and_negative_flags</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>, result: <span class="type">u8</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> result == <span class="number">0</span> &#123;</span><br><span class="line">            <span class="keyword">self</span>.status = <span class="keyword">self</span>.status | <span class="number">0b0000_0010</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">self</span>.status = <span class="keyword">self</span>.status &amp; <span class="number">0b1111_1101</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> result &amp; <span class="number">0b1000_0000</span> != <span class="number">0</span> &#123;</span><br><span class="line">            <span class="keyword">self</span>.status = <span class="keyword">self</span>.status | <span class="number">0b1000_0000</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">self</span>.status = <span class="keyword">self</span>.status &amp; <span class="number">0b0111_1111</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="comment">// ...    </span></span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">interpret</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>, program: <span class="type">Vec</span>&lt;<span class="type">u8</span>&gt;) &#123;</span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line">        <span class="keyword">match</span> opscode &#123;</span><br><span class="line">            <span class="number">0xA9</span> =&gt; &#123;</span><br><span class="line">                <span class="keyword">let</span> <span class="variable">param</span> = program[<span class="keyword">self</span>.program_counter <span class="keyword">as</span> <span class="type">usize</span>];</span><br><span class="line">                <span class="keyword">self</span>.program_counter += <span class="number">1</span>;</span><br><span class="line">                </span><br><span class="line">                <span class="keyword">self</span>.<span class="title function_ invoke__">lda</span>(param);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="number">0xAA</span> =&gt; <span class="keyword">self</span>.<span class="title function_ invoke__">tax</span>(),</span><br><span class="line"></span><br><span class="line">            <span class="number">0x00</span> =&gt; <span class="keyword">return</span>,</span><br><span class="line">            </span><br><span class="line">            _ =&gt; todo!(),</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>好了，现在我们的代码看上去更组织化了。我们希望所有的测试仍然能通过，再怎么强调为我们正在实现的所有操作码编写测试的重要性也不为过，操作本身几乎是微不足道的，但微小的错误会在游戏逻辑中引起不可预测的涟漪。</p>
-<p><img src="https://s2.loli.net/2023/12/14/t524VQZRjmzYuGd.gif" alt="img" style="zoom:50%;" /></p>
-<p>实现程序中的最后一个操作码应该不成问题，我将把这个练习留给你来完成。</p>
-<p>当你完成后，应该可以通过如下的测试：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[test]</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">test_5_ops_working_together</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">cpu</span> = CPU::<span class="title function_ invoke__">new</span>();</span><br><span class="line">    cpu.<span class="title function_ invoke__">interpret</span>(<span class="built_in">vec!</span>[<span class="number">0xa9</span>, <span class="number">0xc0</span>, <span class="number">0xaa</span>, <span class="number">0xe8</span>, <span class="number">0x00</span>]);</span><br><span class="line"> </span><br><span class="line">    <span class="built_in">assert_eq!</span>(cpu.register_x, <span class="number">0xc1</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"> <span class="meta">#[test]</span></span><br><span class="line"> <span class="keyword">fn</span> <span class="title function_">test_inx_overflow</span>() &#123;</span><br><span class="line">     <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">cpu</span> = CPU::<span class="title function_ invoke__">new</span>();</span><br><span class="line">     cpu.register_x = <span class="number">0xff</span>;</span><br><span class="line">     cpu.<span class="title function_ invoke__">interpret</span>(<span class="built_in">vec!</span>[<span class="number">0xe8</span>, <span class="number">0xe8</span>, <span class="number">0x00</span>]);</span><br><span class="line"></span><br><span class="line">     <span class="built_in">assert_eq!</span>(cpu.register_x, <span class="number">1</span>)</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
-<hr>
-<blockquote>
-<p>完整代码可以在GitHub](<a target="_blank" rel="noopener" href="https://github.com/bugzmanov/nes_ebook/tree/master/code/ch3.1)查阅">https://github.com/bugzmanov/nes_ebook/tree/master/code/ch3.1)查阅</a></p>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/12/12/NES%20%E5%B9%B3%E5%8F%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="阿花想养萨摩耶">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="阿花的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/12/12/NES%20%E5%B9%B3%E5%8F%B0/" class="post-title-link" itemprop="url">NES 平台</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-12-12 20:35:06" itemprop="dateCreated datePublished" datetime="2023-12-12T20:35:06+08:00">2023-12-12</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-12-16 12:51:45" itemprop="dateModified" datetime="2023-12-16T12:51:45+08:00">2023-12-16</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%9D%82%E9%A1%B9/" itemprop="url" rel="index"><span itemprop="name">杂项</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id=""><a href="#" class="headerlink" title=" "></a> </h2><h3 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h3><p>软硬件交互的一个简要交互架构如图所示：</p>
-<p><img src="https://bugzmanov.github.io/nes_ebook/images/ch2/image_1_computer_arch.png" alt="img" style="zoom: 50%;" /></p>
-<p>从顶部到底部分别是：</p>
-<ul>
-<li>应用运行着逻辑代码，并通过操作系统（Operating System）与硬件进行交互</li>
-<li>操作系统使用机器语言与硬件进行通信</li>
-<li>在硬件层，每一个设备都被看做存储元件、处理单元或者二者的结合体。基于这个观点，NES joypad不过就是一个包含8个1-bit元素的数组，每一个元素对应的就是joypad上的按钮被按下/释放的状态而已。</li>
-<li>在ALU层以下的层以及存储层并非我们关注的重点。从硬件的角度来看，他们无非就是逻辑门以及对应的变种组合。</li>
-</ul>
-<blockquote>
-<p>如果你想获得更多的计算机组成原理的知识，我强烈建议你阅读这本由Noam Nisan和Shimon Schocken 编写的<a target="_blank" rel="noopener" href="https://www.goodreads.com/book/show/910789.The_Elements_of_Computing_Systems">“The Elements of Computing Systems. Building a Modern Computer from First Principles”</a>.</p>
-</blockquote>
-<p>幸运的是，NES并没有操作系统。这意味着我们的应用层(Gamezzz)直接通过机器语言与硬件进行通信。因此简化后的架构类似下图：</p>
-<p><img src="https://bugzmanov.github.io/nes_ebook/images/ch2/image_2_nes_emul_arch.png" alt="img" style="zoom: 50%;" /></p>
-<p>如你所见，机器语言是我们的模拟器和NES游戏的接口。在我们接下来要构建的模拟器中，我们需要实现NES的计算机架构，算术逻辑单元以及内存。使用高级的编程语言，我们不需要关心布尔运算和时序逻辑的问题，我们仅需要使用现有的Rust特性和语言结构即可。</p>
-<h3 id="NES-平台主要组件"><a href="#NES-平台主要组件" class="headerlink" title="NES 平台主要组件"></a>NES 平台主要组件</h3><p><img src="https://bugzmanov.github.io/nes_ebook/images/ch2/image_3_nes_components.png" alt="img"></p>
-<p>精简版的NES的主要硬件组成如下：</p>
-<ul>
-<li>中央处理单元(CPU) - NES的2A03是<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/MOS_Technology_6502">6502 芯片</a>的一个“魔改版”。不管是什么型号的CPU，该模块的作用就是去执行主程序的指令。</li>
-<li>图像处理单元(PPU) - 也是上面的CPU制造商Ricoh的产品，基于2C02芯片。这个模块的主要目标就是绘制当前游戏状态并将其在一块TV’屏幕上进行展示。</li>
-<li>CPU和PPU都需要从随机接入内存(Random Access Memory,RAM)中获得2 KiB(2046 字节)的空间。</li>
-<li>音频处理单元(APU) - 这是2A03芯片的一部分，它负责生成特定的5通道的音频（chiptune，也就是目前广为人知的8-bit音乐）。</li>
-<li>卡带(Cartridges) - 是平台的一个重要组件。由于NES的控制台并没有操作系统，每个卡带至少携带两个大的ROM芯片：角色ROM(CHR ROM)和程序ROM(PRG ROM)。前者用于存储游戏的视觉图像信息，后者则存储CPU的指令集——也就是游戏的代码（事实上，当卡带插入卡槽时，CHR ROM直接就和PPU进行连接，而PRG ROM则直接和CPU连接）。之后版本的卡带携带了额外的硬件（RAM和ROM），这些硬件可以通过一种称为“映射器 (mappers)”的东西进行访问。这也就解释了为何不升级游戏平台，但后续的游戏也可以获得更好的游玩和视觉体验，</li>
-</ul>
-<p><img src="https://bugzmanov.github.io/nes_ebook/images/ch2/image_4_cartridge.png" alt="img" style="zoom:50%;" /></p>
-<ul>
-<li>游戏手柄 - 用于获取玩家的输入并将其转换为可行的游戏逻辑。我们随后可以认识到，游戏手柄在8-bit的平台中仅仅有8个按钮并不是一个巧合。</li>
-</ul>
-<p>有意思的是，CPU、PPU、APU是相互独立的。这一事实使得NES成为一个分布式系统，其中独立的组件必须协调才能生成一个无缝的游戏体验。我们可以用一张图来描述一下NES 的主要组件，并将其作为我们后面的模拟器编写的提纲：</p>
-<p><img src="https://bugzmanov.github.io/nes_ebook/images/ch2/image_6_impl_plan.png" alt="img" style="zoom:50%;" /></p>
-<p>我们必须对所有这些模块进行模拟，我们的目标是尽快地可以在模拟器上能“玩”到些什么。使用迭代方法，我们将逐渐增加特性来实现这个目标。粗略地估计了一下每个组件的实现难度，PPU将会是最困难的，而BUS则是最简单。</p>
-<p>编写一个完美模拟器是一个永无止境的挑战。但千里之行始于足下，我们马上就会通过编写一个CPU的模拟程序。</p>
-<p><img src="https://bugzmanov.github.io/nes_ebook/images/ch2/image_5_motherboard.png" alt="img"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/12/12/CPU%E6%A8%A1%E6%8B%9F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="阿花想养萨摩耶">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="阿花的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/12/12/CPU%E6%A8%A1%E6%8B%9F/" class="post-title-link" itemprop="url">CPU模拟</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-12-12 20:35:06" itemprop="dateCreated datePublished" datetime="2023-12-12T20:35:06+08:00">2023-12-12</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-08 00:03:27" itemprop="dateModified" datetime="2024-01-08T00:03:27+08:00">2024-01-08</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%9D%82%E9%A1%B9/" itemprop="url" rel="index"><span itemprop="name">杂项</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>本章的主要目标是将我们的第一个NES游戏跑起来。我们将要游玩贪吃蛇，源代码可以在<a target="_blank" rel="noopener" href="https://gist.github.com/wkjagt/9043907">这里</a>找到。</p>
-<p><img src="https://bugzmanov.github.io/nes_ebook/images/ch3/snk_logo.png" alt="img" style="zoom: 25%;" /></p>
-<p><img src="https://bugzmanov.github.io/nes_ebook/images/ch3/snk_game.gif" alt="img"></p>
-<p>CPU是任何计算机系统的心脏。CPU的工作是运行程序指令，协调所有可用的硬件模块，以提供完整的体验。尽管PPU和APU运行着各自独立的电路，但它们仍然要在CPU的节拍下行进，执行CPU发出的命令。</p>
-<p>在我们跳到实现部分的工作前，我们需要简要地讨论下哪些资源是CPU用于完成工作的可用资源。只有两种类型：内存映射和CPU寄存器。从编程的角度来看，内存映射只是一个1字节单元的连续数组。NES CPU使用16位内存寻址，这意味着它可以寻址65536（$2^6$）个不同的内存单元。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/12/12/CPU%E6%A8%A1%E6%8B%9F/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2023/11/26/%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E5%9F%9F%E9%80%82%E5%BA%94/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1146,10 +830,230 @@ H(f,t) = (H_s(f)+a(t)e^{-j2\pi \frac{d_0+v_pt}{\lambda}})e^{-j\theta_o}</script>
   
   
 
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/07/23/Technote-CSIRS/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/07/23/Technote-CSIRS/" class="post-title-link" itemprop="url">CSI-RS详解</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-07-23 23:43:49 / 修改时间：23:43:27" itemprop="dateCreated datePublished" datetime="2023-07-23T23:43:49+08:00">2023-07-23</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="5GNR-CSI-RS"><a href="#5GNR-CSI-RS" class="headerlink" title="5GNR-CSI RS"></a>5GNR-CSI RS</h1><p>CSI-RS的一些简要概述如下：</p>
+<blockquote>
+<ul>
+<li>它是一种特殊的参考信号，由gNB传输给UE，用于估计下行无线信道质量。</li>
+<li>在LTE中，CRS（小区参考信号）通常用于此目的，但NR没有CRS。我们可以将NR中的CSI RS视为LTE中CRS的对应部分。</li>
+<li>CRS（LTE）和CSI RS（NR）的主要区别在于，CSI-RS应由RRC配置传输（意味着它不是强制性信号），而CRS始终在传输。</li>
+<li>另一个区别是NR CSI-RS在设计时考虑了波束成形。</li>
+<li>CSI RS端口数有多种选择：1,2,4,8,16,24,32。</li>
+<li>单端口配置（p1）主要用于TRS（跟踪参考信号），多端口配置（如p2或更高）主要用于CSI测量。</li>
+<li>CSI RS可以在任何OFDM符号和子载波中传输，传输方式几乎是任意的（<strong>不是100%任意，而是超级灵活的</strong>），它将在RRC报文中进行配置。</li>
+</ul>
+</blockquote>
+<p>与LTE CSI一样，NR中的CSI（信道状态信息）是UE测量各种无线信道质量并将结果报告给网络（gNB）的机制。CSI操作涉及的因素相当复杂，但在这里将重点介绍CSI信号生成和资源映射。其他CSI操作步骤将在其他页面进行说明。</p>
+<p>在大多数LTE情况下，我们不需要任何特殊的CSI信号，因为我们使用的是小区专用参考信号。然而，从LTE TM9开始，我们开始为CSI使用特殊的参考信号。因此，如果对TM9或更高版本的LTE CSI参考信号有一定的了解，那么即使NR CSI RS（参考信号）的构造比LTE CSI RS更复杂，也会相对更容易理解本页内容。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/07/23/Technote-CSIRS/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/07/02/%E7%8C%AB%E7%9C%BC%E7%94%B5%E5%BD%B1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/07/02/%E7%8C%AB%E7%9C%BC%E7%94%B5%E5%BD%B1/" class="post-title-link" itemprop="url">猫眼电影爬虫&简单数据分析</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-07-02 21:40:08 / 修改时间：22:49:43" itemprop="dateCreated datePublished" datetime="2023-07-02T21:40:08+08:00">2023-07-02</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="项目说明"><a href="#项目说明" class="headerlink" title="项目说明"></a>项目说明</h2><p>本项目通过爬取猫眼电影数据，分析国内上映影片的票房数据以及其他相关的指标性息，对近年来的电影行业发展进行分析，从而深入了解国内电影市场行业的发展动态与消费市场，对影视从业者从宣发配比、影片类型选择等方面提供参考信息，加速国内电影行业市场的良性发展。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/07/02/%E7%8C%AB%E7%9C%BC%E7%94%B5%E5%BD%B1/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/06/27/CSI-RS%E4%BD%9C%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/06/27/CSI-RS%E4%BD%9C%E7%94%A8/" class="post-title-link" itemprop="url">CSI-RS 作用</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-06-27 20:33:15 / 修改时间：20:33:04" itemprop="dateCreated datePublished" datetime="2023-06-27T20:33:15+08:00">2023-06-27</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>CSI是信道状态信息Channel State Information的缩写，对于分析无线通信系统的性能非常重要。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/06/27/CSI-RS%E4%BD%9C%E7%94%A8/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1217,20 +1121,20 @@ H(f,t) = (H_s(f)+a(t)e^{-j2\pi \frac{d_0+v_pt}{\lambda}})e^{-j\theta_o}</script>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">71</span>
+          <span class="site-state-item-count">65</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-count">21</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">101</span>
+        <span class="site-state-item-count">96</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1262,10 +1166,10 @@ H(f,t) = (H_s(f)+a(t)e^{-j2\pi \frac{d_0+v_pt}{\lambda}})e^{-j\theta_o}</script>
           <a href="/2024/01/07/%E7%9B%AE%E6%A0%87%E4%BD%8D%E7%BD%AE-CSI%E4%BF%A1%E5%8F%B7%E9%A2%91%E7%8E%87%E5%BD%B1%E5%93%8D%E6%8E%A2%E7%A9%B6/" title="2024&#x2F;01&#x2F;07&#x2F;目标位置-CSI信号频率影响探究&#x2F;">【论文笔记】Understanding  WiFi Signal Frequency Features for Position-Independent Gesture Sensing</a>
         </li>
         <li class="links-of-recent-posts-item">
-          <a href="/2023/12/16/3.1/" title="2023&#x2F;12&#x2F;16&#x2F;3.1&#x2F;">指令集构建</a>
+          <a href="/2023/11/26/%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E5%9F%9F%E9%80%82%E5%BA%94/" title="2023&#x2F;11&#x2F;26&#x2F;迁移学习域适应&#x2F;">域适应初探</a>
         </li>
         <li class="links-of-recent-posts-item">
-          <a href="/2023/12/12/NES%20%E5%B9%B3%E5%8F%B0/" title="2023&#x2F;12&#x2F;12&#x2F;NES 平台&#x2F;">NES 平台</a>
+          <a href="/2023/11/14/OAI%20dev-brouche/" title="2023&#x2F;11&#x2F;14&#x2F;OAI dev-brouche&#x2F;"></a>
         </li>
     </ul>
   </div>
