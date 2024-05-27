@@ -189,7 +189,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/05/03/C++%E6%8C%87%E9%92%88%E5%AD%A6%E4%B9%A0/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/27/%E4%B8%80%E7%A7%8D%E6%A0%85%E6%A0%BC%E5%9C%B0%E5%9B%BE%E7%9A%84%E7%94%9F%E6%88%90%E6%96%B9%E6%B3%95/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -203,7 +203,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2023/05/03/C++%E6%8C%87%E9%92%88%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">C/C++核心语法学习（一）</a>
+            <a href="/2024/05/27/%E4%B8%80%E7%A7%8D%E6%A0%85%E6%A0%BC%E5%9C%B0%E5%9B%BE%E7%9A%84%E7%94%9F%E6%88%90%E6%96%B9%E6%B3%95/" class="post-title-link" itemprop="url">一种用于路径规划的栅格地图简易生成方法</a>
         </h2>
 
         <div class="post-meta">
@@ -213,15 +213,82 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2023-05-03 16:01:51" itemprop="dateCreated datePublished" datetime="2023-05-03T16:01:51+08:00">2023-05-03</time>
+              <time title="创建时间：2024-05-27 21:33:39" itemprop="dateCreated datePublished" datetime="2024-05-27T21:33:39+08:00">2024-05-27</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-05-15 15:34:31" itemprop="dateModified" datetime="2023-05-15T15:34:31+08:00">2023-05-15</time>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
               </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">强化学习</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>做机器人路径规划还有避碰方面的应该都离不开栅格地图环境。最近一个项目是要使用N*N大小的栅格地图生成可视障碍物，并要保证在动作空间$\mathcal A={up,down.left,right}$时，从起点到终点有至少一条可行的道路。所有的障碍物用黑色表示，可行区域用白色表示。栅格地图的生成我看网上大多数的文章是基于matlab生成的，使用python的比较少，即使有也是使用gym这个强化学习测试平台进行搭建的，它是强化学习中一个公认的标准测试平台是，用户可以通过自定义环境或修改现有环境构建一个符合自己需要的模型，但是开发文档太长了…它的内核是pygame，有些规范化的东西其实我不太喜欢，而且代码也忒长了。我参考了这位<a target="_blank" rel="noopener" href="https://www.ihawo.com/archives/85.html">大佬的文章</a>尝试搭了一下，奈何发现修改起来太麻烦了。gym其实还有一个问题就是，它的环境是固定死的，也就是说你想调整栅格地图的大小和精度就必须重新编写程序，这样其实对需要做大量对比实验的人来说非常不友好，因此我构想了一种更快更容易修改的栅格地图生成法。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/05/27/%E4%B8%80%E7%A7%8D%E6%A0%85%E6%A0%BC%E5%9C%B0%E5%9B%BE%E7%9A%84%E7%94%9F%E6%88%90%E6%96%B9%E6%B3%95/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/27/%E3%80%90%E6%96%87%E7%8C%AE%E7%BF%BB%E8%AF%91%E3%80%91Delay-Optimal%20Virtualized%20Radio%20Resource%20Scheduling%20in%20Software-Defined%20Vehicular%20Networks%20via%20Stochastic%20Learning/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/05/27/%E3%80%90%E6%96%87%E7%8C%AE%E7%BF%BB%E8%AF%91%E3%80%91Delay-Optimal%20Virtualized%20Radio%20Resource%20Scheduling%20in%20Software-Defined%20Vehicular%20Networks%20via%20Stochastic%20Learning/" class="post-title-link" itemprop="url">【文献翻译】Delay-Optimal Virtualized Radio Resource Scheduling in Software-Defined Vehicular Networks via Stochastic Learning</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-05-27 21:33:39" itemprop="dateCreated datePublished" datetime="2024-05-27T21:33:39+08:00">2024-05-27</time>
+            </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -232,7 +299,7 @@
                 </span>
                   ，
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/%E6%96%87%E7%8C%AE%E7%BF%BB%E8%AF%91/" itemprop="url" rel="index"><span itemprop="name">文献翻译</span></a>
                 </span>
             </span>
 
@@ -247,11 +314,13 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><img src="https://s2.loli.net/2023/05/03/aNE6XkqKnSY2oQM.jpg" alt="COde"></p>
-<p>本篇主要是部分C/C++的指针学习。</p>
+          <h1><center>摘要</center></h1>
+
+<p>由于现有的车辆高密度和多样的车载服务需求，在当前的LTE网络使用效益最高的方法保证车载服务质量充满了挑战。很幸运的是，随着5G技术的发展，大量的蜂窝小区的建立被视为可达到车联网低延迟需求的场景下的一个可行方案。然而，这可能会导致大量的操作开销的产生以及由受限的回传容量以及爆发式增长的信号发射造成的移动网络操作的成本。本文提出一种把软件定义的网络和无线资源虚拟化整合到基于LTE系统的车联网络，比如说</p>
+<p>，<strong>SoftdEfined heteRogeneous VehICular nEtwork</strong>。基于此系统框架，我们提出了基于stochastic Learning的时延最优虚拟无线电资源规划方法。延迟优化问题可以被建模成一个无限维度的平均损耗的部分可观测马尔可夫决策链的过程。然后，使用一个等价的贝尔曼方程来解决这个问题。我们提出的方法可以分成两部分，宏观虚拟资源分配MaVRA以及微观虚拟资源分配MiVRA。前者基于大尺度的时间段单元（交通密度的）而使用，后者通过小尺度的时间段单元履行职能（信道状态 队列状态）。仿真的结果显示了我们提出的方法比传统方法更有效。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2023/05/03/C++%E6%8C%87%E9%92%88%E5%AD%A6%E4%B9%A0/#more" rel="contents">
+              <a class="btn" href="/2024/05/27/%E3%80%90%E6%96%87%E7%8C%AE%E7%BF%BB%E8%AF%91%E3%80%91Delay-Optimal%20Virtualized%20Radio%20Resource%20Scheduling%20in%20Software-Defined%20Vehicular%20Networks%20via%20Stochastic%20Learning/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -275,7 +344,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/05/03/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/27/Three.js/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -289,7 +358,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2023/05/03/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/" class="post-title-link" itemprop="url">使用FRP和一台公网IP服务器进行内网穿透</a>
+            <a href="/2024/05/27/Three.js/" class="post-title-link" itemprop="url">Three.js 学习笔记（一）</a>
         </h2>
 
         <div class="post-meta">
@@ -299,454 +368,8 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2023-05-03 11:25:10" itemprop="dateCreated datePublished" datetime="2023-05-03T11:25:10+08:00">2023-05-03</time>
+              <time title="创建时间：2024-05-27 21:33:39" itemprop="dateCreated datePublished" datetime="2024-05-27T21:33:39+08:00">2024-05-27</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-05-16 15:36:25" itemprop="dateModified" datetime="2023-05-16T15:36:25+08:00">2023-05-16</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><img src="https://s2.loli.net/2023/05/03/TSBrgMHdVRlOZw3.jpg" alt="light"></p>
-<p>出于某种比较操蛋的原因，有时候在外面玩着玩着就会被突然叫去干活…我的笔记本电脑放在学校里是常年开启的，但是出门在外的话很难访问到，因此需要进行内网穿透。下面介绍使用frp进行内网穿透得到远程终端，便于在不同环境中进行内网资源的访问。rp需要一台有公网IP的服务器作为中转，我们称其为server。<strong>如果你没有公网IP设备那么接下来就可以不用看咯。</strong>主要有如下几个步骤：</p>
-<ul>
-<li><p>OpenSSH 配置</p>
-</li>
-<li><p>域名映射（可选）</p>
-</li>
-<li>frp配置</li>
-<li>开机自启动</li>
-</ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/05/03/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/04/23/Protobuf/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="阿花想养萨摩耶">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="阿花的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/04/23/Protobuf/" class="post-title-link" itemprop="url">Protobuf学习</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-04-23 23:07:31" itemprop="dateCreated datePublished" datetime="2023-04-23T23:07:31+08:00">2023-04-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-04-24 20:58:38" itemprop="dateModified" datetime="2023-04-24T20:58:38+08:00">2023-04-24</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Google Protocol Buffer( 简称 Protobuf) 是 Google 公司内部的混合语言数据标准，目前已经正在使用的有超过 48,162 种报文格式定义和超过 12,183 个 .proto 文件。他们用于 RPC 系统和持续数据存储系统。Protocol Buffers 是一种轻便高效的结构化数据存储格式，可以用于结构化数据串行化，或者说序列化。它很适合做数据存储或 RPC 数据交换格式。可用于通讯协议、数据存储等领域的语言无关、平台无关、可扩展的序列化结构数据格式。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/04/23/Protobuf/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/04/21/5GNR-%E5%8F%82%E8%80%83%E4%BF%A1%E5%8F%B7%EF%BC%88%E4%B8%89%EF%BC%89/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="阿花想养萨摩耶">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="阿花的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/04/21/5GNR-%E5%8F%82%E8%80%83%E4%BF%A1%E5%8F%B7%EF%BC%88%E4%B8%89%EF%BC%89/" class="post-title-link" itemprop="url">NR参考信号学习（三）</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-04-21 11:02:40" itemprop="dateCreated datePublished" datetime="2023-04-21T11:02:40+08:00">2023-04-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-05-17 13:21:02" itemprop="dateModified" datetime="2023-05-17T13:21:02+08:00">2023-05-17</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/5G/" itemprop="url" rel="index"><span itemprop="name">5G</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>本节主要介绍物理资源块等相关概念，以及SRS的配置方式。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/04/21/5GNR-%E5%8F%82%E8%80%83%E4%BF%A1%E5%8F%B7%EF%BC%88%E4%B8%89%EF%BC%89/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/04/17/5GNR-%E5%8F%82%E8%80%83%E4%BF%A1%E5%8F%B7%EF%BC%88%E4%BA%8C%EF%BC%89/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="阿花想养萨摩耶">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="阿花的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/04/17/5GNR-%E5%8F%82%E8%80%83%E4%BF%A1%E5%8F%B7%EF%BC%88%E4%BA%8C%EF%BC%89/" class="post-title-link" itemprop="url">NR参考信号学习（二）</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-04-17 17:51:30" itemprop="dateCreated datePublished" datetime="2023-04-17T17:51:30+08:00">2023-04-17</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-05-15 15:34:53" itemprop="dateModified" datetime="2023-05-15T15:34:53+08:00">2023-05-15</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/5G/" itemprop="url" rel="index"><span itemprop="name">5G</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p align="center">
-    <img src="https://s2.loli.net/2023/04/17/NOadov1XT46nl3r.png" alt="logo" style="zoom:90%" />
-</p>
-
-<p>首先想先介绍一下ZC序列以及它的一些特性，然后接下来会总结一下SRS到物理资源的映射过程和方式。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/04/17/5GNR-%E5%8F%82%E8%80%83%E4%BF%A1%E5%8F%B7%EF%BC%88%E4%BA%8C%EF%BC%89/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/04/17/5GNR-%E5%8F%82%E8%80%83%E4%BF%A1%E5%8F%B7%EF%BC%88%E4%B8%80%EF%BC%89/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="阿花想养萨摩耶">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="阿花的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/04/17/5GNR-%E5%8F%82%E8%80%83%E4%BF%A1%E5%8F%B7%EF%BC%88%E4%B8%80%EF%BC%89/" class="post-title-link" itemprop="url">NR参考信号学习（一）</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-04-17 09:49:36" itemprop="dateCreated datePublished" datetime="2023-04-17T09:49:36+08:00">2023-04-17</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-05-15 15:34:59" itemprop="dateModified" datetime="2023-05-15T15:34:59+08:00">2023-05-15</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/5G/" itemprop="url" rel="index"><span itemprop="name">5G</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p align="center">
-    <img src="https://s2.loli.net/2023/04/16/xIZ3eipjRtKAMkr.png" alt="logo" style="zoom:50%" />
-</p>
-
-<h2 id="NR-物理参考信号"><a href="#NR-物理参考信号" class="headerlink" title="NR-物理参考信号"></a>NR-物理参考信号</h2><h3 id="参考信号设计原则"><a href="#参考信号设计原则" class="headerlink" title="参考信号设计原则"></a>参考信号设计原则</h3><p>参考信号的设计规范：</p>
-<ol>
-<li>避免持续发送的周期性信号。所谓持续发送，是指不经系统配置即发送，也无法关闭的信号，例如LTE的CRS。</li>
-<li>物理信号占用的时频资源可灵活配置。</li>
-<li>支持大规模波束赋形传输。</li>
-</ol>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/04/17/5GNR-%E5%8F%82%E8%80%83%E4%BF%A1%E5%8F%B7%EF%BC%88%E4%B8%80%EF%BC%89/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/04/15/Three.js/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="阿花想养萨摩耶">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="阿花的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/04/15/Three.js/" class="post-title-link" itemprop="url">Three.js 学习笔记（一）</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-04-15 12:46:29" itemprop="dateCreated datePublished" datetime="2023-04-15T12:46:29+08:00">2023-04-15</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-05-15 15:33:39" itemprop="dateModified" datetime="2023-05-15T15:33:39+08:00">2023-05-15</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -779,7 +402,7 @@
 <p>本篇是<code>Three.js</code>的入门笔记~</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2023/04/15/Three.js/#more" rel="contents">
+              <a class="btn" href="/2024/05/27/Three.js/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -803,7 +426,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/03/07/ISAC/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/27/usrp/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -817,7 +440,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2023/03/07/ISAC/" class="post-title-link" itemprop="url">ISAC学习记录</a>
+            <a href="/2024/05/27/usrp/" class="post-title-link" itemprop="url">在Ubuntu20.04 LTS中配置USRP B210</a>
         </h2>
 
         <div class="post-meta">
@@ -827,105 +450,8 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2023-03-07 22:01:24" itemprop="dateCreated datePublished" datetime="2023-03-07T22:01:24+08:00">2023-03-07</time>
+              <time title="创建时间：2024-05-27 21:33:39" itemprop="dateCreated datePublished" datetime="2024-05-27T21:33:39+08:00">2024-05-27</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-04-01 23:07:49" itemprop="dateModified" datetime="2023-04-01T23:07:49+08:00">2023-04-01</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/ISAC/" itemprop="url" rel="index"><span itemprop="name">ISAC</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p align="center">
-    <img src="https://s2.loli.net/2023/03/07/eON3wACGtfIKyUQ.png" alt="ISAC" />
-</p>
-<h1 align="center">ISAC 学习笔记</h1>
-<p align="center">
-    <em>待更新</em>
-</p>
-
-
-<p>ISAC笔记</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/03/07/ISAC/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/02/28/23228/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="阿花想养萨摩耶">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="阿花的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/02/28/23228/" class="post-title-link" itemprop="url">【学习记录】2023-02-28</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-02-28 12:51:05" itemprop="dateCreated datePublished" datetime="2023-02-28T12:51:05+08:00">2023-02-28</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-03-02 19:20:32" itemprop="dateModified" datetime="2023-03-02T19:20:32+08:00">2023-03-02</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -947,10 +473,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>本周主要是看一堆乱七八糟的论文，然后有喜欢的人了！</p>
+          <p>从实验室白嫖了SDR，是USRP B210，准备用作UE放在Ubuntu搭建的核心网里，记录一下配置的过程。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2023/02/28/23228/#more" rel="contents">
+              <a class="btn" href="/2024/05/27/usrp/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -974,7 +500,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/02/18/Record/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/27/free5gc%20+%20OAI%20gNB%20+%20OAI%20nrUE/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -988,7 +514,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2023/02/18/Record/" class="post-title-link" itemprop="url">神经网络组合优化</a>
+            <a href="/2024/05/27/free5gc%20+%20OAI%20gNB%20+%20OAI%20nrUE/" class="post-title-link" itemprop="url">free5gc+OAI gNB + OAI nrUE</a>
         </h2>
 
         <div class="post-meta">
@@ -998,15 +524,454 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2023-02-18 15:32:46" itemprop="dateCreated datePublished" datetime="2023-02-18T15:32:46+08:00">2023-02-18</time>
+              <time title="创建时间：2024-05-27 21:33:39" itemprop="dateCreated datePublished" datetime="2024-05-27T21:33:39+08:00">2024-05-27</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-02-28 12:53:18" itemprop="dateModified" datetime="2023-02-28T12:53:18+08:00">2023-02-28</time>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
               </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>一台Ubuntu运行free5gc充当核心网，另一台Ubuntu主机运行OAI gNB和模拟UE。在Ubuntu 20.04.6LTS版本可行。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/05/27/free5gc%20+%20OAI%20gNB%20+%20OAI%20nrUE/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/27/Segmentation%20Augmentation/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/05/27/Segmentation%20Augmentation/" class="post-title-link" itemprop="url">语义分割任务的数据增强方式</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-05-27 21:33:39" itemprop="dateCreated datePublished" datetime="2024-05-27T21:33:39+08:00">2024-05-27</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89/" itemprop="url" rel="index"><span itemprop="name">计算机视觉</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>记录了一些视觉任务中的图像处理方式。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/05/27/Segmentation%20Augmentation/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/27/Technote-CSIRS/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/05/27/Technote-CSIRS/" class="post-title-link" itemprop="url">CSI-RS详解</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-05-27 21:33:39" itemprop="dateCreated datePublished" datetime="2024-05-27T21:33:39+08:00">2024-05-27</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="5GNR-CSI-RS"><a href="#5GNR-CSI-RS" class="headerlink" title="5GNR-CSI RS"></a>5GNR-CSI RS</h1><p>CSI-RS的一些简要概述如下：</p>
+<blockquote>
+<ul>
+<li>它是一种特殊的参考信号，由gNB传输给UE，用于估计下行无线信道质量。</li>
+<li>在LTE中，CRS（小区参考信号）通常用于此目的，但NR没有CRS。我们可以将NR中的CSI RS视为LTE中CRS的对应部分。</li>
+<li>CRS（LTE）和CSI RS（NR）的主要区别在于，CSI-RS应由RRC配置传输（意味着它不是强制性信号），而CRS始终在传输。</li>
+<li>另一个区别是NR CSI-RS在设计时考虑了波束成形。</li>
+<li>CSI RS端口数有多种选择：1,2,4,8,16,24,32。</li>
+<li>单端口配置（p1）主要用于TRS（跟踪参考信号），多端口配置（如p2或更高）主要用于CSI测量。</li>
+<li>CSI RS可以在任何OFDM符号和子载波中传输，传输方式几乎是任意的（<strong>不是100%任意，而是超级灵活的</strong>），它将在RRC报文中进行配置。</li>
+</ul>
+</blockquote>
+<p>与LTE CSI一样，NR中的CSI（信道状态信息）是UE测量各种无线信道质量并将结果报告给网络（gNB）的机制。CSI操作涉及的因素相当复杂，但在这里将重点介绍CSI信号生成和资源映射。其他CSI操作步骤将在其他页面进行说明。</p>
+<p>在大多数LTE情况下，我们不需要任何特殊的CSI信号，因为我们使用的是小区专用参考信号。然而，从LTE TM9开始，我们开始为CSI使用特殊的参考信号。因此，如果对TM9或更高版本的LTE CSI参考信号有一定的了解，那么即使NR CSI RS（参考信号）的构造比LTE CSI RS更复杂，也会相对更容易理解本页内容。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/05/27/Technote-CSIRS/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/27/SSB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/05/27/SSB/" class="post-title-link" itemprop="url">5GNR SSB</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-05-27 21:33:39" itemprop="dateCreated datePublished" datetime="2024-05-27T21:33:39+08:00">2024-05-27</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>SSB（Synchronization Signal/PBCH, 同步广播块）是5G中使用的最重要的导频信道之一，其作用关系到UE接入小区的很多方面，如小区搜索、波束测量、波束选择、波束恢复等。SSB是由基站发出的，在进行一定的数量配置后，基站会使用不同方向的波束发送SSB，这其实就包含了一定的UE到gNB的角度信息。下面将介绍SSB的基本组成以及配置，以及OAI中nrUE中的<code>--ssb</code>参数的配置。</p>
+<!-- mroe -->
+<h2 id="SSB时频结构"><a href="#SSB时频结构" class="headerlink" title="SSB时频结构"></a>SSB时频结构</h2><p>在5G中，SSB包括同步信号和广播信号，具体同步信号包括<strong>PSS</strong>（Primary Synchronization Signal，主同步信号）和<strong>SSS</strong>（Secondary Synchronization Signal，辅同步信号）；广播信号包括<strong>PBCH Data</strong>和<strong>PBCH DMRS</strong>信号。具体SSB的时频域结构如下图所示，SSB在时域占据4个OFDM符号，在频域占据20个RB。</p>
+<p><img src="https://s2.loli.net/2023/09/01/IPd8MzG4F1C7mwq.png" alt="image-20230901103453540" style="zoom: 33%;" /></p>
+<p>所有有颜色的色块构成的就是SSB。如上图所示，PSS和SSS分别位于SSB的sym0和sym2，频域上均占用127个RE，而对于sym0和sym2上20RB以内的<strong>其他空闲RE，则不能调度其他信道信号</strong>。PBCH数据和DMRS信号均位于SSB后三个符号，其中在sym2时，SSS的上下两端与PBCH分别间隔9个和8个RE，<strong>这样设计是为了在SSS和PBCH信号间留有一定的保护间隔，抑制子载波间干扰。</strong>注意，上图只是为了说明时频结构，SSB的具体位置还需要参考38.211的如下表格：</p>
+<p><img src="https://s2.loli.net/2023/09/01/4Poj3ZOVmIry8tL.png" alt="image-20230901104848894"></p>
+<h2 id="SSB时域传输"><a href="#SSB时域传输" class="headerlink" title="SSB时域传输"></a>SSB时域传输</h2><p>我们在上面已经大致了解了SSB所处的位置，以及它的组成结构。下面我们将应用SSB，将其在无线NR中传输。</p>
+<h3 id="SSB周期"><a href="#SSB周期" class="headerlink" title="SSB周期"></a>SSB周期</h3><p>与LTE中PSS/SSS的传输周期固定为5 ms不同，<strong>NR中SSB的传输周期从5 ms到160 ms不等</strong>。NR中，SSB的周期可以配置为5 ms、10 ms、20 ms、40 ms、80 ms和160 ms，由高层参数<code>ssb-periodicityServingCell</code>给出。但是，当U<strong>E在进行初始小区搜索，以及在空闲状态下作小区搜索以作移动时，UE可以假设SSB的传输周期为20 ms</strong>。这样，UE就可以知道在某个频率上搜索SSB需要停留的时间。如果UE在这段时间内没有搜索到PSS/SSS，则UE会转换到同步栅格上的下一个频率上继续搜索。</p>
+<blockquote>
+<p>关于同步栅格的概念，可参考5G频段相关术语一文。</p>
+</blockquote>
+<p>较长的SSB周期可以使基站处于深度睡眠状态，从而可以达到降低基站功耗以节能的目的，也有利于节约OFDM符号等系统开销。缺点是会导致UE长时间停留在某个频率上以搜索SSB，即会增加UE开机后的搜索复杂度及搜索时间。</p>
+<p>但是，SSB周期的增加不一定会影响用户的体验，一是因为现在终端的开关机频次较低，开机搜索复杂度和时间的适当增加并不一定会严重影响用户的体验；二是NR使用了比LTE更稀疏的同步栅格，这在一定程度上抵消了由于SSB周期增加所导致的搜索复杂度的增加。</p>
+<p>在实际网络部署的时候，可以根据基站类型、业务类型等设置SSB周期。例如，宏基站覆盖范围大，接入用户多，因此可以设置较短的SSB周期以便快速同步和接入；而微基站覆盖范围小，接入用户少，因此可以设置较长的SSB周期以节约系统开销和基站功耗。再例如，对于时延要求高的uRLLC业务，可以设置较短的SSB周期；而对于时延要求不高的mMTC业务，则可以设置较长的SSB周期</p>
+<h3 id="SSB突发集合概念"><a href="#SSB突发集合概念" class="headerlink" title="SSB突发集合概念"></a>SSB突发集合概念</h3><blockquote>
+<p><em>SSB突发集合</em>这一术语源于3GPP早期的讨论。在3GPP早期讨论中，假设SSB组成SSB突发，而SSB突发又组成SSB突发集合。但是，中间的<em>SSB突发</em>这一术语最终并未被使用，而<em>SSB突发集合</em>这一术语被保留了下来</p>
+</blockquote>
+<p>NR中，SSB通过波束扫描的方式传输，即通过时分复用的方式在不同的波束上传输SSB。<strong>一个波束扫描内SSB的集合就称作SSB突发集合（SS Burst Set）</strong>。需要指出的是，上面一节所说的<strong>SSB周期其实是指SSB突发集合的传输周期</strong>。但在<strong>每个SSB周期内，SSB突发集合总是被限制在5 ms的时间间隔内</strong>，要么在每个帧的前一个半帧内，要么在每个帧的后一个半帧内，如下图所示。如果对帧、子帧、时隙的概念比较模糊的话，可以参考之前的文章。</p>
+<p><img src="https://s2.loli.net/2023/09/01/76p5OqlNacEQLSX.png" alt="在这里插入图片描述"></p>
+<h3 id="SSB图样"><a href="#SSB图样" class="headerlink" title="SSB图样"></a>SSB图样</h3><p>每个SSB突发集合内的最大SSB数因频带不同而不同。SSB在每个SSB突发集合（长度为半帧）内可能的位置（因此此处的SSB称作候选SSB），即<strong>SSB图样</strong>（Pattern），具体有如下A、B、C、D、E、F、G共7种情况，38.213中有详细定义。</p>
+<p><img src="https://s2.loli.net/2023/09/01/47cEqVfWnDzUM5Y.png" alt="image-20230901114124886"></p>
+<blockquote>
+<p>需要注意，在3GPP演进过程中，CaseC的定义被修改过多次。</p>
+</blockquote>
+<p>这里涉及的情况比较多，我拿OAI的默认配置作为解释，至于其他的Case可参考<a target="_blank" rel="noopener" href="https://blog.csdn.net/Graduate2015/article/details/118613213?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_baidulandingword~default-0-118613213-blog-113067577.235^v38^pc_relevant_anti_vip&amp;spm=1001.2101.3001.4242.1&amp;utm_relevant_index=3">这位博主的文章</a>。在OAI 中，我们使用的是band78以及子载波间隔为30kHz，对应的是<code>Case C</code>的情况。此时我们一个帧有20个时隙，一个时隙是0.5ms，因此有：</p>
+<p><img src="https://s2.loli.net/2023/09/01/I96hogxkSWUBYLe.png" alt="img"></p>
+<blockquote>
+<p>在5GNR中，允许SSB与数据和控制信道使用不同的子载波间隔，这样的设计可以保证，无论数据及其相应的控制信道使用的是SCS＝15 kHz还是SCS = 30 kHz，都可以最大程度降低由于SSB的传输导致的对数据传输的影响。</p>
+</blockquote>
+<p>解释一下<code>OFDM Symbol(s)</code>那里的公式：<code>&#123;2，8&#125;</code>是在每个时隙中的位置，每一个<code>n</code>的取值其实是SSB的标号。因此我们可以看到，在Case C中，最多可以配置8个SSB。</p>
+<h3 id="SSB激活"><a href="#SSB激活" class="headerlink" title="SSB激活"></a>SSB激活</h3><p>接下来的问题就是，我是如何控制配置的SSB数量呢？SSB图样给出的是在SSB突发集合内，SSB可能的候选位置以及SSB的最大值$L_{\max}$，基站通过系统消息SIB1或UE专用的RRC信令的高层参数<code>ssb-PositionsInBurst</code>通知给UE具体是哪些SSB被激活使用这个配置在OAI里：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ssb_PositionsInBurs_BitmapPR</span></span><br><span class="line"><span class="comment"># 1=short, 2=medium, 3=long</span></span><br><span class="line">      ssb_PositionsInBurst_PR                                       = 2;</span><br><span class="line">      ssb_PositionsInBurst_Bitmap                                   = 1;</span><br></pre></td></tr></table></figure>
+<p><code>short</code>/<code>medium</code>/<code>long</code>的字段，分别对应的是下方的Bitmap的长短。<code>Short</code>表示Bitmap只按照4位比特读取，比如说<code>1010</code>,<code>0101</code>,<code>0001</code>等等，开启对应位置的SSB。不可以不配置SSB的哈~如果是<code>Medium</code>的话，最多是8位比特；如果是<code>long</code>那么则是64位比特，一般会以十六进制数进行保存，比如说<code>0xff00000000000000</code>。</p>
+<blockquote>
+<p>SSB突发集合内的SSB数量与天线的波束宽度密切相关。天线发射的波束越窄，需要配置的SSB数量越多，而波束的宽度与载波频率和天线增益有关。对于定向天线，频率越高、增益越大、波束越窄，因此需要配置的SSB数量越多。宏基站需要通过较大的天线增益和较窄的波束实现较大的覆盖范围，因此需要配置的SSB数量较多；而微基站由于覆盖范围较小，波束较窄、波束较少，因此配置的SSB数量也较少。波束数量较多的优点是可以通过波束扫描获得较大的覆盖增益，缺点是增加了系统复杂性和开销；波束较少的情况则相反。</p>
+<p>对于配置了载波聚合的小区，SSB的数量还与小区类型有关。由于UE是在主服务小区（PCell）上进行小区搜索和随机接入，为了较少系统开销，辅小区可以不配置SSB，UE通过同一组小区内的主服务小区或主辅服务小区（PSCell）的SSB获得时间和频率同步。</p>
+</blockquote>
+<h2 id="OAI中nrUE的-ssb参数计算"><a href="#OAI中nrUE的-ssb参数计算" class="headerlink" title="OAI中nrUE的--ssb参数计算"></a>OAI中nrUE的<code>--ssb</code>参数计算</h2><p>这部分要感谢我的好Bro 冰老师。UE里面涉及到频点配置的有2个参数：</p>
+<ul>
+<li><code>-C</code> ：中心频点</li>
+<li><code>--ssb</code>：ssb的最底的子载波到pointA的<strong>距离</strong>（子载波个数）</li>
+</ul>
+<p>冰老师给了个例子，我们来看看：</p>
+<h3 id="例子1"><a href="#例子1" class="headerlink" title="例子1"></a>例子1</h3><p><strong>已知</strong>：</p>
+<ol>
+<li>带宽为106 RB </li>
+<li><code>dl_absoluteFrequencyPointA = 620040</code></li>
+</ol>
+<p>pointA的ARFCN是620040对应的频率是3300.6MHz。这个计算如果你偷懒的话，可以使用<a target="_blank" rel="noopener" href="https://5g-tools.com/5g-nr-gscn-calculator/">这个工具</a>进行换算：</p>
+<p><img src="https://s2.loli.net/2023/09/01/82OasI4gfzM3E7G.png" alt="image-20230901143034289" style="zoom:67%;" /></p>
+<p>带宽是106RB ，中心频点 = 53RB + pointA的频率 = 53*12*30k + 3300.6M = <code>3319.68e6</code>，因此在输入<code>-C</code>的时候需要输入<code>3319680000</code>。然后，我们将中心频点转换到ARFCN：</p>
+<p><img src="https://s2.loli.net/2023/09/01/VH3XflIhZWJ5iyK.png" alt="image-20230901143300463" style="zoom:67%;" /></p>
+<p>当前SSB的绝对频点也就是621312；（这里走了狗屎运，正好带宽中心频点可以配置成SSB的中心频点）此时，计算<code>--ssb</code>参数要计算SSB的最底子载波到pointA的子载波个数，因为SSB的中心频点到最底子载波还有10个RB，所以就是：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+&((3319.68-3300.6)\times 10^6)/(30*10^3)-10\times12\\
+=&636子载波-120子载波\\
+=&516
+\end{aligned}</script><h3 id="例子2"><a href="#例子2" class="headerlink" title="例子2"></a>例子2</h3><p>冰老师截的图咯：</p>
+<p><img src="https://s2.loli.net/2023/09/01/mZPi5y7nYcIavFJ.jpg" alt="f3f89838c01c81a47b044aaa7c3ecd5" style="zoom:33%;" /></p>
+<p>SSB的频率为3408.96，pointA的ARFCN是626724。使用工具可计算PointA的频率为3400.86。因此，<code>--ssb</code>计算为：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+&((3408.96-3400.86)\times 10^6)/(30*10^3)-10\times12\\
+=&270-120\\
+=&150
+\end{aligned}</script>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/27/SRS-devlog/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/05/27/SRS-devlog/" class="post-title-link" itemprop="url">Type your title here</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-05-27 21:33:39" itemprop="dateCreated datePublished" datetime="2024-05-27T21:33:39+08:00">2024-05-27</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/categoreis1/" itemprop="url" rel="index"><span itemprop="name">categoreis1</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p align="center">
+    <img src="https://s2.loli.net/2022/08/20/oxvPZeT8G7ydzct.png" alt="pyecharts logo" width=200 height=200 />
+</p>
+
+
+<p>开发日志，垃圾心情记录</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/05/27/SRS-devlog/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/27/Record/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/05/27/Record/" class="post-title-link" itemprop="url">神经网络组合优化</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-05-27 21:33:39" itemprop="dateCreated datePublished" datetime="2024-05-27T21:33:39+08:00">2024-05-27</time>
+            </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -1031,7 +996,7 @@
           <h1 id="Neural-Combinatorial-Optimization-with-Reinforcement-Learning"><a href="#Neural-Combinatorial-Optimization-with-Reinforcement-Learning" class="headerlink" title="Neural Combinatorial Optimization with Reinforcement Learning"></a>Neural Combinatorial Optimization with Reinforcement Learning</h1><p>论文连接：<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1611.09940.pdf">1611.09940.pdf (arxiv.org)</a>，记录自己的复现记录。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2023/02/18/Record/#more" rel="contents">
+              <a class="btn" href="/2024/05/27/Record/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1161,16 +1126,16 @@
     </div>
     <ul class="links-of-recent-posts-list">
         <li class="links-of-recent-posts-item">
-          <a href="/2024/01/13/%E8%A3%85%E6%9C%BA/" title="2024&#x2F;01&#x2F;13&#x2F;装机&#x2F;">ITX-Lancer L1 Mesh</a>
+          <a href="/2024/05/27/%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E5%9F%9F%E9%80%82%E5%BA%94/" title="2024&#x2F;05&#x2F;27&#x2F;迁移学习域适应&#x2F;">域适应初探</a>
         </li>
         <li class="links-of-recent-posts-item">
-          <a href="/2024/01/07/%E7%9B%AE%E6%A0%87%E4%BD%8D%E7%BD%AE-CSI%E4%BF%A1%E5%8F%B7%E9%A2%91%E7%8E%87%E5%BD%B1%E5%93%8D%E6%8E%A2%E7%A9%B6/" title="2024&#x2F;01&#x2F;07&#x2F;目标位置-CSI信号频率影响探究&#x2F;">【论文笔记】Understanding  WiFi Signal Frequency Features for Position-Independent Gesture Sensing</a>
+          <a href="/2024/05/27/%E9%80%A0%E7%A5%9E%E5%B9%B4%E4%BB%A3/" title="2024&#x2F;05&#x2F;27&#x2F;造神年代&#x2F;">读《造神年代》的一些读后随想</a>
         </li>
         <li class="links-of-recent-posts-item">
-          <a href="/2023/11/26/%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E5%9F%9F%E9%80%82%E5%BA%94/" title="2023&#x2F;11&#x2F;26&#x2F;迁移学习域适应&#x2F;">域适应初探</a>
+          <a href="/2024/05/27/%E7%9B%AE%E6%A0%87%E4%BD%8D%E7%BD%AE-CSI%E4%BF%A1%E5%8F%B7%E9%A2%91%E7%8E%87%E5%BD%B1%E5%93%8D%E6%8E%A2%E7%A9%B6/" title="2024&#x2F;05&#x2F;27&#x2F;目标位置-CSI信号频率影响探究&#x2F;">【论文笔记】Understanding  WiFi Signal Frequency Features for Position-Independent Gesture Sensing</a>
         </li>
         <li class="links-of-recent-posts-item">
-          <a href="/2023/11/14/OAI%20dev-brouche/" title="2023&#x2F;11&#x2F;14&#x2F;OAI dev-brouche&#x2F;"></a>
+          <a href="/2024/05/27/%E8%A3%85%E6%9C%BA/" title="2024&#x2F;05&#x2F;27&#x2F;装机&#x2F;">ITX-Lancer L1 Mesh</a>
         </li>
     </ul>
   </div>

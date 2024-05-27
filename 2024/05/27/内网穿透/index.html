@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":5},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="出于某种比较操蛋的原因，有时候在外面玩着玩着就会被突然叫去干活…我的笔记本电脑放在学校里是常年开启的，但是出门在外的话很难访问到，因此需要进行内网穿透。下面介绍使用frp进行内网穿透得到远程终端，便于在不同环境中进行内网资源的访问。rp需要一台有公网IP的服务器作为中转，我们称其为server。如果你没有公网IP设备那么接下来就可以不用看咯。主要有如下几个步骤：  OpenSSH 配置  域名映">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用FRP和一台公网IP服务器进行内网穿透">
+<meta property="og:url" content="http://example.com/2024/05/27/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/index.html">
+<meta property="og:site_name" content="阿花的Blog">
+<meta property="og:description" content="出于某种比较操蛋的原因，有时候在外面玩着玩着就会被突然叫去干活…我的笔记本电脑放在学校里是常年开启的，但是出门在外的话很难访问到，因此需要进行内网穿透。下面介绍使用frp进行内网穿透得到远程终端，便于在不同环境中进行内网资源的访问。rp需要一台有公网IP的服务器作为中转，我们称其为server。如果你没有公网IP设备那么接下来就可以不用看咯。主要有如下几个步骤：  OpenSSH 配置  域名映">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2023/05/03/TSBrgMHdVRlOZw3.jpg">
+<meta property="og:image" content="https://s2.loli.net/2023/05/03/KQM9UqxV4TXAohO.png">
+<meta property="article:published_time" content="2024-05-27T13:33:39.530Z">
+<meta property="article:modified_time" content="2024-05-27T13:33:39.530Z">
+<meta property="article:author" content="阿花想养萨摩耶">
+<meta property="article:tag" content="frp">
+<meta property="article:tag" content="内网穿透">
+<meta property="article:tag" content="2147954406">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/05/03/TSBrgMHdVRlOZw3.jpg">
+
+<link rel="canonical" href="http://example.com/2024/05/27/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>使用FRP和一台公网IP服务器进行内网穿透 | 阿花的Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">阿花的Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/27/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          使用FRP和一台公网IP服务器进行内网穿透
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-05-27 21:33:39" itemprop="dateCreated datePublished" datetime="2024-05-27T21:33:39+08:00">2024-05-27</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="https://s2.loli.net/2023/05/03/TSBrgMHdVRlOZw3.jpg" alt="light"></p>
+<p>出于某种比较操蛋的原因，有时候在外面玩着玩着就会被突然叫去干活…我的笔记本电脑放在学校里是常年开启的，但是出门在外的话很难访问到，因此需要进行内网穿透。下面介绍使用frp进行内网穿透得到远程终端，便于在不同环境中进行内网资源的访问。rp需要一台有公网IP的服务器作为中转，我们称其为server。<strong>如果你没有公网IP设备那么接下来就可以不用看咯。</strong>主要有如下几个步骤：</p>
+<ul>
+<li><p>OpenSSH 配置</p>
+</li>
+<li><p>域名映射（可选）</p>
+</li>
+<li>frp配置</li>
+<li>开机自启动</li>
+</ul>
+<span id="more"></span>
+<h2 id="OpenSSH配置"><a href="#OpenSSH配置" class="headerlink" title="OpenSSH配置"></a>OpenSSH配置</h2><p>frp需要一台有公网IP的服务器作为中转，我们称其为server。<strong>如果你没有公网IP设备那么接下来就可以不用看咯。</strong>我们需要访问的内网设备叫做客户端client。内网穿透就是使用一台独立于server和client的设备，通过访问server的某一个端口访问到处在内网的client。</p>
+<h3 id="Windos配置"><a href="#Windos配置" class="headerlink" title="Windos配置"></a>Windos配置</h3><p>参与到这个过程的所有设备都需要进行OpenSSH配置。Windows下的配置比较简单，按下<code>win+s</code>键后搜索<strong>“添加可选功能”</strong>，然后搜索OpenSSH客户端和OpenSSH服务器，分别安装即可。如果安装OpenSSH服务器出现0x80072ee6错误，可以参照<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_42752910/article/details/114080481">这篇文章</a>进行修补。</p>
+<h3 id="Linux配置"><a href="#Linux配置" class="headerlink" title="Linux配置"></a>Linux配置</h3><p>Linux下以Ubuntu为例，则需要输入如下命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install openssh-server</span><br></pre></td></tr></table></figure>
+<p>修改配置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 切换到root用户</span></span><br><span class="line">su root</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用vi编辑器打开sshd_config文件</span></span><br><span class="line">vim /etc/ssh/sshd_config</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在编辑器中使用修改参数，参考vi用法 https://www.runoob.com/linux/linux-vim.html</span></span><br><span class="line"><span class="comment"># PermitRootLogin prohibit-password</span></span><br><span class="line">PermitRootLogis <span class="built_in">yes</span></span><br><span class="line">PasswordAuthenticatios <span class="built_in">yes</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># :wq 保存变更退出</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 重启ssh服务</span></span><br><span class="line">service ssh restart</span><br></pre></td></tr></table></figure>
+<h2 id="域名映射"><a href="#域名映射" class="headerlink" title="域名映射"></a>域名映射</h2><p>下一步是域名映射，主要是避免你忘记公网IP的尴尬。域名映射相当于是把那一串数字变成一个你好记忆的名称在使用SSH链接时不会太过于麻烦。配置同样分Windows和Linux端，Mac端没钱买不知道…</p>
+<h3 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/hosts</span><br></pre></td></tr></table></figure>
+<p>输入<code>i</code>后进入编辑模式，按下<code>Esc</code>键后输入<code>:wq</code>保存文件，<code>qa!</code>不保存退出vim。我们在hosts文件中按如下规则进行域名映射的添加：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 域名映射的注释</span></span><br><span class="line">访问设备IP_1 你起的别名1</span><br><span class="line">10.25.1.1 MyPC</span><br><span class="line"></span><br><span class="line"><span class="comment"># 域名映射的注释</span></span><br><span class="line">访问设备IP_2 你起的别名2</span><br><span class="line">10.25.1.2 Server</span><br></pre></td></tr></table></figure>
+<p>这样使用ssh进行访问时：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#原本的访问方法</span></span><br><span class="line"><span class="comment">#ssh 访问设备用户名@访问设备IP</span></span><br><span class="line"><span class="comment">#ssh ubuntu@10.25.1.1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#现在的访问方法</span></span><br><span class="line"><span class="comment">#ssh 访问设备用户名@你起的别名</span></span><br><span class="line">ssh ubuntu@MyPC</span><br></pre></td></tr></table></figure>
+<h3 id="Windows"><a href="#Windows" class="headerlink" title="Windows"></a>Windows</h3><p>Windows下新建一个txt文件，写入你要进行域名映射内容，然后将其放入<code>C:\Windows\System32\drivers\etc</code>文件夹中。注意这一步需要管理员权限哈。</p>
+<h2 id="FRP下载与配置"><a href="#FRP下载与配置" class="headerlink" title="FRP下载与配置"></a>FRP下载与配置</h2><h3 id="Linux服务端"><a href="#Linux服务端" class="headerlink" title="Linux服务端"></a>Linux服务端</h3><p>服务端用于转发。我们需要前往frp的<a target="_blank" rel="noopener" href="https://github.com/fatedier/frp/releases/tag/v0.48.0">Release</a>页面下载编译好的程序。一般来说Windows端下载<code>*_windows_adm64.zip</code>这个，Linux端下载<code>*_linux_amd64.tar.gz</code>这个。下载解压后，我们重命名一下文件夹，<code>Windows</code>的对应变成frpc，<code>Linux</code>的变成<code>frps</code>。</p>
+<p>我们进入frps，只保留带着<code>frps</code>的这几个文件即可（License忘记删了不过没啥关系）：</p>
+<p><img src="https://s2.loli.net/2023/05/03/KQM9UqxV4TXAohO.png" alt="image-20230503110746591"></p>
+<p>然后将其放到公网IP的服务端机器上，我直接用VScode把frps文件夹放在了服务端机器用户<code>ubuntu</code>的根目录，因此其绝对路径为<code>/home/ubuntu/frps</code>。</p>
+<h3 id="Windows客户端"><a href="#Windows客户端" class="headerlink" title="Windows客户端"></a>Windows客户端</h3><p>这个端是我们需要进行穿透的设备。我们打开<code>frpc.ini</code>，修改server_addr的内容为服务器的公网IP：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[common]</span><br><span class="line">server_addr = 你的服务端的公网IP</span><br><span class="line">server_port = 7000</span><br><span class="line"></span><br><span class="line">[ssh]</span><br><span class="line"><span class="built_in">type</span> = tcp</span><br><span class="line">local_ip = 127.0.0.1</span><br><span class="line">local_port = 22</span><br><span class="line">remote_port = 6000</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>然后在frpc文件夹中新建一个文件<code>frpc_autostart.bat</code>写入如下内容：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">@<span class="built_in">echo</span> off</span><br><span class="line"><span class="keyword">if</span> not defined TAG (</span><br><span class="line">	<span class="built_in">set</span> TAG=1</span><br><span class="line">	start wt -p <span class="string">&quot;cmd&quot;</span> %0</span><br><span class="line">	<span class="built_in">exit</span></span><br><span class="line">)</span><br><span class="line">:home</span><br><span class="line">frpc -c frpc.ini</span><br><span class="line">goto home</span><br></pre></td></tr></table></figure>
+<p>然后把frpc文件夹放在一个你平时不会访问的地方，做完这一步之后为<code>frpc_autostart.bat</code>生成一个桌面快捷方式，即右键该程序，选择发送到桌面快捷方式，我们后续会用到。</p>
+<h2 id="开机自启动"><a href="#开机自启动" class="headerlink" title="开机自启动"></a>开机自启动</h2><h3 id="Linux端"><a href="#Linux端" class="headerlink" title="Linux端"></a>Linux端</h3><p>服务端这边的终端输入：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /lib/systemd/system/frps.service</span><br></pre></td></tr></table></figure>
+<p>粘贴如下内容：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=Frp Server Service</span><br><span class="line">After=network.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=simple</span><br><span class="line">User=nobody</span><br><span class="line">Restart=on-failure</span><br><span class="line">RestartSec=5s</span><br><span class="line">ExecStart=/home/ubuntu/frps -c /home/ubuntu/frps/frps.ini	<span class="comment"># 前文提到的绝对路径</span></span><br><span class="line">LimitNOFILE=1048576</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br></pre></td></tr></table></figure>
+<p>保存后设置自启动：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl <span class="built_in">enable</span> frps</span><br><span class="line">systemctl start frps</span><br><span class="line">systemctl status frps <span class="comment"># 查看运行状态，正常来说会有三行 ctrl+c退出状态查看</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="Windows端"><a href="#Windows端" class="headerlink" title="Windows端"></a>Windows端</h3><p>打开<code>C:\Users\你的用户名\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup</code>，然后将<code>frpc_autostart.bat</code>快捷方式放到这个文件夹中，至此完成啦！</p>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -p 6000 内网设备用户名@服务端域名</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/frp/" rel="tag"><i class="fa fa-tag"></i> frp</a>
+              <a href="/tags/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/" rel="tag"><i class="fa fa-tag"></i> 内网穿透</a>
+              <a href="/tags/2147954406/" rel="tag"><i class="fa fa-tag"></i> 2147954406</a>
+          </div>
+          <script type="text/javascript">
+            var tagsall=document.getElementsByClassName("post-tags")
+            for (var i = tagsall.length - 1; i >= 0; i--){
+                var tags=tagsall[i].getElementsByTagName("a");
+                for (var j = tags.length - 1; j >= 0; j--) {
+                    var golden_ratio = 0.618033988749895;
+                    var s = 0.5;
+                    var v = 0.999;
+                    var h = golden_ratio + Math.random()*0.8 - 0.5;
+                    var h_i = parseInt(h * 6);
+                    var f = h * 6 - h_i;
+                    var p = v * (1 - s);
+                    var q = v * (1 - f * s);
+                    var t = v * (1 - (1 - f) * s);
+                    var r, g, b;
+                    switch (h_i) {
+                        case 0:
+                            r = v;
+                            g = t;
+                            b = p;
+                            break;
+                        case 1:
+                            r = q;
+                            g = v;
+                            b = p;
+                            break;
+                        case 2:
+                            r = p;
+                            g = v;
+                            b = t;
+                            break;
+                        case 3 :
+                            r = p;
+                            g = q;
+                            b = v;
+                            break;
+                        case 4:
+                            r = t;
+                            g = p;
+                            b = v;
+                            break;
+                        case 5:
+                            r = v;
+                            g = p;
+                            b = q;
+                            break;
+                        default:
+                            r = 1;
+                            g = 1;
+                            b = 1;
+                      }
+                    tags[j].style.background = "rgba("+parseInt(r*255)+","+parseInt(g*255)+","+parseInt(b*255)+","+0.5+")";
+                }
+            }                        
+            </script>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/05/27/%E5%9B%BE%E5%83%8F%E5%8D%B7%E7%A7%AF/" rel="prev" title="从一维卷积到二维卷积：浅析图像卷积">
+      <i class="fa fa-chevron-left"></i> 从一维卷积到二维卷积：浅析图像卷积
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/05/27/%E5%85%89%E6%A8%A1%E5%9D%97%E5%95%86%E7%94%A8/" rel="next" title="光模块发展简易调研">
+      光模块发展简易调研 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#OpenSSH%E9%85%8D%E7%BD%AE"><span class="nav-number">1.</span> <span class="nav-text">OpenSSH配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Windos%E9%85%8D%E7%BD%AE"><span class="nav-number">1.1.</span> <span class="nav-text">Windos配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux%E9%85%8D%E7%BD%AE"><span class="nav-number">1.2.</span> <span class="nav-text">Linux配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%9F%E5%90%8D%E6%98%A0%E5%B0%84"><span class="nav-number">2.</span> <span class="nav-text">域名映射</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux"><span class="nav-number">2.1.</span> <span class="nav-text">Linux</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Windows"><span class="nav-number">2.2.</span> <span class="nav-text">Windows</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FRP%E4%B8%8B%E8%BD%BD%E4%B8%8E%E9%85%8D%E7%BD%AE"><span class="nav-number">3.</span> <span class="nav-text">FRP下载与配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux%E6%9C%8D%E5%8A%A1%E7%AB%AF"><span class="nav-number">3.1.</span> <span class="nav-text">Linux服务端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Windows%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-number">3.2.</span> <span class="nav-text">Windows客户端</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF%E5%8A%A8"><span class="nav-number">4.</span> <span class="nav-text">开机自启动</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux%E7%AB%AF"><span class="nav-number">4.1.</span> <span class="nav-text">Linux端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Windows%E7%AB%AF"><span class="nav-number">4.2.</span> <span class="nav-text">Windows端</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8"><span class="nav-number">5.</span> <span class="nav-text">使用</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="阿花想养萨摩耶"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">阿花想养萨摩耶</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">65</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dafeigy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dafeigy" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1070642765@qq.com" title="E-Mail → mailto:1070642765@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/2659883291" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;2659883291" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+  </div>
+
+
+
+  <div class="links-of-recent-posts motion-element">
+    <div class="links-of-recent-posts-title">
+      <i class="fa fa-history fa-fw"></i>
+      最近文章
+    </div>
+    <ul class="links-of-recent-posts-list">
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E5%9F%9F%E9%80%82%E5%BA%94/" title="2024&#x2F;05&#x2F;27&#x2F;迁移学习域适应&#x2F;">域适应初探</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E9%80%A0%E7%A5%9E%E5%B9%B4%E4%BB%A3/" title="2024&#x2F;05&#x2F;27&#x2F;造神年代&#x2F;">读《造神年代》的一些读后随想</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E7%9B%AE%E6%A0%87%E4%BD%8D%E7%BD%AE-CSI%E4%BF%A1%E5%8F%B7%E9%A2%91%E7%8E%87%E5%BD%B1%E5%93%8D%E6%8E%A2%E7%A9%B6/" title="2024&#x2F;05&#x2F;27&#x2F;目标位置-CSI信号频率影响探究&#x2F;">【论文笔记】Understanding  WiFi Signal Frequency Features for Position-Independent Gesture Sensing</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E8%A3%85%E6%9C%BA/" title="2024&#x2F;05&#x2F;27&#x2F;装机&#x2F;">ITX-Lancer L1 Mesh</a>
+        </li>
+    </ul>
+  </div>
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">阿花</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

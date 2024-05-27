@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":5},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="2016年11月18日，在美国内华达州里诺召开的3GPP RAN1 #87次会议，确定Polar Code作为5G eMBB（增强移动宽带）场景下控制信道编码方案。极化码具有确定性的构造方法，并且是已知的唯一一种能够被严格证明“达到”信道容量的信道编码方法，因此我们将其作为研究对象，研究其编码&#x2F;译码的实现。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Polar码编码及SC译码Matlab仿真">
+<meta property="og:url" content="http://example.com/2024/05/27/G1831/index.html">
+<meta property="og:site_name" content="阿花的Blog">
+<meta property="og:description" content="2016年11月18日，在美国内华达州里诺召开的3GPP RAN1 #87次会议，确定Polar Code作为5G eMBB（增强移动宽带）场景下控制信道编码方案。极化码具有确定性的构造方法，并且是已知的唯一一种能够被严格证明“达到”信道容量的信道编码方法，因此我们将其作为研究对象，研究其编码&#x2F;译码的实现。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/05/27/t4Gi5PnegJYhRkv.png">
+<meta property="og:image" content="https://i.loli.net/2021/09/03/sohiuSG6P1JtvKw.png">
+<meta property="og:image" content="https://i.loli.net/2021/09/06/OkXdnBWDjHc1oRS.jpg">
+<meta property="og:image" content="https://i.loli.net/2021/09/09/rbHnPJFvyMx7a1f.jpg">
+<meta property="article:published_time" content="2024-05-27T13:33:39.521Z">
+<meta property="article:modified_time" content="2024-05-27T13:33:39.521Z">
+<meta property="article:author" content="阿花想养萨摩耶">
+<meta property="article:tag" content="5G通信">
+<meta property="article:tag" content="极化码">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2022/05/27/t4Gi5PnegJYhRkv.png">
+
+<link rel="canonical" href="http://example.com/2024/05/27/G1831/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Polar码编码及SC译码Matlab仿真 | 阿花的Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">阿花的Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/27/G1831/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Polar码编码及SC译码Matlab仿真
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-05-27 21:33:39" itemprop="dateCreated datePublished" datetime="2024-05-27T21:33:39+08:00">2024-05-27</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%80%9A%E4%BF%A1%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">通信技术</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>2016年11月18日，在美国内华达州里诺召开的3GPP RAN1 #87次会议，确定Polar Code作为5G eMBB（增强移动宽带）场景下控制信道编码方案。极化码具有确定性的构造方法，并且是已知的唯一一种能够被严格证明“达到”信道容量的信道编码方法，因此我们将其作为研究对象，研究其编码/译码的实现。</p>
+<p><img src="https://s2.loli.net/2022/05/27/t4Gi5PnegJYhRkv.png" alt=""></p>
+<span id="more"></span>
+<h1 id="研究讨论"><a href="#研究讨论" class="headerlink" title="研究讨论"></a>研究讨论</h1><h3 id="研究现状"><a href="#研究现状" class="headerlink" title="研究现状"></a>研究现状</h3><p>在针对时延扩展较长的信道时，频域选择性严重衰落，会出现残留冗余造成带宽浪费，通过采用以信源状态转移关系为基础构建信源信道联合译码网格图，综合信源转移概率和信道转移概率计算统一的序列后验概率的方式，可以实现了信源译码和信道译码的一体化联合优化，进而在不降低通信速率的情况下提高传输可靠性，基本实现无误码通信。不仅如此，在对6G$^{[1]}$的展望中，消除冗余的Polar码仍具有较LDPC码更优的BER性能，对于高阶调制的Polar码和多核Polar码设计也处于研究阶段，但纠错性能有一定的局限性，因此，具有较高纠错性能的多核Polar码的设计仍在发展中，也许成功的研究会应用于6G的信道编码技术。不过本次我们的仿真旨在理解Polar Code的基础原理，因此采用最基础的原始理论进行编写。</p>
+<h3 id="研究意义"><a href="#研究意义" class="headerlink" title="研究意义"></a>研究意义</h3><p>作为一种新兴的码种，极化码在推出之时就获得学术界的广泛关注。它是第一个能达到香农极限的编码方式，因此在推动通信系统的性能发展中有不可限量的应用前途。作为通信系的学生，尝试研读、复现论文成果一来能锻炼科研的理解能力、实践能力，同时也能从中汲取到通信这一学科的前沿知识，能获得较高的实用价值。极化码的编码、译码是极化码的核心部分，也是小组成员拟研究的方向。</p>
+<h3 id="研究计划"><a href="#研究计划" class="headerlink" title="研究计划"></a>研究计划</h3><ul>
+<li>研读极化码的原始论文《Channel polarization: A method for constructing capacity-achieving codes for symmetric binary-input memoryless channels》，掌握信道极化的思想以及编码/译码思路；</li>
+<li>在Matlab中搭建仿真平台，完成极化码编码、译码实现；</li>
+<li>对比其他编码方式以及译码方式，对极化码实用性进行评估，并针对仿真结果，对编码译码方式进行考量并做出评价。</li>
+</ul>
+<h2 id="实现过程"><a href="#实现过程" class="headerlink" title="实现过程"></a>实现过程</h2><h3 id="编码部分"><a href="#编码部分" class="headerlink" title="编码部分"></a>编码部分</h3><h4 id="编码原理"><a href="#编码原理" class="headerlink" title="编码原理"></a>编码原理</h4><p>Polar Code是通过引入信道极化概念而构建的。</p>
+<p>信道极化分为两个阶段，分别是信道联合和信道分裂。通过信道的联合与分裂，各个子信道的对称容量将呈现两级分化的趋势：随着码长（即联合信道数）N的增加，一部分子信道的容量趋于1，而其余子信道的容量趋于0。Polar Code正是利用这一信道极化的现象，在容量趋于1的K个子信道上传输消息比特，在其余子信道上传输冻结比特（即收发双方已知的固定比特，通常设置为全零）。由此构成的编码即为Polar Code，码率为$K/N$。</p>
+<p>可以看出，编码问题的关键在于生成矩阵和信息位、冻结位的判决选取。最终的编码输出结果，可以简化为矩阵运算：</p>
+<script type="math/tex; mode=display">
+u^N=c_{i}^N·G_N</script><p>其中，$u^N$代表编码结果，$c_{i}^N$代表了输入数据，$G_N$为生成矩阵，$N$代表输入码长，且该值规定为2的正整数幂。</p>
+<h4 id="生成矩阵的产生"><a href="#生成矩阵的产生" class="headerlink" title="生成矩阵的产生"></a>生成矩阵的产生</h4><p>首先先引入<strong>克罗内克积($\otimes$)</strong>运算：</p>
+<p> 如果<em>A</em>是一个<em>m</em>×<em>n</em>的矩阵，而<em>B</em>是一个<em>p</em>×<em>q</em>的矩阵，则它们的克罗内克积则是一个<em>mp</em>×<em>nq</em>的分块矩阵，记为：</p>
+<script type="math/tex; mode=display">
+\mathrm{A} \otimes \mathrm{B}=\left[\begin{array}{ccc}
+a_{11} B & \cdots & a_{1 n} B \\
+\vdots & \ddots & \vdots \\
+a_{1 n} B & \cdots & a_{n n} B
+\end{array}\right]</script><p>以下举A，B为二阶矩阵时运算克罗内克积为例：</p>
+<script type="math/tex; mode=display">
+\left[\begin{array}{ll}
+a_{11} & a_{12} \\
+a_{21} & a_{22}
+\end{array}\right] \otimes\left[\begin{array}{ll}
+b_{11} & b_{12} \\
+b_{21} & b_{22}
+\end{array}\right]=\left[\begin{array}{llll}
+a_{11} b_{11} & a_{11} b_{12} & a_{12} b_{11} & a_{12} b_{12} \\
+a_{11} b_{21} & a_{11} b_{22} & a_{12} b_{21} & a_{12} b_{22} \\
+a_{21} b_{11} & a_{21} b_{12} & a_{22} b_{11} & a_{22} b_{12} \\
+a_{21} b_{21} & a_{21} b_{22} & a_{22} b_{21} & a_{22} b_{22}
+\end{array}\right]</script><p>下图为文献$^{[1]}$中的编码示意图：</p>
+<p><img src="https://i.loli.net/2021/09/03/sohiuSG6P1JtvKw.png" alt="image-20210903221730402" style="zoom: 80%;" /></p>
+<p>该过程可以简化为如下流程：</p>
+<p>首先输入的码字经过了向量元素的重排操作，即通过图中的$R_N$矩阵相乘运算，然后将翻转后的码字经过信道进行联合、分裂。</p>
+<p>同时，也可以将整个生成矩阵的产生过程可以简化为如下运算：</p>
+<script type="math/tex; mode=display">
+G_{N}=B_{N} F^{\otimes n}</script><p>下面对该表达式进行说明：</p>
+<ul>
+<li><p>$B_N$为元素经过扩展重排后的结果，定义为：</p>
+<script type="math/tex; mode=display">
+B_{N}=R_{N}\left(I_{2} \otimes B_{N / 2}\right)</script><p>其中：</p>
+<ul>
+<li><p>$I_2$为二阶单位矩阵。从定义式可以看出，$B_N$的生成为一递归过程，给定递归初值为$B_2=I_2$。</p>
+</li>
+<li><p>$R_N$为置换矩阵，即将输入序列完成奇序元素和偶序元素的分离。用符号表示为：</p>
+<script type="math/tex; mode=display">
+\left(u_{1}, u_{2}, u_{3}, u_{4}, \cdots, u_{N}\right) \times R_{N}=u_{1}, u_{3}, u_{5}, \cdots, u_{N-1}, u_{2}, u_{4}, u_{6}, \cdots, u_{N}</script></li>
+</ul>
+<p>经过上述操作后，$B_N$完成了比特反序重排。即将每个原序列的十进制序号$i \in{1,2,3,…,N}$先减一得到$i-1$，再将$i-1$按二进制表示，随后将该二进制的高低位进行倒叙排列，将得到的一串二进制重新转化为十进制数$j-1$，然后将第$j$位对应的数变成原来的第$i$位数。以元素$u_7$举例如下：</p>
+<script type="math/tex; mode=display">
+u_{7} \stackrel{7-1}{\longrightarrow} u_{6} \stackrel{\text { 十进制转二进制 }}{\longrightarrow} 110 \stackrel{\text { reverse }}{\longrightarrow} 011 \stackrel{\text { 二进制转十进制 }}{\longrightarrow} 3 \stackrel{3 * 1}{\rightarrow} 4 \rightarrow u_7^*=u_{4}</script><p>其他元素可依次依照此流程重新排序，这里不再赘述。</p>
+</li>
+<li><p>$F^{\otimes n}$为F的n次克罗内克积,即对矩阵$F$进行n次克罗内克积运算。文献$^{[1]}$中给出的$F$矩阵定义为：</p>
+</li>
+</ul>
+<script type="math/tex; mode=display">
+F=\left[\begin{array}{ll}
+1 & 0 \\
+1 & 1
+\end{array}\right]</script><h4 id="信息位与冻结位的选取"><a href="#信息位与冻结位的选取" class="headerlink" title="信息位与冻结位的选取"></a>信息位与冻结位的选取</h4><p>信道极化过程中，有一部分信道的信道容量$I(W)$可以到达1，另一部分则趋近于0。引入文献$^{[1]}$的巴氏参数$Z(W)$来衡量信道容量的趋向性：</p>
+<script type="math/tex; mode=display">
+Z\left(W_{N}^{(i)}\right)=\sum_{y_{1}^{N} \in Y^{N}} \sum_{u_{1}^{i-1} \in X^{i-1}} \sqrt{W_{N}^{(i)}\left(y_{1}^{N}, u_{1}^{i-1} \mid 0\right) W_{N}^{(i)}\left(y_{1}^{N}, u_{1}^{i-1} \mid 1\right)}</script><p>式中的$W_N^{i}(y,u|x)$表示第i个信道的条件转移概率。</p>
+<p>对于一个给定信道，巴氏参数越大说明该信道越不可靠。因此我们只需计算出联合、分裂后信道的巴氏参数，并对它们进行排序，然后根据码率选择巴氏参数较小的信道作为信息位，剩余信道作为冻结位。</p>
+<h4 id="编码输出"><a href="#编码输出" class="headerlink" title="编码输出"></a>编码输出</h4><p>得到巴氏参数的序列后，将该序列从小到大进行排列，前一半作为信息位，后一半为冻结位。即将原始的输入$u$重新排序为$c_i$。最后将排序后的信息$c_i$与生成矩阵相乘：</p>
+<script type="math/tex; mode=display">
+u^N=c_{i}^N·G_N</script><h3 id="信道部分"><a href="#信道部分" class="headerlink" title="信道部分"></a>信道部分</h3><p>我们在常见的高斯加性白噪声信道中进行模拟。将编码结果经过BPSK调制，即将${0,1}$符号映射为${1,-1}$，随后用不同信噪比的高斯加性白噪声与调制结果叠加。</p>
+<h3 id="译码部分"><a href="#译码部分" class="headerlink" title="译码部分"></a>译码部分</h3><h4 id="译码原理"><a href="#译码原理" class="headerlink" title="译码原理"></a>译码原理</h4><p>由之前提到的编码可以看出极化码的构造就是一个信道选择的过程，而极化信道的选择实际上就是按照最优SC译码性能为标准的。因此对极化码而言，最合适的译码算法应当是基于SC译码的，只有这类译码算法才能充分利用极化码的结构，并且同时保证在码长足够长时容量可达。</p>
+<p>SC译码全称为successive cancellation decoder即连续消除译码，采用蝶形算法，通过递归的方式来进行串行解码。而根据蝶形算法的特性，从右向左进行计算，因此在解码时我们首先要确定最右端所判决得到的近似值。</p>
+<h4 id="近似判决"><a href="#近似判决" class="headerlink" title="近似判决"></a>近似判决</h4><p>先对信息位和冻结位进行判决：</p>
+<script type="math/tex; mode=display">
+\hat{\mathrm{u}}_{1}^{(\mathrm{i})}\left\{\begin{array}{c}
+\mathrm{h}_{\mathrm{i}}\left(\mathrm{y}_{\mathrm{N}}^{(\mathrm{i})}, \hat{\mathrm{u}}_{1}^{(\mathrm{i}-1)}\right), \text { if } \mathrm{i} \in \mathrm{A} \\
+\mathrm{u}_{\mathrm{i}}, \text { if } \mathrm{i} \in \mathrm{A}^{\mathrm{c}}
+\end{array}\right.</script><p>其中$\mathrm{i} \in \mathrm{A}^{\mathrm{c}}$表明该比特为冻结比特，$\mathrm{i} \in \mathrm{A}$表明该比特为承载信息的比特。</p>
+<p>随后是对信息位进行判决：</p>
+<script type="math/tex; mode=display">
+\widehat{\mathrm{h}}_{1}^{(\mathrm{i})}\left\{\begin{array}{l}
+0, \text { if } \mathrm{L}_{\mathrm{N}}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{i})}, \hat{\mathrm{u}}_{1}^{(\mathrm{i}-1)}\right) \geq 0 \\
+1, \text { if if } \mathrm{L}_{\mathrm{N}}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{i})}, \hat{\mathrm{u}}_{1}^{(\mathrm{i}-1)}\right)<0
+\end{array}\right.</script><p>其中$\mathrm{L}<em>{\mathrm{N}}^{(\mathrm{i})}\left(\mathrm{y}</em>{1}^{(\mathrm{i})}, \widehat{\mathrm{u}}_{1}^{(\mathrm{i}-1)}\right)$为对数似然比（Log-Likelihood Ratio）：</p>
+<script type="math/tex; mode=display">
+\mathrm{L}_{\mathrm{N}}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{i})}, \widehat{\mathrm{u}}_{1}^{(\mathrm{i}-1)}\right) \triangleq \ln \left(\frac{\mathrm{W}_{\mathrm{N}}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{i})}, \widehat{\mathrm{u}}_{1}^{(\mathrm{i}-1)} \mid 0\right)}{\mathrm{W}_{\mathrm{N}}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{i})}, \hat{\mathrm{u}}_{1}^{(\mathrm{i}-1)} \mid 1\right)}\right)</script><p>该式说明LLR的值为在接收端得到$\left(\mathrm{y}<em>{1}^{(\mathrm{i})}, \widehat{\mathrm{u}}</em>{1}^{(\mathrm{i}-1)}\right)$发送端原本的发送”0”和”1”的比值取对数，当该对数值大于等于0时，说明原本发送”0”的概率要大，因此我们可以将其判决为接收端收到的应该为”0”，反之则为”1”。</p>
+<h4 id="递归求解"><a href="#递归求解" class="headerlink" title="递归求解"></a>递归求解</h4><p>给定递归求解的公式：</p>
+<script type="math/tex; mode=display">
+\begin{gathered}
+\mathrm{L}_{\mathrm{N}}^{(2 \mathrm{i}-1)}\left(\mathrm{y}_{1}^{(\mathrm{N})}, \widehat{\mathrm{u}}_{1}^{(2 \mathrm{i}-2)}\right)=\mathrm{f}\left(\mathrm{L}_{\mathrm{N} / 2}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{N} / 2)}, \widehat{\mathrm{u}}_{1,0}^{(2 \mathrm{i}-2)} \oplus \hat{\mathrm{u}}_{1, \mathrm{e}}^{(2 \mathrm{i}-2)}\right), \mathrm{L}_{\mathrm{N} / 2}^{(\mathrm{i})}\left(\mathrm{y}_{\mathrm{N} / 2+1}^{(\mathrm{N}}, \hat{\mathrm{u}}_{1, \mathrm{e}}^{(2 \mathrm{i}-2)}\right)\right. \\
+\mathrm{L}_{\mathrm{N}}^{(2 \mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{N})}, \hat{\mathrm{u}}_{1}^{(2 \mathrm{i}-1)}\right)=\mathrm{g}\left(\mathrm{L}_{\mathrm{N} / 2}^{(\mathrm{i})}\left(\mathrm{y}_{1}^{(\mathrm{N} / 2)}, \hat{\mathrm{u}}_{1,0}^{(2 \mathrm{i}-2)} \oplus \hat{\mathrm{u}}_{1, \mathrm{e}}^{(2 \mathrm{i}-2)}\right), \mathrm{L}_{\mathrm{N} / 2}^{(\mathrm{i})}\left(\mathrm{y}_{\mathrm{N} / 2+1}^{(\mathrm{N}} \hat{\mathrm{u}}_{1, \mathrm{e}}^{(2 \mathrm{i}-2)}\right), \hat{\mathrm{u}}_{2 \mathrm{i}-1}\right).
+\end{gathered}</script><p>其中：</p>
+<script type="math/tex; mode=display">
+\begin{gathered}
+f(a, b)=\ln \left(\frac{1+e^{a+b}}{e^{a}+e^{b}}\right) \\
+g\left(a, b, u_{s}\right)=(-1)^{u_{s}} a+b
+\end{gathered}</script><p>上述递归的的终止条件为$N=1$,即递归到达了最左端的$W$端。此时：</p>
+<script type="math/tex; mode=display">
+\mathrm{L}_{1}^{1}\left(\mathrm{y}_{\mathrm{j}}\right)=\ln \frac{\mathrm{W}\left(\mathrm{y}_{\mathrm{j}} \mid 0\right)}{\mathrm{W}\left(\mathrm{y}_{\mathrm{j}} \mid 1\right)}</script><p>由于我们在高斯信道下进行仿真，因此：</p>
+<script type="math/tex; mode=display">
+\mathrm{W}(\mathrm{y} \mid \mathrm{x})=\frac{1}{\sqrt{2 \pi} \sigma} \exp \left(-\frac{(\mathrm{y}-\mathrm{x})^{2}}{2 \sigma^{2}}\right)</script><p>给定递归出口：</p>
+<script type="math/tex; mode=display">
+\mathrm{L}_{1}^{1}\left(\mathrm{y}_{\mathrm{j}}\right)=\frac{2 \mathrm{y}}{\sigma^{2}}</script><h4 id="译码结果"><a href="#译码结果" class="headerlink" title="译码结果"></a>译码结果</h4><p>循环求出最后一列所有节点的似然值，然后倒推计算之前各个节点的似然值，重复该过程直到最右端即可完成译码。</p>
+<h2 id="实现结果"><a href="#实现结果" class="headerlink" title="实现结果"></a>实现结果</h2><h3 id="结果评估"><a href="#结果评估" class="headerlink" title="结果评估"></a>结果评估</h3><p>我们在信噪比为5-20dB的情况下进行不同码长的极化码编码译码仿真，并统计了误码率，结果如下所示：</p>
+<p><img src="https://i.loli.net/2021/09/06/OkXdnBWDjHc1oRS.jpg" style="zoom:50%;" /></p>
+<center>码长为8时SNR-BER</center>
+
+<p><img src="https://i.loli.net/2021/09/09/rbHnPJFvyMx7a1f.jpg" style="zoom:50%;" /></p>
+<center>码长为16时SNR-BER</center>
+
+<p>信噪比提高时时，误码率也在减小。码长增大时，抗噪性能越好。</p>
+<h3 id="改进以及探究"><a href="#改进以及探究" class="headerlink" title="改进以及探究"></a>改进以及探究</h3><h4 id="巴氏参数的递归求解"><a href="#巴氏参数的递归求解" class="headerlink" title="巴氏参数的递归求解"></a>巴氏参数的递归求解</h4><p>在文献$^{[1]}$中，给定的巴氏参数计算方法较为复杂。且考虑条件转移概率和信道特性后，我们可以将该过程用递归过程实现：</p>
+<script type="math/tex; mode=display">
+\begin{gathered}
+\mathrm{Z}\left(\mathrm{W}_{\mathrm{N}}^{(2 \mathrm{j}-1)}\right)=2 \mathrm{Z}\left(\mathrm{W}_{\mathrm{N} / 2}^{(\mathrm{j})}\right)-\mathrm{Z}\left(\mathrm{W}_{\mathrm{N} / 2}^{(\mathrm{j})}\right)^{2} \\
+\mathrm{Z}\left(\mathrm{W}_{\mathrm{N}}^{(2 \mathrm{j})}\right)=\mathrm{Z}\left(\mathrm{W}_{\mathrm{N} / 2}^{(\mathrm{j})}\right)^{2}
+\end{gathered}</script><h4 id="近似LLR硬件实现优化"><a href="#近似LLR硬件实现优化" class="headerlink" title="近似LLR硬件实现优化"></a>近似LLR硬件实现优化</h4><p>文献$^{[2]}$中指出，同时含有指数运算以及对数运算的过程不利于硬件实现，因此我们做出如下近似：</p>
+<p>$$<br>f(a, b)=\ln \left(\frac{1+e^{a+b}}{e^{a}+e^{b}}\right)\thickapprox sgn(a·b)·\min\</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/5G%E9%80%9A%E4%BF%A1/" rel="tag"><i class="fa fa-tag"></i> 5G通信</a>
+              <a href="/tags/%E6%9E%81%E5%8C%96%E7%A0%81/" rel="tag"><i class="fa fa-tag"></i> 极化码</a>
+          </div>
+          <script type="text/javascript">
+            var tagsall=document.getElementsByClassName("post-tags")
+            for (var i = tagsall.length - 1; i >= 0; i--){
+                var tags=tagsall[i].getElementsByTagName("a");
+                for (var j = tags.length - 1; j >= 0; j--) {
+                    var golden_ratio = 0.618033988749895;
+                    var s = 0.5;
+                    var v = 0.999;
+                    var h = golden_ratio + Math.random()*0.8 - 0.5;
+                    var h_i = parseInt(h * 6);
+                    var f = h * 6 - h_i;
+                    var p = v * (1 - s);
+                    var q = v * (1 - f * s);
+                    var t = v * (1 - (1 - f) * s);
+                    var r, g, b;
+                    switch (h_i) {
+                        case 0:
+                            r = v;
+                            g = t;
+                            b = p;
+                            break;
+                        case 1:
+                            r = q;
+                            g = v;
+                            b = p;
+                            break;
+                        case 2:
+                            r = p;
+                            g = v;
+                            b = t;
+                            break;
+                        case 3 :
+                            r = p;
+                            g = q;
+                            b = v;
+                            break;
+                        case 4:
+                            r = t;
+                            g = p;
+                            b = v;
+                            break;
+                        case 5:
+                            r = v;
+                            g = p;
+                            b = q;
+                            break;
+                        default:
+                            r = 1;
+                            g = 1;
+                            b = 1;
+                      }
+                    tags[j].style.background = "rgba("+parseInt(r*255)+","+parseInt(g*255)+","+parseInt(b*255)+","+0.5+")";
+                }
+            }                        
+            </script>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/05/27/D2D%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A0%81/" rel="prev" title="D2D通信中的网络编码技术调查">
+      <i class="fa fa-chevron-left"></i> D2D通信中的网络编码技术调查
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/05/27/Free5GC+OAI%20gNB+COTSUE/" rel="next" title="Free5GC+OAI gNB+COTS UE">
+      Free5GC+OAI gNB+COTS UE <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A0%94%E7%A9%B6%E8%AE%A8%E8%AE%BA"><span class="nav-number">1.</span> <span class="nav-text">研究讨论</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A0%94%E7%A9%B6%E7%8E%B0%E7%8A%B6"><span class="nav-number">1.0.1.</span> <span class="nav-text">研究现状</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A0%94%E7%A9%B6%E6%84%8F%E4%B9%89"><span class="nav-number">1.0.2.</span> <span class="nav-text">研究意义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A0%94%E7%A9%B6%E8%AE%A1%E5%88%92"><span class="nav-number">1.0.3.</span> <span class="nav-text">研究计划</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E8%BF%87%E7%A8%8B"><span class="nav-number">1.1.</span> <span class="nav-text">实现过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E7%A0%81%E9%83%A8%E5%88%86"><span class="nav-number">1.1.1.</span> <span class="nav-text">编码部分</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%96%E7%A0%81%E5%8E%9F%E7%90%86"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">编码原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E7%9F%A9%E9%98%B5%E7%9A%84%E4%BA%A7%E7%94%9F"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">生成矩阵的产生</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%A1%E6%81%AF%E4%BD%8D%E4%B8%8E%E5%86%BB%E7%BB%93%E4%BD%8D%E7%9A%84%E9%80%89%E5%8F%96"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">信息位与冻结位的选取</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%96%E7%A0%81%E8%BE%93%E5%87%BA"><span class="nav-number">1.1.1.4.</span> <span class="nav-text">编码输出</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%A1%E9%81%93%E9%83%A8%E5%88%86"><span class="nav-number">1.1.2.</span> <span class="nav-text">信道部分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%91%E7%A0%81%E9%83%A8%E5%88%86"><span class="nav-number">1.1.3.</span> <span class="nav-text">译码部分</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%91%E7%A0%81%E5%8E%9F%E7%90%86"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">译码原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%91%E4%BC%BC%E5%88%A4%E5%86%B3"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">近似判决</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%92%E5%BD%92%E6%B1%82%E8%A7%A3"><span class="nav-number">1.1.3.3.</span> <span class="nav-text">递归求解</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%91%E7%A0%81%E7%BB%93%E6%9E%9C"><span class="nav-number">1.1.3.4.</span> <span class="nav-text">译码结果</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E7%BB%93%E6%9E%9C"><span class="nav-number">1.2.</span> <span class="nav-text">实现结果</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E6%9E%9C%E8%AF%84%E4%BC%B0"><span class="nav-number">1.2.1.</span> <span class="nav-text">结果评估</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B9%E8%BF%9B%E4%BB%A5%E5%8F%8A%E6%8E%A2%E7%A9%B6"><span class="nav-number">1.2.2.</span> <span class="nav-text">改进以及探究</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B7%B4%E6%B0%8F%E5%8F%82%E6%95%B0%E7%9A%84%E9%80%92%E5%BD%92%E6%B1%82%E8%A7%A3"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">巴氏参数的递归求解</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%91%E4%BC%BCLLR%E7%A1%AC%E4%BB%B6%E5%AE%9E%E7%8E%B0%E4%BC%98%E5%8C%96"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">近似LLR硬件实现优化</span></a></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="阿花想养萨摩耶"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">阿花想养萨摩耶</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">65</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dafeigy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dafeigy" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1070642765@qq.com" title="E-Mail → mailto:1070642765@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/2659883291" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;2659883291" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+  </div>
+
+
+
+  <div class="links-of-recent-posts motion-element">
+    <div class="links-of-recent-posts-title">
+      <i class="fa fa-history fa-fw"></i>
+      最近文章
+    </div>
+    <ul class="links-of-recent-posts-list">
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E5%9F%9F%E9%80%82%E5%BA%94/" title="2024&#x2F;05&#x2F;27&#x2F;迁移学习域适应&#x2F;">域适应初探</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E9%80%A0%E7%A5%9E%E5%B9%B4%E4%BB%A3/" title="2024&#x2F;05&#x2F;27&#x2F;造神年代&#x2F;">读《造神年代》的一些读后随想</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E7%9B%AE%E6%A0%87%E4%BD%8D%E7%BD%AE-CSI%E4%BF%A1%E5%8F%B7%E9%A2%91%E7%8E%87%E5%BD%B1%E5%93%8D%E6%8E%A2%E7%A9%B6/" title="2024&#x2F;05&#x2F;27&#x2F;目标位置-CSI信号频率影响探究&#x2F;">【论文笔记】Understanding  WiFi Signal Frequency Features for Position-Independent Gesture Sensing</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E8%A3%85%E6%9C%BA/" title="2024&#x2F;05&#x2F;27&#x2F;装机&#x2F;">ITX-Lancer L1 Mesh</a>
+        </li>
+    </ul>
+  </div>
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">阿花</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>

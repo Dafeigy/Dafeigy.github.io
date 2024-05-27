@@ -189,7 +189,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/05/31/Free5GC+OAI%20gNB+COTSUE/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/27/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-Rope/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -203,7 +203,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2023/05/31/Free5GC+OAI%20gNB+COTSUE/" class="post-title-link" itemprop="url">Free5GC+OAI gNB+COTS UE</a>
+            <a href="/2024/05/27/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-Rope/" class="post-title-link" itemprop="url">字符串结构的高效实现——Rope</a>
         </h2>
 
         <div class="post-meta">
@@ -213,15 +213,17 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2023-05-31 23:21:42" itemprop="dateCreated datePublished" datetime="2023-05-31T23:21:42+08:00">2023-05-31</time>
+              <time title="创建时间：2024-05-27 21:33:39" itemprop="dateCreated datePublished" datetime="2024-05-27T21:33:39+08:00">2024-05-27</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-03-23 18:56:51" itemprop="dateModified" datetime="2024-03-23T18:56:51+08:00">2024-03-23</time>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
               </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
+                </span>
+            </span>
 
           
 
@@ -234,16 +236,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>Free5GC和OAI gNB的安装见前文。下面主要是配置：</p>
-<h3 id="核心网配置"><a href="#核心网配置" class="headerlink" title="核心网配置"></a>核心网配置</h3><p>在执行<code>./run.sh</code>，命令前需要设置转发：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo sysctl -w net.ipv4.ip_forward=1</span><br><span class="line">sudo iptables -t nat -A POSTROUTING -o &lt;上网网卡名称&gt; -j MASQUERADE</span><br><span class="line">sudo systemctl stop ufw</span><br><span class="line">sudo iptables -I FORWARD 1 -j ACCEPT</span><br></pre></td></tr></table></figure>
-<p>上网网卡名称通过<code>ifconfig</code>命令查看。</p>
-<h3 id="gNB侧配置"><a href="#gNB侧配置" class="headerlink" title="gNB侧配置"></a>gNB侧配置</h3><p>在运行前需要添加网络路由：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">route -n <span class="comment"># 查看路由</span></span><br><span class="line">sudo route add -net 10.60.0.0 netmask 255.255.255.0 gw 192.168.0.131</span><br><span class="line">						^									^</span><br><span class="line">				 核心网分配UE的IP网段					运行核心网主机IP地址</span><br><span class="line">sudo route add -net 10.61.0.0 netmask 255.255.255.0 gw 192.168.0.131</span><br><span class="line">						^									^</span><br><span class="line">				 核心网分配UE的IP网段					运行核心网主机IP地址</span><br></pre></td></tr></table></figure>
-<p>gNB在运行前需要修改基站配置信息中的<code>PLMN</code>相关信息和<code>amf</code>地址的信息，如下：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">amf_ip_address</span>      <span class="string">=</span> <span class="string">(</span> &#123; <span class="string">ipv4</span>       <span class="string">=</span> <span class="string">&quot;192.168.0.133&quot;</span><span class="string">;</span>	<span class="comment"># 修改成运行核心网主机的IP地址</span></span><br><span class="line">                              <span class="string">ipv6</span>       <span class="string">=</span> <span class="string">&quot;192:168:30::17&quot;</span><span class="string">;</span></span><br><span class="line">                              <span class="string">active</span>     <span class="string">=</span> <span class="string">&quot;yes&quot;</span><span class="string">;</span></span><br><span class="line">                              <span class="string">preference</span> <span class="string">=</span> <span class="string">&quot;ipv4&quot;</span><span class="string">;</span></span><br><span class="line">                            &#125;</span><br><span class="line">                          <span class="string">);</span></span><br><span class="line"><span class="attr">NETWORK_INTERFACES :</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">GNB_INTERFACE_NAME_FOR_NG_AMF</span>            <span class="string">=</span> <span class="string">&quot;eno1&quot;</span><span class="string">;</span>				<span class="comment"># 修改成运行gNB的主机上网的网卡名称</span></span><br><span class="line">        <span class="string">GNB_IPV4_ADDRESS_FOR_NG_AMF</span>              <span class="string">=</span> <span class="string">&quot;192.168.0.140/24&quot;</span><span class="string">;</span>	<span class="comment"># 修改成运行gNB的主机的IP</span></span><br><span class="line">        <span class="string">GNB_INTERFACE_NAME_FOR_NGU</span>               <span class="string">=</span> <span class="string">&quot;eno1&quot;</span><span class="string">;</span>				<span class="comment"># 修改成运行gNB的主机上网的网卡名称</span></span><br><span class="line">        <span class="string">GNB_IPV4_ADDRESS_FOR_NGU</span>                 <span class="string">=</span> <span class="string">&quot;192.168.0.140/24&quot;</span><span class="string">;</span>  <span class="comment"># 修改成运行gNB的主机的IP</span></span><br><span class="line">        <span class="string">GNB_PORT_FOR_S1U</span>                         <span class="string">=</span> <span class="number">2152</span><span class="string">;</span> <span class="comment"># Spec 2152</span></span><br><span class="line">    &#125;<span class="string">;</span></span><br></pre></td></tr></table></figure>
-<h3 id="手机侧"><a href="#手机侧" class="headerlink" title="手机侧"></a>手机侧</h3><p>设置APN。</p>
-
+          <p>Rope作为一种高效处理字符串的数据结构广泛应用于长文本的字符串操作中。下文给出Rope数据结构的基本结构以及Python的实现。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/05/27/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-Rope/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -262,7 +263,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/05/28/vue%E5%AD%A6%E4%B9%A0%EF%BC%881%EF%BC%89/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/27/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%952022-8-20/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -276,7 +277,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2023/05/28/vue%E5%AD%A6%E4%B9%A0%EF%BC%881%EF%BC%89/" class="post-title-link" itemprop="url">Vue3学习记录</a>
+            <a href="/2024/05/27/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%952022-8-20/" class="post-title-link" itemprop="url">【学习记录】2022-8-20-？</a>
         </h2>
 
         <div class="post-meta">
@@ -285,9 +286,618 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2023-05-28 21:22:43 / 修改时间：21:22:22" itemprop="dateCreated datePublished" datetime="2023-05-28T21:22:43+08:00">2023-05-28</time>
+              <time title="创建时间：2024-05-27 21:33:39" itemprop="dateCreated datePublished" datetime="2024-05-27T21:33:39+08:00">2024-05-27</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>师兄让我别去CV卷了，让我搞搞通信。然后就是让我看看5G核心网相关的内容，笑死😂，我本科的时候移动通信的老师也和我们一起摆烂，考试开卷基本没啥东西记住的。不过想想也是，CV就业压力挺大的，当成业余兴趣爱好去研究下也不错，做成工作可能也很难受，也卷不过985的顶级实验室出来的。娄山雀说他前几天有个北大ACM区域金牌的计算机硕去面他们的后端都没有机会，然后四个清华大学的硕去面OPPO连简历复筛都没过……很可怕很可怕。然后最近看了严曦老师的《造神年代》，我再次燃起了对通信事业的热情。链接每个节点、信息的传输，和生命的波纹好像，当这些所有波纹和对事件的响应结合到一起构建成了一个系统，就完成了一个宏观定义的世界交互（我好像在说一些乱七八糟的屁话😂）这种感觉和造物其实也挺像的。所以开始吧：</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/05/27/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%952022-8-20/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/27/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%952022-7-22/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/05/27/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%952022-7-22/" class="post-title-link" itemprop="url">【学习记录】2022-7-22-2022-8-5</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-05-27 21:33:39" itemprop="dateCreated datePublished" datetime="2024-05-27T21:33:39+08:00">2024-05-27</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>要写一个yolov5+faceNet的人脸识别，没给定数据集和模型要求，所以我按<del>最高性价比</del>最摸鱼的原则进行构建。这个任务的由三部分组成的，首先是使用<code>Yolov5</code>完成人脸的识别并裁剪，随后用<code>FaceNet</code>进行特征的提取，最后使用提取的特征通过一个<code>classifier</code>完成人脸所属对象的识别。</p>
+<p>测试用的demo使用了B站Up主<a target="_blank" rel="noopener" href="https://space.bilibili.com/298054634">马哥巨离谱</a>的作品：<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1z34y167KD?spm_id_from=333.999.0.0&amp;vd_source=ab34db443b112b108b42c31ac575fd1f">穿山甲之【广东分甲】</a>，人物共有五个，人脸信息分布也很足；FaceNet作为局部的信息提取，我是使用MobileNet作为主干网络，并使用了一些预训练的权重进行训练。至于最后的分类器，我觉就只用了一个FC就完成了，效果还算不错。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/05/27/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%952022-7-22/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/27/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%20%E7%AC%AC%E4%B8%89%E5%91%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/05/27/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%20%E7%AC%AC%E4%B8%89%E5%91%A8/" class="post-title-link" itemprop="url">【学习记录】2022-9-26</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-05-27 21:33:39" itemprop="dateCreated datePublished" datetime="2024-05-27T21:33:39+08:00">2024-05-27</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%80%9A%E4%BF%A1%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">通信技术</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>本周工作主要是看《SoftdEfined heteRogeneous VehICular nEtwork》以及弄清楚师兄让我搭的5G小系统。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/05/27/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%20%E7%AC%AC%E4%B8%89%E5%91%A8/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/27/%E5%9F%BA%E7%AB%99%E5%88%86%E9%85%8D/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/05/27/%E5%9F%BA%E7%AB%99%E5%88%86%E9%85%8D/" class="post-title-link" itemprop="url">基站选址研究</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-05-27 21:33:39" itemprop="dateCreated datePublished" datetime="2024-05-27T21:33:39+08:00">2024-05-27</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>This is your introduction…好久没写数模了，正好选修课要写一个大报告的论文，我找了个和通信相关的题目来做一下找找感觉。选了<a target="_blank" rel="noopener" href="http://www.mathorcup.org/detail/2377">2022年第十二届MathorCup高校数学建模挑战赛</a>中的D题来做，边写边记录吧，我也不是啥专家啥的，就只能见招拆招。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/05/27/%E5%9F%BA%E7%AB%99%E5%88%86%E9%85%8D/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/27/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%20%E7%AC%AC%E4%BA%8C%E5%91%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/05/27/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%20%E7%AC%AC%E4%BA%8C%E5%91%A8/" class="post-title-link" itemprop="url">【学习记录】2022-09-19</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-05-27 21:33:39" itemprop="dateCreated datePublished" datetime="2024-05-27T21:33:39+08:00">2024-05-27</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%80%9A%E4%BF%A1%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">通信技术</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%80%9A%E4%BF%A1%E6%8A%80%E6%9C%AF/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>本周主要工作是看了老师的论文《Delay-Optimal Virtualized Radio Resource Scheduling in Software-Defined Vehicular Networks via Stochastic Learning》，这篇将会称为我移动通信课程的presentation的内容。这篇文章的翻译可以参见<a target="_blank" rel="noopener" href="https://cybercolyce.cn/2022/09/24/【文献翻译】Delay-Optimal Virtualized Radio Resource Scheduling in Software-Defined Vehicular Networks via Stochastic Learning/">这里</a>，是我翻译的，但是翻译到后期就开始摸鱼了。。。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/05/27/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%20%E7%AC%AC%E4%BA%8C%E5%91%A8/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/27/%E5%85%89%E6%A8%A1%E5%9D%97%E5%95%86%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/05/27/%E5%85%89%E6%A8%A1%E5%9D%97%E5%95%86%E7%94%A8/" class="post-title-link" itemprop="url">光模块发展简易调研</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-05-27 21:33:39" itemprop="dateCreated datePublished" datetime="2024-05-27T21:33:39+08:00">2024-05-27</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%80%9A%E4%BF%A1%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">通信技术</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>​        光模块是光通信中的核心器件，其核心功能是实现光电信号的相互转换。在数据流量爆发与网络需求升级的背景下，全球光模块市场成长动能强劲。从长期来看，光模块厂商未来有望迎来发展黄金时期，产品力的提升与工程师红利为光模块行业带来巨大潜能，国内龙头厂商如中际旭创、新易盛等在全球光模块竞争市场中逐渐崛起，近年来产品竞争力已赶超海外。本文试从商用光模块基本信息概述与光模块发展趋势两个维度对光模块发展进行简单的分析。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/05/27/%E5%85%89%E6%A8%A1%E5%9D%97%E5%95%86%E7%94%A8/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/27/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/05/27/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/" class="post-title-link" itemprop="url">使用FRP和一台公网IP服务器进行内网穿透</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-05-27 21:33:39" itemprop="dateCreated datePublished" datetime="2024-05-27T21:33:39+08:00">2024-05-27</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><img src="https://s2.loli.net/2023/05/03/TSBrgMHdVRlOZw3.jpg" alt="light"></p>
+<p>出于某种比较操蛋的原因，有时候在外面玩着玩着就会被突然叫去干活…我的笔记本电脑放在学校里是常年开启的，但是出门在外的话很难访问到，因此需要进行内网穿透。下面介绍使用frp进行内网穿透得到远程终端，便于在不同环境中进行内网资源的访问。rp需要一台有公网IP的服务器作为中转，我们称其为server。<strong>如果你没有公网IP设备那么接下来就可以不用看咯。</strong>主要有如下几个步骤：</p>
+<ul>
+<li><p>OpenSSH 配置</p>
+</li>
+<li><p>域名映射（可选）</p>
+</li>
+<li>frp配置</li>
+<li>开机自启动</li>
+</ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/05/27/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/27/%E5%9B%BE%E5%83%8F%E5%8D%B7%E7%A7%AF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/05/27/%E5%9B%BE%E5%83%8F%E5%8D%B7%E7%A7%AF/" class="post-title-link" itemprop="url">从一维卷积到二维卷积：浅析图像卷积</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-05-27 21:33:39" itemprop="dateCreated datePublished" datetime="2024-05-27T21:33:39+08:00">2024-05-27</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="什么是卷积"><a href="#什么是卷积" class="headerlink" title="什么是卷积"></a>什么是卷积</h2><p>首先先给出一维情况的卷积的定义。</p>
+<script type="math/tex; mode=display">
+f(x)*g(x)=\int_{-\infty}^{\infty}f(x)g(\tau-x)d\tau</script><p>这个式子很难从直观层面进行理解，因为它包含了乘积、翻转、积分三个部分的内容。如果你是信通学子，那么你肯定会知道两个函数的卷积结果可以看作是他们对应的傅里叶变换在频域的乘积的反变换，也就是说把一个函数作为输入信号，另一个函数作为描述系统的一个方程，当这个系统接收到输入信号后会做出响应，这个响应$y(t)$就是输入信号$x(t)$与系统函数$h(t)$卷积的结果：</p>
+<script type="math/tex; mode=display">
+y(t)=x(t)*h(t)=\mathcal F^{-1}[X(jw)H(jw)]</script><p>但很明显不是所有人都学过信号与系统，所以我想了个更<del>好</del>恶心的例子进行描述。
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/05/27/%E5%9B%BE%E5%83%8F%E5%8D%B7%E7%A7%AF/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/27/vue%E5%AD%A6%E4%B9%A0%EF%BC%881%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/05/27/vue%E5%AD%A6%E4%B9%A0%EF%BC%881%EF%BC%89/" class="post-title-link" itemprop="url">Vue3学习记录</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-05-27 21:33:39" itemprop="dateCreated datePublished" datetime="2024-05-27T21:33:39+08:00">2024-05-27</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -314,679 +924,7 @@
 <p>Vue3学习记录。本篇为第一篇，记录配置与创建Vue3项目。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2023/05/28/vue%E5%AD%A6%E4%B9%A0%EF%BC%881%EF%BC%89/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/05/19/SCRCPY%E6%8A%95%E5%B1%8F%E6%8E%A7%E5%88%B6%E5%AE%89%E5%8D%93%E6%89%8B%E6%9C%BA/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="阿花想养萨摩耶">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="阿花的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/05/19/SCRCPY%E6%8A%95%E5%B1%8F%E6%8E%A7%E5%88%B6%E5%AE%89%E5%8D%93%E6%89%8B%E6%9C%BA/" class="post-title-link" itemprop="url">Ubuntu下SCRCPY投屏控制安卓手机</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-05-19 12:04:20" itemprop="dateCreated datePublished" datetime="2023-05-19T12:04:20+08:00">2023-05-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-05-22 19:27:38" itemprop="dateModified" datetime="2023-05-22T19:27:38+08:00">2023-05-22</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%9D%82%E9%A1%B9/" itemprop="url" rel="index"><span itemprop="name">杂项</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Ubuntu下使用投屏开源的SCRCPY投屏控制安卓手机~</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/05/19/SCRCPY%E6%8A%95%E5%B1%8F%E6%8E%A7%E5%88%B6%E5%AE%89%E5%8D%93%E6%89%8B%E6%9C%BA/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/05/18/free5gc%20+%20OAI%20gNB%20+%20OAI%20nrUE/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="阿花想养萨摩耶">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="阿花的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/05/18/free5gc%20+%20OAI%20gNB%20+%20OAI%20nrUE/" class="post-title-link" itemprop="url">free5gc+OAI gNB + OAI nrUE</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-05-18 20:05:36" itemprop="dateCreated datePublished" datetime="2023-05-18T20:05:36+08:00">2023-05-18</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-05-19 14:28:23" itemprop="dateModified" datetime="2023-05-19T14:28:23+08:00">2023-05-19</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>一台Ubuntu运行free5gc充当核心网，另一台Ubuntu主机运行OAI gNB和模拟UE。在Ubuntu 20.04.6LTS版本可行。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/05/18/free5gc%20+%20OAI%20gNB%20+%20OAI%20nrUE/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/05/15/ChartGPT/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="阿花想养萨摩耶">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="阿花的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/05/15/ChartGPT/" class="post-title-link" itemprop="url">使用自然语言配合GPT生成图表</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2023-05-15 15:49:33 / 修改时间：15:49:20" itemprop="dateCreated datePublished" datetime="2023-05-15T15:49:33+08:00">2023-05-15</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%91%B8%E9%B1%BC%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">摸鱼记录</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p align="center">
-    <img src="https://s2.loli.net/2023/05/10/LDUpFzo7VJiOshd.png" alt="ChartGPT logo" width=200 height=200 />
-</p>
-
-<p>使用自然语言描述生成ECharts图表。使用了Flask作为后端，并使用了Ajax进行数据的前后端交互，不涉及数据库，是Flask和前端js的一个简单学习。该摸鱼产品受启发于ChartGenie，并在此基础上对常用的Web小产品开发进行了实践，也算是这一段时间做的比较有意思的东西。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/05/15/ChartGPT/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/05/15/5G%E6%89%8B%E6%9C%BA%E6%8E%A5%E5%85%A5%E5%85%A5%E7%BD%91%E6%B5%81%E7%A8%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="阿花想养萨摩耶">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="阿花的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/05/15/5G%E6%89%8B%E6%9C%BA%E6%8E%A5%E5%85%A5%E5%85%A5%E7%BD%91%E6%B5%81%E7%A8%8B/" class="post-title-link" itemprop="url">UE手机入网流程</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2023-05-15 15:23:22 / 修改时间：15:23:08" itemprop="dateCreated datePublished" datetime="2023-05-15T15:23:22+08:00">2023-05-15</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/5G/" itemprop="url" rel="index"><span itemprop="name">5G</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p align="center">
-    <img src="https://s2.loli.net/2023/05/15/B8yrLFs3e1jWmdX.png" alt="logo"/>
-</p>
-
-
-<p>在分析UE接入OAI的gNB基站中经常出现连接不稳定的情况，因此对手机接入的流程进行了分析。在5G中的UE入网流程如上图所示，下面将会对每个部分详细展开。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/05/15/5G%E6%89%8B%E6%9C%BA%E6%8E%A5%E5%85%A5%E5%85%A5%E7%BD%91%E6%B5%81%E7%A8%8B/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/05/12/MIT%E7%B3%BB%E5%88%97/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="阿花想养萨摩耶">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="阿花的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/05/12/MIT%E7%B3%BB%E5%88%97/" class="post-title-link" itemprop="url">MIT-RF系列论文</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-05-12 09:14:05" itemprop="dateCreated datePublished" datetime="2023-05-12T09:14:05+08:00">2023-05-12</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-05-16 14:26:06" itemprop="dateModified" datetime="2023-05-16T14:26:06+08:00">2023-05-16</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">论文笔记</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>本文系MIT实验室的一系列文章的笔记，主要有RF-pose，RF-capture以及RFpose3D。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/05/12/MIT%E7%B3%BB%E5%88%97/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/05/11/Asynicio/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="阿花想养萨摩耶">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="阿花的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/05/11/Asynicio/" class="post-title-link" itemprop="url">Python协程：Asyncio入门</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-05-11 13:04:41" itemprop="dateCreated datePublished" datetime="2023-05-11T13:04:41+08:00">2023-05-11</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-05-15 15:34:09" itemprop="dateModified" datetime="2023-05-15T15:34:09+08:00">2023-05-15</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p align="center">
-    <img src="https://s2.loli.net/2023/05/11/eNXy1CHzBRkJMw8.jpg" alt="pyecharts logo" />
-</p>
-
-
-<p>本文是对Python协程的学习记录。协程并不能像多线程那样提升程序运行效率，它更适合处理那些需要等待的任务，如网络通信。本文使用的库是<code>asyncio</code>，通过asyncio的Event Loop高效完成任务。内容参考<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1oa411b7c9/?spm_id_from=333.999.0.0&amp;vd_source=ab34db443b112b108b42c31ac575fd1f">码农高天的协程教学视频</a>。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/05/11/Asynicio/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/05/05/SRS-devlog/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="阿花想养萨摩耶">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="阿花的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/05/05/SRS-devlog/" class="post-title-link" itemprop="url">Type your title here</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-05-05 23:56:26" itemprop="dateCreated datePublished" datetime="2023-05-05T23:56:26+08:00">2023-05-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-05-22 19:23:02" itemprop="dateModified" datetime="2023-05-22T19:23:02+08:00">2023-05-22</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/categoreis1/" itemprop="url" rel="index"><span itemprop="name">categoreis1</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p align="center">
-    <img src="https://s2.loli.net/2022/08/20/oxvPZeT8G7ydzct.png" alt="pyecharts logo" width=200 height=200 />
-</p>
-
-
-<p>开发日志，垃圾心情记录</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/05/05/SRS-devlog/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/05/04/C++%E7%BB%93%E6%9E%84%E4%BD%93%E5%AD%A6%E4%B9%A0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="阿花想养萨摩耶">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="阿花的Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/05/04/C++%E7%BB%93%E6%9E%84%E4%BD%93%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">C/C++核心语法学习（二）</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-05-04 13:27:48" itemprop="dateCreated datePublished" datetime="2023-05-04T13:27:48+08:00">2023-05-04</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-05-15 15:34:24" itemprop="dateModified" datetime="2023-05-15T15:34:24+08:00">2023-05-15</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><img src="https://s2.loli.net/2023/05/03/aNE6XkqKnSY2oQM.jpg" alt="banner"></p>
-<p>本篇主要是结构体的介绍与使用。通过实现一个链表的结构，学习存储期的概念以及全局与局部的更深一层的理解。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/05/04/C++%E7%BB%93%E6%9E%84%E4%BD%93%E5%AD%A6%E4%B9%A0/#more" rel="contents">
+              <a class="btn" href="/2024/05/27/vue%E5%AD%A6%E4%B9%A0%EF%BC%881%EF%BC%89/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1116,16 +1054,16 @@
     </div>
     <ul class="links-of-recent-posts-list">
         <li class="links-of-recent-posts-item">
-          <a href="/2024/01/13/%E8%A3%85%E6%9C%BA/" title="2024&#x2F;01&#x2F;13&#x2F;装机&#x2F;">ITX-Lancer L1 Mesh</a>
+          <a href="/2024/05/27/%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E5%9F%9F%E9%80%82%E5%BA%94/" title="2024&#x2F;05&#x2F;27&#x2F;迁移学习域适应&#x2F;">域适应初探</a>
         </li>
         <li class="links-of-recent-posts-item">
-          <a href="/2024/01/07/%E7%9B%AE%E6%A0%87%E4%BD%8D%E7%BD%AE-CSI%E4%BF%A1%E5%8F%B7%E9%A2%91%E7%8E%87%E5%BD%B1%E5%93%8D%E6%8E%A2%E7%A9%B6/" title="2024&#x2F;01&#x2F;07&#x2F;目标位置-CSI信号频率影响探究&#x2F;">【论文笔记】Understanding  WiFi Signal Frequency Features for Position-Independent Gesture Sensing</a>
+          <a href="/2024/05/27/%E9%80%A0%E7%A5%9E%E5%B9%B4%E4%BB%A3/" title="2024&#x2F;05&#x2F;27&#x2F;造神年代&#x2F;">读《造神年代》的一些读后随想</a>
         </li>
         <li class="links-of-recent-posts-item">
-          <a href="/2023/11/26/%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E5%9F%9F%E9%80%82%E5%BA%94/" title="2023&#x2F;11&#x2F;26&#x2F;迁移学习域适应&#x2F;">域适应初探</a>
+          <a href="/2024/05/27/%E7%9B%AE%E6%A0%87%E4%BD%8D%E7%BD%AE-CSI%E4%BF%A1%E5%8F%B7%E9%A2%91%E7%8E%87%E5%BD%B1%E5%93%8D%E6%8E%A2%E7%A9%B6/" title="2024&#x2F;05&#x2F;27&#x2F;目标位置-CSI信号频率影响探究&#x2F;">【论文笔记】Understanding  WiFi Signal Frequency Features for Position-Independent Gesture Sensing</a>
         </li>
         <li class="links-of-recent-posts-item">
-          <a href="/2023/11/14/OAI%20dev-brouche/" title="2023&#x2F;11&#x2F;14&#x2F;OAI dev-brouche&#x2F;"></a>
+          <a href="/2024/05/27/%E8%A3%85%E6%9C%BA/" title="2024&#x2F;05&#x2F;27&#x2F;装机&#x2F;">ITX-Lancer L1 Mesh</a>
         </li>
     </ul>
   </div>

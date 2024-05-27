@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":5},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="要写一个yolov5+faceNet的人脸识别，没给定数据集和模型要求，所以我按最高性价比最摸鱼的原则进行构建。这个任务的由三部分组成的，首先是使用Yolov5完成人脸的识别并裁剪，随后用FaceNet进行特征的提取，最后使用提取的特征通过一个classifier完成人脸所属对象的识别。 测试用的demo使用了B站Up主马哥巨离谱的作品：穿山甲之【广东分甲】，人物共有五个，人脸信息分布也很足；Fa">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【学习记录】2022-7-22-2022-8-5">
+<meta property="og:url" content="http://example.com/2024/05/27/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%952022-7-22/index.html">
+<meta property="og:site_name" content="阿花的Blog">
+<meta property="og:description" content="要写一个yolov5+faceNet的人脸识别，没给定数据集和模型要求，所以我按最高性价比最摸鱼的原则进行构建。这个任务的由三部分组成的，首先是使用Yolov5完成人脸的识别并裁剪，随后用FaceNet进行特征的提取，最后使用提取的特征通过一个classifier完成人脸所属对象的识别。 测试用的demo使用了B站Up主马哥巨离谱的作品：穿山甲之【广东分甲】，人物共有五个，人脸信息分布也很足；Fa">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/07/25/AtufwTK238Z1sPR.png">
+<meta property="og:image" content="https://s2.loli.net/2022/07/25/kBKaHcQCPdO3RmV.png">
+<meta property="og:image" content="https://s2.loli.net/2022/07/25/9scCXZ3rOhavUBQ.png">
+<meta property="og:image" content="https://s2.loli.net/2022/07/25/mhyW6EGT37RCYuA.png">
+<meta property="og:image" content="https://s2.loli.net/2022/08/03/B9C1MgU4N7XrHdW.png">
+<meta property="og:image" content="https://s2.loli.net/2022/07/27/jIfv8VZgLep4OHt.png">
+<meta property="og:image" content="https://s2.loli.net/2022/08/02/bWgmUj4fKGweoMr.png">
+<meta property="og:image" content="https://s2.loli.net/2022/08/02/WAr5wIh4ZbStVuF.jpg">
+<meta property="og:image" content="https://s2.loli.net/2022/08/02/ChxozZ3PRFp2nyO.png">
+<meta property="og:image" content="https://s2.loli.net/2022/08/02/LKJy9svTaERXUZS.png">
+<meta property="og:image" content="https://s2.loli.net/2022/08/02/quI9WnQZ4kzRDKo.png">
+<meta property="og:image" content="https://s2.loli.net/2022/08/02/OYi8dzawNkR26Vf.png">
+<meta property="og:image" content="https://s2.loli.net/2022/08/05/ldiUFYzgjBrqyQN.png">
+<meta property="og:image" content="https://s2.loli.net/2022/08/07/JsfkZiAtdFRXL3P.png">
+<meta property="og:image" content="https://s2.loli.net/2022/08/05/qnpZ3vXkxS9uG78.png">
+<meta property="article:published_time" content="2024-05-27T13:33:39.532Z">
+<meta property="article:modified_time" content="2024-05-27T13:33:39.532Z">
+<meta property="article:author" content="阿花想养萨摩耶">
+<meta property="article:tag" content="计算机视觉">
+<meta property="article:tag" content="Yolov5">
+<meta property="article:tag" content="FaceNet">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2022/07/25/AtufwTK238Z1sPR.png">
+
+<link rel="canonical" href="http://example.com/2024/05/27/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%952022-7-22/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>【学习记录】2022-7-22-2022-8-5 | 阿花的Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">阿花的Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/27/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%952022-7-22/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【学习记录】2022-7-22-2022-8-5
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-05-27 21:33:39" itemprop="dateCreated datePublished" datetime="2024-05-27T21:33:39+08:00">2024-05-27</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>要写一个yolov5+faceNet的人脸识别，没给定数据集和模型要求，所以我按<del>最高性价比</del>最摸鱼的原则进行构建。这个任务的由三部分组成的，首先是使用<code>Yolov5</code>完成人脸的识别并裁剪，随后用<code>FaceNet</code>进行特征的提取，最后使用提取的特征通过一个<code>classifier</code>完成人脸所属对象的识别。</p>
+<p>测试用的demo使用了B站Up主<a target="_blank" rel="noopener" href="https://space.bilibili.com/298054634">马哥巨离谱</a>的作品：<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1z34y167KD?spm_id_from=333.999.0.0&amp;vd_source=ab34db443b112b108b42c31ac575fd1f">穿山甲之【广东分甲】</a>，人物共有五个，人脸信息分布也很足；FaceNet作为局部的信息提取，我是使用MobileNet作为主干网络，并使用了一些预训练的权重进行训练。至于最后的分类器，我觉就只用了一个FC就完成了，效果还算不错。</p>
+<span id="more"></span>
+<h1 id="Yolov5"><a href="#Yolov5" class="headerlink" title="Yolov5"></a>Yolov5</h1><p><img src="https://s2.loli.net/2022/07/25/AtufwTK238Z1sPR.png" alt="yolov5s_1"></p>
+<center><small>Yolov5s结构，图源知乎@江大白</small></center>
+
+<p>Yolov5其实就是一个大锅炉，整个网络就分为Backbone、Neck、head和prediction四个部分。可以看到Yolov5用到的模块还挺多的，下面简单的分析一下每个模块。</p>
+<h2 id="Backbone部分"><a href="#Backbone部分" class="headerlink" title="Backbone部分"></a>Backbone部分</h2><p>Backbone就是用来提取主要的特征的。Backbone网络一般都很大，且有人训练好了一些权重，不用我们自己从头再训练，直接到官网下载模型权重就可以了。在训练时只需Finetune一下就可以了。</p>
+<h3 id="CBL模块"><a href="#CBL模块" class="headerlink" title="CBL模块"></a>CBL模块</h3><p><code>CBL</code>其实就是卷积层BN层再加一个激活函数LeakyReLU。卷积层和BN层没啥好说的了，现在成功的网络结构的基本模块都是这样搭配，值得一提的是这个LeakyReLU，区别于传统ReLU的，它增强了非线性能力。</p>
+<h3 id="Res模块"><a href="#Res模块" class="headerlink" title="Res模块"></a>Res模块</h3><p>就是改进过后的残差块。Kaiming的<code>ResNet</code>出来之后<code>ResBlock</code>的使用就广泛起来了，当今的网络发展趋势就是不断的加深、加参数，ResBlock的出现就是为了解决深度加大后的梯度弥散问题，跳跃连接可以将梯度信息不那么快的消失掉。</p>
+<h3 id="Focus模块"><a href="#Focus模块" class="headerlink" title="Focus模块"></a>Focus模块</h3><p>这个其实我觉得挺关键的，作者也在<a target="_blank" rel="noopener" href="https://github.com/ultralytics/yolov5/discussions/3181">Issue</a>有给出设计的目的。结论就是：减少参数和计算量。</p>
+<p><img src="https://s2.loli.net/2022/07/25/kBKaHcQCPdO3RmV.png" alt="image-20220725125709651"></p>
+<p>首先<code>Focus</code>模块是放在图像输入后的第一个位置，它使用了4个slice对图像进行分割，具体的操作是这样子的：</p>
+<p><img src="https://s2.loli.net/2022/07/25/9scCXZ3rOhavUBQ.png" alt="slice操作"></p>
+<center><small>Focus模块的Slice操作</small></center>
+
+<p>具体就是在一张图片中每隔一个像素拿到一个值，按照图中这样的Slice方法可以得到4张图片（原始图像是<code>4*4*3</code>，新图像是<code>2*2*12</code>）。这样做的目的我的理解是将图像的宽、高信息转换到了通道channel中，然后这时图像大小类似下采样虽然缩小了一倍，但它蕴含的信息量并未减少，只是信息转换到了通道中，为后续的处理预留了方便吧。为什么这样说呢，首先要明确网络的参数和计算量的概念。</p>
+<p><strong>网络的参数量（parmas）决定了网络的大小</strong>，由于一般使用<code>float32</code>进行保存，因此模型大小是参数量的4倍；<strong>计算量（FLOPs）即浮点运算数</strong>，可以用来衡量算法/模型的复杂度，这关系到算法速度，大模型的单位通常为G，小模型单位通常为M；通常只考虑乘加操作的数量，而且只考虑Conv和FC等参数层的计算量，忽略BN和PReLU等，一般情况下，Conv和FC层也会忽略仅纯加操作的计算量，如bias偏置加和shoutcut残差加等，目前技术有BN和CNN可以不加bias。</p>
+<p>经过<code>Focus</code>模块后的图像类似经过了下采样的操作，但是和卷积实现的下采样不同，Slice不但减少了计算量也减少了参数。作者做了一个和Yolov3对比的实验：</p>
+<p><img src="https://s2.loli.net/2022/07/25/mhyW6EGT37RCYuA.png" alt="image-20220725130745790"></p>
+<h3 id="CSP模块"><a href="#CSP模块" class="headerlink" title="CSP模块"></a>CSP模块</h3><p>和Yolov4不同，CSP的结构在Yolov5中有两种，分别运用在Backbone和Neck部分，而在Yolov4中只有Backbone使用了CSP结构。CSP结构就是<strong>跨阶段局部网络（Cross Stage Paritial Network）</strong>，用于缓解以往工作需要从网络架构角度进行大量推理计算的问题，CSPNet作者认为这个问题的<strong>出现原因是网络优化中的重复梯度信息。</strong></p>
+<p>简单总结一下CSP结构的有点：</p>
+<ul>
+<li>增强CNN的学习能力，在轻量化和准确性这两方面两手抓。</li>
+<li>降低计算瓶颈。</li>
+<li>降低内存成本。</li>
+</ul>
+<h2 id="Neck部分"><a href="#Neck部分" class="headerlink" title="Neck部分"></a>Neck部分</h2><p>Neck的作用就是更好的利用Backbone提取的特征进行更精细的划分。Yolov5最新的模型是使用了特征金字塔网络(FPN,Feature Pyramid Network)+路径聚合网络(PAN，Path Aggregation Network)结构。</p>
+<h2 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h2><h3 id="制作数据集和配置文件"><a href="#制作数据集和配置文件" class="headerlink" title="制作数据集和配置文件"></a>制作数据集和配置文件</h3><p>首先使用<code>git clone</code>把Yolov5的代码给下载下来：</p>
+<p><img src="https://s2.loli.net/2022/08/03/B9C1MgU4N7XrHdW.png" alt="image-20220727114737933"></p>
+<p>然后再这个目录下新建一个文件夹，命名随意，但不用用已有的<code>data</code>。我这里用的是<code>Facedata</code>，然后在<code>Facedata</code>下面再新建两个文件夹<code>Annotations</code>和<code>images</code>，分别用于存储用<code>labelimg</code>标注的数据(<code>.xml</code>)和图片(<code>.jpg</code>)。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">- yolov5</span><br><span class="line">	- Facedata</span><br><span class="line">		- Annotations</span><br><span class="line">			- 1.xml</span><br><span class="line">			- 2.xml</span><br><span class="line">			- ...</span><br><span class="line">		- images</span><br><span class="line">			- 1.jpg</span><br><span class="line">			- 2.jpg</span><br><span class="line">			- ...</span><br></pre></td></tr></table></figure>
+<p>然后在自己数据集的文件夹下新建一个用于分离训练集和测试集的脚本<code>split_train_test.py</code>:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># coding:utf-8</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line"></span><br><span class="line">parser = argparse.ArgumentParser()</span><br><span class="line"><span class="comment">#xml文件的地址，根据自己的数据进行修改 xml一般存放在Annotations下</span></span><br><span class="line">parser.add_argument(<span class="string">&#x27;--xml_path&#x27;</span>, default=<span class="string">&#x27;Annotations&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, <span class="built_in">help</span>=<span class="string">&#x27;input xml label path&#x27;</span>)</span><br><span class="line"><span class="comment">#数据集的划分，地址选择自己数据下的ImageSets/Main</span></span><br><span class="line">parser.add_argument(<span class="string">&#x27;--txt_path&#x27;</span>, default=<span class="string">&#x27;ImageSets/Main&#x27;</span>, <span class="built_in">type</span>=<span class="built_in">str</span>, <span class="built_in">help</span>=<span class="string">&#x27;output txt label path&#x27;</span>)</span><br><span class="line">opt = parser.parse_args()</span><br><span class="line"></span><br><span class="line">trainval_percent = <span class="number">1.0</span>  <span class="comment"># 训练集和验证集所占比例。 这里没有划分测试集</span></span><br><span class="line">train_percent = <span class="number">0.9</span>     <span class="comment"># 训练集所占比例，可自己进行调整</span></span><br><span class="line">xmlfilepath = opt.xml_path</span><br><span class="line">txtsavepath = opt.txt_path</span><br><span class="line">total_xml = os.listdir(xmlfilepath)</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(txtsavepath):</span><br><span class="line">    os.makedirs(txtsavepath)</span><br><span class="line"></span><br><span class="line">num = <span class="built_in">len</span>(total_xml)</span><br><span class="line">list_index = <span class="built_in">range</span>(num)</span><br><span class="line">tv = <span class="built_in">int</span>(num * trainval_percent)</span><br><span class="line">tr = <span class="built_in">int</span>(tv * train_percent)</span><br><span class="line">trainval = random.sample(list_index, tv)</span><br><span class="line">train = random.sample(trainval, tr)</span><br><span class="line"></span><br><span class="line">file_trainval = <span class="built_in">open</span>(txtsavepath + <span class="string">&#x27;/trainval.txt&#x27;</span>, <span class="string">&#x27;w&#x27;</span>)</span><br><span class="line">file_test = <span class="built_in">open</span>(txtsavepath + <span class="string">&#x27;/test.txt&#x27;</span>, <span class="string">&#x27;w&#x27;</span>)</span><br><span class="line">file_train = <span class="built_in">open</span>(txtsavepath + <span class="string">&#x27;/train.txt&#x27;</span>, <span class="string">&#x27;w&#x27;</span>)</span><br><span class="line">file_val = <span class="built_in">open</span>(txtsavepath + <span class="string">&#x27;/val.txt&#x27;</span>, <span class="string">&#x27;w&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> list_index:</span><br><span class="line">    name = total_xml[i][:-<span class="number">4</span>] + <span class="string">&#x27;\n&#x27;</span></span><br><span class="line">    <span class="keyword">if</span> i <span class="keyword">in</span> trainval:</span><br><span class="line">        file_trainval.write(name)</span><br><span class="line">        <span class="keyword">if</span> i <span class="keyword">in</span> train:</span><br><span class="line">            file_train.write(name)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            file_val.write(name)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        file_test.write(name)</span><br><span class="line"></span><br><span class="line">file_trainval.close()</span><br><span class="line">file_train.close()</span><br><span class="line">file_val.close()</span><br><span class="line">file_test.close()</span><br></pre></td></tr></table></figure>
+<p>然后同样是在这个目录下新建<code>xml_to_yolo.py</code>文件，这个主要是用来转换yolov5训练的格式(<code>.txt</code>)，代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> xml.etree.ElementTree <span class="keyword">as</span> ET</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> os <span class="keyword">import</span> getcwd</span><br><span class="line"></span><br><span class="line">sets = [<span class="string">&#x27;train&#x27;</span>, <span class="string">&#x27;val&#x27;</span>, <span class="string">&#x27;test&#x27;</span>]</span><br><span class="line">classes = [<span class="string">&quot;face&quot;</span>]   <span class="comment"># 改成自己的类别</span></span><br><span class="line">abs_path = os.getcwd()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">convert</span>(<span class="params">size, box</span>):</span><br><span class="line">    dw = <span class="number">1.</span> / (size[<span class="number">0</span>])</span><br><span class="line">    dh = <span class="number">1.</span> / (size[<span class="number">1</span>])</span><br><span class="line">    x = (box[<span class="number">0</span>] + box[<span class="number">1</span>]) / <span class="number">2.0</span> - <span class="number">1</span></span><br><span class="line">    y = (box[<span class="number">2</span>] + box[<span class="number">3</span>]) / <span class="number">2.0</span> - <span class="number">1</span></span><br><span class="line">    w = box[<span class="number">1</span>] - box[<span class="number">0</span>]</span><br><span class="line">    h = box[<span class="number">3</span>] - box[<span class="number">2</span>]</span><br><span class="line">    x = x * dw</span><br><span class="line">    w = w * dw</span><br><span class="line">    y = y * dh</span><br><span class="line">    h = h * dh</span><br><span class="line">    <span class="keyword">return</span> x, y, w, h</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">convert_annotation</span>(<span class="params">image_id</span>):</span><br><span class="line">    in_file = <span class="built_in">open</span>(<span class="string">&#x27;yolov5\\Facedata\\Annotations\\%s.xml&#x27;</span> % (image_id), encoding=<span class="string">&#x27;UTF-8&#x27;</span>)</span><br><span class="line">    out_file = <span class="built_in">open</span>(<span class="string">&#x27;yolov5\\Facedata\\labels\\%s.txt&#x27;</span> % (image_id), <span class="string">&#x27;w&#x27;</span>)</span><br><span class="line">    tree = ET.parse(in_file)</span><br><span class="line">    root = tree.getroot()</span><br><span class="line">    size = root.find(<span class="string">&#x27;size&#x27;</span>)</span><br><span class="line">    w = <span class="built_in">int</span>(size.find(<span class="string">&#x27;width&#x27;</span>).text)</span><br><span class="line">    h = <span class="built_in">int</span>(size.find(<span class="string">&#x27;height&#x27;</span>).text)</span><br><span class="line">    <span class="keyword">for</span> obj <span class="keyword">in</span> root.<span class="built_in">iter</span>(<span class="string">&#x27;object&#x27;</span>):</span><br><span class="line">        difficult = obj.find(<span class="string">&#x27;difficult&#x27;</span>).text</span><br><span class="line">        </span><br><span class="line">        <span class="comment">#difficult = obj.find(&#x27;Difficult&#x27;).text</span></span><br><span class="line">        cls = obj.find(<span class="string">&#x27;name&#x27;</span>).text</span><br><span class="line">        <span class="keyword">if</span> cls <span class="keyword">not</span> <span class="keyword">in</span> classes <span class="keyword">or</span> <span class="built_in">int</span>(difficult) == <span class="number">1</span>:</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        cls_id = classes.index(cls)</span><br><span class="line">        xmlbox = obj.find(<span class="string">&#x27;bndbox&#x27;</span>)</span><br><span class="line">        b = (<span class="built_in">float</span>(xmlbox.find(<span class="string">&#x27;xmin&#x27;</span>).text), <span class="built_in">float</span>(xmlbox.find(<span class="string">&#x27;xmax&#x27;</span>).text), <span class="built_in">float</span>(xmlbox.find(<span class="string">&#x27;ymin&#x27;</span>).text),</span><br><span class="line">             <span class="built_in">float</span>(xmlbox.find(<span class="string">&#x27;ymax&#x27;</span>).text))</span><br><span class="line">        b1, b2, b3, b4 = b</span><br><span class="line">        <span class="comment"># 标注越界修正</span></span><br><span class="line">        <span class="keyword">if</span> b2 &gt; w:</span><br><span class="line">            b2 = w</span><br><span class="line">        <span class="keyword">if</span> b4 &gt; h:</span><br><span class="line">            b4 = h</span><br><span class="line">        b = (b1, b2, b3, b4)</span><br><span class="line">        bb = convert((w, h), b)</span><br><span class="line">        </span><br><span class="line">        out_file.write(<span class="built_in">str</span>(cls_id) + <span class="string">&quot; &quot;</span> + <span class="string">&quot; &quot;</span>.join([<span class="built_in">str</span>(a) <span class="keyword">for</span> a <span class="keyword">in</span> bb]) + <span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line"></span><br><span class="line">wd = getcwd()</span><br><span class="line"><span class="keyword">for</span> image_set <span class="keyword">in</span> sets:</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(<span class="string">&#x27;yolov5\\Facedata\\labels&#x27;</span>):</span><br><span class="line">        os.makedirs(<span class="string">&#x27;yolov5\\Facedata\\labels&#x27;</span>)</span><br><span class="line">    image_ids = <span class="built_in">open</span>(<span class="string">&#x27;yolov5\\Facedata\\ImageSets\\Main\\%s.txt&#x27;</span> % (image_set)).read().strip().split()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(<span class="string">&#x27;yolov5\\Facedata\\dataSet_path&#x27;</span>):</span><br><span class="line">        os.makedirs(<span class="string">&#x27;yolov5\\Facedata\\dataSet_path&#x27;</span>)</span><br><span class="line">     </span><br><span class="line">    list_file = <span class="built_in">open</span>(<span class="string">&#x27;yolov5\\Facedata\\dataSet_path\\%s.txt&#x27;</span> % (image_set), <span class="string">&#x27;w&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> image_id <span class="keyword">in</span> image_ids:</span><br><span class="line">        list_file.write(<span class="string">&#x27;yolov5\\Facedata\\images\\%s.jpg\n&#x27;</span> % (image_id))</span><br><span class="line">        convert_annotation(image_id)</span><br><span class="line">    list_file.close()</span><br></pre></td></tr></table></figure>
+<p>然后到Yolov5文件夹下的data文件夹新建自己的数据库索引文件<code>Facedata.yaml</code>:</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">train:</span> <span class="string">F:/Programme/Demo/FaceDetection/yolov5/Facedata/dataSet_path/train.txt</span></span><br><span class="line"><span class="attr">val:</span> <span class="string">F:/Programme/Demo/FaceDetection/yolov5/Facedata/dataSet_path/val.txt</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># number of classes</span></span><br><span class="line"><span class="attr">nc:</span> <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># class names</span></span><br><span class="line"><span class="attr">names:</span> [<span class="string">&quot;face&quot;</span>]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>最后在<code>model</code>文件夹中选择使用的模型，我选的是<code>Yolov5s.yaml</code>，然后修改一下nc对应的数量就可以了。</p>
+<h3 id="正式训练"><a href="#正式训练" class="headerlink" title="正式训练"></a>正式训练</h3><p>正式训练是在这个<code>train.py</code>的文件里。打开看一下可以看到很多的参数：</p>
+<p><img src="https://s2.loli.net/2022/07/27/jIfv8VZgLep4OHt.png" alt="image-20220727170725337"></p>
+<p>主要是修改以下几个东西：</p>
+<ul>
+<li><code>--weights</code>：初始权重，要和模型对应，脚本会从官网下载预训练好的权重。</li>
+<li><code>--data</code>：训练数据配置文件<code>xxx.yaml</code>，存放在Yolov5文件夹下的<code>data</code>文件夹中</li>
+<li><code>--epochs</code>：训练轮数，一般来说小数据（不到一千张）100轮左右就有结果了。</li>
+<li><code>--batch-size</code>：取决于设备内存大小，我设置为16。</li>
+<li><code>device</code>：用于训练的设备，一般个人单显卡且有CUDA环境支持的话就设成0就好。</li>
+<li><code>workers</code>：似乎是CPU核心控制的线程数量，电脑配置低一点的就设成0或者1就好。</li>
+</ul>
+<h3 id="使用训练后的模型"><a href="#使用训练后的模型" class="headerlink" title="使用训练后的模型"></a>使用训练后的模型</h3><p>测试模型的话，在yolov5的文件夹下方有一个<code>detect.py</code>的文件，按照代码的说明修改程序就可以测试了。测试的结果是放在<code>runs/detect/expx/</code>的文件夹中。</p>
+<h3 id="如何部署自定义模型"><a href="#如何部署自定义模型" class="headerlink" title="如何部署自定义模型"></a>如何部署自定义模型</h3><p>如果图省事的话，可以用<code>pytorchhub</code>直接加载集成好的环境，具体的操作可以见<a target="_blank" rel="noopener" href="https://github.com/ultralytics/yolov5/issues/36">作者写的Documentation</a>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line"><span class="comment"># Model</span></span><br><span class="line">model = torch.hub.load(<span class="string">&#x27;yolov5&#x27;</span>, <span class="string">&#x27;custom&#x27;</span>, path=<span class="string">&#x27;best&#x27;</span>, source=<span class="string">&#x27;local&#x27;</span>) </span><br><span class="line"><span class="comment"># Image</span></span><br><span class="line">img = <span class="string">r&#x27;dataset\video\VideoCapture\9.jpg&#x27;</span></span><br><span class="line"><span class="comment"># Inference</span></span><br><span class="line">results = model(img)</span><br><span class="line"><span class="built_in">print</span>(results.pandas().xyxy[<span class="number">0</span>])</span><br><span class="line"><span class="comment">#         xmin        ymin        xmax        ymax  confidence  class  name</span></span><br><span class="line"><span class="comment">#0  714.960083  141.053375  932.943726  412.439209    0.924156      0  face</span></span><br></pre></td></tr></table></figure>
+<p>甚至可以使用<code>ndarrays</code>作为输入：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"><span class="comment"># Model</span></span><br><span class="line">model = torch.hub.load(<span class="string">&#x27;yolov5&#x27;</span>, <span class="string">&#x27;custom&#x27;</span>, path=<span class="string">&#x27;best&#x27;</span>, source=<span class="string">&#x27;local&#x27;</span>) </span><br><span class="line"><span class="comment"># Image</span></span><br><span class="line">img = <span class="string">r&#x27;F:\Programme\Demo\FaceDetection\dataset\video\VideoCapture\9.jpg&#x27;</span></span><br><span class="line">img = cv2.imread(img)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">type</span>(img))</span><br><span class="line"><span class="comment"># &lt;class &#x27;numpy.ndarray&#x27;&gt;</span></span><br><span class="line"><span class="comment"># Inference</span></span><br><span class="line">results = model(img)</span><br><span class="line"><span class="built_in">print</span>(results.pandas().xyxy[<span class="number">0</span>])</span><br><span class="line"><span class="comment">#         xmin        ymin        xmax        ymax  confidence  class  name</span></span><br><span class="line"><span class="comment">#0  714.960083  141.053375  932.943726  412.439209    0.924156      0  face</span></span><br></pre></td></tr></table></figure>
+<p>但如果想进一步拓展Yolov5的输入端性能的话，<code>Yolov5</code>的作者把跟<code>Pytorchhub</code>加载的模型相关的内容放在了<code>models/common.py</code>里面，它的核心功能靠两个类<code>AutoShape</code>和<code>Detections</code>完成，其中<code>AutoShape</code>完成了模型的核心，<code>Detections</code>完成结果的展示以及渲染。用好这两个类足够完成大部分的输入任务了。</p>
+<h2 id="用Yolov5的预测结果获取人脸数据的训练集"><a href="#用Yolov5的预测结果获取人脸数据的训练集" class="headerlink" title="用Yolov5的预测结果获取人脸数据的训练集"></a>用Yolov5的预测结果获取人脸数据的训练集</h2><p>观察到模型输出的信息：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#         xmin        ymin        xmax        ymax  confidence  class  name</span></span><br><span class="line"><span class="comment">#0  714.960083  141.053375  932.943726  412.439209    0.924156      0  face</span></span><br></pre></td></tr></table></figure>
+<p>是使用<code>pandas.DataFrame</code>类表示的，且内取值为浮点数。因此需要对数据进行抽取排序以及取整处理：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">crop_images</span>(<span class="params">file_path, file_name, save_dir</span>):</span><br><span class="line">    <span class="comment"># file_path: 文件路径</span></span><br><span class="line">    <span class="comment"># file_name: 文件名称</span></span><br><span class="line">    <span class="comment"># save_dir:  保存路径</span></span><br><span class="line">    img = cv2.imread(file_path)</span><br><span class="line">    results = model(img)</span><br><span class="line">    df = results.pandas().xyxy[<span class="number">0</span>]</span><br><span class="line">    <span class="keyword">for</span> index, row <span class="keyword">in</span> df.iterrows():</span><br><span class="line">        xmin, ymin, xmax, ymax = <span class="built_in">int</span>(row[<span class="string">&#x27;xmin&#x27;</span>]), <span class="built_in">int</span>(row[<span class="string">&#x27;ymin&#x27;</span>]), <span class="built_in">int</span>(row[<span class="string">&#x27;xmax&#x27;</span>]), <span class="built_in">int</span>(row[<span class="string">&#x27;ymax&#x27;</span>])</span><br><span class="line">        crop = img[ymin : ymax, xmin : xmax]</span><br><span class="line">        cv2.imwrite(<span class="string">r&#x27;&#123;&#125;\&#123;&#125;-&#123;&#125;.jpg&#x27;</span>.<span class="built_in">format</span>(save_dir, file_name[:-<span class="number">4</span>], index), crop)   <span class="comment"># index是图像识别中的第x个对象</span></span><br></pre></td></tr></table></figure>
+<p>随后使用模型裁剪人脸数据：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Easy way to use customed yolov5 model to predict</span></span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="comment"># Model</span></span><br><span class="line">model = torch.hub.load(<span class="string">&#x27;yolov5&#x27;</span>, <span class="string">&#x27;custom&#x27;</span>, path=<span class="string">&#x27;best&#x27;</span>, source=<span class="string">&#x27;local&#x27;</span>) </span><br><span class="line"><span class="comment"># Inference</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">crop_images</span>(<span class="params">file_path, file_name, save_dir</span>):</span><br><span class="line">    <span class="comment"># file_path: 文件路径</span></span><br><span class="line">    <span class="comment"># file_name: 文件名称</span></span><br><span class="line">    <span class="comment"># save_dir:  保存路径</span></span><br><span class="line">    img = cv2.imread(file_path)</span><br><span class="line">    results = model(img)</span><br><span class="line">    df = results.pandas().xyxy[<span class="number">0</span>]</span><br><span class="line">    <span class="keyword">for</span> index, row <span class="keyword">in</span> df.iterrows():</span><br><span class="line">        xmin, ymin, xmax, ymax = <span class="built_in">int</span>(row[<span class="string">&#x27;xmin&#x27;</span>]), <span class="built_in">int</span>(row[<span class="string">&#x27;ymin&#x27;</span>]), <span class="built_in">int</span>(row[<span class="string">&#x27;xmax&#x27;</span>]), <span class="built_in">int</span>(row[<span class="string">&#x27;ymax&#x27;</span>])</span><br><span class="line">        crop = img[ymin : ymax, xmin : xmax]</span><br><span class="line">        cv2.imwrite(<span class="string">r&#x27;&#123;&#125;\&#123;&#125;-&#123;&#125;.jpg&#x27;</span>.<span class="built_in">format</span>(save_dir, file_name[:-<span class="number">4</span>], index), crop)   <span class="comment"># index是图像识别中的第x个对象</span></span><br><span class="line">        </span><br><span class="line"></span><br><span class="line">path = <span class="string">r&#x27;dataset\raw&#x27;</span></span><br><span class="line">files= os.listdir(path) <span class="comment">#得到文件夹下的所有文件名称</span></span><br><span class="line"><span class="keyword">for</span> each <span class="keyword">in</span> files:</span><br><span class="line">    crop_images(<span class="string">r&#x27;dataset\raw\&#123;&#125;&#x27;</span>.<span class="built_in">format</span>(each), each, save_dir=<span class="string">r&#x27;dataset\train&#x27;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;file &#123;&#125; has been crop.&#x27;</span>.<span class="built_in">format</span>(each))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>得到后人工对人脸进行分类放入不同类别的文件夹中。</p>
+<h1 id="FaceNet"><a href="#FaceNet" class="headerlink" title="FaceNet+"></a>FaceNet+</h1><p>论文链接：<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1503.03832">[1503.03832] FaceNet: A Unified Embedding for Face Recognition and Clustering (arxiv.org)</a>。FaceNet是谷歌提出的，特点是CNN的端到端训练、Triplet loss 以及 特征欧几里得距离，模型大小仅有128Bytes，达到了当时的SOTA水平。论文使用的模型如下：</p>
+<p><img src="https://s2.loli.net/2022/08/02/bWgmUj4fKGweoMr.png" alt="image-20220802190434704" style="zoom: 80%;" /></p>
+<h2 id="网络部分"><a href="#网络部分" class="headerlink" title="网络部分"></a>网络部分</h2><p>论文当时的Backbone使用的是<code>Inception-net</code>的结构，然后后续为了更加轻便的部署我又更换成了<code>MobileNet-v1</code>的结构。下面的内容主要针对的是<code>MobileNet-V1</code>。</p>
+<h3 id="深度可分离卷积"><a href="#深度可分离卷积" class="headerlink" title="深度可分离卷积"></a>深度可分离卷积</h3><p>首先<code>MobileNet</code>也是谷歌提出来的，它的核心组件是一种叫做<code>“深度可分离卷积块”</code>的结构组成的，其结构如下：</p>
+<p><img src="https://s2.loli.net/2022/08/02/WAr5wIh4ZbStVuF.jpg" alt="img"></p>
+<p>其具体的解析在<a target="_blank" rel="noopener" href="https://towardsdatascience.com/a-basic-introduction-to-separable-convolutions-b99ec3102728">这篇文章</a>有。深度可分离卷积块由两部分组成，分别为<code>Depthwise Convolutional Filters</code>和<code>Pointwise Convolutional Filters</code>。深度可分离卷积块的目的是使用更少的参数来代替普通的卷积。下面给出普通卷积和可分离卷积的对比：</p>
+<p><img src="https://s2.loli.net/2022/08/02/ChxozZ3PRFp2nyO.png" alt="img" style="zoom: 33%;" /></p>
+<center><small>普通卷积，对于12*12*3->8*8*256的映射需要256个[5,5,3]的卷积核，<br>参数量为256 x 5 x 5 x 3 = 19200</small></center>
+
+<p><img src="https://s2.loli.net/2022/08/02/LKJy9svTaERXUZS.png" alt="img" style="zoom: 33%;" /></p>
+<p><img src="https://s2.loli.net/2022/08/02/quI9WnQZ4kzRDKo.png" alt="img" style="zoom: 33%;" /></p>
+<center><small>可分离卷积，对于12*12*3->8*8*256的映射需要3个[5,5,1]的卷积核(Depthwise)和256个[1,1,3]的卷积核(Pointwise)<br>参数量为3 x 5 x 5 x 1 + 256 x 1 x 1 x 3 = 843</small></center>
+
+<p>可以看出来深度可分离卷积结构块可以减少模型的参数。</p>
+<h3 id="网络结构"><a href="#网络结构" class="headerlink" title="网络结构"></a>网络结构</h3><p>网络结构由Backbone+Classifier两个部分组成。Backbone前文也提及到使用的是<code>MobileNet</code>，而<code>Classifier</code>则是一个多层感知机。师兄给了一篇参考的博客给我看，他的<code>Classifier</code>用的是<code>SVM</code>，我能理解这样做的目的，舍弃了端到端的直观过程，让神经网络的黑盒少了最后那部分的可解释性差的问题。但是这样就很麻烦，部署起来很费时间，所以我最终还是选择了用MLP作为分类器，还有一个原因我会放在后面的训练技巧部分那里说。</p>
+<p>Backbone部分的代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">conv_bn</span>(<span class="params">inp, oup, stride = <span class="number">1</span></span>):</span><br><span class="line">    <span class="keyword">return</span> nn.Sequential(</span><br><span class="line">        nn.Conv2d(inp, oup, <span class="number">3</span>, stride, <span class="number">1</span>, bias=<span class="literal">False</span>),</span><br><span class="line">        nn.BatchNorm2d(oup),</span><br><span class="line">        nn.ReLU6()</span><br><span class="line">    )</span><br><span class="line">    </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">conv_dw</span>(<span class="params">inp, oup, stride = <span class="number">1</span></span>):</span><br><span class="line">    <span class="keyword">return</span> nn.Sequential(</span><br><span class="line">        nn.Conv2d(inp, inp, <span class="number">3</span>, stride, <span class="number">1</span>, groups=inp, bias=<span class="literal">False</span>),</span><br><span class="line">        nn.BatchNorm2d(inp),</span><br><span class="line">        nn.ReLU6(),</span><br><span class="line"></span><br><span class="line">        nn.Conv2d(inp, oup, <span class="number">1</span>, <span class="number">1</span>, <span class="number">0</span>, bias=<span class="literal">False</span>),</span><br><span class="line">        nn.BatchNorm2d(oup),</span><br><span class="line">        nn.ReLU6(),</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MobileNetV1</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(MobileNetV1, self).__init__()</span><br><span class="line">        self.stage1 = nn.Sequential(</span><br><span class="line">            <span class="comment"># 160,160,3 -&gt; 80,80,32</span></span><br><span class="line">            conv_bn(<span class="number">3</span>, <span class="number">32</span>, <span class="number">2</span>), </span><br><span class="line">            <span class="comment"># 80,80,32 -&gt; 80,80,64</span></span><br><span class="line">            conv_dw(<span class="number">32</span>, <span class="number">64</span>, <span class="number">1</span>), </span><br><span class="line"></span><br><span class="line">            <span class="comment"># 80,80,64 -&gt; 40,40,128</span></span><br><span class="line">            conv_dw(<span class="number">64</span>, <span class="number">128</span>, <span class="number">2</span>),</span><br><span class="line">            conv_dw(<span class="number">128</span>, <span class="number">128</span>, <span class="number">1</span>),</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 40,40,128 -&gt; 20,20,256</span></span><br><span class="line">            conv_dw(<span class="number">128</span>, <span class="number">256</span>, <span class="number">2</span>),</span><br><span class="line">            conv_dw(<span class="number">256</span>, <span class="number">256</span>, <span class="number">1</span>),</span><br><span class="line">        )</span><br><span class="line">        self.stage2 = nn.Sequential(</span><br><span class="line">            <span class="comment"># 20,20,256 -&gt; 10,10,512</span></span><br><span class="line">            conv_dw(<span class="number">256</span>, <span class="number">512</span>, <span class="number">2</span>),</span><br><span class="line">            conv_dw(<span class="number">512</span>, <span class="number">512</span>, <span class="number">1</span>),</span><br><span class="line">            conv_dw(<span class="number">512</span>, <span class="number">512</span>, <span class="number">1</span>),</span><br><span class="line">            conv_dw(<span class="number">512</span>, <span class="number">512</span>, <span class="number">1</span>),</span><br><span class="line">            conv_dw(<span class="number">512</span>, <span class="number">512</span>, <span class="number">1</span>),</span><br><span class="line">            conv_dw(<span class="number">512</span>, <span class="number">512</span>, <span class="number">1</span>),</span><br><span class="line">        )</span><br><span class="line">        self.stage3 = nn.Sequential(</span><br><span class="line">            <span class="comment"># 10,10,512 -&gt; 5,5,1024</span></span><br><span class="line">            conv_dw(<span class="number">512</span>, <span class="number">1024</span>, <span class="number">2</span>),</span><br><span class="line">            conv_dw(<span class="number">1024</span>, <span class="number">1024</span>, <span class="number">1</span>),</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">        self.avg = nn.AdaptiveAvgPool2d((<span class="number">1</span>,<span class="number">1</span>))</span><br><span class="line">        self.fc = nn.Linear(<span class="number">1024</span>, <span class="number">1000</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = self.stage1(x)</span><br><span class="line">        x = self.stage2(x)</span><br><span class="line">        x = self.stage3(x)</span><br><span class="line">        x = self.avg(x)</span><br><span class="line">        <span class="comment"># x = self.model(x)</span></span><br><span class="line">        x = x.view(-<span class="number">1</span>, <span class="number">1024</span>)</span><br><span class="line">        x = self.fc(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+<p>FaceNet的代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Facenet</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, backbone=<span class="string">&quot;mobilenet&quot;</span>, dropout_keep_prob=<span class="number">0.5</span>, embedding_size=<span class="number">128</span>, num_classes=<span class="literal">None</span>, mode=<span class="string">&quot;train&quot;</span></span>):</span><br><span class="line">        <span class="built_in">super</span>(Facenet, self).__init__()</span><br><span class="line">        <span class="keyword">if</span> backbone == <span class="string">&quot;mobilenet&quot;</span>:</span><br><span class="line">            self.backbone = mobilenet()</span><br><span class="line">            flat_shape = <span class="number">1024</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">&#x27;Unsupported backbone - `&#123;&#125;`, Use mobilenet.&#x27;</span>.<span class="built_in">format</span>(backbone))</span><br><span class="line">        self.avg = nn.AdaptiveAvgPool2d((<span class="number">1</span>,<span class="number">1</span>))</span><br><span class="line">        self.Dropout = nn.Dropout(<span class="number">1</span> - dropout_keep_prob)</span><br><span class="line">        self.Bottleneck = nn.Linear(flat_shape, embedding_size,bias=<span class="literal">False</span>)</span><br><span class="line">        self.last_bn = nn.BatchNorm1d(embedding_size, eps=<span class="number">0.001</span>, momentum=<span class="number">0.1</span>, affine=<span class="literal">True</span>)</span><br><span class="line">        <span class="keyword">if</span> mode == <span class="string">&quot;train&quot;</span>:</span><br><span class="line">            self.classifier = nn.Linear(embedding_size, num_classes)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = self.backbone(x)</span><br><span class="line">        x = self.avg(x)</span><br><span class="line">        x = x.view(x.size(<span class="number">0</span>), -<span class="number">1</span>)</span><br><span class="line">        x = self.Dropout(x)</span><br><span class="line">        x = self.Bottleneck(x)</span><br><span class="line">        x = self.last_bn(x)</span><br><span class="line">        x = F.normalize(x, p=<span class="number">2</span>, dim=<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward_feature</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = self.backbone(x)</span><br><span class="line">        x = self.avg(x)</span><br><span class="line">        x = x.view(x.size(<span class="number">0</span>), -<span class="number">1</span>)</span><br><span class="line">        x = self.Dropout(x)</span><br><span class="line">        x = self.Bottleneck(x)</span><br><span class="line">        before_normalize = self.last_bn(x)</span><br><span class="line">        x = F.normalize(before_normalize, p=<span class="number">2</span>, dim=<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> before_normalize, x</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward_classifier</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = self.classifier(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+<h2 id="Loss部分"><a href="#Loss部分" class="headerlink" title="Loss部分"></a>Loss部分</h2><p>FaceNet使用了<code>Triplet Loss</code>。这个Loss的目的是：对于一张人脸图片<code>Anchor</code>输入$x_i^a$，通过神经网络$f(x)$的映射到$d$维特征空间$\Bbb R^d$的结果$f(x_i^a)$和所有的正样本<code>Positive</code>的结果(和Anchor输入的类别相同的所有照片的$d$维特征空间结果$f(x_i^p)$)的欧式距离最短，而与所有的负样本<code>Negative</code>（和Anchor输入的类别不同的所有照片的$d$维特征空间结果$f(x_i^n)$）的欧氏距离最长，如图所示：</p>
+<p><img src="https://s2.loli.net/2022/08/02/OYi8dzawNkR26Vf.png" alt="image-20220802195743710" style="zoom:80%;" /></p>
+<p>用公式表示一下这个<strong>约束条件</strong>就是：</p>
+<script type="math/tex; mode=display">
+||f(x_i^a)-f(x_i^p)||_2^2+\alpha<||f(x_i^a)-f(x_i^n)||_2^2,\\
+\forall (f(x_i^a),f(x_i^p),f(x_i^n))\in\tau</script><p>其中，$\alpha$是规定的正负样本的边界距离，$\tau$代表的是三元组的每一组基组成的$N$维空间。对于这种情况，网络的优化目标就是最小化这个式子：</p>
+<script type="math/tex; mode=display">
+\sum_i^N{[||f(x_i^a)-f(x_i^p)||_2^2+\alpha-||f(x_i^a)-f(x_i^n)||_2^2]}_+</script><h2 id="训练技巧"><a href="#训练技巧" class="headerlink" title="训练技巧"></a>训练技巧</h2><h3 id="三元组Triplet的选择"><a href="#三元组Triplet的选择" class="headerlink" title="三元组Triplet的选择"></a>三元组Triplet的选择</h3><p>上文提到，把所有可能的三元组构建出来是非常耗时的，而且大部分的式子都能满足<strong>约束条件</strong>，而神经网络是一个基于差别进行反馈修正的系统，因此较小的Loss其实对训练的结果修改并没有很大的意义。举个例子，备战高考，在做往年题的时候发现自己的立体几何做得很强，但是导数题做得一塌糊涂漏洞百出。这个时候就需要专攻薄弱环节导数题进行训练，因为薄弱环节的提分可以最大程度地拉升和满分之间的差距（减小Loss，提高Accuracy）。基于这种想法，我们直接选择那些违背了约束条件的三元组进行训练即可。（但在实际的训练中，我将直接选择更改为了随机选择，因为考虑到模型的泛化性能我对违背约束条件的三元组的选择是以0.2的概率进行抽样送往网络训练）</p>
+<h3 id="分类器的辅助训练"><a href="#分类器的辅助训练" class="headerlink" title="分类器的辅助训练"></a>分类器的辅助训练</h3><p>FaceNet输出的其实是要给长度为128的特征向量，下一步的分类器根据特征向量分类才输出最终的分类结果。仅仅使用Triplet Loss会难以让网络收敛，因此在训练过程中可以再加上一个MLP作为训练器，使用Cross-Entropy作为辅助Triplet-Loss收敛。这样做的话其实就已经自带了一个<code>Classifier</code>了，不再需要额外的训练。这就是为什么之前提到不使用SVM等等一类的分类算法进行最后的分类器。</p>
+<h3 id="数据增强"><a href="#数据增强" class="headerlink" title="数据增强"></a>数据增强</h3><ul>
+<li><p><strong>随机水平翻转。</strong>给定正态分布$X\sim \delta(0,1)$，对于随机变量$x$，当其取值小于0.5时，将输入的图像进行左右的翻转。在<code>opencv</code>中仅需要<code>cv2.flip(image,1)</code>即可完成操作。</p>
+</li>
+<li><p><strong>灰度边框+等比缩放。</strong>首先获取输入图片的原始尺寸，计算其长宽比$r<em>1$；然后根据长宽中的最大值和MobileNet的输入尺寸<code>160*160</code>进行比较，得到缩放倍率$d</em>{wh}=\frac{160}{\max(w,h)}$，随后根据长宽比和缩放倍率对原始图像进行缩放，使得长宽中的一边达到160；随后，针对不足160的部分使用灰色<code>RGB:(128,128,128)</code>矩形从两端均匀padding。代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">letterbox</span>(<span class="params">im, new_shape=(<span class="params"><span class="number">160</span>, <span class="number">160</span></span>), color=(<span class="params"><span class="number">128</span>, <span class="number">128</span>, <span class="number">128</span></span>), auto=<span class="literal">False</span>, scaleFill=<span class="literal">False</span>, scaleup=<span class="literal">True</span>, stride=<span class="number">32</span></span>):</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># Resize and pad image while meeting stride-multiple constraints</span></span><br><span class="line">    shape = im.shape[:<span class="number">2</span>]  <span class="comment"># current shape [height, width]</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">isinstance</span>(new_shape, <span class="built_in">int</span>):</span><br><span class="line">        new_shape = (new_shape, new_shape)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Scale ratio (new / old)</span></span><br><span class="line">    r = <span class="built_in">min</span>(new_shape[<span class="number">0</span>] / shape[<span class="number">0</span>], new_shape[<span class="number">1</span>] / shape[<span class="number">1</span>])</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> scaleup:  <span class="comment"># only scale down, do not scale up (for better val mAP)</span></span><br><span class="line">        r = <span class="built_in">min</span>(r, <span class="number">1.0</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Compute padding</span></span><br><span class="line">    ratio = r, r  <span class="comment"># width, height ratios</span></span><br><span class="line">    new_unpad = <span class="built_in">int</span>(<span class="built_in">round</span>(shape[<span class="number">1</span>] * r)), <span class="built_in">int</span>(<span class="built_in">round</span>(shape[<span class="number">0</span>] * r))</span><br><span class="line">    dw, dh = new_shape[<span class="number">1</span>] - new_unpad[<span class="number">0</span>], new_shape[<span class="number">0</span>] - new_unpad[<span class="number">1</span>]  <span class="comment"># wh padding</span></span><br><span class="line">    <span class="keyword">if</span> auto:  <span class="comment"># minimum rectangle</span></span><br><span class="line">        dw, dh = np.mod(dw, stride), np.mod(dh, stride)  <span class="comment"># wh padding</span></span><br><span class="line">    <span class="keyword">elif</span> scaleFill:  <span class="comment"># stretch</span></span><br><span class="line">        dw, dh = <span class="number">0.0</span>, <span class="number">0.0</span></span><br><span class="line">        new_unpad = (new_shape[<span class="number">1</span>], new_shape[<span class="number">0</span>])</span><br><span class="line">        ratio = new_shape[<span class="number">1</span>] / shape[<span class="number">1</span>], new_shape[<span class="number">0</span>] / shape[<span class="number">0</span>]  <span class="comment"># width, height ratios</span></span><br><span class="line"></span><br><span class="line">    dw /= <span class="number">2</span>  <span class="comment"># divide padding into 2 sides</span></span><br><span class="line">    dh /= <span class="number">2</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> shape[::-<span class="number">1</span>] != new_unpad:  <span class="comment"># resize</span></span><br><span class="line">        im = cv2.resize(im, new_unpad, interpolation=cv2.INTER_LINEAR)</span><br><span class="line">    top, bottom = <span class="built_in">int</span>(<span class="built_in">round</span>(dh - <span class="number">0.1</span>)), <span class="built_in">int</span>(<span class="built_in">round</span>(dh + <span class="number">0.1</span>))</span><br><span class="line">    left, right = <span class="built_in">int</span>(<span class="built_in">round</span>(dw - <span class="number">0.1</span>)), <span class="built_in">int</span>(<span class="built_in">round</span>(dw + <span class="number">0.1</span>))</span><br><span class="line">    im = cv2.copyMakeBorder(im, top, bottom, left, right, cv2.BORDER_CONSTANT, value=color)  <span class="comment"># add border</span></span><br><span class="line">    <span class="keyword">return</span> im<span class="comment"># , ratio, (dw, dh)</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="整合收尾"><a href="#整合收尾" class="headerlink" title="整合收尾"></a>整合收尾</h1><p>终于到这里了！到了我第一喜欢的UI设计环节！！！</p>
+<p><img src="https://s2.loli.net/2022/08/05/ldiUFYzgjBrqyQN.png" alt="image-20220805181658926"  /></p>
+<center><small>其实也没啥设计，就是选了几个颜色而已</small></center>
+
+<h2 id="性能测试"><a href="#性能测试" class="headerlink" title="性能测试"></a>性能测试</h2><p>Yolo推理速度直接搬运官网的0.01s左右，<code>FaceNet</code>推理时间为0.003秒左右。这里其实有个坑，就是一开始测试的时候发现时间差异太大了，然后查了一下发现好像是在部署到设备上进行推理的时候，需要使用一些数据进行<code>Warmup</code>的操作：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">device = torch.device(<span class="string">&#x27;cuda&#x27;</span>)</span><br><span class="line">dummy_input = torch.rand(<span class="number">1</span>,<span class="number">3</span>,<span class="number">160</span>,<span class="number">160</span>).to(device)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Warming Up&#x27;</span>)</span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">20</span>):</span><br><span class="line">        _ = model(dummy_input)</span><br></pre></td></tr></table></figure>
+<p>然后进行性能的测试。首先是推理时间：</p>
+<p><img src="https://s2.loli.net/2022/08/07/JsfkZiAtdFRXL3P.png" alt="image-20220807092856305"></p>
+<p>基本上可以做到100FPS的水平，也就是说，基本上实时检测是没问题的了。那么准确度如何呢？我使用了两个验证集进行测试，其中一个验证集是训练集数据来源的视频的下半部分（这部分没有任何数据用于训练、测试），另一个则是完全独立的新视频。先说几个存在的问题吧，首先无论是在哪个验证集上面进行效果测试，脸部画面占据画面20-50%的情况下，推理准确度为100%。然而在人脸屏占比为10~15%左右的时候，会出现分类抖动的情况，就是说分类结果会很不稳定，出现的原因可能是<code>FaceNet</code>要求的输入图像大小为<code>160*160</code>导致的，加上Resize函数和LetterBox的操作会导致一些特征的变换有所丢失。解决方法则是对对所有的小尺寸图片划分为子类，并固定Backbone参数重新训练FaceNet以及分类器，最后导出结果的时候再把子类合并到大类里面。</p>
+<h2 id="探索实验"><a href="#探索实验" class="headerlink" title="探索实验"></a>探索实验</h2><p>然后这里我还额外做了个实验，研究模型的卷积层的关注点，对重点区域生成热力图，观察到底是什么特征区分了人脸：</p>
+<p><img src="https://s2.loli.net/2022/08/05/qnpZ3vXkxS9uG78.png" alt="image-20220805183241174" style="zoom: 50%;" /></p>
+<center><small>Grad-CAM钩在Backbone最后的卷积层上生成的热力图</small></center>
+
+<p>可以看出网络主要是重点关注鼻子部分的信息进行分类决策的。就这个简单的分类任务而言基本上准确率处于一个可以接受的范围，但是就更广泛一点的人脸识别任务来说，这个网络的设计其实还是有缺陷的，因为我们希望的是网络<strong>更加关注五官的信息而不是针对数据集的差异关注某一局部的信息。</strong>所以如果要构建更通用的人脸识别系统的话，可以参考目标识别设定中的预设描框对人脸的五官局部进行裁剪或者滑动窗口+注意力机制综合运用，对局部信息进行特征向量的提取与embedding，甚至还可以降低特征向量的维度（FaceNet的输出特征向量维度是128），在我调参的过程中我也研究过<code>Embedding Size</code>的大小设置，针对这次使用的数据集而言，128的长度其实对5个类别来说其实有些冗余了，可以进行一定的缩减；其次，五官信息的特征可以以组合的形式输出一个新的特征向量，最后只需要对这个新的特征向量做分类工作即可。我更改了网络的主干部分，使用并修改了Swim Transformer的结构，但碍于设备性能未能进行实验探索，日后有机会的话可能会从这方面进行进一步的探索工作。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89/" rel="tag"><i class="fa fa-tag"></i> 计算机视觉</a>
+              <a href="/tags/Yolov5/" rel="tag"><i class="fa fa-tag"></i> Yolov5</a>
+              <a href="/tags/FaceNet/" rel="tag"><i class="fa fa-tag"></i> FaceNet</a>
+          </div>
+          <script type="text/javascript">
+            var tagsall=document.getElementsByClassName("post-tags")
+            for (var i = tagsall.length - 1; i >= 0; i--){
+                var tags=tagsall[i].getElementsByTagName("a");
+                for (var j = tags.length - 1; j >= 0; j--) {
+                    var golden_ratio = 0.618033988749895;
+                    var s = 0.5;
+                    var v = 0.999;
+                    var h = golden_ratio + Math.random()*0.8 - 0.5;
+                    var h_i = parseInt(h * 6);
+                    var f = h * 6 - h_i;
+                    var p = v * (1 - s);
+                    var q = v * (1 - f * s);
+                    var t = v * (1 - (1 - f) * s);
+                    var r, g, b;
+                    switch (h_i) {
+                        case 0:
+                            r = v;
+                            g = t;
+                            b = p;
+                            break;
+                        case 1:
+                            r = q;
+                            g = v;
+                            b = p;
+                            break;
+                        case 2:
+                            r = p;
+                            g = v;
+                            b = t;
+                            break;
+                        case 3 :
+                            r = p;
+                            g = q;
+                            b = v;
+                            break;
+                        case 4:
+                            r = t;
+                            g = p;
+                            b = v;
+                            break;
+                        case 5:
+                            r = v;
+                            g = p;
+                            b = q;
+                            break;
+                        default:
+                            r = 1;
+                            g = 1;
+                            b = 1;
+                      }
+                    tags[j].style.background = "rgba("+parseInt(r*255)+","+parseInt(g*255)+","+parseInt(b*255)+","+0.5+")";
+                }
+            }                        
+            </script>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/05/27/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%20%E7%AC%AC%E4%B8%89%E5%91%A8/" rel="prev" title="【学习记录】2022-9-26">
+      <i class="fa fa-chevron-left"></i> 【学习记录】2022-9-26
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/05/27/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%952022-8-20/" rel="next" title="【学习记录】2022-8-20-？">
+      【学习记录】2022-8-20-？ <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Yolov5"><span class="nav-number">1.</span> <span class="nav-text">Yolov5</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Backbone%E9%83%A8%E5%88%86"><span class="nav-number">1.1.</span> <span class="nav-text">Backbone部分</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CBL%E6%A8%A1%E5%9D%97"><span class="nav-number">1.1.1.</span> <span class="nav-text">CBL模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Res%E6%A8%A1%E5%9D%97"><span class="nav-number">1.1.2.</span> <span class="nav-text">Res模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Focus%E6%A8%A1%E5%9D%97"><span class="nav-number">1.1.3.</span> <span class="nav-text">Focus模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CSP%E6%A8%A1%E5%9D%97"><span class="nav-number">1.1.4.</span> <span class="nav-text">CSP模块</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Neck%E9%83%A8%E5%88%86"><span class="nav-number">1.2.</span> <span class="nav-text">Neck部分</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95"><span class="nav-number">1.3.</span> <span class="nav-text">使用方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%B6%E4%BD%9C%E6%95%B0%E6%8D%AE%E9%9B%86%E5%92%8C%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">1.3.1.</span> <span class="nav-text">制作数据集和配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A3%E5%BC%8F%E8%AE%AD%E7%BB%83"><span class="nav-number">1.3.2.</span> <span class="nav-text">正式训练</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E8%AE%AD%E7%BB%83%E5%90%8E%E7%9A%84%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.3.3.</span> <span class="nav-text">使用训练后的模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E9%83%A8%E7%BD%B2%E8%87%AA%E5%AE%9A%E4%B9%89%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.3.4.</span> <span class="nav-text">如何部署自定义模型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8Yolov5%E7%9A%84%E9%A2%84%E6%B5%8B%E7%BB%93%E6%9E%9C%E8%8E%B7%E5%8F%96%E4%BA%BA%E8%84%B8%E6%95%B0%E6%8D%AE%E7%9A%84%E8%AE%AD%E7%BB%83%E9%9B%86"><span class="nav-number">1.4.</span> <span class="nav-text">用Yolov5的预测结果获取人脸数据的训练集</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#FaceNet"><span class="nav-number">2.</span> <span class="nav-text">FaceNet+</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E9%83%A8%E5%88%86"><span class="nav-number">2.1.</span> <span class="nav-text">网络部分</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%B1%E5%BA%A6%E5%8F%AF%E5%88%86%E7%A6%BB%E5%8D%B7%E7%A7%AF"><span class="nav-number">2.1.1.</span> <span class="nav-text">深度可分离卷积</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84"><span class="nav-number">2.1.2.</span> <span class="nav-text">网络结构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Loss%E9%83%A8%E5%88%86"><span class="nav-number">2.2.</span> <span class="nav-text">Loss部分</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%AD%E7%BB%83%E6%8A%80%E5%B7%A7"><span class="nav-number">2.3.</span> <span class="nav-text">训练技巧</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E5%85%83%E7%BB%84Triplet%E7%9A%84%E9%80%89%E6%8B%A9"><span class="nav-number">2.3.1.</span> <span class="nav-text">三元组Triplet的选择</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E7%B1%BB%E5%99%A8%E7%9A%84%E8%BE%85%E5%8A%A9%E8%AE%AD%E7%BB%83"><span class="nav-number">2.3.2.</span> <span class="nav-text">分类器的辅助训练</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA"><span class="nav-number">2.3.3.</span> <span class="nav-text">数据增强</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B4%E5%90%88%E6%94%B6%E5%B0%BE"><span class="nav-number">3.</span> <span class="nav-text">整合收尾</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95"><span class="nav-number">3.1.</span> <span class="nav-text">性能测试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A2%E7%B4%A2%E5%AE%9E%E9%AA%8C"><span class="nav-number">3.2.</span> <span class="nav-text">探索实验</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="阿花想养萨摩耶"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">阿花想养萨摩耶</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">65</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dafeigy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dafeigy" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1070642765@qq.com" title="E-Mail → mailto:1070642765@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/2659883291" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;2659883291" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+  </div>
+
+
+
+  <div class="links-of-recent-posts motion-element">
+    <div class="links-of-recent-posts-title">
+      <i class="fa fa-history fa-fw"></i>
+      最近文章
+    </div>
+    <ul class="links-of-recent-posts-list">
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E5%9F%9F%E9%80%82%E5%BA%94/" title="2024&#x2F;05&#x2F;27&#x2F;迁移学习域适应&#x2F;">域适应初探</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E9%80%A0%E7%A5%9E%E5%B9%B4%E4%BB%A3/" title="2024&#x2F;05&#x2F;27&#x2F;造神年代&#x2F;">读《造神年代》的一些读后随想</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E7%9B%AE%E6%A0%87%E4%BD%8D%E7%BD%AE-CSI%E4%BF%A1%E5%8F%B7%E9%A2%91%E7%8E%87%E5%BD%B1%E5%93%8D%E6%8E%A2%E7%A9%B6/" title="2024&#x2F;05&#x2F;27&#x2F;目标位置-CSI信号频率影响探究&#x2F;">【论文笔记】Understanding  WiFi Signal Frequency Features for Position-Independent Gesture Sensing</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E8%A3%85%E6%9C%BA/" title="2024&#x2F;05&#x2F;27&#x2F;装机&#x2F;">ITX-Lancer L1 Mesh</a>
+        </li>
+    </ul>
+  </div>
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">阿花</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>

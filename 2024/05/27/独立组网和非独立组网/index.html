@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":5},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="4G技术刚落地没多久（按通信技术的代数来划分来说4G还是比较年轻的），5G就开始推广了。为了更充分发挥现有的4G基站设备，5G技术的发展迭代后诞生了NSA和NSA组网的两种方式，下文将简单解析。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="独立组网和非独立组网">
+<meta property="og:url" content="http://example.com/2024/05/27/%E7%8B%AC%E7%AB%8B%E7%BB%84%E7%BD%91%E5%92%8C%E9%9D%9E%E7%8B%AC%E7%AB%8B%E7%BB%84%E7%BD%91/index.html">
+<meta property="og:site_name" content="阿花的Blog">
+<meta property="og:description" content="4G技术刚落地没多久（按通信技术的代数来划分来说4G还是比较年轻的），5G就开始推广了。为了更充分发挥现有的4G基站设备，5G技术的发展迭代后诞生了NSA和NSA组网的两种方式，下文将简单解析。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/08/28/RYD6uAb1SsX4WlZ.png">
+<meta property="og:image" content="https://s2.loli.net/2022/08/28/RYD6uAb1SsX4WlZ.png">
+<meta property="og:image" content="https://s2.loli.net/2022/08/28/aQ47rIyAvwtZW16.png">
+<meta property="og:image" content="https://s2.loli.net/2022/08/28/lzfWReDn8HUaGbX.png">
+<meta property="article:published_time" content="2024-05-27T13:33:39.534Z">
+<meta property="article:modified_time" content="2024-05-27T13:33:39.534Z">
+<meta property="article:author" content="阿花想养萨摩耶">
+<meta property="article:tag" content="通信技术">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2022/08/28/RYD6uAb1SsX4WlZ.png">
+
+<link rel="canonical" href="http://example.com/2024/05/27/%E7%8B%AC%E7%AB%8B%E7%BB%84%E7%BD%91%E5%92%8C%E9%9D%9E%E7%8B%AC%E7%AB%8B%E7%BB%84%E7%BD%91/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>独立组网和非独立组网 | 阿花的Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">阿花的Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/27/%E7%8B%AC%E7%AB%8B%E7%BB%84%E7%BD%91%E5%92%8C%E9%9D%9E%E7%8B%AC%E7%AB%8B%E7%BB%84%E7%BD%91/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          独立组网和非独立组网
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-05-27 21:33:39" itemprop="dateCreated datePublished" datetime="2024-05-27T21:33:39+08:00">2024-05-27</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>4G技术刚落地没多久（按通信技术的代数来划分来说4G还是比较年轻的），5G就开始推广了。为了更充分发挥现有的4G基站设备，5G技术的发展迭代后诞生了NSA和NSA组网的两种方式，下文将简单解析。</p>
+<p><img src="https://s2.loli.net/2022/08/28/RYD6uAb1SsX4WlZ.png" alt="image-20220828172224509" style="zoom:50%;" /></p>
+<span id="more"></span>
+<h1 id="独立（NSA）组网和非独立-NSA-组网"><a href="#独立（NSA）组网和非独立-NSA-组网" class="headerlink" title="独立（NSA）组网和非独立(NSA)组网"></a>独立（NSA）组网和非独立(NSA)组网</h1><h2 id="5G网络架构"><a href="#5G网络架构" class="headerlink" title="5G网络架构"></a>5G网络架构</h2><p>5G网络中有SA和NSA两种，在3GPP的R15版本中分成两个阶段，他们的部署是不同的。所谓SA即为<code>StandAlon</code>的缩写，NSA即为<code>NotStandAlone</code>，之所以有两种组网方式，是因为4G从推广普及到现在这个时间其实还不算很久，当初为了4G通信而购置的大量硬件设施的成本还没盈利回来，所以现阶段的5G通信为了推行技术，故对4G的设备进行了一定的兼容。这样，各大运营商可以使用上5G技术来赚米，又不会浪费现在的设备。</p>
+<h2 id="SA和NSA简略介绍"><a href="#SA和NSA简略介绍" class="headerlink" title="SA和NSA简略介绍"></a>SA和NSA简略介绍</h2><p>如果从技术理论设计上来说，<strong>SA（独立组网）无疑是最佳的选择</strong>，但现实是 3GPP 不得不考虑目前各大运营 商已存在庞大的 4G 网络，如何能<strong>让就网络设备能继续发挥作用，节省投资，又能享受 5G 的体验，这就是 NSA （非独立组网）。</strong></p>
+<h3 id="SA与NSA分类"><a href="#SA与NSA分类" class="headerlink" title="SA与NSA分类"></a>SA与NSA分类</h3><p><img src="https://s2.loli.net/2022/08/28/RYD6uAb1SsX4WlZ.png" alt="image-20220828172224509" style="zoom:50%;" /></p>
+<center><small>图1 5G组网分类</small></center>
+
+<p><img src="https://s2.loli.net/2022/08/28/aQ47rIyAvwtZW16.png" alt="image-20220828172703315" style="zoom:50%;" /></p>
+<center><small>图2 SA和NSA组网方式</small></center>
+
+<p>图2高亮的部分其实对应图1的物种组网方式。这么多的选项，就是 3GPP 提供给运营商更多的选择，主要为他们提供节省资源利旧，我们看一下它们的差别。</p>
+<ul>
+<li><p>SA-opt2（NGC+NR）：全新的 5G 核心网和无线网 gNB 组网，完全新建。这样的优势是可以完全发挥 5G 的各项性能， 按照 3GPP 的标准推进。缺点就需要浩大的投资。</p>
+</li>
+<li><p>SA-opt3（NGC+NR（CP）+LTE）：把原来的 4G 基站进行升级接入，它也属于独立组网。</p>
+</li>
+<li><p>NSA-opt3： 4G 核心网+（4G 基站与 5G 基站混合），运营商一般都爱用3x选项，把UPF数据分两部分，把对4G网络造成瓶颈的部分放到5G处理，剩下那部分走4G的LTE基站。</p>
+<p><img src="https://s2.loli.net/2022/08/28/lzfWReDn8HUaGbX.png" alt="image-20220828173203767" style="zoom:50%;" /></p>
+</li>
+<li><p>NSA-opt4：5G 核心网+（4G 基站与 5G 基站混合）</p>
+</li>
+<li><p>NSA-op7：5G 核心网+（4G 基站与 5G 基站混合），但是UPF和CPF的方式不同。</p>
+</li>
+</ul>
+<h3 id="技术要点总结"><a href="#技术要点总结" class="headerlink" title="技术要点总结"></a>技术要点总结</h3><ul>
+<li>NSA 没有 5G 核心网，是利用现有的 4G 核心网接入，而 SA 则是全部采用 5G 架构，包括 5G 的核心网。</li>
+<li>由于 NSA 是新建 5G 基站+4G 基站升级支持 5G 的，再连接 4G 核心网，因此，在 NSA 组网下，5G 与 4G 在接入网级互通复杂，虽然利旧了 4G 设备，但组网和运营成本大增；在 SA 组网下，5G 与 4G 仅在核心网级互 通，非常简单。</li>
+<li>在 NSA 组网下，终端需要支持 LTE 和 NR 双连接，终端成本会更高；在 SA 组网下，终端仅连接 NR 一种 无线接入技术，对 4G 采用回落技术，简单成熟的技术。</li>
+</ul>
+<p>从技术的角度来说，NSA 肯定是要比 SA 差很远，但 NSA 可以利用现有的设备，节 省投资快速部署 5G，是运营商愿意使用的关键。</p>
+<h3 id="功能差异对比"><a href="#功能差异对比" class="headerlink" title="功能差异对比"></a>功能差异对比</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">功能名称</th>
+<th style="text-align:center">SA支持情况</th>
+<th style="text-align:center">NSA支持情况</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">5G网络切片</td>
+<td style="text-align:center">✅</td>
+<td style="text-align:center">❌</td>
+</tr>
+<tr>
+<td style="text-align:center">多接入边缘计算（MEC）</td>
+<td style="text-align:center">✅</td>
+<td style="text-align:center">❌</td>
+</tr>
+<tr>
+<td style="text-align:center">网络安全与开放</td>
+<td style="text-align:center">安全和开放能力增强</td>
+<td style="text-align:center">安全能力与4G网络一致，无开放能力</td>
+</tr>
+<tr>
+<td style="text-align:center">部署运维</td>
+<td style="text-align:center">部署成本高，运维成本低</td>
+<td style="text-align:center">部署成本低且快，运维成本高</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>综上所述，SA 将是运营商未来的方向，NSA 只作为过渡快速部署和利旧的方案，会获得短期的应用。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E9%80%9A%E4%BF%A1%E6%8A%80%E6%9C%AF/" rel="tag"><i class="fa fa-tag"></i> 通信技术</a>
+          </div>
+          <script type="text/javascript">
+            var tagsall=document.getElementsByClassName("post-tags")
+            for (var i = tagsall.length - 1; i >= 0; i--){
+                var tags=tagsall[i].getElementsByTagName("a");
+                for (var j = tags.length - 1; j >= 0; j--) {
+                    var golden_ratio = 0.618033988749895;
+                    var s = 0.5;
+                    var v = 0.999;
+                    var h = golden_ratio + Math.random()*0.8 - 0.5;
+                    var h_i = parseInt(h * 6);
+                    var f = h * 6 - h_i;
+                    var p = v * (1 - s);
+                    var q = v * (1 - f * s);
+                    var t = v * (1 - (1 - f) * s);
+                    var r, g, b;
+                    switch (h_i) {
+                        case 0:
+                            r = v;
+                            g = t;
+                            b = p;
+                            break;
+                        case 1:
+                            r = q;
+                            g = v;
+                            b = p;
+                            break;
+                        case 2:
+                            r = p;
+                            g = v;
+                            b = t;
+                            break;
+                        case 3 :
+                            r = p;
+                            g = q;
+                            b = v;
+                            break;
+                        case 4:
+                            r = t;
+                            g = p;
+                            b = v;
+                            break;
+                        case 5:
+                            r = v;
+                            g = p;
+                            b = q;
+                            break;
+                        default:
+                            r = 1;
+                            g = 1;
+                            b = 1;
+                      }
+                    tags[j].style.background = "rgba("+parseInt(r*255)+","+parseInt(g*255)+","+parseInt(b*255)+","+0.5+")";
+                }
+            }                        
+            </script>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/05/27/%E7%8C%AB%E7%9C%BC%E7%94%B5%E5%BD%B1/" rel="prev" title="猫眼电影爬虫&简单数据分析">
+      <i class="fa fa-chevron-left"></i> 猫眼电影爬虫&简单数据分析
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/05/27/%E7%94%9C%E7%94%9C%E5%9C%88%E7%9A%84%E4%BC%98%E5%8C%96/" rel="next" title="3D甜甜圈的计算优化">
+      3D甜甜圈的计算优化 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%8B%AC%E7%AB%8B%EF%BC%88NSA%EF%BC%89%E7%BB%84%E7%BD%91%E5%92%8C%E9%9D%9E%E7%8B%AC%E7%AB%8B-NSA-%E7%BB%84%E7%BD%91"><span class="nav-number">1.</span> <span class="nav-text">独立（NSA）组网和非独立(NSA)组网</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#5G%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84"><span class="nav-number">1.1.</span> <span class="nav-text">5G网络架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SA%E5%92%8CNSA%E7%AE%80%E7%95%A5%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.2.</span> <span class="nav-text">SA和NSA简略介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SA%E4%B8%8ENSA%E5%88%86%E7%B1%BB"><span class="nav-number">1.2.1.</span> <span class="nav-text">SA与NSA分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%80%E6%9C%AF%E8%A6%81%E7%82%B9%E6%80%BB%E7%BB%93"><span class="nav-number">1.2.2.</span> <span class="nav-text">技术要点总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%9F%E8%83%BD%E5%B7%AE%E5%BC%82%E5%AF%B9%E6%AF%94"><span class="nav-number">1.2.3.</span> <span class="nav-text">功能差异对比</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="阿花想养萨摩耶"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">阿花想养萨摩耶</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">65</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dafeigy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dafeigy" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1070642765@qq.com" title="E-Mail → mailto:1070642765@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/2659883291" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;2659883291" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+  </div>
+
+
+
+  <div class="links-of-recent-posts motion-element">
+    <div class="links-of-recent-posts-title">
+      <i class="fa fa-history fa-fw"></i>
+      最近文章
+    </div>
+    <ul class="links-of-recent-posts-list">
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E5%9F%9F%E9%80%82%E5%BA%94/" title="2024&#x2F;05&#x2F;27&#x2F;迁移学习域适应&#x2F;">域适应初探</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E9%80%A0%E7%A5%9E%E5%B9%B4%E4%BB%A3/" title="2024&#x2F;05&#x2F;27&#x2F;造神年代&#x2F;">读《造神年代》的一些读后随想</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E7%9B%AE%E6%A0%87%E4%BD%8D%E7%BD%AE-CSI%E4%BF%A1%E5%8F%B7%E9%A2%91%E7%8E%87%E5%BD%B1%E5%93%8D%E6%8E%A2%E7%A9%B6/" title="2024&#x2F;05&#x2F;27&#x2F;目标位置-CSI信号频率影响探究&#x2F;">【论文笔记】Understanding  WiFi Signal Frequency Features for Position-Independent Gesture Sensing</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E8%A3%85%E6%9C%BA/" title="2024&#x2F;05&#x2F;27&#x2F;装机&#x2F;">ITX-Lancer L1 Mesh</a>
+        </li>
+    </ul>
+  </div>
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">阿花</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

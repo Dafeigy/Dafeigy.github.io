@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":5},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="This is your introduction…好久没写数模了，正好选修课要写一个大报告的论文，我找了个和通信相关的题目来做一下找找感觉。选了2022年第十二届MathorCup高校数学建模挑战赛中的D题来做，边写边记录吧，我也不是啥专家啥的，就只能见招拆招。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基站选址研究">
+<meta property="og:url" content="http://example.com/2024/05/27/%E5%9F%BA%E7%AB%99%E5%88%86%E9%85%8D/index.html">
+<meta property="og:site_name" content="阿花的Blog">
+<meta property="og:description" content="This is your introduction…好久没写数模了，正好选修课要写一个大报告的论文，我找了个和通信相关的题目来做一下找找感觉。选了2022年第十二届MathorCup高校数学建模挑战赛中的D题来做，边写边记录吧，我也不是啥专家啥的，就只能见招拆招。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/10/16/t2AcRWDB7VE9kHs.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/16/2g1SRCftv83ITkU.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/16/OGsgkXahJ6WRUAu.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/16/jlto3HRpqcNhTs8.jpg">
+<meta property="og:image" content="https://s2.loli.net/2022/10/16/7uLQ93UVwIfjA1r.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/16/LY8j4vVWpFOfMZt.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/16/fEevjtYrQm5BlyO.jpg">
+<meta property="og:image" content="https://s2.loli.net/2022/10/18/BSX9ClrxwaGJmON.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/18/1zOtCEDvocih49b.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/18/A74QLXWGdfcueNS.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/18/uvZoD1zFyeKdGjH.jpg">
+<meta property="og:image" content="https://s2.loli.net/2022/10/18/9cflhKytuzVJN1Z.jpg">
+<meta property="og:image" content="https://s2.loli.net/2022/10/16/uflPdJQp1Wrh4ne.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/18/GDfWIudyUkbqi9g.jpg">
+<meta property="og:image" content="https://s2.loli.net/2022/10/19/aSp9kCDtQ6PwjAc.jpg">
+<meta property="og:image" content="https://s2.loli.net/2022/10/19/whRdZeXjWuLpV2g.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/19/aTMvI4P1BhQjcNE.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/19/naPGY8xoDiHerfy.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/19/fbU5TZiXJDILl4R.jpg">
+<meta property="og:image" content="https://s2.loli.net/2022/10/19/bv573DKYAtWou8G.jpg">
+<meta property="og:image" content="https://s2.loli.net/2022/10/19/ebKsmrG4H9zPkNU.jpg">
+<meta property="og:image" content="https://s2.loli.net/2022/10/19/RydS6o7W3ckPBFI.jpg">
+<meta property="og:image" content="https://s2.loli.net/2022/10/19/jmq6GCJxrpIAyc5.png">
+<meta property="article:published_time" content="2024-05-27T13:33:39.531Z">
+<meta property="article:modified_time" content="2024-05-27T13:33:39.531Z">
+<meta property="article:author" content="阿花想养萨摩耶">
+<meta property="article:tag" content="数学模型">
+<meta property="article:tag" content="基站选址">
+<meta property="article:tag" content="聚类">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2022/10/16/t2AcRWDB7VE9kHs.png">
+
+<link rel="canonical" href="http://example.com/2024/05/27/%E5%9F%BA%E7%AB%99%E5%88%86%E9%85%8D/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>基站选址研究 | 阿花的Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">阿花的Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/27/%E5%9F%BA%E7%AB%99%E5%88%86%E9%85%8D/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          基站选址研究
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-05-27 21:33:39" itemprop="dateCreated datePublished" datetime="2024-05-27T21:33:39+08:00">2024-05-27</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>This is your introduction…好久没写数模了，正好选修课要写一个大报告的论文，我找了个和通信相关的题目来做一下找找感觉。选了<a target="_blank" rel="noopener" href="http://www.mathorcup.org/detail/2377">2022年第十二届MathorCup高校数学建模挑战赛</a>中的D题来做，边写边记录吧，我也不是啥专家啥的，就只能见招拆招。</p>
+<span id="more"></span>
+<h2 id="题目背景"><a href="#题目背景" class="headerlink" title="题目背景"></a>题目背景</h2><p>​        移动通信技术规模飞速发展，运营规模也越来越大，导致带来的通信 网络越来越复杂。随着 5G 的发展，通信的带宽越来越大，但基站的能覆盖 范围越来越小，使得覆盖同样的区域，需要的基站数量变的更多。另外， 基站和天线的种类也变多了。这就使得通信网络的规划特别是站址选择的 问题变得越来越复杂。<strong>站址选择问题是：根据现网天线的覆盖情况，给出现网的弱覆盖区域，选择一定数量的点，使得在这些点上新建基站后，可 以解决现网的弱覆盖区域的覆盖问题。</strong>例如，下图为某城市某区域的现网覆盖情况，其中红色的区域表示为弱覆盖区域。</p>
+<p><img src="https://s2.loli.net/2022/10/16/t2AcRWDB7VE9kHs.png" alt="题目配图" style="zoom:50%;" /></p>
+<p>​        在实际网络规划中，考虑基站的建设成本和一些其他因素，有时候可 能无法把所有弱覆盖区域都解决，这时候就需要考虑业务量的因素，尽量 优先解决业务量高的弱覆盖区域。</p>
+<p>​        为了便于计算，将给定的区域用很小的栅格进行划分，只考虑每个栅格的中心点，即任给一个区域，都可以划分成有限个点。每个点有一些属性值，包括：坐标，是否为弱覆盖点，业务量等。站址也只能选择区域内的点。某个点是否被规划基站覆盖可以按如下方法判断： 设选择基站的覆盖范围为 d，基站所规划的点的坐标为：$P_0(x_0,y_0)$ ，则对于坐标为$P(x,y)$的点，若$||P-P_0||_2\leq d$，则认为该点被该基站覆盖，否则认 为该点没有被该基站覆盖。 同时，实际中还需要考虑一个约束条件，即新建站址之间以及新建站 址和现有站址之间的距离不能<strong>小于等于给定门限</strong>。</p>
+<p>​        <strong>问题1</strong>：给定区域的大小是 2500×2500 个栅格即 2500×2500 个点， 其中横坐标范围是 0 到 2499，纵坐标范围是 0 到 2499。附件 1 中是筛选出 该区域中的弱覆盖点的信息，包括每个点的坐标和业务量。给定 2 种基站， 分别为：宏基站（覆盖范围30，成本10），微基站（覆盖范围10，成本1）。附件 2 中还给出了现网基站的坐标点，<strong>新建站址之间以及新建站址和现有站址之间的距离的门限是10</strong>。根据给定的信息和附件中的数据，进行站址规划，<strong>使得弱覆盖点总业务量的 90%被规划基站覆盖。</strong>给出选择的站址的坐标以及每个站址选择的基站种类。站址的坐标只能在给定区域内的 2500×2500 个点中选择。</p>
+<p>​        <strong>问题 2</strong>：进一步考虑，实际中，每个站并不是完全的圆形覆盖，而是 每个站上有 3 个扇区，每个扇区指向一个方向。每个扇区在主方向上覆盖 范围最大（宏基站为 30，微基站为 10），在主方向左右 60 度的范围内可以 覆盖，覆盖范围按线性逐渐缩小，在 60 度的时候，覆盖范围为主方向覆盖范围的一半。超过 60 度，则无法被该扇区覆盖。 考虑每个站的任意 2 个扇区的主方向之间的夹角不能小于 45 度，同时仍然考虑上一问中的基站成本等其他条件，问在最优站址和扇区角度的条 件下，新建站能否覆盖弱覆盖点总业务量的 90%。若能，给出最优站址和扇区角度的结果；否则，给出最优站址和扇区角度的结果，并给出最多可以覆盖的弱覆盖点的总业务量的比例。</p>
+<p>​        <strong>问题 3</strong>：实际工作中，为了更好的解决弱覆盖问题，需要对弱覆盖点进行区域聚类，把距离近的弱覆盖点聚成一类，可以得到弱覆盖区域，这样可以对不同的弱覆盖区域分开管理使得可以更好的解决弱覆盖问题。 若 2 个弱覆盖点的距离不大于 20，则这 2 个弱覆盖点应聚为一类，并 且考虑聚类性质具有传递性，即若点 A 和点 B 是一类的，点 B 和点 C 是一 类的，则点 A、B 和 C 都是一类的。试对所有弱覆盖点进行聚类，要求聚 类所用方法的总时间复杂度尽量低。</p>
+<h2 id="第一题的解答"><a href="#第一题的解答" class="headerlink" title="第一题的解答"></a>第一题的解答</h2><p>第一题就让我们看两个附件了，之后的题要我干什么我都不敢想了😡</p>
+<p><img src="https://s2.loli.net/2022/10/16/2g1SRCftv83ITkU.png" alt="image-20221016225907864"></p>
+<p>首先先看看附件1的数据：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">data = pd.read_csv(<span class="string">&#x27;附件\附件1 弱覆盖栅格数据(筛选).csv&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(data.head())</span><br><span class="line"></span><br><span class="line"><span class="comment">#      x     y     traffic</span></span><br><span class="line"><span class="comment"># 0   66  1486  140.581390</span></span><br><span class="line"><span class="comment"># 1   67  1486  140.518829</span></span><br><span class="line"><span class="comment"># 2  177  1486   48.919178</span></span><br><span class="line"><span class="comment"># 3  187  1486    4.322495</span></span><br><span class="line"><span class="comment"># 4  284  1486   71.528404</span></span><br></pre></td></tr></table></figure>
+<p>一共有三列，<code>traffic</code>代表的是业务量吧，然后前面的xy是坐标。这时候我的第一反应是画一个热力图（非常自然的想法啊对不对），所以我先生成一个<code>2500*2500</code>的零矩阵。然后根据<code>(x,y)</code>对应到矩阵中的元素对其进行修改成对应的<code>traffic</code>值：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">grid_blank = np.zeros((<span class="number">2500</span>,<span class="number">2500</span>))</span><br><span class="line">x_index = data[<span class="string">&#x27;x&#x27;</span>].tolist()</span><br><span class="line">y_index = data[<span class="string">&#x27;y&#x27;</span>].tolist()</span><br><span class="line">value = data[<span class="string">&#x27;traffic&#x27;</span>].tolist()</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(x_index)):</span><br><span class="line">    grid_blank[x_index[i]][y_index[i]] = value[i]</span><br><span class="line"></span><br><span class="line">heatmap = sns.heatmap(grid_blank)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p>运行！然后发现问题不对劲了：</p>
+<p><img src="https://s2.loli.net/2022/10/16/OGsgkXahJ6WRUAu.png" alt="失败的热力图"></p>
+<p>这能看到个啥？？？原本理应为方块的地方已经变成了像素了…所以我决定换一种作图方式！选择散点图：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">fig,ax = plt.subplots(figsize = (<span class="number">12</span>,<span class="number">10</span>))</span><br><span class="line"> <span class="comment">#注意 s 离散化的方法，因为需要通过点的大小来直观感受其所表示的数值大小</span></span><br><span class="line"> <span class="comment">#参数是 X 轴数据、Y 轴数据、各个点的大小、各个点的颜色</span></span><br><span class="line">scatter = ax.scatter(x_index, y_index , s = value, c = value, cmap = plt.cm.get_cmap(<span class="string">&#x27;RdYlBu&#x27;</span>), linewidth = <span class="number">0.5</span>, alpha = <span class="number">0.5</span>)</span><br><span class="line">ax.grid()</span><br><span class="line">fig.colorbar(scatter)</span><br><span class="line">plt.show()</span><br><span class="line"><span class="comment">#plt.savefig(&quot;Figure1.png&quot;)</span></span><br></pre></td></tr></table></figure>
+<p>当然可以选择3维的柱状图，不过实际效果可能没那么好…</p>
+<p><img src="https://s2.loli.net/2022/10/16/jlto3HRpqcNhTs8.jpg" style="zoom:50%;" /></p>
+<center><small>数据初探：基站的业务痛点</small></center>
+
+<p>在这里越蓝的点代表了其越重要的业务承担，也可以通过点的大小来表示（其实这个时候也不能说是点了…说是圆的大小还差不多）。既然我们可视化了，下一步就该思考下这个问题该怎么走下去了。首先我们先关注那些业务量大的点，保证他们能被优先覆盖。题目给的要求是要覆盖90%以上的业务，意思就是说，你选择的基站的业务量要占总的业务量的90%以上。我们先研究下这些薄弱基站的业务量的分布：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">value_cnt = data.value_counts(<span class="string">&#x27;traffic&#x27;</span>,sort=<span class="literal">False</span>)</span><br><span class="line">value_cnt_index = value_cnt.index.to_list()</span><br><span class="line">value_cnt_data = value_cnt.to_list()</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> pyecharts.charts <span class="keyword">import</span> Bar</span><br><span class="line"><span class="keyword">from</span> pyecharts <span class="keyword">import</span> options <span class="keyword">as</span> opts</span><br><span class="line">bar = (</span><br><span class="line">    Bar()</span><br><span class="line">    .add_xaxis(value_cnt_index)</span><br><span class="line">    .add_yaxis(<span class="string">&#x27;业务量&#x27;</span>,value_cnt_data, label_opts=opts.LabelOpts(is_show=<span class="literal">False</span>))</span><br><span class="line">    .set_global_opts(</span><br><span class="line">        title_opts=opts.TitleOpts(</span><br><span class="line">            title=<span class="string">&quot;业务量统计📈&quot;</span>,</span><br><span class="line">            pos_left=<span class="string">&#x27;center&#x27;</span>),</span><br><span class="line">        datazoom_opts=[opts.DataZoomOpts(), opts.DataZoomOpts(type_=<span class="string">&quot;inside&quot;</span>)],</span><br><span class="line">        legend_opts=opts.LegendOpts(is_show=<span class="literal">False</span>)</span><br><span class="line">    )</span><br><span class="line">)</span><br><span class="line">bar.render(<span class="string">&#x27;Traffic.html&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="https://s2.loli.net/2022/10/16/7uLQ93UVwIfjA1r.png" alt="image-20221016164231319" style="zoom: 80%;" /></p>
+<p>我们可以看到薄弱基站的业务量的大头其实集中在低端区域<code>[0,2]</code>左右的区间。这说明如果我们只考虑覆盖业务总量的条件下，我们只需要优先考虑大业务量的基站即可。即：优先覆盖大区域，然后再已覆盖的大区域附近选取更多的小业务量基站以达到更优的覆盖率。</p>
+<p>至于你说为什么我突然转成了<code>pyecharts</code>？我也不想的，但是<code>sns</code>不知道为啥卡了…而且效果图也不是很好。如果你要坚持要用也不是不行，很慢就是了：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bar = sns.barplot(x=value_cnt_index, y=value_cnt_data)</span><br><span class="line">plt.savefig(<span class="string">&#x27;Figure2.png&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="https://s2.loli.net/2022/10/16/LY8j4vVWpFOfMZt.png" style="zoom: 80%;" /></p>
+<p>OK。下一步就是筛选出最优先考虑覆盖的薄弱基站，我们要获取这些基站的坐标信息。获取这些坐标信息的逻辑很简单：我们只需要先对这些薄弱基站按业务量进行排序，先计算业务量总和，然后对排序后的结果进行累加直至累加到某一个基站达到设定的业务阈值（也就是题目1中的0.9）后跳出迭代过程，并把所以参加过累加的基站索引给取出即可。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">sort_data = data.sort_values(by=<span class="string">&#x27;traffic&#x27;</span>,ascending=<span class="literal">False</span>)</span><br><span class="line">traffic_total = sort_data[<span class="string">&#x27;traffic&#x27;</span>].<span class="built_in">sum</span>()</span><br><span class="line">percentage = sort_data[<span class="string">&#x27;traffic&#x27;</span>].cumsum()/data[<span class="string">&#x27;traffic&#x27;</span>].<span class="built_in">sum</span>()</span><br><span class="line"><span class="built_in">print</span>(percentage)</span><br><span class="line"></span><br><span class="line">threshold = <span class="number">0.9</span></span><br><span class="line">better_choice = percentage[percentage &gt; threshold]</span><br><span class="line">at_least = better_choice.index[<span class="number">0</span>]</span><br><span class="line">better_choice_idx = sort_data.index.to_list().index(at_least)</span><br><span class="line"></span><br><span class="line">key_station = sort_data[:better_choice_idx]</span><br><span class="line">key_station.to_csv(<span class="string">&#x27;Key_station.csv&#x27;</span>)</span><br><span class="line"></span><br><span class="line">x_index = key_station[<span class="string">&#x27;x&#x27;</span>].to_list()</span><br><span class="line">y_index = key_station[<span class="string">&#x27;y&#x27;</span>].to_list()</span><br><span class="line">value = key_station[<span class="string">&#x27;traffic&#x27;</span>].to_list()</span><br><span class="line"></span><br><span class="line">fig,ax = plt.subplots(figsize = (<span class="number">12</span>,<span class="number">10</span>))</span><br><span class="line">bubble = ax.scatter(x_index, y_index , s = value, c = value, cmap = plt.cm.get_cmap(<span class="string">&#x27;RdYlBu&#x27;</span>), linewidth = <span class="number">0.5</span>, alpha = <span class="number">0.5</span>)</span><br><span class="line">ax.grid()</span><br><span class="line">fig.colorbar(bubble)</span><br><span class="line">plt.title(<span class="string">&quot;Base Station Distribution.[Selected]&quot;</span>)</span><br><span class="line">plt.savefig(<span class="string">&#x27;Figure_3.jpg&#x27;</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://s2.loli.net/2022/10/16/fEevjtYrQm5BlyO.jpg" style="zoom: 80%;" /></p>
+<p>下一步则是根据已经获得的坐标进行规划了。</p>
+<p>我们先看看已有的基站和弱覆盖区域的分布：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">data = pd.read_csv(<span class="string">&#x27;附件\附件1 弱覆盖栅格数据(筛选).csv&#x27;</span>)</span><br><span class="line">data2 = pd.read_csv(<span class="string">&#x27;附件\附件2 现网站址坐标(筛选).csv&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># print(data.head())</span></span><br><span class="line"><span class="comment"># grid_blank = np.zeros((2500,2500))</span></span><br><span class="line">x_index = data[<span class="string">&#x27;x&#x27;</span>].tolist()</span><br><span class="line">y_index = data[<span class="string">&#x27;y&#x27;</span>].tolist()</span><br><span class="line">value = data[<span class="string">&#x27;traffic&#x27;</span>].tolist()</span><br><span class="line"></span><br><span class="line">x_index_2 = data2[<span class="string">&#x27;x&#x27;</span>].tolist()</span><br><span class="line">y_index_2 = data2[<span class="string">&#x27;y&#x27;</span>].tolist()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># for i in range(len(x_index)):</span></span><br><span class="line"><span class="comment">#     grid_blank[x_index[i]][y_index[i]] = value[i]</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># heatmap = sns.heatmap(grid_blank)</span></span><br><span class="line"><span class="comment"># plt.show()</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">fig,ax = plt.subplots(figsize = (<span class="number">12</span>,<span class="number">10</span>))</span><br><span class="line"> <span class="comment">#注意 s 离散化的方法，因为需要通过点的大小来直观感受其所表示的数值大小</span></span><br><span class="line"> <span class="comment">#参数是 X 轴数据、Y 轴数据、各个点的大小、各个点的颜色</span></span><br><span class="line">ax.scatter(x_index, y_index , s = <span class="number">4</span>, c = <span class="string">&#x27;red&#x27;</span>, linewidth = <span class="number">0.5</span>, alpha = <span class="number">0.5</span>)</span><br><span class="line">ax.scatter(x_index_2,y_index_2,s =<span class="number">20</span>, c=<span class="string">&quot;blue&quot;</span>, linewidth = <span class="number">0.5</span>, alpha = <span class="number">0.5</span>, marker=<span class="number">7</span>)</span><br><span class="line">ax.grid()</span><br><span class="line"><span class="comment">#fig.colorbar(bubble)</span></span><br><span class="line">plt.title(<span class="string">&#x27;Weak Area And Exsisted Base Station Distribution&#x27;</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://s2.loli.net/2022/10/18/BSX9ClrxwaGJmON.png" style="zoom: 50%;" /></p>
+<p>其中的蓝色三角点代表的是已有基站，红色点代表的是弱覆盖区域。可以看到已有的基站其实挺多的，我们先假设这些基站都是微基站，也就是覆盖半径为10，我们先通过这个假设排除掉一些被覆盖的薄弱区域。考虑到后面还有宏基站，以及需要对基站分配结果进行检验，故设计了几个函数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Debug用的装饰器，计时用</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">count_time</span>(<span class="params">func</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">wrapper</span>(<span class="params">*args, **kwargs</span>):</span><br><span class="line">        start = time.time()</span><br><span class="line">        a = func(*args, **kwargs)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Cost time: &#123;&#125; secondes.&quot;</span>.<span class="built_in">format</span>(time.time()-start))</span><br><span class="line">        <span class="keyword">return</span> a</span><br><span class="line">    <span class="keyword">return</span> wrapper</span><br><span class="line"></span><br><span class="line"><span class="comment"># 根据偏移坐标点生成实际覆盖区域的坐标点集</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">generate_area</span>(<span class="params">x,y,offset_list</span>):</span><br><span class="line">    <span class="keyword">return</span> [[x+each[index],y+each[index]]<span class="keyword">for</span> each <span class="keyword">in</span> offset_list <span class="keyword">for</span> index,_ <span class="keyword">in</span> <span class="built_in">enumerate</span>(each)]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#@count_time	#Debug完记得注释掉</span></span><br><span class="line"><span class="comment">#通过在(0,0)计算相对允许偏移点集合</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">generate_offset</span>(<span class="params">radius</span>):</span><br><span class="line">    <span class="keyword">return</span> [[i,j] <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(-radius,radius+<span class="number">1</span>) <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(-radius,radius+<span class="number">1</span>) <span class="keyword">if</span> i ** <span class="number">2</span> + j ** <span class="number">2</span> &lt;= radius**<span class="number">2</span>]</span><br></pre></td></tr></table></figure>
+<p>就是说如果对于每一个选择的基站，我们要计算其部署后的覆盖点集，但我们即便在最低的运算条件下，即只是用给定的现有的<code>1474</code>个基站计算，每个基站就要算<code>317</code>个点，总共的大小为<code>317*1474 = 465783</code>。如果你用一个列表来保存这些点那么你的内存可能会爆掉，所以最好的办法就是用一个哈希表来保存。假如某两个基站的覆盖点重合了，那么只记录已有的点，然后进行下一个点的生成，这样就能保证列表中的点是唯一的。Python怎么实现哈希表？字典就可以了，把<code>Key</code>设成字符串型的坐标，value只需要标记成True即可。依然选择我最爱用的Generator，快的一批：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">coverage_min = &#123;<span class="built_in">str</span>(each) :<span class="literal">True</span> <span class="keyword">for</span> index,_ <span class="keyword">in</span> data2.iterrows() <span class="keyword">for</span> each <span class="keyword">in</span> generate_area(data2[<span class="string">&#x27;x&#x27;</span>][index],data2[<span class="string">&#x27;y&#x27;</span>][index],offset_list_10)&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://s2.loli.net/2022/10/18/1zOtCEDvocih49b.png" alt="image-20221018170311840"></p>
+<p>内存占用一下子变成了<code>29786</code>，对比原本的<code>465783</code>，内存占用一下子就少了93%好吧？很他吗强！下面我们可以把所有已覆盖区域给标记一下，为了防止翻车我做了个backup：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">data_copy = data.copy()</span><br><span class="line">data_copy[<span class="string">&#x27;is_covered&#x27;</span>] = <span class="literal">False</span></span><br><span class="line"><span class="keyword">for</span> index,_ <span class="keyword">in</span> data_copy.iterrows():</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">str</span>([data_copy[<span class="string">&#x27;x&#x27;</span>][index],data_copy[<span class="string">&#x27;y&#x27;</span>][index]]) <span class="keyword">in</span> coverage_min:</span><br><span class="line">         data_copy[<span class="string">&#x27;is_covered&#x27;</span>][index] =  <span class="literal">True</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://s2.loli.net/2022/10/18/A74QLXWGdfcueNS.png" alt="image-20221018175832659"></p>
+<p>然后清洗一下，把还没覆盖的点给选出来画个图：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">unconvered = data_copy[data_copy[<span class="string">&#x27;is_covered&#x27;</span>] == <span class="literal">False</span>]</span><br><span class="line">convered = data_copy[data_copy[<span class="string">&#x27;is_covered&#x27;</span>] == <span class="literal">True</span>]</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(convered.head())</span><br><span class="line"><span class="comment">#          x     y    traffic  is_covered</span></span><br><span class="line"><span class="comment"># 316   1735   529   0.964652        True</span></span><br><span class="line"><span class="comment"># 717   1736   530   3.396427        True</span></span><br><span class="line"><span class="comment"># 897    332   849   2.226614        True</span></span><br><span class="line"><span class="comment"># 1113  2187   211  27.612494        True</span></span><br><span class="line"><span class="comment"># 1209  2313  1488   1.841420        True</span></span><br><span class="line"><span class="built_in">print</span>(unconvered.head())</span><br><span class="line"><span class="comment">#      x     y     traffic  is_covered</span></span><br><span class="line"><span class="comment"># 0   66  1486  140.581390       False</span></span><br><span class="line"><span class="comment"># 1   67  1486  140.518829       False</span></span><br><span class="line"><span class="comment"># 2  177  1486   48.919178       False</span></span><br><span class="line"><span class="comment"># 3  187  1486    4.322495       False</span></span><br><span class="line"><span class="comment"># 4  284  1486   71.528404       False</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> seaborn <span class="keyword">as</span> sns</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line">x_index = unconvered[<span class="string">&#x27;x&#x27;</span>].to_list()</span><br><span class="line">y_index = unconvered[<span class="string">&#x27;y&#x27;</span>].to_list()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">fig,ax = plt.subplots(figsize = (<span class="number">12</span>,<span class="number">10</span>))</span><br><span class="line"> <span class="comment">#注意 s 离散化的方法，因为需要通过点的大小来直观感受其所表示的数值大小</span></span><br><span class="line"> <span class="comment">#参数是 X 轴数据、Y 轴数据、各个点的大小、各个点的颜色</span></span><br><span class="line">bubble = ax.scatter(x_index, y_index , s = <span class="number">10</span>, c= <span class="string">&#x27;red&#x27;</span>)</span><br><span class="line">ax.grid()</span><br><span class="line">plt.title(<span class="string">&quot;Unconvered Area&quot;</span>)</span><br><span class="line">plt.savefig(<span class="string">&#x27;Unconvered Area.jpg&#x27;</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://s2.loli.net/2022/10/18/uvZoD1zFyeKdGjH.jpg" style="zoom:67%;" /></p>
+<p>我陷入了思考…这好像也没多少变化啊？对比一下看看到底有多少区域是覆盖的：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">x_index2 = convered[<span class="string">&#x27;x&#x27;</span>].to_list()</span><br><span class="line">y_index2 = convered[<span class="string">&#x27;y&#x27;</span>].to_list()</span><br><span class="line"></span><br><span class="line">fig,ax = plt.subplots(figsize = (<span class="number">12</span>,<span class="number">10</span>))</span><br><span class="line"> <span class="comment">#注意 s 离散化的方法，因为需要通过点的大小来直观感受其所表示的数值大小</span></span><br><span class="line"> <span class="comment">#参数是 X 轴数据、Y 轴数据、各个点的大小、各个点的颜色</span></span><br><span class="line">bubble = ax.scatter(x_index, y_index , s = <span class="number">10</span>, c= <span class="string">&#x27;red&#x27;</span>)</span><br><span class="line"></span><br><span class="line">ax.grid()</span><br><span class="line"></span><br><span class="line">ax.grid()</span><br><span class="line"></span><br><span class="line">ax.scatter(x_index,y_index,c=<span class="string">&#x27;red&#x27;</span>,s=<span class="number">10</span>)</span><br><span class="line">ax.scatter(x_index2,y_index2,c=<span class="string">&#x27;blue&#x27;</span>,s=<span class="number">10</span>)</span><br><span class="line">plt.title(<span class="string">&quot;Unconvered Area and Convered Area&quot;</span>)</span><br><span class="line">plt.savefig(<span class="string">&#x27;Unconvered Area and Convered Area.jpg&#x27;</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://s2.loli.net/2022/10/18/9cflhKytuzVJN1Z.jpg" style="zoom: 67%;" /></p>
+<p>沉默…覆盖的点太少了。覆盖点有728个，但未覆盖的点有182079个，这两个差的数量级不是一星半点…那该怎么办捏？</p>
+<p><img src="https://s2.loli.net/2022/10/16/uflPdJQp1Wrh4ne.png" alt="image-20221016225955434" style="zoom:50%;" /></p>
+<p>这个时候千万别灰心啊，因为你是在最垃圾的情况下覆盖了728个薄弱点，本来就没指望它能覆盖的啊。如果我们把原有基站的覆盖半径设置为30会怎样呢？</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">offset_list_30 = generate_offset(<span class="number">30</span>)</span><br><span class="line">coverage_max = &#123;<span class="built_in">str</span>(each) :<span class="literal">True</span> <span class="keyword">for</span> index,_ <span class="keyword">in</span> data2.iterrows() <span class="keyword">for</span> each <span class="keyword">in</span> generate_area(data2[<span class="string">&#x27;x&#x27;</span>][index],data2[<span class="string">&#x27;y&#x27;</span>][index],offset_list_30)&#125;</span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span> (<span class="string">&#x27;coverage_max.txt&#x27;</span>,<span class="string">&#x27;w&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.write(<span class="built_in">str</span>(coverage_max))</span><br><span class="line">    f.close()</span><br><span class="line"></span><br><span class="line">data_copy2 = data.copy()</span><br><span class="line">data_copy2[<span class="string">&#x27;is_covered&#x27;</span>] = <span class="literal">False</span></span><br><span class="line"><span class="keyword">for</span> index,_ <span class="keyword">in</span> data_copy2.iterrows():</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">str</span>([data_copy2[<span class="string">&#x27;x&#x27;</span>][index],data_copy2[<span class="string">&#x27;y&#x27;</span>][index]]) <span class="keyword">in</span> coverage_max:</span><br><span class="line">         data_copy2[<span class="string">&#x27;is_covered&#x27;</span>][index] =  <span class="literal">True</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(data_copy2.head())</span><br><span class="line"></span><br><span class="line">unconvered2 = data_copy2[data_copy2[<span class="string">&#x27;is_covered&#x27;</span>] == <span class="literal">False</span>]</span><br><span class="line">convered2 = data_copy2[data_copy2[<span class="string">&#x27;is_covered&#x27;</span>] == <span class="literal">True</span>]</span><br><span class="line"></span><br><span class="line">x_index1 = unconvered2[<span class="string">&#x27;x&#x27;</span>].to_list()</span><br><span class="line">y_index1 = unconvered2[<span class="string">&#x27;y&#x27;</span>].to_list()</span><br><span class="line"></span><br><span class="line">x_index2_ = convered2[<span class="string">&#x27;x&#x27;</span>].to_list()</span><br><span class="line">y_index2_ = convered2[<span class="string">&#x27;y&#x27;</span>].to_list()</span><br><span class="line"></span><br><span class="line">fig,ax = plt.subplots(figsize = (<span class="number">12</span>,<span class="number">10</span>))</span><br><span class="line"> <span class="comment">#注意 s 离散化的方法，因为需要通过点的大小来直观感受其所表示的数值大小</span></span><br><span class="line"> <span class="comment">#参数是 X 轴数据、Y 轴数据、各个点的大小、各个点的颜色</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">ax.grid()</span><br><span class="line"></span><br><span class="line">ax.scatter(x_index1,y_index1,c=<span class="string">&#x27;red&#x27;</span>,s=<span class="number">10</span>)</span><br><span class="line">ax.scatter(x_index2_,y_index2_,c=<span class="string">&#x27;blue&#x27;</span>,s=<span class="number">10</span>)</span><br><span class="line">plt.title(<span class="string">&quot;Unconvered Area and Convered Area --30&quot;</span>)</span><br><span class="line">plt.savefig(<span class="string">&#x27;Unconvered Area and Convered Area --30.jpg&#x27;</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://s2.loli.net/2022/10/18/GDfWIudyUkbqi9g.jpg" style="zoom:67%;" /></p>
+<p>额…我觉得不太对劲。只比原来多了两千个覆盖点，而且我发现覆盖的点分布有点奇怪啊？方向都是斜向上的，为此我写了个已有基站的覆盖点可视化，不写不知道，一写吓一跳：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">coverage_max_list = [each <span class="keyword">for</span> index,_ <span class="keyword">in</span> data2.iterrows() <span class="keyword">for</span> each <span class="keyword">in</span> generate_area(data2[<span class="string">&#x27;x&#x27;</span>][index],data2[<span class="string">&#x27;y&#x27;</span>][index],offset_list_30)]</span><br><span class="line"></span><br><span class="line">cover_max_data = pd.DataFrame(coverage_max_list,columns=[<span class="string">&#x27;x&#x27;</span>,<span class="string">&#x27;y&#x27;</span>])</span><br><span class="line"></span><br><span class="line">cover_index_x = cover_max_data[<span class="string">&#x27;x&#x27;</span>].to_list()</span><br><span class="line">cover_index_y = cover_max_data[<span class="string">&#x27;y&#x27;</span>].to_list()</span><br><span class="line"></span><br><span class="line">fig,ax = plt.subplots(figsize = (<span class="number">12</span>,<span class="number">10</span>))</span><br><span class="line"> <span class="comment">#注意 s 离散化的方法，因为需要通过点的大小来直观感受其所表示的数值大小</span></span><br><span class="line"> <span class="comment">#参数是 X 轴数据、Y 轴数据、各个点的大小、各个点的颜色</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">ax.grid()</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line">ax.scatter(cover_index_x,cover_index_y,c=<span class="string">&#x27;red&#x27;</span>,s=<span class="number">5</span>,alpha=<span class="number">0.5</span>)</span><br><span class="line">ax.scatter(x_index1,y_index1,c=<span class="string">&#x27;blue&#x27;</span>,s=<span class="number">20</span>,alpha = <span class="number">0.5</span>,marker=<span class="string">&#x27;s&#x27;</span>,label = <span class="string">&#x27;Base Station&#x27;</span>)</span><br><span class="line"></span><br><span class="line">plt.title(<span class="string">&quot;Coverage Area 30&quot;</span>)</span><br><span class="line">plt.savefig(<span class="string">&#x27;Coverage Area 30.jpg&#x27;</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://s2.loli.net/2022/10/19/aSp9kCDtQ6PwjAc.jpg" style="zoom: 80%;" /></p>
+<p>Holly shit…我也不知道为啥他只在第一三象限有覆盖，难道是我<code>generate_offset</code>函数出问题了，我们单点可视化一下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">generate_offset_list</span>(<span class="params">radius</span>):</span><br><span class="line">    base = []</span><br><span class="line">    <span class="comment">#return [[i,j] for i in range(-radius,radius+1) for j in range(-radius,radius+1) if i ** 2 + j ** 2 &lt;= radius**2]</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(-<span class="number">1</span>*radius,radius+<span class="number">1</span>):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(-radius,radius+<span class="number">1</span>):</span><br><span class="line">            <span class="keyword">if</span> (i**<span class="number">2</span>) + (j**<span class="number">2</span>) &lt;= radius ** <span class="number">2</span>:</span><br><span class="line">                base.append([i,j])</span><br><span class="line">    <span class="keyword">return</span> base</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">generate_area</span>(<span class="params">x,y,offset_list</span>):</span><br><span class="line">    <span class="keyword">return</span> [[x+each[index],y+each[index]] <span class="keyword">for</span> each <span class="keyword">in</span> offset_list <span class="keyword">for</span> index,_ <span class="keyword">in</span> <span class="built_in">enumerate</span>(each)]</span><br><span class="line"></span><br><span class="line">offset_list = generate_offset_list(<span class="number">30</span>)</span><br><span class="line"></span><br><span class="line">basic = generate_area(<span class="number">0</span>,<span class="number">0</span>,offset_list)</span><br><span class="line"></span><br><span class="line">data = pd.DataFrame(offset_list,columns=[<span class="string">&#x27;x&#x27;</span>,<span class="string">&#x27;y&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(data.head())</span><br><span class="line"></span><br><span class="line">x_index = data[<span class="string">&#x27;x&#x27;</span>].to_list()</span><br><span class="line">y_index = data[<span class="string">&#x27;y&#x27;</span>].to_list()</span><br><span class="line"></span><br><span class="line">fig,ax = plt.subplots(figsize = (<span class="number">12</span>,<span class="number">10</span>))</span><br><span class="line"> <span class="comment">#注意 s 离散化的方法，因为需要通过点的大小来直观感受其所表示的数值大小</span></span><br><span class="line"> <span class="comment">#参数是 X 轴数据、Y 轴数据、各个点的大小、各个点的颜色</span></span><br><span class="line">bubble = ax.scatter(x_index, y_index , s = <span class="number">10</span>, linewidth = <span class="number">0.5</span>, alpha = <span class="number">0.8</span>)</span><br><span class="line">ax.grid()</span><br><span class="line">plt.title(<span class="string">&quot;base point&quot;</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://s2.loli.net/2022/10/19/whRdZeXjWuLpV2g.png" style="zoom: 50%;" /></p>
+<p>显然问题不在他，那么我们看看另一个函数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">generate_offset_list</span>(<span class="params">radius</span>):</span><br><span class="line">    base = []</span><br><span class="line">    <span class="comment">#return [[i,j] for i in range(-radius,radius+1) for j in range(-radius,radius+1) if i ** 2 + j ** 2 &lt;= radius**2]</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(-<span class="number">1</span>*radius,radius+<span class="number">1</span>):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(-radius,radius+<span class="number">1</span>):</span><br><span class="line">            <span class="keyword">if</span> (i**<span class="number">2</span>) + (j**<span class="number">2</span>) &lt;= radius ** <span class="number">2</span>:</span><br><span class="line">                base.append([i,j])</span><br><span class="line">    <span class="keyword">return</span> base</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">generate_area</span>(<span class="params">x,y,offset_list</span>):</span><br><span class="line">    <span class="keyword">return</span> [[x+each[index],y+each[index]] <span class="keyword">for</span> each <span class="keyword">in</span> offset_list <span class="keyword">for</span> index,_ <span class="keyword">in</span> <span class="built_in">enumerate</span>(each)]</span><br><span class="line"></span><br><span class="line">offset_list = generate_offset_list(<span class="number">30</span>)</span><br><span class="line"></span><br><span class="line">basic = generate_area(<span class="number">0</span>,<span class="number">0</span>,offset_list)</span><br><span class="line"></span><br><span class="line">data = pd.DataFrame(basic,columns=[<span class="string">&#x27;x&#x27;</span>,<span class="string">&#x27;y&#x27;</span>])</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(data.head())</span><br><span class="line"></span><br><span class="line">x_index = data[<span class="string">&#x27;x&#x27;</span>].to_list()</span><br><span class="line">y_index = data[<span class="string">&#x27;y&#x27;</span>].to_list()</span><br><span class="line"></span><br><span class="line">fig,ax = plt.subplots(figsize = (<span class="number">12</span>,<span class="number">10</span>))</span><br><span class="line"> <span class="comment">#注意 s 离散化的方法，因为需要通过点的大小来直观感受其所表示的数值大小</span></span><br><span class="line"> <span class="comment">#参数是 X 轴数据、Y 轴数据、各个点的大小、各个点的颜色</span></span><br><span class="line">bubble = ax.scatter(x_index, y_index , s = <span class="number">10</span>, linewidth = <span class="number">0.5</span>, alpha = <span class="number">0.8</span>)</span><br><span class="line">ax.grid()</span><br><span class="line">plt.title(<span class="string">&quot;base point&quot;</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p><img src="https://s2.loli.net/2022/10/19/aTMvI4P1BhQjcNE.png" style="zoom: 50%;" /></p>
+<p>好了，罪魁祸首找到了。我看到那个<code>enumerate(each)</code>的时候沉思了一下。我为啥要写这个啊？？？改下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">generate_area</span>(<span class="params">x,y,offset_list</span>):</span><br><span class="line">    <span class="comment">#return [[x+each[index],y+each[index]] for each in offset_list for index,_ in enumerate(each)]</span></span><br><span class="line">    <span class="keyword">return</span> [[x+each[<span class="number">0</span>],y+each[<span class="number">1</span>]] <span class="keyword">for</span> each <span class="keyword">in</span> offset_list]</span><br></pre></td></tr></table></figure>
+<p>然后重新从前面开始跑一下代码，先看看最低覆盖情况：</p>
+<p><img src="https://s2.loli.net/2022/10/19/naPGY8xoDiHerfy.png" alt="image-20221019101251078"></p>
+<p>这时候已经有四十多万个点覆盖了啊啊啊啊啊啊！！！！！！！看下其他的图：</p>
+<p><img src="https://s2.loli.net/2022/10/19/fbU5TZiXJDILl4R.jpg" style="zoom:67%;" /></p>
+<p><img src="https://s2.loli.net/2022/10/19/bv573DKYAtWou8G.jpg" style="zoom:67%;" /></p>
+<p>虽然修复了BUG，但是全设成微基站依然覆盖率不足，此时覆盖率为<code>7.58%</code>，所以还是得上宏基站看看。代码就不重复了，我把所有图都放到了一起：</p>
+<p><img src="https://s2.loli.net/2022/10/19/ebKsmrG4H9zPkNU.jpg" alt=""></p>
+<p>哎，爽多了吧！这时候可以确定红色区域附近时没有蓝色基站点的，但是以防万一我们看看覆盖图：</p>
+<p><img src="https://s2.loli.net/2022/10/19/RydS6o7W3ckPBFI.jpg" style="zoom: 67%;" /></p>
+<p>终于不再是线粒体了！太感动了555…业务量如何呢？</p>
+<p><img src="https://s2.loli.net/2022/10/19/jmq6GCJxrpIAyc5.png" alt="image-20221019104004178"></p>
+<p>我们还是选择宏基站吧！先生成个DataFrame保存一下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uncovered2.to_csv(<span class="string">&#x27;Uncovered.csv&#x27;</span>,index=<span class="literal">False</span>)</span><br></pre></td></tr></table></figure>
+<p>明天继续！</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E5%AD%A6%E6%A8%A1%E5%9E%8B/" rel="tag"><i class="fa fa-tag"></i> 数学模型</a>
+              <a href="/tags/%E5%9F%BA%E7%AB%99%E9%80%89%E5%9D%80/" rel="tag"><i class="fa fa-tag"></i> 基站选址</a>
+              <a href="/tags/%E8%81%9A%E7%B1%BB/" rel="tag"><i class="fa fa-tag"></i> 聚类</a>
+          </div>
+          <script type="text/javascript">
+            var tagsall=document.getElementsByClassName("post-tags")
+            for (var i = tagsall.length - 1; i >= 0; i--){
+                var tags=tagsall[i].getElementsByTagName("a");
+                for (var j = tags.length - 1; j >= 0; j--) {
+                    var golden_ratio = 0.618033988749895;
+                    var s = 0.5;
+                    var v = 0.999;
+                    var h = golden_ratio + Math.random()*0.8 - 0.5;
+                    var h_i = parseInt(h * 6);
+                    var f = h * 6 - h_i;
+                    var p = v * (1 - s);
+                    var q = v * (1 - f * s);
+                    var t = v * (1 - (1 - f) * s);
+                    var r, g, b;
+                    switch (h_i) {
+                        case 0:
+                            r = v;
+                            g = t;
+                            b = p;
+                            break;
+                        case 1:
+                            r = q;
+                            g = v;
+                            b = p;
+                            break;
+                        case 2:
+                            r = p;
+                            g = v;
+                            b = t;
+                            break;
+                        case 3 :
+                            r = p;
+                            g = q;
+                            b = v;
+                            break;
+                        case 4:
+                            r = t;
+                            g = p;
+                            b = v;
+                            break;
+                        case 5:
+                            r = v;
+                            g = p;
+                            b = q;
+                            break;
+                        default:
+                            r = 1;
+                            g = 1;
+                            b = 1;
+                      }
+                    tags[j].style.background = "rgba("+parseInt(r*255)+","+parseInt(g*255)+","+parseInt(b*255)+","+0.5+")";
+                }
+            }                        
+            </script>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/05/27/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%20%E7%AC%AC%E4%BA%8C%E5%91%A8/" rel="prev" title="【学习记录】2022-09-19">
+      <i class="fa fa-chevron-left"></i> 【学习记录】2022-09-19
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/05/27/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%20%E7%AC%AC%E4%B8%89%E5%91%A8/" rel="next" title="【学习记录】2022-9-26">
+      【学习记录】2022-9-26 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">题目背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E9%A2%98%E7%9A%84%E8%A7%A3%E7%AD%94"><span class="nav-number">2.</span> <span class="nav-text">第一题的解答</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="阿花想养萨摩耶"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">阿花想养萨摩耶</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">65</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dafeigy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dafeigy" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1070642765@qq.com" title="E-Mail → mailto:1070642765@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/2659883291" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;2659883291" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+  </div>
+
+
+
+  <div class="links-of-recent-posts motion-element">
+    <div class="links-of-recent-posts-title">
+      <i class="fa fa-history fa-fw"></i>
+      最近文章
+    </div>
+    <ul class="links-of-recent-posts-list">
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E5%9F%9F%E9%80%82%E5%BA%94/" title="2024&#x2F;05&#x2F;27&#x2F;迁移学习域适应&#x2F;">域适应初探</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E9%80%A0%E7%A5%9E%E5%B9%B4%E4%BB%A3/" title="2024&#x2F;05&#x2F;27&#x2F;造神年代&#x2F;">读《造神年代》的一些读后随想</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E7%9B%AE%E6%A0%87%E4%BD%8D%E7%BD%AE-CSI%E4%BF%A1%E5%8F%B7%E9%A2%91%E7%8E%87%E5%BD%B1%E5%93%8D%E6%8E%A2%E7%A9%B6/" title="2024&#x2F;05&#x2F;27&#x2F;目标位置-CSI信号频率影响探究&#x2F;">【论文笔记】Understanding  WiFi Signal Frequency Features for Position-Independent Gesture Sensing</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E8%A3%85%E6%9C%BA/" title="2024&#x2F;05&#x2F;27&#x2F;装机&#x2F;">ITX-Lancer L1 Mesh</a>
+        </li>
+    </ul>
+  </div>
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">阿花</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>

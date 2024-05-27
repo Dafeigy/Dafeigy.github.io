@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":5},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="师兄让我别去CV卷了，让我搞搞通信。然后就是让我看看5G核心网相关的内容，笑死😂，我本科的时候移动通信的老师也和我们一起摆烂，考试开卷基本没啥东西记住的。不过想想也是，CV就业压力挺大的，当成业余兴趣爱好去研究下也不错，做成工作可能也很难受，也卷不过985的顶级实验室出来的。娄山雀说他前几天有个北大ACM区域金牌的计算机硕去面他们的后端都没有机会，然后四个清华大学的硕去面OPPO连简历复筛都没过">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【学习记录】2022-8-20-？">
+<meta property="og:url" content="http://example.com/2024/05/27/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%952022-8-20/index.html">
+<meta property="og:site_name" content="阿花的Blog">
+<meta property="og:description" content="师兄让我别去CV卷了，让我搞搞通信。然后就是让我看看5G核心网相关的内容，笑死😂，我本科的时候移动通信的老师也和我们一起摆烂，考试开卷基本没啥东西记住的。不过想想也是，CV就业压力挺大的，当成业余兴趣爱好去研究下也不错，做成工作可能也很难受，也卷不过985的顶级实验室出来的。娄山雀说他前几天有个北大ACM区域金牌的计算机硕去面他们的后端都没有机会，然后四个清华大学的硕去面OPPO连简历复筛都没过">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/08/21/8tsFlNCMLvTDSeX.png">
+<meta property="og:image" content="https://s2.loli.net/2022/08/21/xMaLeEgD5KvWkcp.jpg">
+<meta property="og:image" content="https://s2.loli.net/2022/08/21/vcplj7bGWZX9ymr.png">
+<meta property="og:image" content="https://s2.loli.net/2022/08/21/9JoVwjSYZR1Gvtb.jpg">
+<meta property="og:image" content="https://s2.loli.net/2022/08/21/ZrOvf4BPnq1sxW5.jpg">
+<meta property="og:image" content="https://s2.loli.net/2022/08/21/mjOSBUkM4HC8YiF.png">
+<meta property="og:image" content="https://s2.loli.net/2022/08/21/jIu8dYUeKiX5HDp.jpg">
+<meta property="og:image" content="https://s2.loli.net/2022/08/21/YTSwIyQ87Z5RUgC.jpg">
+<meta property="og:image" content="https://s2.loli.net/2022/08/21/VNQCTUz3WoZdKhe.jpg">
+<meta property="og:image" content="https://s2.loli.net/2022/08/21/9whUsXVCz2xHRl7.jpg">
+<meta property="og:image" content="https://s2.loli.net/2022/08/21/NnYyhD6bJQv3em9.jpg">
+<meta property="og:image" content="https://s2.loli.net/2022/08/21/QTJyAWGHx68INun.jpg">
+<meta property="article:published_time" content="2024-05-27T13:33:39.532Z">
+<meta property="article:modified_time" content="2024-05-27T13:33:39.532Z">
+<meta property="article:author" content="阿花想养萨摩耶">
+<meta property="article:tag" content="5G">
+<meta property="article:tag" content="通信技术">
+<meta property="article:tag" content="核心网">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2022/08/21/8tsFlNCMLvTDSeX.png">
+
+<link rel="canonical" href="http://example.com/2024/05/27/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%952022-8-20/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>【学习记录】2022-8-20-？ | 阿花的Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">阿花的Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/27/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%952022-8-20/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【学习记录】2022-8-20-？
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-05-27 21:33:39" itemprop="dateCreated datePublished" datetime="2024-05-27T21:33:39+08:00">2024-05-27</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>师兄让我别去CV卷了，让我搞搞通信。然后就是让我看看5G核心网相关的内容，笑死😂，我本科的时候移动通信的老师也和我们一起摆烂，考试开卷基本没啥东西记住的。不过想想也是，CV就业压力挺大的，当成业余兴趣爱好去研究下也不错，做成工作可能也很难受，也卷不过985的顶级实验室出来的。娄山雀说他前几天有个北大ACM区域金牌的计算机硕去面他们的后端都没有机会，然后四个清华大学的硕去面OPPO连简历复筛都没过……很可怕很可怕。然后最近看了严曦老师的《造神年代》，我再次燃起了对通信事业的热情。链接每个节点、信息的传输，和生命的波纹好像，当这些所有波纹和对事件的响应结合到一起构建成了一个系统，就完成了一个宏观定义的世界交互（我好像在说一些乱七八糟的屁话😂）这种感觉和造物其实也挺像的。所以开始吧：</p>
+<span id="more"></span>
+<h2 id="说在开始前"><a href="#说在开始前" class="headerlink" title="说在开始前"></a>说在开始前</h2><p>我对通信比较喜欢不上来的点在于更新速度太快，然后各种缩写在查阅资料的时候又非常麻烦，所以这次真的是破釜沉舟，把每一个缩写都给吃透了。阅读的时候如果有需要查阅的缩写可以直接在网站的搜索功能进行搜索，应该会有解释的。这次学习的内容主要是5G的核心网，由于我的基础比较薄弱，所以我得花花时间了解下发展的历程和了解些工程的问题。</p>
+<p><img src="https://s2.loli.net/2022/08/21/8tsFlNCMLvTDSeX.png" alt="img" style="zoom: 25%;" /></p>
+<h2 id="核心网"><a href="#核心网" class="headerlink" title="核心网"></a>核心网</h2><h3 id="核心网是什么"><a href="#核心网是什么" class="headerlink" title="核心网是什么"></a>核心网是什么</h3><p>在了解5G核心网之前我们需要先了解核心网到底是什么。核心网，有个洋气的英文名，叫Core Network（核心网络），简称CN。说实话，核心网的概念很难定义！广义上的解释难以界定，而狭义角度的解释又没有对应实体。我们只能通过类比以下来描述一下核心网：试想一个快递分拣中心，上面的传送带装满了双十一的各种包裹，传送带是负责传送包裹的，但是哪一个包裹需要传送到哪个地方，是需要一个智体进行调配的。在这个分拣中心，包裹相当于需要传输的数据，传送带相当于一个承载网络，作为信息的承载介质，而我们的核心网就是负责调配数据应该如何传输的指挥官。在这个基础上，我们可以进一步看看核心网到底是怎么发展的。</p>
+<h3 id="核心网的发展"><a href="#核心网的发展" class="headerlink" title="核心网的发展"></a>核心网的发展</h3><p>首先先说说2G，为什么不从1G开始说呢，<del>因为1G的时候根本上不了网啊😂</del>因为1G和2G的核心网架构是非常近似的，这里可以直接等价了。</p>
+<p><img src="https://s2.loli.net/2022/08/21/xMaLeEgD5KvWkcp.jpg" alt="640?wx_fmt=png" style="zoom:50%;" /></p>
+<center><small>2G核心网架构</small></center>
+
+
+
+<p>2G其实前期也是没法上网的，直到2.5G出现才解决了这一问题。从图中可以看出来，2G的核心网组网非常简单，MSC就是核心网的最主要设备。HLR、EIR和用户身份有关，用于鉴权。值得注意的是，之所以图上面写的是“MSC/VLR”，是因为VLR是一个功能实体，但是物理上，VLR和MSC是同一个硬件设备。相当于一个设备实现了两个角色，所以画在一起。HLR/AUC也是如此，HLR和AUC物理合一。下面是2.5G的核心网：</p>
+<p><img src = 'https://s2.loli.net/2022/08/21/2qwdskLl6fxXOhQ.jpg' style="zoom:50%;" ></p>
+<center><small>2.5G核心网架构，为了图简单没有把2G核心网里面的HLR等模块画上去</small></center>
+
+
+
+<p>相比于2G其实就是多了SGSN和GGSN两个模块。这两个模块都是为了实现GPRS数据业务而存在的，GPRS则是2.5G上网的核心服务：</p>
+<p><img src="https://s2.loli.net/2022/08/21/vcplj7bGWZX9ymr.png" alt="640?wx_fmt=png" style="zoom:67%;" /></p>
+<p>再之后就是3G时代了：</p>
+<p><img src="https://s2.loli.net/2022/08/21/9JoVwjSYZR1Gvtb.jpg" alt="640?wx_fmt=png" style="zoom: 50%;" /></p>
+<center><small>3G核心网架构，为了图简单没把HLR等模块画上去</small></center>
+
+
+
+<p>可以看出3G其实变化较大的部分是基站部分，引入了一个<code>NodeB</code>和一个<code>RNC</code>的东西。这个<code>NodeB</code>其实就是专属于3G时代的基站，只是为了区分和2G时代的基站而另起一个名字而已😂这样的作法会在后面的4G、5G都有体现。尽管在图中3G核心网的变化与2G的相比没啥不同，但其实硬件设备已经经过了一轮新的迭代。我们知道，硬件才是工程里面最能指导性能突破的核心力量，因此3G的成功之处很大一部分要感谢硬件的蓬勃发展。不要小看了硬件平台，实际上，就像最开始<strong>华为的C&amp;C08</strong>、<strong>中兴的ZXJ10</strong>一样，设备商自家的很多不同业务的设备，都是基于同一个硬件平台进行开发的。不可能每个设备都单独开发硬件平台，既浪费时间和精力，又不利于生产和维护。稳定可靠且处理能力强大的硬件平台，是产品的基石。从2G到3G，除了IP化以及硬件平台的升级之外，最大的不同就在于分离。在通信系统里面，说白了，就两个（平）面，用户面和控制面：</p>
+<p><img src="https://s2.loli.net/2022/08/21/ZrOvf4BPnq1sxW5.jpg" alt="640?wx_fmt=png" style="zoom:50%;" /></p>
+<p><img src="https://s2.loli.net/2022/08/21/mjOSBUkM4HC8YiF.png" alt="640?wx_fmt=png" style="zoom:50%;" /></p>
+<p>用户面，就是用户的实际业务数据，就是你的语音数据啊，视频流数据啊之类的。而控制面，是为了管理数据走向的信令、命令。这两个面，在通信设备内部，就相当于两个不同的系统，2G时代，用户面和控制面没有明显分开。3G时代，把两个面进行了分离。接着，SGSN变成MME，GGSN变成SGW/PGW，也就演进成了4G核心网：</p>
+<p><img src="https://s2.loli.net/2022/08/21/jIu8dYUeKiX5HDp.jpg" alt="640?wx_fmt=png" style="zoom:50%;" /></p>
+<p>值得注意的是基站里面的RNC没有了，为了实现扁平化，功能一部分给了核心网，一部分给了<code>eNodeB</code>（还记得我说的NodeB是什么嘛）。发展到这里的时候，硬件平台也升级了，以中兴为例，开始启用ATCA/ETCA平台（后来MME就用了它），还有xGW T8000平台（后面PGW和SGW用了它，PGW和SGW物理上是一体的）。</p>
+<p><img src="https://s2.loli.net/2022/08/21/YTSwIyQ87Z5RUgC.jpg" alt="?wx_fmt=jpeg"></p>
+<center><small>中兴ATCA机框</small></center>
+
+
+
+<p>在3G到4G的过程中，IMS出现了，取代传统CS（也就是MSC那些），提供更强大的多媒体服务（语音、图片短信、视频电话等）。IMS，使用的也主要是ATCA平台。实际上这些硬件很像一个电脑，有处理器（MP单板），有网卡（以太网接口卡，光纤接口卡）。而ATCA平台，更像一台电脑了，前面你也看到了，名字就叫“先进电信计算平台”，也就是“电信服务器”嘛。确切说，ATCA里面的业务处理单板，本身就是一台单板造型的“小型化电脑”，有处理器、内存、硬盘，俗称“刀片”。</p>
+<p><img src="https://s2.loli.net/2022/08/21/VNQCTUz3WoZdKhe.jpg" alt="640?wx_fmt=png"></p>
+<center><small>ATCA业务处理板——“刀片”</small></center>
+
+
+
+<p>既然都走到这一步，原来的专用硬件，越做越像IT机房里面的x86通用服务器，那么，不如干脆直接用x86服务器吧!于是虚拟化时代就到来了。虚拟化，就是网元功能虚拟化（Network Function Virtualization，<strong>NFV</strong>）。说白了就是在硬件上，直接采用HP、IBM等IT厂家的x86平台通用服务器（目前以刀片服务器为主，节约空间，也够用）。</p>
+<p><img src="https://s2.loli.net/2022/08/21/9whUsXVCz2xHRl7.jpg" alt="640?wx_fmt=jpeg"></p>
+<p>软件上，设备商基于openstack这样的开源平台，开发自己的虚拟化平台，把以前的核心网网元，“种植”在这个平台之上：</p>
+<p><img src="https://s2.loli.net/2022/08/21/NnYyhD6bJQv3em9.jpg" alt="?wx_fmt=jpeg"></p>
+<p>虚拟化平台不等于5G核心网。也就是说，并不是只有5G才能用虚拟化平台。也不是用了虚拟化平台，就是5G。按照惯例，设备商先在虚拟化平台部署4G核心网，也就是，在为后面5G做准备，提前实验。硬件平台，永远都会提前准备。上面说了5G核心网的硬件平台，接下来，我们仔细说说5G核心网的架构。到了5G，网络逻辑结构彻底改变了。</p>
+<h3 id="5G核心网引入"><a href="#5G核心网引入" class="headerlink" title="5G核心网引入"></a>5G核心网引入</h3><p>5G核心网，采用的是SBA架构（Service Based Architecture，即基于服务的架构）。SBA架构，基于云原生构架设计，借鉴了IT领域的“微服务”理念，把原来具有多个功能的整体，分拆为多个具有独自功能的个体。每个个体，实现自己的微服务。这样的变化，会有一个明显的外部表现，就是网元大量增加了。</p>
+<p><img src="https://s2.loli.net/2022/08/21/QTJyAWGHx68INun.jpg" alt="640?wx_fmt=png" style="zoom:50%;" /></p>
+<center><small>红色虚线内为5G核心网,除了UPF之外，都是控制面</small></center>
+
+
+
+<p>这些网元看上去很多，实际上，硬件都是在虚拟化平台里面虚拟出来的。简而言之，<strong>5G核心网就是模块化、软件化</strong>。5G核心网之所以要模块化，还有一个主要原因，就是为了<strong>“切片”</strong>。5G是一个天下一统的网络，通吃所有用户。设计之初，就需要它应对各种需求。这些需求，被整理为三大应用场景:</p>
+<ul>
+<li><p><strong>eMBB（增强型移动宽带）</strong></p>
+<p>一般日常情况下的上网方式。</p>
+</li>
+<li><p><strong>mMTC（海量物联网通信）</strong></p>
+<p>那堆搞物联网的应该就要搞这个。</p>
+</li>
+<li><p><strong>uRLLC（低时延、高可靠通信）</strong></p>
+<p>用于智能无人驾驶、工业自动化等需要低时延高可靠连接的业务。</p>
+</li>
+</ul>
+<p>既然网络用途不同，当然要见招拆招。以一个死板的固定网络结构去应对，肯定是不行的。只有拆分成模块，灵活组队，才能搞定。所以模块化的设计，有利于网络切片，根据业务需求进行模块的删改增补。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/5G/" rel="tag"><i class="fa fa-tag"></i> 5G</a>
+              <a href="/tags/%E9%80%9A%E4%BF%A1%E6%8A%80%E6%9C%AF/" rel="tag"><i class="fa fa-tag"></i> 通信技术</a>
+              <a href="/tags/%E6%A0%B8%E5%BF%83%E7%BD%91/" rel="tag"><i class="fa fa-tag"></i> 核心网</a>
+          </div>
+          <script type="text/javascript">
+            var tagsall=document.getElementsByClassName("post-tags")
+            for (var i = tagsall.length - 1; i >= 0; i--){
+                var tags=tagsall[i].getElementsByTagName("a");
+                for (var j = tags.length - 1; j >= 0; j--) {
+                    var golden_ratio = 0.618033988749895;
+                    var s = 0.5;
+                    var v = 0.999;
+                    var h = golden_ratio + Math.random()*0.8 - 0.5;
+                    var h_i = parseInt(h * 6);
+                    var f = h * 6 - h_i;
+                    var p = v * (1 - s);
+                    var q = v * (1 - f * s);
+                    var t = v * (1 - (1 - f) * s);
+                    var r, g, b;
+                    switch (h_i) {
+                        case 0:
+                            r = v;
+                            g = t;
+                            b = p;
+                            break;
+                        case 1:
+                            r = q;
+                            g = v;
+                            b = p;
+                            break;
+                        case 2:
+                            r = p;
+                            g = v;
+                            b = t;
+                            break;
+                        case 3 :
+                            r = p;
+                            g = q;
+                            b = v;
+                            break;
+                        case 4:
+                            r = t;
+                            g = p;
+                            b = v;
+                            break;
+                        case 5:
+                            r = v;
+                            g = p;
+                            b = q;
+                            break;
+                        default:
+                            r = 1;
+                            g = 1;
+                            b = 1;
+                      }
+                    tags[j].style.background = "rgba("+parseInt(r*255)+","+parseInt(g*255)+","+parseInt(b*255)+","+0.5+")";
+                }
+            }                        
+            </script>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/05/27/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%952022-7-22/" rel="prev" title="【学习记录】2022-7-22-2022-8-5">
+      <i class="fa fa-chevron-left"></i> 【学习记录】2022-7-22-2022-8-5
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/05/27/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-Rope/" rel="next" title="字符串结构的高效实现——Rope">
+      字符串结构的高效实现——Rope <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B4%E5%9C%A8%E5%BC%80%E5%A7%8B%E5%89%8D"><span class="nav-number">1.</span> <span class="nav-text">说在开始前</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E7%BD%91"><span class="nav-number">2.</span> <span class="nav-text">核心网</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E7%BD%91%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">2.1.</span> <span class="nav-text">核心网是什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E7%BD%91%E7%9A%84%E5%8F%91%E5%B1%95"><span class="nav-number">2.2.</span> <span class="nav-text">核心网的发展</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5G%E6%A0%B8%E5%BF%83%E7%BD%91%E5%BC%95%E5%85%A5"><span class="nav-number">2.3.</span> <span class="nav-text">5G核心网引入</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="阿花想养萨摩耶"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">阿花想养萨摩耶</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">65</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dafeigy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dafeigy" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1070642765@qq.com" title="E-Mail → mailto:1070642765@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/2659883291" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;2659883291" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+  </div>
+
+
+
+  <div class="links-of-recent-posts motion-element">
+    <div class="links-of-recent-posts-title">
+      <i class="fa fa-history fa-fw"></i>
+      最近文章
+    </div>
+    <ul class="links-of-recent-posts-list">
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E5%9F%9F%E9%80%82%E5%BA%94/" title="2024&#x2F;05&#x2F;27&#x2F;迁移学习域适应&#x2F;">域适应初探</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E9%80%A0%E7%A5%9E%E5%B9%B4%E4%BB%A3/" title="2024&#x2F;05&#x2F;27&#x2F;造神年代&#x2F;">读《造神年代》的一些读后随想</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E7%9B%AE%E6%A0%87%E4%BD%8D%E7%BD%AE-CSI%E4%BF%A1%E5%8F%B7%E9%A2%91%E7%8E%87%E5%BD%B1%E5%93%8D%E6%8E%A2%E7%A9%B6/" title="2024&#x2F;05&#x2F;27&#x2F;目标位置-CSI信号频率影响探究&#x2F;">【论文笔记】Understanding  WiFi Signal Frequency Features for Position-Independent Gesture Sensing</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E8%A3%85%E6%9C%BA/" title="2024&#x2F;05&#x2F;27&#x2F;装机&#x2F;">ITX-Lancer L1 Mesh</a>
+        </li>
+    </ul>
+  </div>
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">阿花</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>

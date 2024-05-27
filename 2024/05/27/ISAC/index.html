@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":5},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="ISAC 学习笔记      待更新    ISAC笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ISAC学习记录">
+<meta property="og:url" content="http://example.com/2024/05/27/ISAC/index.html">
+<meta property="og:site_name" content="阿花的Blog">
+<meta property="og:description" content="ISAC 学习笔记      待更新    ISAC笔记">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2023/03/07/eON3wACGtfIKyUQ.png">
+<meta property="og:image" content="https://s2.loli.net/2023/03/06/2HAE5Oh3RWJwK4i.png">
+<meta property="og:image" content="https://s2.loli.net/2023/03/06/s4aWZFCxYT13JEA.png">
+<meta property="og:image" content="https://s2.loli.net/2023/03/08/UI1dKJsEhAFm4CV.png">
+<meta property="og:image" content="https://s2.loli.net/2023/03/07/oJCzSXxOI6FhDWP.png">
+<meta property="og:image" content="https://s2.loli.net/2023/03/07/B8fH6g45hv7oAiJ.png">
+<meta property="og:image" content="https://s2.loli.net/2023/03/08/B2bRJCX5GQ6947n.png">
+<meta property="og:image" content="https://s2.loli.net/2023/03/08/lPIFLciRx3X1uUp.png">
+<meta property="og:image" content="https://s2.loli.net/2023/03/08/yVS3hD5H6sGfdlO.png">
+<meta property="article:published_time" content="2024-05-27T13:33:39.522Z">
+<meta property="article:modified_time" content="2024-05-27T17:02:00.617Z">
+<meta property="article:author" content="阿花想养萨摩耶">
+<meta property="article:tag" content="ISAC">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/03/07/eON3wACGtfIKyUQ.png">
+
+<link rel="canonical" href="http://example.com/2024/05/27/ISAC/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>ISAC学习记录 | 阿花的Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">阿花的Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/27/ISAC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ISAC学习记录
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-05-27 21:33:39" itemprop="dateCreated datePublished" datetime="2024-05-27T21:33:39+08:00">2024-05-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-05-28 01:02:00" itemprop="dateModified" datetime="2024-05-28T01:02:00+08:00">2024-05-28</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/ISAC/" itemprop="url" rel="index"><span itemprop="name">ISAC</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p align="center">
+    <img src="https://s2.loli.net/2023/03/07/eON3wACGtfIKyUQ.png" alt="ISAC" />
+</p>
+<h1 align="center">ISAC 学习笔记</h1>
+<p align="center">
+    <em>待更新</em>
+</p>
+
+
+<p>ISAC笔记</p>
+<span id="more"></span>
+<h2 id="引言部分"><a href="#引言部分" class="headerlink" title="引言部分"></a>引言部分</h2><p>下一代的通信（B5G、6G）技术对无线连接能力和准确、高鲁棒的感知能力提出了高要求，这些技术都有一个共同的主题——感知。感知是嵌入在网络中的一种技术，或者说是一种能力，是用来给未来的潜在应用赋能或收集数据的。<code>S&amp;C</code>即<em>Sensing and Communication</em>的功能集合需要在未来网络进行联合的设计，即<em>Integrated Sensing and Communication</em>s（<code>ISAC</code>）。</p>
+<p>感知和通信对应着两个方面。感知从含噪声的观测中收取并提炼信息，通信则是关注使用特定的信号传输信息然后将信息在接收端恢复。二者的统一是ISAC的终极目的，实现提升频谱或能效同时减少硬件与信令的消耗。</p>
+<p>ISAC在之前有一堆乱七八糟的名字——RC、JCR、JRC、DFRC，主要集中在雷达感知领域，曾经也是ISAC的主流方向。雷达传感的联合感知与通信将是ISAC的核心。ISAC的发展历程如下：</p>
+<p><img src="https://s2.loli.net/2023/03/06/2HAE5Oh3RWJwK4i.png" alt="image-20230306092652694"></p>
+<p>感知在未来的无线网络中是一种原生的能力而不是一种额外附加的能力，本身就能为大量用户提供服务。联合增益与整体增益是ISAC发展的两个可能方向。具体的参照下图：</p>
+<p><img src="https://s2.loli.net/2023/03/06/s4aWZFCxYT13JEA.png" alt="image-20230306095419941"></p>
+<h2 id="工业进展与应用"><a href="#工业进展与应用" class="headerlink" title="工业进展与应用"></a>工业进展与应用</h2><p><img src="https://s2.loli.net/2023/03/08/UI1dKJsEhAFm4CV.png" alt="图片" style="zoom:80%;" /></p>
+<p>感知服务：</p>
+<ul>
+<li>增强定位于跟踪：全球卫星导航下的卫星定位精度——米级。5G NR的最高定位标准是垂直/水平精度分别为0.2m/1 m， 难以满足未来的工业物联网需求。机器人操作精度5mm，室内人物动作识别精度1cm，距离多普勒处理。</li>
+<li>区域成像：射频城乡的侵扰性更低，米级别的分辨率。毫米波以及mMIMO技术可以放到BS上面，RAN可以作为一个分布式的MIMO雷达，最终让UE感知到周边的环境。</li>
+<li>无人机监测于管理：某些无人机体积小，热成像或摄像头难以监测，可能会出现擅入禁区的情况，ISAC的蜂窝网络可以提供监测和管理。</li>
+</ul>
+<p>智能家居和室内感知：</p>
+<ul>
+<li>人类活动识别：疲劳驾驶监测。智能人类居住环境的保障，比如说检测到睡眠状态降低环境中的环境的资源消耗之类的。</li>
+<li>空间感知计算：室内设备的空间几何关系，对增强虚拟现实应用提供支持。</li>
+</ul>
+<p>V2X：</p>
+<ul>
+<li>车辆运作管理：传统方法基于领导-跟随者的框架，依赖多跳的V2V通信传输每辆车的状态信息，延迟很大。</li>
+<li>SLAM</li>
+</ul>
+<p>智能建造和工业IoT：集群导航、节点的调度</p>
+<p>遥感和地理科学：战区信息广播、空基雷达监测地球变化，4维度映射，安全相关。</p>
+<p>环境监测：传输信号在不同的环境下的性能差异监测环境的变化</p>
+<p>人机交互：虚拟键盘，谷歌Soli项目，无接触的人机交互，微多普勒识别的准确性。</p>
+<p>总结如下：</p>
+<p><img src="https://s2.loli.net/2023/03/07/oJCzSXxOI6FhDWP.png" alt="image-20230307104531125"></p>
+<h2 id="性能评估"><a href="#性能评估" class="headerlink" title="性能评估"></a>性能评估</h2><p>从信息论的角度来看，感知的性能并不像通信的性能那样明确，信息论层面的感知性能分析还鲜有报道。因此，需要新的分析技术来评价通感一体系统，揭示两者在信息论层面上的基本理论极限。</p>
+<h3 id="感知的评估"><a href="#感知的评估" class="headerlink" title="感知的评估"></a>感知的评估</h3><ul>
+<li>检测：MMSE</li>
+<li>估计：CRLB</li>
+<li>认知：</li>
+</ul>
+<h3 id="通信的评估"><a href="#通信的评估" class="headerlink" title="通信的评估"></a>通信的评估</h3><ul>
+<li>有效性：传输速率</li>
+<li>可靠性：误码率</li>
+</ul>
+<h2 id="信息论的权衡"><a href="#信息论的权衡" class="headerlink" title="信息论的权衡"></a>信息论的权衡</h2><p>和ISAC相关的重要理论桥梁是最小均方误差和互信息的关系，它连接了通信衡量指标的输入输出的互信息和检测指标：</p>
+<script type="math/tex; mode=display">
+\frac{d}{d\,\mathrm{snr}}I(\mathrm{snr})=\frac{1}{2}MMSE(\mathrm{snr})</script><p>这里就有一个平衡的关系：一个高斯输入可以使得式子左边变大，但是同样会使得检测部分的错误上升，二者构成一个平衡。另一个容量-衰减的权衡是在一个经典场景下构建的：</p>
+<p><img src="https://s2.loli.net/2023/03/07/B8fH6g45hv7oAiJ.png" alt="image-20230307230625015" style="zoom:67%;" /></p>
+<p>发送端想传输纯信息（用$W\in{1,2,\dotsm2^{nR}}$表示信息的索引）和信道状态$S$的描述$\hat S$到接收端。在给定$W$和$S$的情况下，发射端以速率$R$传输一个编码$X(W,S)$到接收端。接收端的观测如下：</p>
+<script type="math/tex; mode=display">
+Y\sim\prod_{i=1}^{n}p(y_i|{x_i,s_i})</script><p>接收端随后从$Y$中解码信息$\hat W(Y)\in{1,2,\dots,2^{nR}}$，同时对状态进行估计为$\hat S(Y)$。译码的错误概率和状态估计的误差定义如下：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\mathcal P_e^{(n)}&=\frac{1}{2^{nR}}\sum_{i=1}^{2^{nR}}\Pr\{\hat W\neq i|W=i\}\\
+D&=\mathbb E\{d(S,\hat S\}
+\end{aligned}</script><p>其中$d(S,\hat S)$是$S$和$\hat S$之间的失真度量。一个率失真对$(R,D)$如果存在这样一个序列$(2^{nR},n)$对$X(W,S)$进行编码，那么我们说它是可达的：</p>
+<script type="math/tex; mode=display">
+\mathbb E{\{d(S,\hat S)\}}\leq D,\mathcal P_{e}^{(n)}\rightarrow0,n\rightarrow \infty</script><p>如果失真函数选择为状态估计误差的平方，则MSE的估计可以表述为：</p>
+<script type="math/tex; mode=display">
+\mathbb E{\{d(S,\hat S)\}}=\frac{1}{n}\mathbb E{||S-\hat S(Y)||^2}</script><p>接下来还需要考虑状态独立的高斯信道$Y=X(W,S)+S+N$，其中$S_i\sim\mathcal N(0,Q_S)$，$N_i\sim(0,Q_N)$。举个列子，以$\gamma\in[0,1]$$(R,D)$对的帕累托最优边界为：</p>
+<script type="math/tex; mode=display">
+(R,D)=(\frac{1}{2}\log(1+\frac{\gamma P}{Q_N}),
+Q_S\frac{(\gamma P + Q_N)}{(\sqrt{Q_S}+\sqrt{(1-\gamma)P})^2 + \gamma P+Q_N}
+)</script><p>其中,$P \geq \frac{1}{n}E({\sum<em>{i=1}^{n} X</em>{i}^{2}(W,S)})$，表示为发射信号$X$的功率约束。可以看到传输的功率分割为两部分：$\gamma P$和$(1-\gamma)P$，分别对应着传输纯信息和状态信息，达到一种权衡。功率资源由纯信息和信道状态信息共享，这种方法也会在PHY的tradeoff中再次体现。</p>
+<p>需要指出，上述的率失真的权衡不能捕捉到经典的ISAC场景中的某些特征，比如说某个目标的反射波的估计。在单静态雷达中，发射端是不能预先知道目标的信道状态的。另外，其也不需要感知目标。Kobayashi 和 Caire提出了将目标的返回信号建模为一个延迟回馈信道，如下图所示：</p>
+<p><img src="https://s2.loli.net/2023/03/08/B2bRJCX5GQ6947n.png" alt="image-20230308092411212" style="zoom: 67%;" /></p>
+<p>信道的状态在接收端是可知的，但是发射端是不知道的。在每次传输的时候，传输端利用一个估计器从延迟反馈的输出$Z\in\mathcal Z$对信道状态进行估计得到$\hat S$。选择一条信息$W$后，传输端使用一个基于$W$和$\hat S$的编码器发送一个符号$X\in\mathcal X$。信道的输出$Y\in\mathcal Y$会传输到接收端，随后返回一个信道状态到发送端。联合的分布$SXYZ\hat S$可以表述为：</p>
+<script type="math/tex; mode=display">
+
+P_{SXYZ\hat S}(s,x,y,z,\hat s)\\=P_S(s)P_X(x)P_{YZ|XS}(y,z|x,s)P_{\hat S|XZ}(\hat s|x,z)</script><p>给定了一个失真$D$后，信道的容量$C$和失真的权衡表示为：</p>
+<script type="math/tex; mode=display">
+C(D)=\max_{P_X:\frac{1}{n}\sum_{i=1}^{n}\mathbb E\{X_i^2\leq P\}}I(X;Y|S)\\
+s.t.\,\mathbb E(d(S,\hat S))\leq D</script><p>其中$P_X$代表了信道输入$X$的分布。上述的问题一般来说是一个凸优化问题，可以通过Blahut-Arimoto算法求解。</p>
+<h2 id="物理层的权衡"><a href="#物理层的权衡" class="headerlink" title="物理层的权衡"></a>物理层的权衡</h2><p>在通信感知一体化场景中，感知和通信通常需要集成到同一套硬件平台并且共享相同的无线资源，并且在给定的资源配置中，感知性能和通信性能往往是相互对立、此消彼长的关系。物理层的权衡其实可以原生的通信/感知的评估指标进行表述，就在上文提到的信息论的框架下进行。当然也可以对感知提出新的评估指标，因为上文也说到了感知这方面的评估基础还比较空缺。</p>
+<h3 id="原生的S-amp-C评估"><a href="#原生的S-amp-C评估" class="headerlink" title="原生的S&amp;C评估"></a>原生的S&amp;C评估</h3><p>物理层的感知性能一般用检测概率和MSE进行衡量。然而即便有MSE的闭式表示也不一定能获取到相关得计算数据，而CRB下界或许是一个可选项。</p>
+<ul>
+<li><p>检测vs.通信</p>
+<p><img src="https://s2.loli.net/2023/03/08/lPIFLciRx3X1uUp.png" alt="image-20230308102531886" style="zoom:33%;" /></p>
+<p>ISAC系统的发送端在总功率限制下发射一个感知波形$s_R(t)$和通信$s_C(t)$波形。两个信号使用的是正交的资源（时频）以防止出现互相干扰。感知接收器SR从直接信道和监督信道中接受$s_R(t)$，期望能在稍后检测到目标的存在与否。另一方面通信用户CU接收到包含有用信息的$s_C(t)$。下面的关键问题就是如何分配功率到感知/通信功能上，建模为如下优化问题：</p>
+<script type="math/tex; mode=display">
+\max_{P_R,P_C}\mathcal P_D \quad s.t.\, R\geq R_{th},P_R+P_C=P_T</script><p>$\mathcal P<em>D$代表了雷达的检测概率，$R=\log(1+P_C\gamma_c)$是可达速率，其中$\gamma_c$是含噪信道归一化增益，$R</em>{th}$是一个阈值。检测问题可以建模为二元假设测试问题：</p>
+<script type="math/tex; mode=display">
+\mathcal H_0:\begin{cases}
+\mathrm y_d=\gamma_d\mathrm G_d\mathrm s_R+\mathrm n_d\\
+\mathrm y_s=\mathrm n_s,
+\end{cases} 
+\qquad
+\mathcal H_1:\begin{cases}
+\mathrm y_d=\gamma_d\mathrm G_d\mathrm s_R+\mathrm n_d\\
+\mathrm y_s=\gamma_s\mathrm G_s\mathrm s_R+\mathrm n_s,
+\end{cases}</script><p>$\mathrm y_d$和$\mathrm y_s$是从直接信道于监督信道接收到的信号，$\mathrm G_d$和$\mathrm G_s$是一$L\times L$的单一多普勒算子矩阵矩阵，分别对应直接信道和监督信道，$\gamma_d,\gamma_s$分别是两个信道的标量系数，然后$n_d,n_s$是加性高斯白噪声，其方差为$\sigma ^2$。检测通过广义似然比测试进行评估，对应的$\mathcal P_D$可以如下近似：</p>
+<script type="math/tex; mode=display">
+\mathcal P_D \approx Q_1(\sqrt{\frac{2P_R|\gamma_d|^2}{\sigma^2}},\sqrt{2\gamma})</script><p>其中$Q_1(a,b)$表示了Marcum Q函数(第一类零阶修正贝塞尔函数)，$\gamma$表示了阈值。考虑到功率的约束以及速率的表达式，检测概率可以表示为：</p>
+<script type="math/tex; mode=display">
+\mathcal P_D\approx Q_1(\sqrt{2(P_T-\frac{1}{\gamma_c}(2^{R_{th}}-1)\frac{|\gamma_d|^2}{\sigma^2})},\sqrt{2\gamma})</script></li>
+<li><p>估计vs.通信</p>
+<p>一般的分析不会让资源复用，虽然便于理论分析但是造成了资源的极大浪费。一种多天线的ISAC收发机有$N_t$个发射天线和$N_r\geq N_t$个接收天线，为$K$个单天线用户服务，并同时检测目标，如图所示：</p>
+<p><img src="https://s2.loli.net/2023/03/08/yVS3hD5H6sGfdlO.png" alt="image-20230308200417927" style="zoom: 50%;" /></p>
+<p>这是种多用户多输入单输出的下行通信系统，也成为monostatic/active MIMO 雷达。使用ISAC波形矩阵$\mathrm X\in\mathbb C^{N_t\times L}$进行传输，受到功率约束$P_T$，基站接收到如下的回传信号：</p>
+<script type="math/tex; mode=display">
+\mathrm{Y}_R=\mathrm{GX}+\mathrm{N}_R</script><p>其中$\mathrm G \in \mathbb C^{N_r \times N_t}$代表了目标的响应矩阵（TRM），对于不同的目标模型会有不同的形式，同时$N_R$是方差为$\sigma_R^2$的AWGN矩阵。多用户通信的接受的信号模型表示为：</p>
+<script type="math/tex; mode=display">
+\mathrm{Y}_c=\mathrm{HX}+\mathrm{N}_C</script><p>其中$\mathrm{H}=[\mathrm{h_1,h_2,\dots,h_K}]^H\in\mathcal C^{K\times N_t}$是通信信道矩阵，且基站已知。同时$N_C$是方差为$\sigma_C^2$是AWGN矩阵。ISAC的波形设计可以建模为如下式子的优化问题：</p>
+<script type="math/tex; mode=display">
+\min_\mathrm{X}\, \mathrm{tr}(\mathrm{R_X^{-1}})\,\mathrm{s.t.}||\mathrm{X}||_F^2 \leq LP_T,c_i(\mathrm{X}\odot C_i)</script></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/ISAC/" rel="tag"><i class="fa fa-tag"></i> ISAC</a>
+          </div>
+          <script type="text/javascript">
+            var tagsall=document.getElementsByClassName("post-tags")
+            for (var i = tagsall.length - 1; i >= 0; i--){
+                var tags=tagsall[i].getElementsByTagName("a");
+                for (var j = tags.length - 1; j >= 0; j--) {
+                    var golden_ratio = 0.618033988749895;
+                    var s = 0.5;
+                    var v = 0.999;
+                    var h = golden_ratio + Math.random()*0.8 - 0.5;
+                    var h_i = parseInt(h * 6);
+                    var f = h * 6 - h_i;
+                    var p = v * (1 - s);
+                    var q = v * (1 - f * s);
+                    var t = v * (1 - (1 - f) * s);
+                    var r, g, b;
+                    switch (h_i) {
+                        case 0:
+                            r = v;
+                            g = t;
+                            b = p;
+                            break;
+                        case 1:
+                            r = q;
+                            g = v;
+                            b = p;
+                            break;
+                        case 2:
+                            r = p;
+                            g = v;
+                            b = t;
+                            break;
+                        case 3 :
+                            r = p;
+                            g = q;
+                            b = v;
+                            break;
+                        case 4:
+                            r = t;
+                            g = p;
+                            b = v;
+                            break;
+                        case 5:
+                            r = v;
+                            g = p;
+                            b = q;
+                            break;
+                        default:
+                            r = 1;
+                            g = 1;
+                            b = 1;
+                      }
+                    tags[j].style.background = "rgba("+parseInt(r*255)+","+parseInt(g*255)+","+parseInt(b*255)+","+0.5+")";
+                }
+            }                        
+            </script>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/05/27/LSTM%E5%88%9D%E6%8E%A2/" rel="prev" title="LSTM初探">
+      <i class="fa fa-chevron-left"></i> LSTM初探
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/05/27/MIT%E7%B3%BB%E5%88%97/" rel="next" title="MIT-RF系列论文">
+      MIT-RF系列论文 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">ISAC 学习笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%95%E8%A8%80%E9%83%A8%E5%88%86"><span class="nav-number">1.1.</span> <span class="nav-text">引言部分</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%A5%E4%B8%9A%E8%BF%9B%E5%B1%95%E4%B8%8E%E5%BA%94%E7%94%A8"><span class="nav-number">1.2.</span> <span class="nav-text">工业进展与应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E8%AF%84%E4%BC%B0"><span class="nav-number">1.3.</span> <span class="nav-text">性能评估</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%84%9F%E7%9F%A5%E7%9A%84%E8%AF%84%E4%BC%B0"><span class="nav-number">1.3.1.</span> <span class="nav-text">感知的评估</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E4%BF%A1%E7%9A%84%E8%AF%84%E4%BC%B0"><span class="nav-number">1.3.2.</span> <span class="nav-text">通信的评估</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%A1%E6%81%AF%E8%AE%BA%E7%9A%84%E6%9D%83%E8%A1%A1"><span class="nav-number">1.4.</span> <span class="nav-text">信息论的权衡</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%A9%E7%90%86%E5%B1%82%E7%9A%84%E6%9D%83%E8%A1%A1"><span class="nav-number">1.5.</span> <span class="nav-text">物理层的权衡</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E7%94%9F%E7%9A%84S-amp-C%E8%AF%84%E4%BC%B0"><span class="nav-number">1.5.1.</span> <span class="nav-text">原生的S&amp;C评估</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="阿花想养萨摩耶"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">阿花想养萨摩耶</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">65</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dafeigy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dafeigy" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1070642765@qq.com" title="E-Mail → mailto:1070642765@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/2659883291" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;2659883291" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+  </div>
+
+
+
+  <div class="links-of-recent-posts motion-element">
+    <div class="links-of-recent-posts-title">
+      <i class="fa fa-history fa-fw"></i>
+      最近文章
+    </div>
+    <ul class="links-of-recent-posts-list">
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E5%9F%9F%E9%80%82%E5%BA%94/" title="2024&#x2F;05&#x2F;27&#x2F;迁移学习域适应&#x2F;">域适应初探</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E9%80%A0%E7%A5%9E%E5%B9%B4%E4%BB%A3/" title="2024&#x2F;05&#x2F;27&#x2F;造神年代&#x2F;">读《造神年代》的一些读后随想</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E7%9B%AE%E6%A0%87%E4%BD%8D%E7%BD%AE-CSI%E4%BF%A1%E5%8F%B7%E9%A2%91%E7%8E%87%E5%BD%B1%E5%93%8D%E6%8E%A2%E7%A9%B6/" title="2024&#x2F;05&#x2F;27&#x2F;目标位置-CSI信号频率影响探究&#x2F;">【论文笔记】Understanding  WiFi Signal Frequency Features for Position-Independent Gesture Sensing</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E8%A3%85%E6%9C%BA/" title="2024&#x2F;05&#x2F;27&#x2F;装机&#x2F;">ITX-Lancer L1 Mesh</a>
+        </li>
+    </ul>
+  </div>
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">阿花</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>

@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":5},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="本篇主要是结构体的介绍与使用。通过实现一个链表的结构，学习存储期的概念以及全局与局部的更深一层的理解。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C&#x2F;C++核心语法学习（二）">
+<meta property="og:url" content="http://example.com/2024/05/27/C++%E7%BB%93%E6%9E%84%E4%BD%93%E5%AD%A6%E4%B9%A0/index.html">
+<meta property="og:site_name" content="阿花的Blog">
+<meta property="og:description" content="本篇主要是结构体的介绍与使用。通过实现一个链表的结构，学习存储期的概念以及全局与局部的更深一层的理解。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2023/05/03/aNE6XkqKnSY2oQM.jpg">
+<meta property="og:image" content="https://s2.loli.net/2023/05/04/qSskVKDWOrRuTIz.png">
+<meta property="og:image" content="https://s2.loli.net/2023/05/04/ojaI42PpiZzVYET.png">
+<meta property="article:published_time" content="2024-05-27T13:33:39.518Z">
+<meta property="article:modified_time" content="2024-05-27T13:33:39.518Z">
+<meta property="article:author" content="阿花想养萨摩耶">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="C">
+<meta property="article:tag" content="结构体">
+<meta property="article:tag" content="类">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/05/03/aNE6XkqKnSY2oQM.jpg">
+
+<link rel="canonical" href="http://example.com/2024/05/27/C++%E7%BB%93%E6%9E%84%E4%BD%93%E5%AD%A6%E4%B9%A0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>C/C++核心语法学习（二） | 阿花的Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">阿花的Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/27/C++%E7%BB%93%E6%9E%84%E4%BD%93%E5%AD%A6%E4%B9%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          C/C++核心语法学习（二）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-05-27 21:33:39" itemprop="dateCreated datePublished" datetime="2024-05-27T21:33:39+08:00">2024-05-27</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/" itemprop="url" rel="index"><span itemprop="name">学习记录</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="https://s2.loli.net/2023/05/03/aNE6XkqKnSY2oQM.jpg" alt="banner"></p>
+<p>本篇主要是结构体的介绍与使用。通过实现一个链表的结构，学习存储期的概念以及全局与局部的更深一层的理解。</p>
+<span id="more"></span>
+<h2 id="结构体基础"><a href="#结构体基础" class="headerlink" title="结构体基础"></a>结构体基础</h2><h3 id="结构体的使用场景"><a href="#结构体的使用场景" class="headerlink" title="结构体的使用场景"></a>结构体的使用场景</h3><p>结构体的本质是通过组合已有的数据类型来构建新的类型。它的使用语法如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Student</span> &#123;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> number;</span><br><span class="line">    <span class="type">char</span> name[<span class="number">30</span>];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>这里构建了一个<code>Student</code>类型的结构体，之后可以使用：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Student a, b;</span><br></pre></td></tr></table></figure>
+<p>进行调用。如果要对其内容进行声明与定义，则可以这样：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">a.number = <span class="number">12345</span>;</span><br><span class="line"><span class="comment">// 令 a.name 为 &quot;Bob&quot;，但是数组不能直接赋值，所以只能逐元素处理</span></span><br><span class="line">a.name[<span class="number">0</span>] = <span class="string">&#x27;B&#x27;</span>;</span><br><span class="line">a.name[<span class="number">1</span>] = <span class="string">&#x27;o&#x27;</span>;</span><br><span class="line">a.name[<span class="number">2</span>] = <span class="string">&#x27;b&#x27;</span>;</span><br><span class="line">a.name[<span class="number">3</span>] = <span class="string">&#x27;\0&#x27;</span>;</span><br></pre></td></tr></table></figure>
+<h3 id="结构体的定义"><a href="#结构体的定义" class="headerlink" title="结构体的定义"></a>结构体的定义</h3><p>结构体是由若干个数据“合起来”组成的一种新类型。这些数据被称为结构体的<strong>成员</strong>（Member）。若想定义一个新的结构体类型，你需要这样写：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">struct 结构体类型名 &#123;</span><br><span class="line">    成员列表</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>其中，<code>结构体类型名</code> 是一个引入的类型名，它遵循和变量名相同的命名规则。<code>成员列表</code> 是一系列可选的带初始化器的声明，比如：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Coordinate</span> &#123;</span><br><span class="line">    <span class="type">int</span> x, y;</span><br><span class="line">    <span class="type">int</span> z&#123;<span class="number">42</span>&#125;;</span><br><span class="line">&#125;; <span class="comment">// 别忘了这有一个分号</span></span><br></pre></td></tr></table></figure>
+<p>一定是先定义再使用！你在定义结构体类型变量时，也可以带一个初始化器。初始化器中是一系列由逗号分隔的值，它们会依次初始化每一个成员。比如：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Student</span> &#123;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> number;</span><br><span class="line">    <span class="type">char</span> name[<span class="number">30</span>];</span><br><span class="line">&#125;;</span><br><span class="line">Student bob&#123;<span class="number">12345</span>, <span class="string">&quot;Bob&quot;</span>&#125;;</span><br></pre></td></tr></table></figure>
+<p>建议将结构体的定义写在全局作用域内。这样做的原因是，我们可以在所有的函数中使用这个结构体类型：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Student</span> &#123;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> number;</span><br><span class="line">    <span class="type">char</span> name[<span class="number">30</span>];</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">printName</span><span class="params">(Student student)</span> </span>&#123;</span><br><span class="line">    cout &lt;&lt; student.name &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Student bob&#123;<span class="number">12345</span>, <span class="string">&quot;Bob&quot;</span>&#125;;</span><br><span class="line">    <span class="built_in">printName</span>(bob);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="结构体成员访问"><a href="#结构体成员访问" class="headerlink" title="结构体成员访问"></a>结构体成员访问</h3><p>访问一个结构体的成员需要通过成员运算符 <code>.</code> 来实现，甚至可以变为指针类型：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Student</span> &#123;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> number;</span><br><span class="line">    <span class="type">char</span> name[<span class="number">30</span>];</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Student a&#123;<span class="number">10001</span>, <span class="string">&quot;Alice&quot;</span>&#125;;</span><br><span class="line">    Student* p&#123;&amp;a&#125;;</span><br><span class="line">    cout &lt;&lt; (*p).name &lt;&lt; endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="一个结构体的例子"><a href="#一个结构体的例子" class="headerlink" title="一个结构体的例子"></a>一个结构体的例子</h3><p>链表，不再赘述这种数据结构了。我们给出实现：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Node</span> &#123;</span><br><span class="line">    <span class="type">int</span> data;</span><br><span class="line">    Node* next; <span class="comment">// 指向下一节点的指针</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Node a&#123;<span class="number">12</span>&#125;;</span><br><span class="line">    Node b&#123;<span class="number">99</span>&#125;;</span><br><span class="line">    Node c&#123;<span class="number">37</span>&#125;;</span><br><span class="line">    a.next = &amp;b;</span><br><span class="line">    b.next = &amp;c;</span><br><span class="line">    c.next = <span class="literal">nullptr</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>但是再实现链表功能前我们还需要一些别的知识前置：</p>
+<h2 id="存储期"><a href="#存储期" class="headerlink" title="存储期"></a>存储期</h2><p>在学习如何建立一个链表之前，我们首先要学习一个叫做<strong>存储期</strong>（Storage duration）的概念。每个变量都拥有一个存储期，指出在什么时候为这个变量分配内存，在什么时候将这个变量的内存释放</p>
+<h3 id="自动存储期"><a href="#自动存储期" class="headerlink" title="自动存储期"></a>自动存储期</h3><p>在复合语句和形参中声明的局部变量拥有自动存储期（Automatic storage duration）。自动存储期的变量在<strong>进入复合语句</strong>（或函数体）时分配到内存，在<strong>离开复合语句</strong>（或函数体）时释放内存。</p>
+<h3 id="静态存储期"><a href="#静态存储期" class="headerlink" title="静态存储期"></a>静态存储期</h3><p>全局变量拥有静态存储期（Static storage duration）。不同于自动存储期，它们会在<strong>程序启动</strong>的时候<strong>立即</strong>分配内存。全局变量会在分配内存后进行初始化。它们<strong>直到程序退出</strong>的时候才和程序共同将存储空间释放给操作系统。全局变量若有初始化器，则它的初始化值必须是编译期常量；若没有则零初始化。</p>
+<h3 id="动态存储期"><a href="#动态存储期" class="headerlink" title="动态存储期"></a>动态存储期</h3><p>但是这些都不适合链表。因为链表中每一个节点都是独立的，我们需要<strong>手动控制</strong>何时创建一个节点，何时令一个节点消亡。我们称那些可以在运行期间控制何时分配内存、释放内存的变量拥有动态存储期（Dynamic storage duration）。</p>
+<p>我们通过 new 表达式手动<strong>向操作系统申请</strong>一片内存，并进行初始化。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">运算符</th>
+<th style="text-align:center">名称</th>
+<th style="text-align:center">作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">new T</td>
+<td style="text-align:center">new 运算符</td>
+<td style="text-align:center">获取一个非数组的T类型变量的存储空间</td>
+</tr>
+<tr>
+<td style="text-align:center">delete p</td>
+<td style="text-align:center">delete运算符</td>
+<td style="text-align:center">将 <code>p</code> 指向的存储空间释放（稍后解释）</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>new 表达式 <code>new T</code> 的结果是一个指向 <code>T</code> 类型的指针，这个指针所存放的地址就是刚刚申请到的那片存储空间。比如：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span>* ptr&#123;<span class="literal">nullptr</span>&#125;;</span><br><span class="line">ptr = <span class="keyword">new</span> <span class="type">int</span>;</span><br><span class="line">*ptr = <span class="number">42</span>;</span><br></pre></td></tr></table></figure>
+<p>这里，<code>ptr</code> 这个指针赋值为 new 表达式申请的地址，可以通过这个指针来对这个刚刚得到的存储空间进行操作。为了体现动态存储期的特点，我们这样写：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="comment">// 获得一个存储空间，并赋值为 value</span></span><br><span class="line"><span class="function"><span class="type">int</span>* <span class="title">getSpace</span><span class="params">(<span class="type">int</span> value)</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span>* ptr&#123;<span class="keyword">new</span> <span class="type">int</span>&#125;;</span><br><span class="line">    *ptr = value;</span><br><span class="line">    <span class="keyword">return</span> ptr;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span>* ptr&#123;<span class="literal">nullptr</span>&#125;;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;Continue?&quot;</span> &lt;&lt; endl;</span><br><span class="line">    <span class="keyword">if</span> (cin.<span class="built_in">get</span>() == <span class="string">&#x27;y&#x27;</span>)  &#123;</span><br><span class="line">        ptr = <span class="built_in">getSpace</span>(<span class="number">42</span>);</span><br><span class="line">        cout &lt;&lt; *ptr &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">delete</span> ptr; <span class="comment">// 见后文</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里，<code>getSpace</code> 函数用于获取一片空间，并将指向这个空间的指针返回。而 main 函数中，是否获取这个空间取决于运行期间的输入：如果我们的输入是 <code>y</code>，则获取空间并存放变量；否则不做任何事情，也不会有任何变量被定义。而且，<code>ptr</code> 指向的这块存储空间可以在任何场合下访问：我们既可以在 <code>getSpace</code> 函数中给它赋值，也可以在 main 函数中将它的值输出。这是全局变量和局部变量都无法实现的，也是我们之后实现链表的必需手段。</p>
+<p>new 表达式在分配内存完成后会自动进行初始化。你可以把初始化器放在 new 表达式中，比如：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Node</span> &#123;</span><br><span class="line">    <span class="type">int</span> data;</span><br><span class="line">    Node* next;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">f</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Node* head&#123;<span class="keyword">new</span> Node&#123;<span class="number">42</span>, <span class="literal">nullptr</span>&#125;&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后再通过delete表达式释放new申请的内存：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span>* ptr&#123;<span class="keyword">new</span> <span class="type">int</span>&#125;;</span><br><span class="line"><span class="comment">// [...] 对 *ptr 的操作</span></span><br><span class="line"><span class="keyword">delete</span> ptr;</span><br></pre></td></tr></table></figure>
+<p>当执行 <code>delete ptr;</code> 后，<code>ptr</code> 指向的内存空间<strong>归还给操作系统</strong>，因此 <code>*ptr</code> 成为了非法操作——这片存储空间已经不能再用了！我们在删除链表节点的时候，就需要执行这样的操作。new 到的存储空间用 delete 释放，这是一个必须养成的编程习惯。<strong>如果 new 完不 delete，可能导致严重的内存泄漏问题</strong>。所以请务必细心编写你的代码。</p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p><img src="https://s2.loli.net/2023/05/04/qSskVKDWOrRuTIz.png" alt="image-20230504104115475"></p>
+<h2 id="链表构建"><a href="#链表构建" class="headerlink" title="链表构建"></a>链表构建</h2><p>我们尝试来构造一个链表。因为我们需要手动控制每一个节点的增删，所以每一个节点都得是动态存储期存储的。因此每一个节点都需要通过 new 表达式来创建。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Node</span> &#123;</span><br><span class="line">    <span class="type">int</span> data;</span><br><span class="line">    Node* next;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>需要注意的是，在写下 <code>Node* next;</code> 这行声明时，<code>Node</code> 的定义还没有完成——它只是一个声明。所以，如果在这个时候写下 <code>Node sth</code>，作为成员是会报错的。这里能够使用 <code>Node*</code> 的原因就是，C/C++ 允许定义不完整类型的指针。先来创建第一个节点。链表的第一个节点称为头结点，用一个名叫 <code>head</code> 的指针指向它，并让其中 <code>data</code> 初始化为 <code>0</code>：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Node</span> &#123;</span><br><span class="line">    <span class="type">int</span> data;</span><br><span class="line">    Node* next;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Node* head&#123;<span class="keyword">new</span> Node&#123;<span class="number">0</span>&#125;&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后，定义一个指针 <code>current</code>，指向当前正在操作的节点。现在，就让 <code>current</code> 和 <code>head</code> 都指向头结点：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Node</span> &#123;</span><br><span class="line">    <span class="type">int</span> data;</span><br><span class="line">    Node* next;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Node* head&#123;<span class="keyword">new</span> Node&#123;<span class="number">0</span>&#125;&#125;;</span><br><span class="line">    Node* current&#123;head&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>令 <code>current</code> 的 <code>next</code> 指针指向一个新节点，其 <code>data</code> 初始化为 <code>1</code>。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Node</span> &#123;</span><br><span class="line">    <span class="type">int</span> data;</span><br><span class="line">    Node* next;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Node* head&#123;<span class="keyword">new</span> Node&#123;<span class="number">0</span>&#125;&#125;;</span><br><span class="line">    Node* current&#123;head&#125;;</span><br><span class="line">    (*current).next = <span class="keyword">new</span> Node&#123;<span class="number">1</span>&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接下来，我们需要把 <code>current</code> 指针挪到新节点上。我们现在已经生成了两个节点：第一个是头结点，其 <code>data</code> 为 <code>0</code>；第二个的 <code>data</code> 为 <code>1</code>:</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Node</span> &#123;</span><br><span class="line">    <span class="type">int</span> data;</span><br><span class="line">    Node* next;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Node* head&#123;<span class="keyword">new</span> Node&#123;<span class="number">0</span>&#125;&#125;;</span><br><span class="line">    Node* current&#123;head&#125;;</span><br><span class="line">    (*current).next = <span class="keyword">new</span> Node&#123;<span class="number">1</span>&#125;;</span><br><span class="line">    current = (*current).next;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们可以用循环的方式完成多个节点的拼接：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Node</span> &#123;</span><br><span class="line">    <span class="type">int</span> data;</span><br><span class="line">    Node* next;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Node* head&#123;<span class="keyword">new</span> Node&#123;<span class="number">0</span>&#125;&#125;;</span><br><span class="line">    Node* current&#123;head&#125;;</span><br><span class="line">    <span class="type">int</span> n&#123;<span class="number">5</span>&#125;; <span class="comment">// 节点个数</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i&#123;<span class="number">1</span>&#125;; i &lt; n; i++) &#123;</span><br><span class="line">        (*current).next = <span class="keyword">new</span> Node&#123;i&#125;;</span><br><span class="line">        current = (*current).next;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// [...]</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当生成完 n 个节点之后，我们用 <code>nullptr</code> 来表示链表的终点，这就完成了链表的构建。上述代码构造了由 n 个节点组成的链表，其中它们存储的数据分别是$ 0\sim n - 1$∼的正整数。但是这个方法不能构建不含任何节点的链表（即 <code>head</code> 为 <code>nullptr</code>），这种情况需要特殊判断。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Node</span> &#123;</span><br><span class="line">    <span class="type">int</span> data;</span><br><span class="line">    Node* next;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Node* head&#123;<span class="keyword">new</span> Node&#123;<span class="number">0</span>&#125;&#125;;</span><br><span class="line">    Node* current&#123;head&#125;;</span><br><span class="line">    <span class="type">int</span> n&#123;<span class="number">5</span>&#125;; <span class="comment">// 节点个数</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i&#123;<span class="number">1</span>&#125;; i &lt; n; i++) &#123;</span><br><span class="line">        (*current).next = <span class="keyword">new</span> Node&#123;i&#125;;</span><br><span class="line">        current = (*current).next;</span><br><span class="line">    &#125;</span><br><span class="line">    (*current).next = <span class="literal">nullptr</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="链表的访问"><a href="#链表的访问" class="headerlink" title="链表的访问"></a>链表的访问</h3><p>链表可以很快地进行插入和删除操作，但相对地，若想访问其中一个节点就会比数组麻烦不少。如果想访问第 x 个节点，那我们不得不从 <code>head</code> 开始，一个一个 <code>next</code> 地去找，直到第 x 个为止。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Node</span> &#123;</span><br><span class="line">    <span class="type">int</span> data;</span><br><span class="line">    Node* next;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 获取第 x 个节点（从 0 开始）</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function">Node* <span class="title">getNode</span><span class="params">(Node* head, <span class="type">unsigned</span> <span class="type">int</span> x)</span> </span>&#123;</span><br><span class="line">    Node* current&#123;head&#125;;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">unsigned</span> <span class="type">int</span> i&#123;<span class="number">0</span>&#125;; i &lt; x; i++) &#123;</span><br><span class="line">        current = (*current).next;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> current;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Node* head&#123;<span class="keyword">new</span> Node&#123;<span class="number">0</span>&#125;&#125;;</span><br><span class="line">    Node* current&#123;head&#125;;</span><br><span class="line">    <span class="type">int</span> n&#123;<span class="number">5</span>&#125;; <span class="comment">// 节点个数</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i&#123;<span class="number">1</span>&#125;; i &lt; n; i++) &#123;</span><br><span class="line">        (*current).next = <span class="keyword">new</span> Node&#123;i&#125;;</span><br><span class="line">        current = (*current).next;</span><br><span class="line">    &#125;</span><br><span class="line">    (*current).next = <span class="literal">nullptr</span>;</span><br><span class="line">    Node* thirdNode&#123;<span class="built_in">getNode</span>(head, <span class="number">3</span>)&#125;;</span><br><span class="line">    cout &lt;&lt; (*thirdNode).data &lt;&lt; endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="一种简化的表达"><a href="#一种简化的表达" class="headerlink" title="一种简化的表达"></a>一种简化的表达</h3><p>在上面的例子中，我们频繁地使用一种形式的表达式：<code>(*a).b</code>，即访问一个指针指向的结构体的成员。C/C++ 为此提供了一个更方便的写法 <code>a-&gt;b</code>：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>名称</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>a-&gt;b</code></td>
+<td>指针成员运算符</td>
+<td>等价于 <code>(*a).b</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>其实 <code>-&gt;</code> 这个运算符只是提供了一个“快捷方式”，它实际上仍然是先解地址，然后取得其成员。有了它，我们可以把刚才的遍历代码改成这样：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Node</span> &#123;</span><br><span class="line">    <span class="type">int</span> data;</span><br><span class="line">    Node* next;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 获取第 x 个节点（从 0 开始）</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function">Node* <span class="title">getNode</span><span class="params">(Node* head, <span class="type">unsigned</span> <span class="type">int</span> x)</span> </span>&#123;</span><br><span class="line">    Node* current&#123;head&#125;;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">unsigned</span> <span class="type">int</span> i&#123;<span class="number">0</span>&#125;; i &lt; x; i++) &#123;</span><br><span class="line">        current = current-&gt;next;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> current;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Node* head&#123;<span class="keyword">new</span> Node&#123;<span class="number">0</span>&#125;&#125;;</span><br><span class="line">    Node* current&#123;head&#125;;</span><br><span class="line">    <span class="type">int</span> n&#123;<span class="number">5</span>&#125;; <span class="comment">// 节点个数</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i&#123;<span class="number">1</span>&#125;; i &lt; n; i++) &#123;</span><br><span class="line">        current-&gt;next = <span class="keyword">new</span> Node&#123;i&#125;;</span><br><span class="line">        current = current-&gt;next;</span><br><span class="line">    &#125;</span><br><span class="line">    current-&gt;next = <span class="literal">nullptr</span>;</span><br><span class="line">    Node* thirdNode&#123;<span class="built_in">getNode</span>(head, <span class="number">3</span>)&#125;;</span><br><span class="line">    cout &lt;&lt; thirdNode-&gt;data &lt;&lt; endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="链表元素的插入"><a href="#链表元素的插入" class="headerlink" title="链表元素的插入"></a>链表元素的插入</h3><p>如果我们插入的位置不是头部，那么首先需要拿到插入位置前面的结构体，并令指针 <code>prev</code> 指向它。随后，用 <code>temp</code> 指向一个新生成的结构体，调整它们 <code>next</code> 指向的位置即可。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Node* temp&#123;<span class="keyword">new</span> Node&#123;&#125;&#125;;</span><br><span class="line">temp-&gt;next = prev-&gt;next;</span><br><span class="line">prev-&gt;next = temp;</span><br></pre></td></tr></table></figure>
+<p><img src="https://s2.loli.net/2023/05/04/ojaI42PpiZzVYET.png" alt="图示"></p>
+<p>如果插入的位置是头部，则需要修改 <code>head</code> 指针指向的位置。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Node* temp&#123;<span class="keyword">new</span> Node&#123;&#125;&#125;;</span><br><span class="line">temp-&gt;next = head-&gt;next;</span><br><span class="line">head = temp;</span><br></pre></td></tr></table></figure>
+<h3 id="链表元素的删除"><a href="#链表元素的删除" class="headerlink" title="链表元素的删除"></a>链表元素的删除</h3><p>同样地，删除一个节点也需要先拿到前面的节点，令 <code>prev</code> 为指向前面那个节点的指针。同样地，令 <code>temp</code> 指向要删除的节点，随后调整 <code>next</code> 指针。最后别忘记释放 <code>temp</code> 这片内存。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Node* temp&#123;prev-&gt;next&#125;;</span><br><span class="line">prev-&gt;next = temp-&gt;next;</span><br><span class="line"><span class="keyword">delete</span> temp;</span><br></pre></td></tr></table></figure>
+<p>同理可删除头节点：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Node* temp&#123;head&#125;;</span><br><span class="line">head = temp-&gt;next;</span><br><span class="line"><span class="keyword">delete</span> temp;</span><br></pre></td></tr></table></figure>
+<h3 id="链表的释放"><a href="#链表的释放" class="headerlink" title="链表的释放"></a>链表的释放</h3><p>我们使用完一个链表务必要将其所有节点占用的存储空间都释放掉。最典型的方法是，从头到尾一个一个删掉，直到 <code>nullptr</code> 尾部为止。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">freeList</span><span class="params">(Node* head)</span> </span>&#123;</span><br><span class="line">    Node* current&#123;&#125;;</span><br><span class="line">    <span class="keyword">while</span> (head) &#123;</span><br><span class="line">        current = head;</span><br><span class="line">        head = head-&gt;next;</span><br><span class="line">        <span class="keyword">delete</span> current;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当链表长度较小的时候，使用递归也可：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">freeList</span><span class="params">(Node* head)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!head) <span class="keyword">return</span>;</span><br><span class="line">    <span class="built_in">freeList</span>(head-&gt;next);</span><br><span class="line">    <span class="keyword">delete</span> head;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="动态大小数组"><a href="#动态大小数组" class="headerlink" title="动态大小数组"></a>动态大小数组</h2><p>在使用 new 表达式时，C++ 并不允许申请数组类型的空间，但是C++ 提供了一个称为 new[] 表达式的东西来实现相关的操作：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>名称</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>new T[n]</code></td>
+<td>new[] 运算符</td>
+<td>获取 <code>n</code> 个连续的 <code>T</code> 类型存储空间</td>
+</tr>
+<tr>
+<td><code>delete[] p</code></td>
+<td>delete[] 运算符</td>
+<td>释放 new[] 表达式申请到的内存（见下文）</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>new[] 表达式的写法是 <code>new T[n]</code>，它可以申请 <code>n</code> 个连续的 <code>T</code> 类型的空间并初始化，最后将其中首个空间的地址作为表达式的结果值。所以，new[] 的返回值类型为 <code>T*</code>类型的地址：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span>* ptr&#123;<span class="keyword">new</span> <span class="type">int</span>[<span class="number">4</span>]&#125;;</span><br></pre></td></tr></table></figure>
+<p>这里，<code>ptr</code> 指向刚刚申请到的 4 个连续的 <code>int</code> 存储空间中的首个 <code>int</code>。不过仍然注意，这里的 <code>ptr</code> 仍是一个指针而非一个数组：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sizeof</span>(ptr); <span class="comment">// 等价于 sizeof(int*)，而非 sizeof(int[4])</span></span><br></pre></td></tr></table></figure>
+<p>注意：<code>new[]</code> 完不 <code>delete[]</code> 会导致严重的内存泄漏问题。<code>new[]</code> 完只 <code>delete</code> 是不够的，因为还有 <code>n - 1</code> 块后续内存未被释放。new[] 和 delete[] 表达式是 C++ 中实现动态大小“数组”的唯一方式。而且，无法通过这种方式创建在“两个维度上动态”的“数组”。</p>
+<h2 id="一些注意事项"><a href="#一些注意事项" class="headerlink" title="一些注意事项"></a>一些注意事项</h2><p>如果用C来声明并定义一个结构体，需要在类型说明符前加上详述类型说明符 <code>struct</code>。比如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">struct Coord &#123;</span><br><span class="line">    int x, y;</span><br><span class="line">&#125;;</span><br><span class="line">Coord a;        /* C 中错误，C++ 中 OK */</span><br><span class="line">struct Coord a; /* C 和 C++ 都合法 */</span><br></pre></td></tr></table></figure>
+<p>即你在使用结构体名字前必须再额外写一个 <code>struct</code>，否则 C 编译器无法理解这个名字。你可以通过 typedef 声明来避免这个啰嗦：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Coord_impl</span> &#123;</span><br><span class="line">    <span class="type">int</span> x, y;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> <span class="title class_">Coord_impl</span> Coord;</span><br><span class="line">Coord a; <span class="comment">/* 合法 C */</span></span><br></pre></td></tr></table></figure>
+<p>或者直接：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="type">int</span> x, y;</span><br><span class="line">&#125; Coord;</span><br><span class="line">Coord a; <span class="comment">/* 合法 C */</span></span><br></pre></td></tr></table></figure>
+<p>除此之外，C和C++还有如下的不同之处：</p>
+<p>除了上述内容，C 和 C++ 的不同之处还有：</p>
+<ul>
+<li>结构体不引入作用域（C++ 中引入）</li>
+<li>关键字 <code>inline</code> 含义为优先内联（C++ 中为<a target="_blank" rel="noopener" href="https://learn-cpp.tk/ch09/inline">容许重复定义</a>）</li>
+<li>全局作用域只读变量拥有外部连接（C++ 中拥有内部连接）</li>
+<li>对齐相关关键字 <code>_Alignas</code> <code>_Alignof</code>（C++ 中 <code>alignas</code> <code>alignof</code>）</li>
+<li>静态断言 <code>_Static_assert</code>（C++ 中 <code>static_assert</code>）</li>
+<li>线程存储期 <code>_Thread_local</code>（C++ 中 <code>thread_local</code>）</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"><i class="fa fa-tag"></i> C++</a>
+              <a href="/tags/C/" rel="tag"><i class="fa fa-tag"></i> C</a>
+              <a href="/tags/%E7%BB%93%E6%9E%84%E4%BD%93/" rel="tag"><i class="fa fa-tag"></i> 结构体</a>
+              <a href="/tags/%E7%B1%BB/" rel="tag"><i class="fa fa-tag"></i> 类</a>
+          </div>
+          <script type="text/javascript">
+            var tagsall=document.getElementsByClassName("post-tags")
+            for (var i = tagsall.length - 1; i >= 0; i--){
+                var tags=tagsall[i].getElementsByTagName("a");
+                for (var j = tags.length - 1; j >= 0; j--) {
+                    var golden_ratio = 0.618033988749895;
+                    var s = 0.5;
+                    var v = 0.999;
+                    var h = golden_ratio + Math.random()*0.8 - 0.5;
+                    var h_i = parseInt(h * 6);
+                    var f = h * 6 - h_i;
+                    var p = v * (1 - s);
+                    var q = v * (1 - f * s);
+                    var t = v * (1 - (1 - f) * s);
+                    var r, g, b;
+                    switch (h_i) {
+                        case 0:
+                            r = v;
+                            g = t;
+                            b = p;
+                            break;
+                        case 1:
+                            r = q;
+                            g = v;
+                            b = p;
+                            break;
+                        case 2:
+                            r = p;
+                            g = v;
+                            b = t;
+                            break;
+                        case 3 :
+                            r = p;
+                            g = q;
+                            b = v;
+                            break;
+                        case 4:
+                            r = t;
+                            g = p;
+                            b = v;
+                            break;
+                        case 5:
+                            r = v;
+                            g = p;
+                            b = q;
+                            break;
+                        default:
+                            r = 1;
+                            g = 1;
+                            b = 1;
+                      }
+                    tags[j].style.background = "rgba("+parseInt(r*255)+","+parseInt(g*255)+","+parseInt(b*255)+","+0.5+")";
+                }
+            }                        
+            </script>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/05/27/CMA/" rel="prev" title="CMA均衡Matlab仿真实验">
+      <i class="fa fa-chevron-left"></i> CMA均衡Matlab仿真实验
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/05/27/CN-Intriguing%20properties%20of%20neural%20networks/" rel="next" title="【文献翻译】神经网络的有趣特性">
+      【文献翻译】神经网络的有趣特性 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E6%9E%84%E4%BD%93%E5%9F%BA%E7%A1%80"><span class="nav-number">1.</span> <span class="nav-text">结构体基础</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E6%9E%84%E4%BD%93%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">1.1.</span> <span class="nav-text">结构体的使用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E6%9E%84%E4%BD%93%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="nav-number">1.2.</span> <span class="nav-text">结构体的定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E6%9E%84%E4%BD%93%E6%88%90%E5%91%98%E8%AE%BF%E9%97%AE"><span class="nav-number">1.3.</span> <span class="nav-text">结构体成员访问</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E7%BB%93%E6%9E%84%E4%BD%93%E7%9A%84%E4%BE%8B%E5%AD%90"><span class="nav-number">1.4.</span> <span class="nav-text">一个结构体的例子</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E6%9C%9F"><span class="nav-number">2.</span> <span class="nav-text">存储期</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E5%AD%98%E5%82%A8%E6%9C%9F"><span class="nav-number">2.1.</span> <span class="nav-text">自动存储期</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E5%AD%98%E5%82%A8%E6%9C%9F"><span class="nav-number">2.2.</span> <span class="nav-text">静态存储期</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E5%AD%98%E5%82%A8%E6%9C%9F"><span class="nav-number">2.3.</span> <span class="nav-text">动态存储期</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">2.4.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%93%BE%E8%A1%A8%E6%9E%84%E5%BB%BA"><span class="nav-number">3.</span> <span class="nav-text">链表构建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%93%BE%E8%A1%A8%E7%9A%84%E8%AE%BF%E9%97%AE"><span class="nav-number">3.1.</span> <span class="nav-text">链表的访问</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E7%A7%8D%E7%AE%80%E5%8C%96%E7%9A%84%E8%A1%A8%E8%BE%BE"><span class="nav-number">3.2.</span> <span class="nav-text">一种简化的表达</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%93%BE%E8%A1%A8%E5%85%83%E7%B4%A0%E7%9A%84%E6%8F%92%E5%85%A5"><span class="nav-number">3.3.</span> <span class="nav-text">链表元素的插入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%93%BE%E8%A1%A8%E5%85%83%E7%B4%A0%E7%9A%84%E5%88%A0%E9%99%A4"><span class="nav-number">3.4.</span> <span class="nav-text">链表元素的删除</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%93%BE%E8%A1%A8%E7%9A%84%E9%87%8A%E6%94%BE"><span class="nav-number">3.5.</span> <span class="nav-text">链表的释放</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E5%A4%A7%E5%B0%8F%E6%95%B0%E7%BB%84"><span class="nav-number">4.</span> <span class="nav-text">动态大小数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">5.</span> <span class="nav-text">一些注意事项</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="阿花想养萨摩耶"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">阿花想养萨摩耶</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">65</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dafeigy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dafeigy" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1070642765@qq.com" title="E-Mail → mailto:1070642765@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/2659883291" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;2659883291" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+  </div>
+
+
+
+  <div class="links-of-recent-posts motion-element">
+    <div class="links-of-recent-posts-title">
+      <i class="fa fa-history fa-fw"></i>
+      最近文章
+    </div>
+    <ul class="links-of-recent-posts-list">
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E5%9F%9F%E9%80%82%E5%BA%94/" title="2024&#x2F;05&#x2F;27&#x2F;迁移学习域适应&#x2F;">域适应初探</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E9%80%A0%E7%A5%9E%E5%B9%B4%E4%BB%A3/" title="2024&#x2F;05&#x2F;27&#x2F;造神年代&#x2F;">读《造神年代》的一些读后随想</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E7%9B%AE%E6%A0%87%E4%BD%8D%E7%BD%AE-CSI%E4%BF%A1%E5%8F%B7%E9%A2%91%E7%8E%87%E5%BD%B1%E5%93%8D%E6%8E%A2%E7%A9%B6/" title="2024&#x2F;05&#x2F;27&#x2F;目标位置-CSI信号频率影响探究&#x2F;">【论文笔记】Understanding  WiFi Signal Frequency Features for Position-Independent Gesture Sensing</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E8%A3%85%E6%9C%BA/" title="2024&#x2F;05&#x2F;27&#x2F;装机&#x2F;">ITX-Lancer L1 Mesh</a>
+        </li>
+    </ul>
+  </div>
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">阿花</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

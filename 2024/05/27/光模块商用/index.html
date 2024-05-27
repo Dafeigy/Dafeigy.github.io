@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":5},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="引言​        光模块是光通信中的核心器件，其核心功能是实现光电信号的相互转换。在数据流量爆发与网络需求升级的背景下，全球光模块市场成长动能强劲。从长期来看，光模块厂商未来有望迎来发展黄金时期，产品力的提升与工程师红利为光模块行业带来巨大潜能，国内龙头厂商如中际旭创、新易盛等在全球光模块竞争市场中逐渐崛起，近年来产品竞争力已赶超海外。本文试从商用光模块基本信息概述与光模块发展趋势两个维度对光">
+<meta property="og:type" content="article">
+<meta property="og:title" content="光模块发展简易调研">
+<meta property="og:url" content="http://example.com/2024/05/27/%E5%85%89%E6%A8%A1%E5%9D%97%E5%95%86%E7%94%A8/index.html">
+<meta property="og:site_name" content="阿花的Blog">
+<meta property="og:description" content="引言​        光模块是光通信中的核心器件，其核心功能是实现光电信号的相互转换。在数据流量爆发与网络需求升级的背景下，全球光模块市场成长动能强劲。从长期来看，光模块厂商未来有望迎来发展黄金时期，产品力的提升与工程师红利为光模块行业带来巨大潜能，国内龙头厂商如中际旭创、新易盛等在全球光模块竞争市场中逐渐崛起，近年来产品竞争力已赶超海外。本文试从商用光模块基本信息概述与光模块发展趋势两个维度对光">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/09/15/paklS4YoVq3LjOZ.png">
+<meta property="og:image" content="https://s2.loli.net/2022/09/15/9pXz6j3IEMYbcSD.png">
+<meta property="og:image" content="c:/Users/cybercolyce/AppData/Roaming/Typora/typora-user-images/image-20220909100857534.png">
+<meta property="og:image" content="https://s2.loli.net/2022/09/15/zdsB86hlYD9fGZ3.png">
+<meta property="og:image" content="https://s2.loli.net/2022/09/15/ktSsBdeZv9x4WmU.png">
+<meta property="og:image" content="https://0.rc.xiniu.com/g1/M00/2C/D8/CgAGTF1f3geAehL4AANfSBQ5vzI153.png">
+<meta property="og:image" content="https://www.etulink.com/js/htmledit/kindeditor-en/attached/20170712/20170712093945_33495.png">
+<meta property="og:image" content="https://img.expreview.com/news/2020/09/09/gddr6x/image-20200909101042207.png">
+<meta property="og:image" content="https://ts1.cn.mm.bing.net/th/id/R-C.48c1e779288b47694b91e15a83fb11ff?rik=YF5ixHZ1CJDJGQ&riu=http%3a%2f%2fwww.chinacablesbuy.com%2fwp-content%2fuploads%2f2017%2f03%2fCFP-CFP2-CFP4-QSFP28.jpg&ehk=Hc5Lmq7fNyTvka14uX2FRnfl96yCaaOYgegGWezKJvg%3d&risl=&pid=ImgRaw&r=0">
+<meta property="og:image" content="https://s2.loli.net/2022/09/15/X5htVeDRZk83nyu.png">
+<meta property="og:image" content="https://s2.loli.net/2022/09/15/ayzWhDPG59nZjrm.png">
+<meta property="article:published_time" content="2024-05-27T13:33:39.530Z">
+<meta property="article:modified_time" content="2024-05-27T13:33:39.530Z">
+<meta property="article:author" content="阿花想养萨摩耶">
+<meta property="article:tag" content="光通信">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2022/09/15/paklS4YoVq3LjOZ.png">
+
+<link rel="canonical" href="http://example.com/2024/05/27/%E5%85%89%E6%A8%A1%E5%9D%97%E5%95%86%E7%94%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>光模块发展简易调研 | 阿花的Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">阿花的Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/27/%E5%85%89%E6%A8%A1%E5%9D%97%E5%95%86%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="阿花想养萨摩耶">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="阿花的Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          光模块发展简易调研
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-05-27 21:33:39" itemprop="dateCreated datePublished" datetime="2024-05-27T21:33:39+08:00">2024-05-27</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%80%9A%E4%BF%A1%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">通信技术</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>​        光模块是光通信中的核心器件，其核心功能是实现光电信号的相互转换。在数据流量爆发与网络需求升级的背景下，全球光模块市场成长动能强劲。从长期来看，光模块厂商未来有望迎来发展黄金时期，产品力的提升与工程师红利为光模块行业带来巨大潜能，国内龙头厂商如中际旭创、新易盛等在全球光模块竞争市场中逐渐崛起，近年来产品竞争力已赶超海外。本文试从商用光模块基本信息概述与光模块发展趋势两个维度对光模块发展进行简单的分析。</p>
+<span id="more"></span>
+<h2 id="商用光模块基本信息概述"><a href="#商用光模块基本信息概述" class="headerlink" title="商用光模块基本信息概述"></a>商用光模块基本信息概述</h2><p>​        本节将就光模块的基本结构、光模块在光通信市场产业链的位置以及光模块当前市场规模三个方面对商用光模块的基本信息进行简单概述。</p>
+<h3 id="光模块基本结构"><a href="#光模块基本结构" class="headerlink" title="光模块基本结构"></a>光模块基本结构</h3><p>​        光模块是用于短中长据数据传输的核心器件。当前通信设备间通常使用光纤进行信息传输，而光模块就是实现信源设备与光纤之间进行光/电信号转换的核心器件，发送端把信源的电信号转换为光信号经由光纤传送，在接收端把光信号转换为电信号$^{[1]}$。</p>
+<p><img src="https://s2.loli.net/2022/09/15/paklS4YoVq3LjOZ.png" alt="image-20220909095628572" style="zoom: 50%;" /></p>
+<center><small>光模块结构示意<br>图源：<a href = 'https://www.elecfans.com/baike/buxian/guangqianshebei/20180309645014_a.html'>电子发烧友-光模块基础知识大全、分类及选用</a></small></center>
+
+<p>​        光模块由光发射组件（含激光器）、光接收组件（含光探测器）、 驱动芯片与放大器等组成。在发送端，一定速率的电信号经驱动芯片处理后驱动激光器发射出相应速率的调制光信号。在接收端，一定速率 的光信号输入模块后由光探测器（PD）转换为电信号，经前置放大器后输出相应速率的电信号。</p>
+<p>​        光模块产品品类繁多，一般以封装形式和光纤链路分类。下表给出光模块分类示意图$^{[2]}$。</p>
+<p><img src="https://s2.loli.net/2022/09/15/9pXz6j3IEMYbcSD.png" alt="image-20220909101704664" style="zoom: 50%;" /></p>
+<center><small>光模块分类示意图<br>资料来源：<a href = "http://legacy.frostchina.com/wp-content/uploads/2021/03/2.pdf">FROST& SULLIVAN</a></small></center>
+
+<h3 id="光模块与光通信产业链"><a href="#光模块与光通信产业链" class="headerlink" title="光模块与光通信产业链"></a>光模块与光通信产业链</h3><p>​        光模块在光通信产业中处于中游的关键节点。上游产业是光芯片、光器件、电芯片厂商，下游是运营商、设备商以及云厂商等，如图$^{[3]}$所示。</p>
+<p><img src="C:\Users\cybercolyce\AppData\Roaming\Typora\typora-user-images\image-20220909100857534.png" alt="image-20220909100857534"></p>
+<center><small>光通信产业链<br>资料来源：<a href = "http://legacy.frostchina.com/wp-content/uploads/2021/03/2.pdf">FROST SULLIVAN</a></small></center>
+
+<p>​        可以看到光模块处于链接产业上下游的关键节点，其产品应用覆盖了互联网服务、电信市场、云服务等行业，产业覆盖面广，在多个行业中承担了重要的技术支持角色。</p>
+<h3 id="光模块市场规模"><a href="#光模块市场规模" class="headerlink" title="光模块市场规模"></a>光模块市场规模</h3><p>​        根据 Lightcounting 的统计数据，全球光模块市场规模在经历2016-2018年连续三年的停滞之后于 2019 恢复增长，2020年全球光模块市场规模达到81亿美元。Lightcounting 预计2026年全球光模块市场规模为176亿美元，2021-2026 年的复合年增长率为13.7%$^{[4]}$。下图给出了</p>
+<p><img src="https://s2.loli.net/2022/09/15/zdsB86hlYD9fGZ3.png" alt="image-20220909105612572"></p>
+<center><small>全球光模块出货量与全球光模块市场规模<br>资料来源：国联证券、Lightcounting</small></center>
+
+<p>​        境内和海外的市场预期表现出很大的反差，其中 2022-2024 年，国内光模块市 场 增 长 率 分 别 为 0.8%/-0.1%/1.1% ， 而 境 外 光 模 块 市 场 增 长 率 分 别 为 24.7%/17.6%/17.1%，下图给出中外光模块发货量(2022年及以后为预测)以及中外光模块市场规模预测(单位为百万美元)$^{[5]}$。</p>
+<p><img src="https://s2.loli.net/2022/09/15/ktSsBdeZv9x4WmU.png" alt="image-20220909110006587"></p>
+<center><small>中外光模块发货量与中外光模块市场规模预测<br>资料来源：Lightcounting</small></center>
+
+<h2 id="光模块发展趋势"><a href="#光模块发展趋势" class="headerlink" title="光模块发展趋势"></a>光模块发展趋势</h2><p>​        本节就光模块发展历程、光模块发展驱动、光模块性能突破方向三个方面对光模块发展趋势进行阐述与总结。</p>
+<h3 id="光模块发展历程"><a href="#光模块发展历程" class="headerlink" title="光模块发展历程"></a>光模块发展历程</h3><p>下图给出了不同时期的不同封装光模块性能比较$^{[6]}$。</p>
+<p>​        <img src="https://0.rc.xiniu.com/g1/M00/2C/D8/CgAGTF1f3geAehL4AANfSBQ5vzI153.png" alt="查看源图像"></p>
+<center><small>光模块发展历程与以太网标准发布的横纵对比</small></center>
+
+<p>​        在2000年以前GBIC是最主要的光模块封装，但由于其体积较大被后来的体积约为其一半的SFP取代，二者在功能上相近（都是千兆级别的），区别在于由于体积减少了一半，如下图$^{[7]}$所示。因此在同样的面板上可以配置多出一倍以上的端口数量；</p>
+<p><img src="https://www.etulink.com/js/htmledit/kindeditor-en/attached/20170712/20170712093945_33495.png" alt="千兆位交换机_SFP光模块_SFP电口模块" style="zoom:50%;" /></p>
+<p>​        随后光模块发展来到万兆级别，在此背景下诞生XFP与SFP+均为10G级别，但SFP+体积比XFP更紧凑，功耗也更小。随后的QSFP/QSFP+/QSFP28/QSFP28-DD根据速度可将QSFP分为4×10G QSFP+、4×25G QSFP28、8×25G QSFP28-DD光模块等，其性能的提升主要是通过增加通道数（以前都是单通道）。同时，采用了PAM4调制技术，区别于传统的PAM调制的NRZ编码，PAM4的编码提高了单通道的速率。</p>
+<p><img src="https://img.expreview.com/news/2020/09/09/gddr6x/image-20200909101042207.png" alt="查看源图像" style="zoom:50%;" /></p>
+<center><small>NRZ与PAM4对比</small></center>
+
+<p>因此在多通道“乘法”与调制方式的“加法”的加持下，光模块的速率得以不断突破。</p>
+<p>​        当前光模块的传输性能可达100-400Hbps，主要是以CFP/CFP2/CFP4/CFP8为主导$^{[8]}$。CFP、CFP2、CFP4的区别在于体积。CFP2的体积是CFP的二分之一，CFP4是CFP的四分之一。CFP8是专门针对400G提出的封装形式，其尺寸与CFP2相当。支持25Gbps和50Gbps的通道速率，通过16x25G或8x50电接口实现<strong>400Gbps</strong>模块速率。</p>
+<p><img src="https://ts1.cn.mm.bing.net/th/id/R-C.48c1e779288b47694b91e15a83fb11ff?rik=YF5ixHZ1CJDJGQ&riu=http%3a%2f%2fwww.chinacablesbuy.com%2fwp-content%2fuploads%2f2017%2f03%2fCFP-CFP2-CFP4-QSFP28.jpg&ehk=Hc5Lmq7fNyTvka14uX2FRnfl96yCaaOYgegGWezKJvg%3d&risl=&pid=ImgRaw&r=0" alt="查看源图像" style="zoom:50%;" /></p>
+<p>400G，是目前光通信产业的主要竞争方向。现在400G也是规模商用的初期阶段。目前的400G光模块，不管是哪种封装，价格都很昂贵，离用户的期望值还有很大差距。所以，暂时还无法快速进行全面普及。</p>
+<h3 id="光模块的发展驱动"><a href="#光模块的发展驱动" class="headerlink" title="光模块的发展驱动"></a>光模块的发展驱动</h3><h4 id="电信市场"><a href="#电信市场" class="headerlink" title="电信市场"></a>电信市场</h4><p>​        5G引入了大带宽和低时延应用，承载网的架构、带宽、时延、同步精度等需求发生很大变化。5G将原4G无线接入网功能模块重新拆分。各级光传输节点之间光端口速率提升明显。随着网络步入大规模成熟部署期，中传、回传以及东西向流量的增加需要更多光模块。</p>
+<p><img src="https://s2.loli.net/2022/09/15/X5htVeDRZk83nyu.png" alt="image-20220909151405593" style="zoom: 50%;" /></p>
+<p>​        5G更高频段带来建站密度的提高，预计建站规模将是4G的1.5到2倍，光模块需求大大增加，室内小基站规模部署后，光模块用量还将更多。根据中国电子信息 产业发展研究院，到2030年，中国5G基站数量将达到1500万个$^{[8]}$。作为全球最早开始5G商用的国家之一，中国的5G基站数量将会高速增长，5G基站的建设需求将刺激运营商对光模块的需求，进一步提高光模块制造商的收入和产能。</p>
+<h4 id="数通市场"><a href="#数通市场" class="headerlink" title="数通市场"></a>数通市场</h4><p>​        数据中心发展呈集中化大型化，中国拥有全球 最大的数据中心增量需求，网络基础设施的新 要求将拉动数据中心光模块需求增长。目前， 北美数据中心如谷歌、微软、亚马逊已陆续开 启400G网络升级进程。这些大型数据中心为 了满足带宽需求，每两到三年会对整体网络架 构进行一次升级。2015至2020年，全球超大型数据中心容量从 3,518MW增长到6,884MW，复合年增长率为 14.4%。同期国内超大 型数据中心容 量从 2017年的461MW增长至2020年的1,325MW， 并且增长还在呈现进一步加快态势。</p>
+<p><img src="https://s2.loli.net/2022/09/15/ayzWhDPG59nZjrm.png" alt="image-20220909150616883" style="zoom: 33%;" /></p>
+<p>​        2021 年，Facebook 宣布进军元宇宙，开启了元宇宙建设的新时代。同时 5G、云计 算、物联网、AI 等技术的发展，不断提高数据处理需求，科技巨头不断加大算力资 源投入，进一步推动高端光模块需求增长。数据中心大量的数据流通需要高速可靠的数据传输作为保障，这为光模块的技术进步提供了巨大的推动力。</p>
+<h4 id="数通电信连携"><a href="#数通电信连携" class="headerlink" title="数通电信连携"></a>数通电信连携</h4><h3 id="光模块性能突破方向"><a href="#光模块性能突破方向" class="headerlink" title="光模块性能突破方向"></a>光模块性能突破方向</h3><p>​        从1998年发展至今，光模块一直朝着更高速率和更小封装与功耗两个方向不断升级。光模块的主要升级是速率升级，基本上3-4年进行一次迭代。</p>
+<h4 id="更高速率的突破"><a href="#更高速率的突破" class="headerlink" title="更高速率的突破"></a>更高速率的突破</h4><p>​        从1.25Gbit/s发展到2.5Gbit/s，再到10Gbit/s、40Gbit/s、100Gbit/s、单波长100Gbit/s、400Gbit/s乃至1T，光模块的速率突破有以倍数增长的趋势。在3.2节中提到光模块提升带宽的思路有两种：</p>
+<ul>
+<li>1.提高每个通道的比特速率。</li>
+<li>2.增加通道数。</li>
+</ul>
+<p>对于思路1，采取更高级、更巧妙的编/解码、调制/解调方式，提高传输速率；对于思路2，则是在硬件层面上进行改进，这应该也是最直接提升性能的最快方式$^{[9]}$。</p>
+<h4 id="更小封装的突破"><a href="#更小封装的突破" class="headerlink" title="更小封装的突破"></a>更小封装的突破</h4><p>​        从低速率的GBIC、SFF到SFP光模块，从10Gbit/s速率的Xenpak、X2、XFP到SFP+，从100G速率的CFP（28W）、CFP2到现今宽度1/4的CFP4以及QSFP+和更小的QSFP28（3.5W），意味着光模块在交换机上具有更高的端口密度，同样的功率可以驱动更多的光模块。最初产品CFP到市场运用最广的成熟产品QSFP28，体积缩小85%，功耗下降87.5%。未来封装的突破同样也是依赖于硬件技术的发展。由于下游应用的需要，会通过通道数减少，信号控制功能优化等方式，进行缩小光模块体积，降低光模块功耗的升级，以100G时代来看，成熟产品要比最初的产品体积缩小85%，功耗减小87.5%。</p>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><p>[1] 电子发烧友. 光模块基础知识大全、分类及选用电子发烧友-光模块基础知识大全、分类及选用[EB/OL]. (2018.3.9)[2018.3.9]. <a target="_blank" rel="noopener" href="https://www.elecfans.com/baike/buxian/guangqianshebei/20180309645014_a.html">https://www.elecfans.com/baike/buxian/guangqianshebei/20180309645014_a.html</a></p>
+<p>[2] 沙利文研究院.项目报告-光模块行业市场独立研究[R].深圳：沙利文研究院, 2021: 4-5。</p>
+<p>[3] 沙利文研究院.项目报告-光模块行业市场独立研究[R].深圳：沙利文研究院, 2021: 5-6.</p>
+<p>[4] 国联证券. 国联证券-中际旭创(300308)境外市场优势明显，行业龙头业绩增长可期-220428[R]. 北京: 国联证券, 2022：11-12.</p>
+<p>[5] 国联证券. 国联证券-中际旭创(300308)境外市场优势明显，行业龙头业绩增长可期-220428[R]. 北京: 国联证券, 2022：12-13.</p>
+<p>[6] smartavlink. What does the optical module look like? [EB/OL]. (2021.7.5)[2021.7.5]<a target="_blank" rel="noopener" href="https://www.smartavlink.com/2021/06/05/what-does-the-optical-module-look-like">https://www.smartavlink.com/2021/06/05/what-does-the-optical-module-look-like</a></p>
+<p>[7] etulink. GBIC和SFP的区别有哪些？[EB/OL].(2017.7.12)[2017.7.12] <a target="_blank" rel="noopener" href="https://www.etulink.com/blog/gbic和sfp的区别有哪些？_b241">https://www.etulink.com/blog/gbic和sfp的区别有哪些？_b241</a></p>
+<p>[8]知乎. 光模块光芯片发展现状与技术趋势 [EB/OL] (2021.10.12)[2021.10.12] <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/420570165">https://zhuanlan.zhihu.com/p/420570165</a></p>
+<p>[9]T. G. Giallorenzi, “Optical communications research and technology: Fiber optics,” in Proceedings of the IEEE, vol. 66, no. 7, pp. 744-780, July 1978, doi: 10.1109/PROC.1978.11014.</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E5%85%89%E9%80%9A%E4%BF%A1/" rel="tag"><i class="fa fa-tag"></i> 光通信</a>
+          </div>
+          <script type="text/javascript">
+            var tagsall=document.getElementsByClassName("post-tags")
+            for (var i = tagsall.length - 1; i >= 0; i--){
+                var tags=tagsall[i].getElementsByTagName("a");
+                for (var j = tags.length - 1; j >= 0; j--) {
+                    var golden_ratio = 0.618033988749895;
+                    var s = 0.5;
+                    var v = 0.999;
+                    var h = golden_ratio + Math.random()*0.8 - 0.5;
+                    var h_i = parseInt(h * 6);
+                    var f = h * 6 - h_i;
+                    var p = v * (1 - s);
+                    var q = v * (1 - f * s);
+                    var t = v * (1 - (1 - f) * s);
+                    var r, g, b;
+                    switch (h_i) {
+                        case 0:
+                            r = v;
+                            g = t;
+                            b = p;
+                            break;
+                        case 1:
+                            r = q;
+                            g = v;
+                            b = p;
+                            break;
+                        case 2:
+                            r = p;
+                            g = v;
+                            b = t;
+                            break;
+                        case 3 :
+                            r = p;
+                            g = q;
+                            b = v;
+                            break;
+                        case 4:
+                            r = t;
+                            g = p;
+                            b = v;
+                            break;
+                        case 5:
+                            r = v;
+                            g = p;
+                            b = q;
+                            break;
+                        default:
+                            r = 1;
+                            g = 1;
+                            b = 1;
+                      }
+                    tags[j].style.background = "rgba("+parseInt(r*255)+","+parseInt(g*255)+","+parseInt(b*255)+","+0.5+")";
+                }
+            }                        
+            </script>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/05/27/%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/" rel="prev" title="使用FRP和一台公网IP服务器进行内网穿透">
+      <i class="fa fa-chevron-left"></i> 使用FRP和一台公网IP服务器进行内网穿透
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/05/27/%E5%AD%A6%E4%B9%A0%E8%AE%B0%E5%BD%95%20%E7%AC%AC%E4%BA%8C%E5%91%A8/" rel="next" title="【学习记录】2022-09-19">
+      【学习记录】2022-09-19 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%95%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%95%86%E7%94%A8%E5%85%89%E6%A8%A1%E5%9D%97%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF%E6%A6%82%E8%BF%B0"><span class="nav-number">2.</span> <span class="nav-text">商用光模块基本信息概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%89%E6%A8%A1%E5%9D%97%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84"><span class="nav-number">2.1.</span> <span class="nav-text">光模块基本结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%89%E6%A8%A1%E5%9D%97%E4%B8%8E%E5%85%89%E9%80%9A%E4%BF%A1%E4%BA%A7%E4%B8%9A%E9%93%BE"><span class="nav-number">2.2.</span> <span class="nav-text">光模块与光通信产业链</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%89%E6%A8%A1%E5%9D%97%E5%B8%82%E5%9C%BA%E8%A7%84%E6%A8%A1"><span class="nav-number">2.3.</span> <span class="nav-text">光模块市场规模</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%89%E6%A8%A1%E5%9D%97%E5%8F%91%E5%B1%95%E8%B6%8B%E5%8A%BF"><span class="nav-number">3.</span> <span class="nav-text">光模块发展趋势</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%89%E6%A8%A1%E5%9D%97%E5%8F%91%E5%B1%95%E5%8E%86%E7%A8%8B"><span class="nav-number">3.1.</span> <span class="nav-text">光模块发展历程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%89%E6%A8%A1%E5%9D%97%E7%9A%84%E5%8F%91%E5%B1%95%E9%A9%B1%E5%8A%A8"><span class="nav-number">3.2.</span> <span class="nav-text">光模块的发展驱动</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%B5%E4%BF%A1%E5%B8%82%E5%9C%BA"><span class="nav-number">3.2.1.</span> <span class="nav-text">电信市场</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E9%80%9A%E5%B8%82%E5%9C%BA"><span class="nav-number">3.2.2.</span> <span class="nav-text">数通市场</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E9%80%9A%E7%94%B5%E4%BF%A1%E8%BF%9E%E6%90%BA"><span class="nav-number">3.2.3.</span> <span class="nav-text">数通电信连携</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%89%E6%A8%A1%E5%9D%97%E6%80%A7%E8%83%BD%E7%AA%81%E7%A0%B4%E6%96%B9%E5%90%91"><span class="nav-number">3.3.</span> <span class="nav-text">光模块性能突破方向</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9B%B4%E9%AB%98%E9%80%9F%E7%8E%87%E7%9A%84%E7%AA%81%E7%A0%B4"><span class="nav-number">3.3.1.</span> <span class="nav-text">更高速率的突破</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9B%B4%E5%B0%8F%E5%B0%81%E8%A3%85%E7%9A%84%E7%AA%81%E7%A0%B4"><span class="nav-number">3.3.2.</span> <span class="nav-text">更小封装的突破</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="nav-number">4.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="阿花想养萨摩耶"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">阿花想养萨摩耶</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">65</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/dafeigy" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;dafeigy" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1070642765@qq.com" title="E-Mail → mailto:1070642765@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/2659883291" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;2659883291" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+  </div>
+
+
+
+  <div class="links-of-recent-posts motion-element">
+    <div class="links-of-recent-posts-title">
+      <i class="fa fa-history fa-fw"></i>
+      最近文章
+    </div>
+    <ul class="links-of-recent-posts-list">
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E5%9F%9F%E9%80%82%E5%BA%94/" title="2024&#x2F;05&#x2F;27&#x2F;迁移学习域适应&#x2F;">域适应初探</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E9%80%A0%E7%A5%9E%E5%B9%B4%E4%BB%A3/" title="2024&#x2F;05&#x2F;27&#x2F;造神年代&#x2F;">读《造神年代》的一些读后随想</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E7%9B%AE%E6%A0%87%E4%BD%8D%E7%BD%AE-CSI%E4%BF%A1%E5%8F%B7%E9%A2%91%E7%8E%87%E5%BD%B1%E5%93%8D%E6%8E%A2%E7%A9%B6/" title="2024&#x2F;05&#x2F;27&#x2F;目标位置-CSI信号频率影响探究&#x2F;">【论文笔记】Understanding  WiFi Signal Frequency Features for Position-Independent Gesture Sensing</a>
+        </li>
+        <li class="links-of-recent-posts-item">
+          <a href="/2024/05/27/%E8%A3%85%E6%9C%BA/" title="2024&#x2F;05&#x2F;27&#x2F;装机&#x2F;">ITX-Lancer L1 Mesh</a>
+        </li>
+    </ul>
+  </div>
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">阿花</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>
