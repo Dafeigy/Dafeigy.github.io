@@ -2656,10 +2656,6 @@ span.tags-punctuation::before {
   min-height: 140px;
   background: linear-gradient(-25deg, var(--efu-main), var(--efu-main-op-deep), var(--efu-main), var(--efu-main-op-deep));
   background-size: 400%;
-  background-image: url("https://s3.qjqq.cn/47/663af296b85f4.webp!color");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
 }
 #aside-content .card-widget.card-info .card-info-avatar {
   width: 114px;
