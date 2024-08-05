@@ -19,7 +19,7 @@
     <meta name="description" content="尽管我们经常听到 L1、L2、高速缓存块等术语，但大多数程序员对高速缓存的真正含义和作用所知甚少。在本文中，我们将简要解释什么是高速缓存、如何实现高速缓存以及高速缓存的必要性。  在我的编程知识库中，有一样东西必不可少，那就是 CPU 缓存。缓存是一把双刃剑，它能让懂得如何处理缓存的程序员的生活变得更轻松，而让不懂得如何处理缓存的程序员的生活变得异常艰难。在讨论高速缓存之前，我们首先需要了解">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【译】Exploring How Cache Memory Really Works">
-<meta property="og:url" content="http://example.com/2024/07/16/How-CPU-Cache-Work/index.html">
+<meta property="og:url" content="https://cybercolyce.cn/2024/07/16/How-CPU-Cache-Work/index.html">
 <meta property="og:site_name" content="Laked22">
 <meta property="og:description" content="尽管我们经常听到 L1、L2、高速缓存块等术语，但大多数程序员对高速缓存的真正含义和作用所知甚少。在本文中，我们将简要解释什么是高速缓存、如何实现高速缓存以及高速缓存的必要性。  在我的编程知识库中，有一样东西必不可少，那就是 CPU 缓存。缓存是一把双刃剑，它能让懂得如何处理缓存的程序员的生活变得更轻松，而让不懂得如何处理缓存的程序员的生活变得异常艰难。在讨论高速缓存之前，我们首先需要了解">
 <meta property="og:locale" content="zh_CN">
@@ -72,7 +72,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":true,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"cybercolyce.cn","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":true,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -474,7 +474,7 @@ i\mod 2^2 = 2</script><p>例如，使用 4 块高速缓存时，内存地址 14 
   <div class="license-box my-3">
     <div class="license-title">
       <div>【译】Exploring How Cache Memory Really Works</div>
-      <div>http://example.com/2024/07/16/How-CPU-Cache-Work/</div>
+      <div>https://cybercolyce.cn/2024/07/16/How-CPU-Cache-Work/</div>
     </div>
     <div class="license-meta">
       
@@ -790,5 +790,20 @@ i\mod 2^2 = 2</script><p>例如，使用 4 块高速缓存时，内存地址 14 
   <noscript>
     <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
   </noscript>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 </body>
 </html>

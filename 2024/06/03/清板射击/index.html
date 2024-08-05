@@ -19,7 +19,7 @@
     <meta name="description" content="好吧其实我也不知道为什么对这个这么感兴趣。在一年前有一款名叫《20 Minutes Till Dawn》的游戏以清版射击+rouge元素+超级性价比的售价吸引了我的游玩，当时作者还没有推出现在的自动瞄准功能，所以我通过一些简陋的方式实现了这个自瞄，这种方式不涉及游戏源码的修改，而是通过外部的计算机视觉处理识别目标进而实现目标的定位。我想以一种轻松愉悦的风格记录下我的探索过程，当然你还可以在我的基础">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【BepInEX】清版射击游戏的自动瞄准实现">
-<meta property="og:url" content="http://example.com/2024/06/03/%E6%B8%85%E6%9D%BF%E5%B0%84%E5%87%BB/index.html">
+<meta property="og:url" content="https://cybercolyce.cn/2024/06/03/%E6%B8%85%E6%9D%BF%E5%B0%84%E5%87%BB/index.html">
 <meta property="og:site_name" content="Laked22">
 <meta property="og:description" content="好吧其实我也不知道为什么对这个这么感兴趣。在一年前有一款名叫《20 Minutes Till Dawn》的游戏以清版射击+rouge元素+超级性价比的售价吸引了我的游玩，当时作者还没有推出现在的自动瞄准功能，所以我通过一些简陋的方式实现了这个自瞄，这种方式不涉及游戏源码的修改，而是通过外部的计算机视觉处理识别目标进而实现目标的定位。我想以一种轻松愉悦的风格记录下我的探索过程，当然你还可以在我的基础">
 <meta property="og:locale" content="zh_CN">
@@ -75,7 +75,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":true,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"cybercolyce.cn","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":true,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -505,7 +505,7 @@ F(y) = -3.8331673795104946*y+396.37936457570794\\</script><p>Next:</p>
   <div class="license-box my-3">
     <div class="license-title">
       <div>【BepInEX】清版射击游戏的自动瞄准实现</div>
-      <div>http://example.com/2024/06/03/清板射击/</div>
+      <div>https://cybercolyce.cn/2024/06/03/清板射击/</div>
     </div>
     <div class="license-meta">
       
@@ -827,5 +827,20 @@ F(y) = -3.8331673795104946*y+396.37936457570794\\</script><p>Next:</p>
   <noscript>
     <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
   </noscript>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 </body>
 </html>

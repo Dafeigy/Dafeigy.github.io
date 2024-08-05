@@ -19,7 +19,7 @@
     <meta name="description" content="CMA均衡算法实验均衡是为了弥补信号在非理想信道下传播时对波形造成的失真进行“修补”，假如把信道输入到非理想信道再到信号输出的过程看作时域下信号与一个系统的系统函数卷积再加上特定的噪声的结果，那么均衡所做的就是拟合这个系统函数“求逆”的结果，使得经过信道的信号在经过这个“求逆”的操作后恢复原本的信号波形。大部分情况下，信道情况是未知的，在这种情况下对输出信道进行均衡的话有主要两种方法：依赖辅助数据">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CMA均衡Matlab仿真实验">
-<meta property="og:url" content="http://example.com/2024/06/02/CMA/index.html">
+<meta property="og:url" content="https://cybercolyce.cn/2024/06/02/CMA/index.html">
 <meta property="og:site_name" content="Laked22">
 <meta property="og:description" content="CMA均衡算法实验均衡是为了弥补信号在非理想信道下传播时对波形造成的失真进行“修补”，假如把信道输入到非理想信道再到信号输出的过程看作时域下信号与一个系统的系统函数卷积再加上特定的噪声的结果，那么均衡所做的就是拟合这个系统函数“求逆”的结果，使得经过信道的信号在经过这个“求逆”的操作后恢复原本的信号波形。大部分情况下，信道情况是未知的，在这种情况下对输出信道进行均衡的话有主要两种方法：依赖辅助数据">
 <meta property="og:locale" content="zh_CN">
@@ -73,7 +73,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":true,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"cybercolyce.cn","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":true,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -524,7 +524,7 @@ MSE = (R_2-|\hat x(n)^2|)^2</script><p>原始的比特流经由4QAM调制后的�
   <div class="license-box my-3">
     <div class="license-title">
       <div>CMA均衡Matlab仿真实验</div>
-      <div>http://example.com/2024/06/02/CMA/</div>
+      <div>https://cybercolyce.cn/2024/06/02/CMA/</div>
     </div>
     <div class="license-meta">
       
@@ -846,5 +846,20 @@ MSE = (R_2-|\hat x(n)^2|)^2</script><p>原始的比特流经由4QAM调制后的�
   <noscript>
     <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
   </noscript>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 </body>
 </html>

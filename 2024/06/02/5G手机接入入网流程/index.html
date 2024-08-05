@@ -19,7 +19,7 @@
     <meta name="description" content="在分析UE接入OAI的gNB基站中经常出现连接不稳定的情况，因此对手机接入的流程进行了分析。在5G中的UE入网流程如上图所示，下面将会对每个部分详细展开。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="UE手机入网流程">
-<meta property="og:url" content="http://example.com/2024/06/02/5G%E6%89%8B%E6%9C%BA%E6%8E%A5%E5%85%A5%E5%85%A5%E7%BD%91%E6%B5%81%E7%A8%8B/index.html">
+<meta property="og:url" content="https://cybercolyce.cn/2024/06/02/5G%E6%89%8B%E6%9C%BA%E6%8E%A5%E5%85%A5%E5%85%A5%E7%BD%91%E6%B5%81%E7%A8%8B/index.html">
 <meta property="og:site_name" content="Laked22">
 <meta property="og:description" content="在分析UE接入OAI的gNB基站中经常出现连接不稳定的情况，因此对手机接入的流程进行了分析。在5G中的UE入网流程如上图所示，下面将会对每个部分详细展开。">
 <meta property="og:locale" content="zh_CN">
@@ -73,7 +73,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":true,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"cybercolyce.cn","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":true,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -502,7 +502,7 @@ mjx-container[display="true"] + br {
 <li>UE收到RRCReconfiguration消息后，开始<strong>建立SRB2和DRB</strong>（如果初始UE上下文建立请求要求建立DRB的话）。SRB2和DRB建立成功后，UE向gNodeB回复<strong>RRCReconfigurationComplete</strong>消息。（UE建立SRB2和DRB，RRCReconfigurationComplete承载在SRB1上，DCCH上）</li>
 <li>gNodeB向AMF回复INITIAL CONTEXT SETUP RESPONSE消息。</li>
 </ol>
-<h3 id="数据接入流程"><a href="#数据接入流程" class="headerlink" title="数据接入流程"></a>数据接入流程</h3><h4 id="PDU建立流程"><a href="#PDU建立流程" class="headerlink" title="PDU建立流程"></a>PDU建立流程</h4><p>初始接入流程到上面就算完成了，PDU建立流程属于初始接入完成后，要做其他业务的流程，可参考<a target="_blank" rel="noopener" href="https://cybercolyce.cn/2022/08/28/PDU会话/#more">PDU会话过程的建立过程 </a>这篇之前的笔记。AMF向gNB发送PDU建立请求，gNB向UE发送RRC重配置信令（携带DRB建立配置等信息），UE建立DRB，向gNB回复RRC重配置完成，gNB向AMF回复PDU建立回复。最终实现数据交互。</p>
+<h3 id="数据接入流程"><a href="#数据接入流程" class="headerlink" title="数据接入流程"></a>数据接入流程</h3><h4 id="PDU建立流程"><a href="#PDU建立流程" class="headerlink" title="PDU建立流程"></a>PDU建立流程</h4><p>初始接入流程到上面就算完成了，PDU建立流程属于初始接入完成后，要做其他业务的流程，可参考<a href="https://cybercolyce.cn/2022/08/28/PDU会话/#more">PDU会话过程的建立过程 </a>这篇之前的笔记。AMF向gNB发送PDU建立请求，gNB向UE发送RRC重配置信令（携带DRB建立配置等信息），UE建立DRB，向gNB回复RRC重配置完成，gNB向AMF回复PDU建立回复。最终实现数据交互。</p>
 <ol>
 <li>AMF向gNodeB发送<strong>PDU SESSION RESOURCE SETUP REQUEST</strong>消息。消息中携带了需要建立的PDU会话列表、每个PDU会话的QoS Flow列表、以及每个QoSFlow的质量属性等。</li>
 <li>gNodeB根据QoS Flow的质量属性和MML界面配置的策略，将QoS Flow映射到DRB，向UE发送<strong>RRCReconfiguration</strong>消息，发起DRB建立请求。</li>
@@ -583,7 +583,7 @@ mjx-container[display="true"] + br {
   <div class="license-box my-3">
     <div class="license-title">
       <div>UE手机入网流程</div>
-      <div>http://example.com/2024/06/02/5G手机接入入网流程/</div>
+      <div>https://cybercolyce.cn/2024/06/02/5G手机接入入网流程/</div>
     </div>
     <div class="license-meta">
       
@@ -905,5 +905,20 @@ mjx-container[display="true"] + br {
   <noscript>
     <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
   </noscript>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 </body>
 </html>
