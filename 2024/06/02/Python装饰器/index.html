@@ -1,235 +1,702 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Python装饰器解析与使用场景 | Laked22</title><noscript>开启JavaScript才能访问本站哦~</noscript><link rel="icon" href="https://pic.imgdb.cn/item/66968c76d9c307b7e96a79c8.png"><!-- index.css--><link rel="stylesheet" href="/css/index.css?v=1.11.3"><!-- inject head--><link rel="stylesheet" href="https://cdn2.codesign.qq.com/icons/7pOrz0WXB5ZWJPX/latest/iconfont.css"><!-- aplayer--><!-- swiper--><!-- fancybox ui--><!-- katex--><!-- Open Graph--><meta name="description" content="如果你是开发人员，那装饰器对你开发调试有很大帮助。装饰器作为python这门语言特有的一个东西，和其他语言的东西很不一样，而且网上的例子又很让人退却三步，所以我看了一位B站up主的视频后就大概理清楚了，也推荐大家关注一下。 函数是什么函数就是一段可以复用的代码段，这是每门语言都有的东西。但是p"><!-- pwa--><meta name="apple-mobile-web-app-capable" content="Laked22"><meta name="theme-color" content="var(--efu-main)"><meta name="apple-mobile-web-app-status-bar-style" content="var(--efu-main)"><link rel="bookmark" href="https://pic.imgdb.cn/item/66968c76d9c307b7e96a79c8.png"><link rel="apple-touch-icon" href="https://pic.imgdb.cn/item/66968c76d9c307b7e96a79c8.png" sizes="180x180"><script>console.log(
-    "%c Program: Hexo %c Theme: Solitude %c Version: v1.11.3",
-    "border-radius:5px 0 0 5px;padding: 5px 10px;color:white;background:#ff3842;",
-    "padding: 5px 10px;color:white;background:#3e9f50;",
-    "padding: 5px 10px;color:white;background:#0084ff;border-radius:0 5px 5px 0",
-)
-</script><script>(()=>{
-        const saveToLocal = {
-            set: function setWithExpiry(key, value, ttl) {
-                if (ttl === 0)
-                    return
-                const now = new Date()
-                const expiryDay = ttl * 86400000
-                const item = {
-                    value: value,
-                    expiry: now.getTime() + expiryDay
-                }
-                localStorage.setItem(key, JSON.stringify(item))
-            },
-            get: function getWithExpiry(key) {
-                const itemStr = localStorage.getItem(key)
-    
-                if (!itemStr) {
-                    return undefined
-                }
-                const item = JSON.parse(itemStr)
-                const now = new Date()
-    
-                if (now.getTime() > item.expiry) {
-                    localStorage.removeItem(key)
-                    return undefined
-                }
-                return item.value
-            }
-        };
-        window.utils = {
-            saveToLocal: saveToLocal,
-            getCSS: (url, id = false) => new Promise((resolve, reject) => {
-              const link = document.createElement('link')
-              link.rel = 'stylesheet'
-              link.href = url
-              if (id) link.id = id
-              link.onerror = reject
-              link.onload = link.onreadystatechange = function() {
-                const loadState = this.readyState
-                if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
-                link.onload = link.onreadystatechange = null
-                resolve()
-              }
-              document.head.appendChild(link)
-            }),
-            getScript: (url, attr = {}) => new Promise((resolve, reject) => {
-              const script = document.createElement('script')
-              script.src = url
-              script.async = true
-              script.onerror = reject
-              script.onload = script.onreadystatechange = function() {
-                const loadState = this.readyState
-                if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
-                script.onload = script.onreadystatechange = null
-                resolve()
-              }
-    
-              Object.keys(attr).forEach(key => {
-                script.setAttribute(key, attr[key])
-              })
-    
-              document.head.appendChild(script)
-            }),
-            addGlobalFn: (key, fn, name = false, parent = window) => {
-                const globalFn = parent.globalFn || {}
-                const keyObj = globalFn[key] || {}
-        
-                if (name && keyObj[name]) return
-        
-                name = name || Object.keys(keyObj).length
-                keyObj[name] = fn
-                globalFn[key] = keyObj
-                parent.globalFn = globalFn
-            },
-        }
-    })()</script><!-- global head--><script>const GLOBAL_CONFIG = {
-    root: '/',
-    algolia: undefined,
-    localsearch: undefined,
-    runtime: '2021-04-20 00:00:00',
-    lazyload: {
-        enable: true,
-        error: '/img/error_load.webp'
-    },
-    copyright: {"limit":50,"author":"作者: 小林花子","link":"链接: ","source":"来源: Laked22","info":"著作权归作者所有。 商业转载请联系作者获得授权，非商业转载请注明出处。"},
-    highlight: {
-        enable: true,
-        limit: 200,
-        expand: true,
-        copy: true,
-        syntax: 'highlight.js'
-    },
-    randomlink: false,
-    lang: {"theme":{"dark":"已切换至深色模式","light":"已切换至浅色模式"},"copy":{"success":"复制成功","error":"复制失败"},"backtop":"返回顶部","time":{"day":"天前","hour":"小时前","just":"刚刚","min":"分钟前","month":"个月前"},"day":" 天","f12":"开发者模式已打开，请遵循GPL协议。","totalk":"无需删除空行，直接输入评论即可"},
-    aside: {
-        sayhello: {
-            morning: '一日之计在于晨',
-            noon: '吃饱了才有力气干活',
-            afternoon: '集中精力，攻克难关',
-            night: '不要太劳累了，早睡更健康',
-            goodnight: '睡个好觉，保证精力充沛',
-        },
-        sayhello2: ["🤖️ 数码科技爱好者","🔍 分享与热心帮助","🔨 设计开发一条龙","🤝 专修交互与设计","🏃 脚踏实地行动派","🧱 团队小组发动机","💢 壮汉人狠话不多","🎮 电竞游戏爱好者"],
-        sayhello3: {
-            prefix: '好久不见，',
-            back: '欢迎再次回来，',
-        },
-    },
-    covercolor: {
-        enable: true
-    },
-    comment: false,
-    lightbox: 'null',
-    post_ai: false,
-    right_menu: {"mode":{"dark":"深色模式","light":"浅色模式"},"img_error":"此图片无法复制与下载"},
-};</script><!-- page-config head--><script id="config-diff">var PAGE_CONFIG = {
-    is_post: true,
-    is_page: false,
-    is_home: false,
-    page: '',
-    toc: true,
-    comment: false,
-    ai_text: false
-}</script><meta name="generator" content="Hexo 7.2.0"></head><body id="body"><!-- universe--><canvas id="universe"></canvas><!-- loading--><!-- console--><div id="console"><div class="close-btn" onclick="sco.hideConsole()"><i class="solitude st-close-fill"></i></div><div class="button-group"><div class="console-btn-item"><span class="darkmode_switchbutton" onclick="sco.switchDarkMode()" title="昼夜切换"><i class="solitude st-moon-clear-fill"></i></span></div><div class="console-btn-item" id="consoleHideAside"><span class="asideSwitch" onclick="sco.switchHideAside()" title="边栏显示控制"><i class="solitude st-side-bar-fill"></i></span></div></div><div class="console-mask" onclick="sco.hideConsole()"></div></div><!-- sidebar--><div id="sidebar" style="zoom: 1;"><div id="menu-mask" style="display: none;"></div><div id="sidebar-menus"><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">21</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">42</div></a></div></div></div><span class="sidebar-menu-item-title">功能</span><div class="sidebar-menu-item"><span class="darkmode_switchbutton menu-child" onclick="sco.switchDarkMode()"><i class="solitude st-moon-clear-fill"></i><span>显示模式</span></span></div><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">项目</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://github.com/Dafeigy/ChartsGPT" title="ChartsGPT"><img class="nolazyload back-menu-item-icon" src="https://s2.loli.net/2023/05/10/LDUpFzo7VJiOshd.png" alt="ChartsGPT"><span class="back-menu-item-text">ChartsGPT</span></a></div></div></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span>首页</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span>文库</span></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="solitude  st-folder-fill"></i><span>文章列表</span></a></li><li><a class="site-page child" href="/categories/"><i class="solitude  st-checkbox-multiple-blank-fill"></i><span>全部分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="solitude  st-price-tag-fill"></i><span>全部标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span>我的</span></a><ul class="menus_item_child"><li><a class="site-page child" href="/equipment/"><i class="solitude  st-laptop-line"></i><span>装备</span></a></li><li><a class="site-page child" href="/tlink/"><i class="solitude  st-tools-fill"></i><span>工具箱</span></a></li><li><a class="site-page child" href="/music/"><i class="solitude  st-disc-fill"></i><span>音乐馆</span></a></li></ul></div></div><span class="sidebar-menu-item-title">标签</span><div class="card-widget card-tags card-archives card-webinfo card-allinfo"><div class="card-tag-cloud"><a href="/tags/%E9%9A%8F%E6%83%B3/">随想<sup>1</sup></a><a href="/tags/5GNR/">5GNR<sup>3</sup></a><a href="/tags/5G/">5G<sup>2</sup></a><a href="/tags/UE/">UE<sup>1</sup></a><a href="/tags/%E5%85%A5%E7%BD%91/">入网<sup>1</sup></a><a href="/tags/CMA/">CMA<sup>1</sup></a><a href="/tags/%E8%87%AA%E9%80%82%E5%BA%94%E5%9D%87%E8%A1%A1/">自适应均衡<sup>1</sup></a><a href="/tags/Matlab/">Matlab<sup>1</sup></a><a href="/tags/GPT/">GPT<sup>1</sup></a><a href="/tags/ECharts/">ECharts<sup>1</sup></a><a href="/tags/%E9%85%8D%E7%BD%AE/">配置<sup>1</sup></a><a href="/tags/OAI/">OAI<sup>4</sup></a><a href="/tags/%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98/">高速缓存<sup>1</sup></a><a href="/tags/CPU/">CPU<sup>1</sup></a><a href="/tags/%E4%BF%A1%E9%81%93%E4%BC%B0%E8%AE%A1/">信道估计<sup>1</sup></a><a href="/tags/%E4%B9%9D%E6%97%A5/">九日<sup>1</sup></a><a href="/tags/%E8%B5%A4%E7%83%9B%E6%B8%B8%E6%88%8F/">赤烛游戏<sup>1</sup></a><a href="/tags/%E7%B1%BB%E9%93%B6%E6%B2%B3%E5%9F%8E/">类银河城<sup>1</sup></a><a href="/tags/%E9%AD%82%E7%B3%BB/">魂系<sup>1</sup></a><a href="/tags/%E7%89%A9%E7%90%86%E5%B1%82/">物理层<sup>1</sup></a><a href="/tags/CMake/">CMake<sup>1</sup></a><a href="/tags/Protobuf/">Protobuf<sup>1</sup></a><a href="/tags/python/">python<sup>1</sup></a><a href="/tags/%E8%A3%85%E9%A5%B0%E5%99%A8/">装饰器<sup>1</sup></a><a href="/tags/Python/">Python<sup>1</sup></a><a href="/tags/Pytorch/">Pytorch<sup>1</sup></a><a href="/tags/Rust/">Rust<sup>2</sup></a><a href="/tags/%E7%A5%9E%E7%BB%8F%E8%BF%9B%E5%8C%96/">神经进化<sup>1</sup></a><a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">神经网络<sup>2</sup></a><a href="/tags/%E5%A4%9A%E5%B1%82%E6%84%9F%E7%9F%A5%E6%9C%BA/">多层感知机<sup>1</sup></a><a href="/tags/%E6%A0%B8%E5%BF%83%E7%BD%91/">核心网<sup>1</sup></a><a href="/tags/MATX/">MATX<sup>1</sup></a><a href="/tags/%E8%A3%85%E6%9C%BA/">装机<sup>2</sup></a><a href="/tags/Akane/">Akane<sup>1</sup></a><a href="/tags/%E6%B8%85%E7%89%88%E5%B0%84%E5%87%BB/">清版射击<sup>1</sup></a><a href="/tags/Unity/">Unity<sup>1</sup></a><a href="/tags/BepInEx/">BepInEx<sup>1</sup></a><a href="/tags/C/">C#<sup>1</sup></a><a href="/tags/Hades/">Hades<sup>1</sup></a><a href="/tags/Lua/">Lua<sup>1</sup></a><a href="/tags/%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/">源码编译<sup>1</sup></a><a href="/tags/ITX/">ITX<sup>1</sup></a></div></div></div></div><!-- keyboard--><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav class="show" id="nav"><div id="nav-group"><div id="blog_name"><div class="back-home-button" tabindex="-1"><i class="back-home-button-icon solitude st-more-fill"></i><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">项目</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://github.com/Dafeigy/ChartsGPT" title="ChartsGPT"><img class="nolazyload back-menu-item-icon" src="https://s2.loli.net/2023/05/10/LDUpFzo7VJiOshd.png" alt="ChartsGPT"><span class="back-menu-item-text">ChartsGPT</span></a></div></div></div></div><a id="site-name" href="/" title="返回博客主页"><span class="title">Laked22</span></a></div><div id="page-name-mask"><div id="page-name"><a id="page-name-text" onclick="sco.toTop()">Python装饰器解析与使用场景</a></div></div><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span>首页</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span>文库</span></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="solitude  st-folder-fill"></i><span>文章列表</span></a></li><li><a class="site-page child" href="/categories/"><i class="solitude  st-checkbox-multiple-blank-fill"></i><span>全部分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="solitude  st-price-tag-fill"></i><span>全部标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span>我的</span></a><ul class="menus_item_child"><li><a class="site-page child" href="/equipment/"><i class="solitude  st-laptop-line"></i><span>装备</span></a></li><li><a class="site-page child" href="/tlink/"><i class="solitude  st-tools-fill"></i><span>工具箱</span></a></li><li><a class="site-page child" href="/music/"><i class="solitude  st-disc-fill"></i><span>音乐馆</span></a></li></ul></div></div></div><div id="nav-left"></div><div id="nav-right"><div class="nav-button" id="nav-console"><a class="console_switchbutton" onclick="sco.showConsole()" title="中控台" href="javascript:void(0);"><i class="solitude st-dashboard-fill"></i></a></div><div class="nav-button" id="nav-totop" onclick="sco.toTop()"><a class="totopbtn"><i class="solitude st-arrow-up-line"></i><span id="percent">0</span></a></div><div id="toggle-menu"><a class="site-page"><i class="solitude st-menu-line"></i></a></div></div></div></nav><div class="coverdiv" id="coverdiv"><img class="nolazyload" id="post-cover" src="https://pic.imgdb.cn/item/66968751d9c307b7e95e324a.png" alt="Python装饰器解析与使用场景"></div><div id="post-info"><div id="post-firstinfo"><div class="meta-firstline"><a class="post-meta-original" title="该文章为原创文章，注意版权协议">原创</a><span class="post-meta-categories"><a class="post-meta-categories" href="/categories/Python%E8%BF%9B%E9%98%B6/">Python进阶</a></span><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/python/"><span class="tags-name tags-punctuation">python</span></a><a class="post-meta__tags" href="/tags/%E8%A3%85%E9%A5%B0%E5%99%A8/"><span class="tags-name tags-punctuation">装饰器</span></a></div></div></div></div><h1 class="post-title">Python装饰器解析与使用场景</h1><div id="post-meta"><div class="meta-secondline"></div></div></div><section class="main-hero-waves-area waves-area"><svg class="waves-svg" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto"><defs><path id="gentle-wave" d="M -160 44 c 30 0 58 -18 88 -18 s 58 18 88 18 s 58 -18 88 -18 s 58 18 88 18 v 44 h -352 Z"></path></defs><g class="parallax"><use href="#gentle-wave" x="48" y="0"></use><use href="#gentle-wave" x="48" y="3"></use><use href="#gentle-wave" x="48" y="5"></use><use href="#gentle-wave" x="48" y="7"></use></g></svg></section></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p><img src= "/img/loading.gif" data-lazy-src="https://s2.loli.net/2022/10/15/EwZH8YS1Nkt67mr.jpg" alt="img"></p>
-<p>如果你是开发人员，那装饰器对你开发调试有很大帮助。装饰器作为python这门语言特有的一个东西，和其他语言的东西很不一样，而且网上的例子又很让人退却三步，所以我看了一位B站up主的<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1Gu411Q7JV/?spm_id_from=333.999.0.0&vd_source=ab34db443b112b108b42c31ac575fd1f">视频</a>后就大概理清楚了，也推荐大家关注一下。</p>
-<span id="more"></span>
 
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#5F9EA0">
+  <meta name="author" content="L4k3d22">
+  <meta name="keywords" content="AI+5GNR+DRL">
+  
+    <meta name="description" content="如果你是开发人员，那装饰器对你开发调试有很大帮助。装饰器作为python这门语言特有的一个东西，和其他语言的东西很不一样，而且网上的例子又很让人退却三步，所以我看了一位B站up主的视频后就大概理清楚了，也推荐大家关注一下。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python装饰器解析与使用场景">
+<meta property="og:url" content="http://example.com/2024/06/02/Python%E8%A3%85%E9%A5%B0%E5%99%A8/index.html">
+<meta property="og:site_name" content="Laked22">
+<meta property="og:description" content="如果你是开发人员，那装饰器对你开发调试有很大帮助。装饰器作为python这门语言特有的一个东西，和其他语言的东西很不一样，而且网上的例子又很让人退却三步，所以我看了一位B站up主的视频后就大概理清楚了，也推荐大家关注一下。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic.imgdb.cn/item/66968751d9c307b7e95e324a.png">
+<meta property="article:published_time" content="2024-06-02T12:05:29.786Z">
+<meta property="article:modified_time" content="2024-08-05T17:22:07.451Z">
+<meta property="article:author" content="L4k3d22">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="装饰器">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://pic.imgdb.cn/item/66968751d9c307b7e95e324a.png">
+  
+  
+  
+  <title>Python装饰器解析与使用场景 - Laked22</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":true,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Laked22</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Python装饰器解析与使用场景"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-06-02 20:05" pubdate>
+          2024年6月2日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          17 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Python装饰器解析与使用场景</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2024年8月6日 凌晨
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <p><img src="https://s2.loli.net/2022/10/15/EwZH8YS1Nkt67mr.jpg" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>如果你是开发人员，那装饰器对你开发调试有很大帮助。装饰器作为python这门语言特有的一个东西，和其他语言的东西很不一样，而且网上的例子又很让人退却三步，所以我看了一位B站up主的<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1Gu411Q7JV/?spm_id_from=333.999.0.0&amp;vd_source=ab34db443b112b108b42c31ac575fd1f">视频</a>后就大概理清楚了，也推荐大家关注一下。</p>
+<span id="more"></span>
 <h2 id="函数是什么"><a href="#函数是什么" class="headerlink" title="函数是什么"></a>函数是什么</h2><p>函数就是一段可以复用的代码段，这是每门语言都有的东西。但是python中的函数与其他语言中的函数的区别，或者说python这门语言和其他语言的本质区别就在于，python中的任何东西都是一个<code>object</code>：</p>
-<p><img src= "/img/loading.gif" data-lazy-src="https://s2.loli.net/2022/10/15/Fv1QB8wEZpCPKus.png" alt="image-20221015211022717"></p>
+<p><img src="https://s2.loli.net/2022/10/15/Fv1QB8wEZpCPKus.png" srcset="/img/loading.gif" lazyload alt="image-20221015211022717"></p>
 <center><small>编译后的字节码，摘自Up主@码农高天 视频</small></center>
 
 <p>我们可以看到整个过程就是1.先把<code>code object</code>加载进来2.加载函数名称<code>double</code>3.制作了一个<code>function obeject</code>4.将function object保存到double里面。因此定义函数的整个过程就是：新建一个变量，然后在变量里面保存一个<code>function object</code>。</p>
 <h3 id="函数作为参数"><a href="#函数作为参数" class="headerlink" title="函数作为参数"></a>函数作为参数</h3><p>python中的函数对象有一个特点，那就是<code>callable</code>的，这意味着你可以调用它。到这里你也能理解了所谓的函数对象也只不过是一个普通的对象而已，它也可以作为参数传入其他函数：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">double</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> x * <span class="number">2</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">triple</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">return</span> x * <span class="number">3</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">cal_number</span>(<span class="params">func,x</span>):</span><br><span class="line">    <span class="built_in">print</span>(func(x))</span><br><span class="line">    </span><br><span class="line">cal_number(double,<span class="number">3</span>)</span><br><span class="line">cal_number(triple,<span class="number">3</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#6 9</span></span><br></pre></td></tr></table></figure>
-
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">double</span>(<span class="hljs-params">x</span>):<br>    <span class="hljs-keyword">return</span> x * <span class="hljs-number">2</span><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">triple</span>(<span class="hljs-params">x</span>):<br>    <span class="hljs-keyword">return</span> x * <span class="hljs-number">3</span><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">cal_number</span>(<span class="hljs-params">func,x</span>):<br>    <span class="hljs-built_in">print</span>(func(x))<br>    <br>cal_number(double,<span class="hljs-number">3</span>)<br>cal_number(triple,<span class="hljs-number">3</span>)<br><br><span class="hljs-comment">#6 9</span><br></code></pre></td></tr></table></figure>
 <h3 id="函数作为返回值"><a href="#函数作为返回值" class="headerlink" title="函数作为返回值"></a>函数作为返回值</h3><p>作为参数和作为返回值都体现着函数只不过是一个普通的对象这一事实，因此我们可以这样定一个函数：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">triplet_loss</span>(<span class="params">alpha = <span class="number">0.2</span></span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">_triplet_loss</span>(<span class="params">y_pred,Batch_size</span>):</span><br><span class="line">        anchor, positive, negative = y_pred[:<span class="built_in">int</span>(Batch_size)], y_pred[<span class="built_in">int</span>(Batch_size):<span class="built_in">int</span>(<span class="number">2</span>*Batch_size)], y_pred[<span class="built_in">int</span>(<span class="number">2</span>*Batch_size):]</span><br><span class="line"></span><br><span class="line">        pos_dist = torch.sqrt(torch.<span class="built_in">sum</span>(torch.<span class="built_in">pow</span>(anchor - positive,<span class="number">2</span>), axis=-<span class="number">1</span>))</span><br><span class="line">        neg_dist = torch.sqrt(torch.<span class="built_in">sum</span>(torch.<span class="built_in">pow</span>(anchor - negative,<span class="number">2</span>), axis=-<span class="number">1</span>))</span><br><span class="line">        </span><br><span class="line">        keep_all = (neg_dist - pos_dist &lt; alpha).cpu().numpy().flatten()</span><br><span class="line">        hard_triplets = np.where(keep_all == <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">        pos_dist = pos_dist[hard_triplets]</span><br><span class="line">        neg_dist = neg_dist[hard_triplets]</span><br><span class="line"></span><br><span class="line">        basic_loss = pos_dist - neg_dist + alpha</span><br><span class="line">        loss = torch.<span class="built_in">sum</span>(basic_loss) / torch.<span class="built_in">max</span>(torch.tensor(<span class="number">1</span>), torch.tensor(<span class="built_in">len</span>(hard_triplets[<span class="number">0</span>])))</span><br><span class="line">        <span class="keyword">return</span> loss</span><br><span class="line">    <span class="keyword">return</span> _triplet_loss</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">triplet_loss</span>(<span class="hljs-params">alpha = <span class="hljs-number">0.2</span></span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">_triplet_loss</span>(<span class="hljs-params">y_pred,Batch_size</span>):<br>        anchor, positive, negative = y_pred[:<span class="hljs-built_in">int</span>(Batch_size)], y_pred[<span class="hljs-built_in">int</span>(Batch_size):<span class="hljs-built_in">int</span>(<span class="hljs-number">2</span>*Batch_size)], y_pred[<span class="hljs-built_in">int</span>(<span class="hljs-number">2</span>*Batch_size):]<br><br>        pos_dist = torch.sqrt(torch.<span class="hljs-built_in">sum</span>(torch.<span class="hljs-built_in">pow</span>(anchor - positive,<span class="hljs-number">2</span>), axis=-<span class="hljs-number">1</span>))<br>        neg_dist = torch.sqrt(torch.<span class="hljs-built_in">sum</span>(torch.<span class="hljs-built_in">pow</span>(anchor - negative,<span class="hljs-number">2</span>), axis=-<span class="hljs-number">1</span>))<br>        <br>        keep_all = (neg_dist - pos_dist &lt; alpha).cpu().numpy().flatten()<br>        hard_triplets = np.where(keep_all == <span class="hljs-number">1</span>)<br><br>        pos_dist = pos_dist[hard_triplets]<br>        neg_dist = neg_dist[hard_triplets]<br><br>        basic_loss = pos_dist - neg_dist + alpha<br>        loss = torch.<span class="hljs-built_in">sum</span>(basic_loss) / torch.<span class="hljs-built_in">max</span>(torch.tensor(<span class="hljs-number">1</span>), torch.tensor(<span class="hljs-built_in">len</span>(hard_triplets[<span class="hljs-number">0</span>])))<br>        <span class="hljs-keyword">return</span> loss<br>    <span class="hljs-keyword">return</span> _triplet_loss<br></code></pre></td></tr></table></figure>
 <p>这是我在做人脸识别的时候写的一个损失函数。它的使用过程是这样的：传入一个alpha的参数然后返回一个<code>_triplet_loss</code>函数，这个<code>_triplet_loss</code>函数的具体返回值就是<code>loss</code>。使用时是这样的：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">loss_fn = triplet_loss()</span><br><span class="line">loss = loss_fn(y_hat,batch_size)</span><br><span class="line"></span><br><span class="line"><span class="comment">#0.012</span></span><br></pre></td></tr></table></figure>
-
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python">loss_fn = triplet_loss()<br>loss = loss_fn(y_hat,batch_size)<br><br><span class="hljs-comment">#0.012</span><br></code></pre></td></tr></table></figure>
 <p>注意一点：这和<code>Pytroch</code>里面常用的那几个损失函数不一样，尽管他们的使用语法很相近：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"></span><br><span class="line">loss_fn = nn.CrossEntropyLoss()</span><br><span class="line">loss = loss_fn(output, target)</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> torch.nn <span class="hljs-keyword">as</span> nn<br><br>loss_fn = nn.CrossEntropyLoss()<br>loss = loss_fn(output, target)<br></code></pre></td></tr></table></figure>
 <p>但是他们的本质是一样的。<code>Pytorch</code>中的<code>loss_fn</code>是一个对象的实例化，然后通过重写对象的<code>__call__</code>方法调用<code>nn</code>模块的标准<code>foward()</code>函数进行运算，所以是在函数中调用函数，调用<code>__call__</code>方法的就是类装饰器中执行的函数。</p>
 <h2 id="假如我要测个时间"><a href="#假如我要测个时间" class="headerlink" title="假如我要测个时间"></a>假如我要测个时间</h2><p>其实也不用假如，因为按现在这个就业形式迟早都会变成开发…言归正传，在刚刚看完罗里吧嗦一大堆之后我们放松下设想一个场景：</p>
 <p>你需要测试一个函数<code>Deny996()</code>的运行时间，你怎么办？你二话不说：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">Deny996</span>()():</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line">start = time.time()</span><br><span class="line">Deny996()</span><br><span class="line"><span class="built_in">print</span>(time.time()-start)</span><br><span class="line"><span class="comment"># 0.0</span></span><br></pre></td></tr></table></figure>
-
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">Deny996</span>()():<br>	<span class="hljs-keyword">return</span> <span class="hljs-literal">None</span><br><br><span class="hljs-keyword">import</span> time<br>start = time.time()<br>Deny996()<br><span class="hljs-built_in">print</span>(time.time()-start)<br><span class="hljs-comment"># 0.0</span><br></code></pre></td></tr></table></figure>
 <p>非常的简单！但是问题来了，下面你老板让你继续测其他的函数运行时间：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">Deny997</span>():</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Deny007</span>():</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Deny667</span>():</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Deny887</span>():</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Deny995</span>():</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">Deny997</span>():<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">None</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">Deny007</span>():<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">None</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">Deny667</span>():<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">None</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">Deny887</span>():<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">None</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">Deny995</span>():<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">None</span><br>...<br></code></pre></td></tr></table></figure>
 <p>你说这简单，就是废我的<code>ctrl</code>键和<code>c</code>键<code>v</code>键。为了避免这种低效的方法，我们使用了装饰器：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">Deny996</span>():</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">count_time</span>(<span class="params">func</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">wrapper</span>():</span><br><span class="line">        start = time.time()</span><br><span class="line">        func()</span><br><span class="line">        <span class="built_in">print</span>(time.time()-start)</span><br><span class="line">    <span class="keyword">return</span> wrapper</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    func = count_time(Deny996)</span><br><span class="line">    func()	<span class="comment">#相当于执行wrapper()</span></span><br></pre></td></tr></table></figure>
-
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">Deny996</span>():<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">None</span><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">count_time</span>(<span class="hljs-params">func</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">wrapper</span>():<br>        start = time.time()<br>        func()<br>        <span class="hljs-built_in">print</span>(time.time()-start)<br>    <span class="hljs-keyword">return</span> wrapper<br><br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&quot;__main__&quot;</span>:<br>    func = count_time(Deny996)<br>    func()	<span class="hljs-comment">#相当于执行wrapper()</span><br></code></pre></td></tr></table></figure>
 <p>这里面的<code>count_time</code>就是一个装饰器，这里面又定义了一个函数<code>wrapper</code>，并把<code>func</code>作为参数放进来运行。当然啦<code>wrapper</code>的名字可以随便起，只要符合变量命名规则就行。</p>
 <h2 id="装饰器的语法糖"><a href="#装饰器的语法糖" class="headerlink" title="装饰器的语法糖"></a>装饰器的语法糖</h2><p>其实大家对装饰器的语法糖更熟悉，它的符号是<code>@</code>。上面的那段代码可以用这样来等价替代：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">count_time</span>(<span class="params">func</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">wrapper</span>():</span><br><span class="line">        start = time.time()</span><br><span class="line">        func()</span><br><span class="line">        <span class="built_in">print</span>(time.time()-start)</span><br><span class="line">    <span class="keyword">return</span> wrapper</span><br><span class="line"></span><br><span class="line"><span class="meta">@count_time</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Deny996</span>():</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    Deny996()</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">count_time</span>(<span class="hljs-params">func</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">wrapper</span>():<br>        start = time.time()<br>        func()<br>        <span class="hljs-built_in">print</span>(time.time()-start)<br>    <span class="hljs-keyword">return</span> wrapper<br><br><span class="hljs-meta">@count_time</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">Deny996</span>():<br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">None</span><br><br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&quot;__main__&quot;</span>:<br>    Deny996()<br></code></pre></td></tr></table></figure>
 <h2 id="但是我的函数需要传入参数…"><a href="#但是我的函数需要传入参数…" class="headerlink" title="但是我的函数需要传入参数…?"></a>但是我的函数需要传入参数…?</h2><p>很明显我写的装饰器只考虑了固定形式的参数，但是万一我有一个装饰器是对不同参数设置的函数进行测试呢？或者说我希望我的装饰器也能通过参数更改功能怎么办？</p>
 <h3 id="装饰器传参"><a href="#装饰器传参" class="headerlink" title="装饰器传参"></a>装饰器传参</h3><p>我们先看装饰器传入参数。Python中对不定参数传入有个办法：<code>*args</code>和<code>**kwargs</code>。前者是传入非键值对参数，后者是传入键值对函数比如说字典类型的变量。给个例子：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"> </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">count_time</span>(<span class="params">func</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">wrapper</span>(<span class="params">*args, **kwargs</span>):</span><br><span class="line">        t1 = time.time()</span><br><span class="line">        func(*args, **kwargs)</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;执行时间为：&quot;</span>, time.time() - t1)</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> wrapper</span><br><span class="line"></span><br><span class="line"><span class="meta">@count_time</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Deny996</span>(<span class="params">name1,name2</span>):</span><br><span class="line">    <span class="built_in">print</span>(name1,name2)</span><br><span class="line">    </span><br><span class="line"><span class="meta">@count_time</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Deny997</span>(<span class="params">name</span>):</span><br><span class="line">    <span class="built_in">print</span>(name)</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    Deny996(<span class="string">&quot;hello&quot;</span>,<span class="string">&quot;world&quot;</span>)</span><br><span class="line">    Deny997(<span class="string">&quot;Capitalism&quot;</span>)</span><br></pre></td></tr></table></figure>
-
-
-
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> time<br> <br><span class="hljs-keyword">def</span> <span class="hljs-title function_">count_time</span>(<span class="hljs-params">func</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">wrapper</span>(<span class="hljs-params">*args, **kwargs</span>):<br>        t1 = time.time()<br>        func(*args, **kwargs)<br>        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;执行时间为：&quot;</span>, time.time() - t1)<br> <br>    <span class="hljs-keyword">return</span> wrapper<br><br><span class="hljs-meta">@count_time</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">Deny996</span>(<span class="hljs-params">name1,name2</span>):<br>    <span class="hljs-built_in">print</span>(name1,name2)<br>    <br><span class="hljs-meta">@count_time</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">Deny997</span>(<span class="hljs-params">name</span>):<br>    <span class="hljs-built_in">print</span>(name)<br>    <br><br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&quot;__main__&quot;</span>:<br>    Deny996(<span class="hljs-string">&quot;hello&quot;</span>,<span class="hljs-string">&quot;world&quot;</span>)<br>    Deny997(<span class="hljs-string">&quot;Capitalism&quot;</span>)<br></code></pre></td></tr></table></figure>
 <h3 id="装饰器带参"><a href="#装饰器带参" class="headerlink" title="装饰器带参"></a>装饰器带参</h3><p>很简单，就是用装饰器去装饰装饰器：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"> </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">count_time_args</span>(<span class="params">msg = <span class="literal">None</span></span>)：</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">count_time</span>(<span class="params">func</span>):</span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">wrapper</span>(<span class="params">*args, **kwargs</span>):</span><br><span class="line">            t1 = time.time()</span><br><span class="line">            func(*args, **kwargs)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;&#123;&#125;执行时间为：&quot;</span>.<span class="built_in">format</span>(msg), time.time() - t1)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> wrapper</span><br><span class="line">    <span class="keyword">return</span> count_time</span><br><span class="line"></span><br><span class="line"><span class="meta">@count_time_args(<span class="params">msg=<span class="string">&quot;996&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Deny996</span>(<span class="params">name1,name2</span>):</span><br><span class="line">    <span class="built_in">print</span>(name1,name2)</span><br><span class="line">    </span><br><span class="line"><span class="meta">@count_time_args(<span class="params">msg=<span class="string">&quot;997&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">Deny997</span>(<span class="params">name</span>):</span><br><span class="line">    <span class="built_in">print</span>(name)</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    Deny996(<span class="string">&quot;hello&quot;</span>,<span class="string">&quot;world&quot;</span>)</span><br><span class="line">    Deny997(<span class="string">&quot;Capitalism&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># hello world</span></span><br><span class="line"><span class="comment"># 996执行时间为： 0.0009996891021728516</span></span><br><span class="line"><span class="comment"># Capitalism</span></span><br><span class="line"><span class="comment"># 997执行时间为： 0.0</span></span><br></pre></td></tr></table></figure>
-
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> time<br> <br><span class="hljs-keyword">def</span> <span class="hljs-title function_">count_time_args</span>(<span class="hljs-params">msg = <span class="hljs-literal">None</span></span>)：<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">count_time</span>(<span class="hljs-params">func</span>):<br>        <span class="hljs-keyword">def</span> <span class="hljs-title function_">wrapper</span>(<span class="hljs-params">*args, **kwargs</span>):<br>            t1 = time.time()<br>            func(*args, **kwargs)<br>            <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;&#123;&#125;执行时间为：&quot;</span>.<span class="hljs-built_in">format</span>(msg), time.time() - t1)<br><br>        <span class="hljs-keyword">return</span> wrapper<br>    <span class="hljs-keyword">return</span> count_time<br><br><span class="hljs-meta">@count_time_args(<span class="hljs-params">msg=<span class="hljs-string">&quot;996&quot;</span></span>)</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">Deny996</span>(<span class="hljs-params">name1,name2</span>):<br>    <span class="hljs-built_in">print</span>(name1,name2)<br>    <br><span class="hljs-meta">@count_time_args(<span class="hljs-params">msg=<span class="hljs-string">&quot;997&quot;</span></span>)</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">Deny997</span>(<span class="hljs-params">name</span>):<br>    <span class="hljs-built_in">print</span>(name)<br>    <br><br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&quot;__main__&quot;</span>:<br>    Deny996(<span class="hljs-string">&quot;hello&quot;</span>,<span class="hljs-string">&quot;world&quot;</span>)<br>    Deny997(<span class="hljs-string">&quot;Capitalism&quot;</span>)<br><br><span class="hljs-comment"># hello world</span><br><span class="hljs-comment"># 996执行时间为： 0.0009996891021728516</span><br><span class="hljs-comment"># Capitalism</span><br><span class="hljs-comment"># 997执行时间为： 0.0</span><br></code></pre></td></tr></table></figure>
 <h2 id="类装饰器到底是不是装饰器？"><a href="#类装饰器到底是不是装饰器？" class="headerlink" title="类装饰器到底是不是装饰器？"></a>类装饰器到底是不是装饰器？</h2><p>虽然我在前面说了一嘴<code>Pytorch</code>中的损失函数和一般的装饰器运行过程不太一样，但也不要否认人家是装饰器这一事实！我们可以看看<code>Pytorch.nn.CrossEntropyLoss</code>类：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">CrossEntropyLoss</span>(<span class="title class_ inherited__">_WeightedLoss</span>):</span><br><span class="line">    __constants__ = [<span class="string">&#x27;ignore_index&#x27;</span>, <span class="string">&#x27;reduction&#x27;</span>, <span class="string">&#x27;label_smoothing&#x27;</span>]</span><br><span class="line">    ignore_index: <span class="built_in">int</span></span><br><span class="line">    label_smoothing: <span class="built_in">float</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, weight: <span class="type">Optional</span>[Tensor] = <span class="literal">None</span>, size_average=<span class="literal">None</span>, ignore_index: <span class="built_in">int</span> = -<span class="number">100</span>,reduce=<span class="literal">None</span>, reduction: <span class="built_in">str</span> = <span class="string">&#x27;mean&#x27;</span>, label_smoothing: <span class="built_in">float</span> = <span class="number">0.0</span></span>) -&gt; <span class="literal">None</span>:</span><br><span class="line">        <span class="built_in">super</span>(CrossEntropyLoss, self).__init__(weight, size_average, reduce, reduction)</span><br><span class="line">        self.ignore_index = ignore_index</span><br><span class="line">        self.label_smoothing = label_smoothing</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, <span class="built_in">input</span>: Tensor, target: Tensor</span>) -&gt; Tensor:</span><br><span class="line">        <span class="keyword">return</span> F.cross_entropy(<span class="built_in">input</span>, target, weight=self.weight,</span><br><span class="line">                               ignore_index=self.ignore_index, reduction=self.reduction,</span><br><span class="line">                               label_smoothing=self.label_smoothing)</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">CrossEntropyLoss</span>(<span class="hljs-title class_ inherited__">_WeightedLoss</span>):<br>    __constants__ = [<span class="hljs-string">&#x27;ignore_index&#x27;</span>, <span class="hljs-string">&#x27;reduction&#x27;</span>, <span class="hljs-string">&#x27;label_smoothing&#x27;</span>]<br>    ignore_index: <span class="hljs-built_in">int</span><br>    label_smoothing: <span class="hljs-built_in">float</span><br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, weight: <span class="hljs-type">Optional</span>[Tensor] = <span class="hljs-literal">None</span>, size_average=<span class="hljs-literal">None</span>, ignore_index: <span class="hljs-built_in">int</span> = -<span class="hljs-number">100</span>,reduce=<span class="hljs-literal">None</span>, reduction: <span class="hljs-built_in">str</span> = <span class="hljs-string">&#x27;mean&#x27;</span>, label_smoothing: <span class="hljs-built_in">float</span> = <span class="hljs-number">0.0</span></span>) -&gt; <span class="hljs-literal">None</span>:<br>        <span class="hljs-built_in">super</span>(CrossEntropyLoss, self).__init__(weight, size_average, reduce, reduction)<br>        self.ignore_index = ignore_index<br>        self.label_smoothing = label_smoothing<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, <span class="hljs-built_in">input</span>: Tensor, target: Tensor</span>) -&gt; Tensor:<br>        <span class="hljs-keyword">return</span> F.cross_entropy(<span class="hljs-built_in">input</span>, target, weight=self.weight,<br>                               ignore_index=self.ignore_index, reduction=self.reduction,<br>                               label_smoothing=self.label_smoothing)<br></code></pre></td></tr></table></figure>
 <p>你会说这也没写那个<code>__call__</code>方法啊？倒是<code>forward()</code>函数写了。别急，我们看看这个类的继承关系：</p>
 <p><code>CrossEntropyLoss -&gt; _WeightedLoss -&gt; _Loss -&gt; Module</code>。点开<code>Module</code>类，在1176行有这么一条：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">__call__ : Callable[..., Any] = _call_impl</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">__call__ : <span class="hljs-type">Callable</span>[..., <span class="hljs-type">Any</span>] = _call_impl<br></code></pre></td></tr></table></figure>
 <p>我们再点开<code>_call_impl</code>：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">_call_impl</span>(<span class="params">self, *<span class="built_in">input</span>, **kwargs</span>):</span><br><span class="line">        forward_call = (self._slow_forward <span class="keyword">if</span> torch._C._get_tracing_state() <span class="keyword">else</span> self.forward)</span><br><span class="line">        <span class="comment"># If we don&#x27;t have any hooks, we want to skip the rest of the logic in</span></span><br><span class="line">        <span class="comment"># this function, and just call forward.</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> (self._backward_hooks <span class="keyword">or</span> self._forward_hooks <span class="keyword">or</span> self._forward_pre_hooks <span class="keyword">or</span> _global_backward_hooks</span><br><span class="line">                <span class="keyword">or</span> _global_forward_hooks <span class="keyword">or</span> _global_forward_pre_hooks):</span><br><span class="line">            <span class="keyword">return</span> forward_call(*<span class="built_in">input</span>, **kwargs)</span><br><span class="line">        <span class="comment"># Do not call functions when jit is used</span></span><br><span class="line">        full_backward_hooks, non_full_backward_hooks = [], []</span><br><span class="line">        <span class="keyword">if</span> self._backward_hooks <span class="keyword">or</span> _global_backward_hooks:</span><br><span class="line">            full_backward_hooks, non_full_backward_hooks = self._get_backward_hooks()</span><br><span class="line">        <span class="keyword">if</span> _global_forward_pre_hooks <span class="keyword">or</span> self._forward_pre_hooks:</span><br><span class="line">            <span class="keyword">for</span> hook <span class="keyword">in</span> (*_global_forward_pre_hooks.values(), *self._forward_pre_hooks.values()):</span><br><span class="line">                result = hook(self, <span class="built_in">input</span>)</span><br><span class="line">                <span class="keyword">if</span> result <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">                    <span class="keyword">if</span> <span class="keyword">not</span> <span class="built_in">isinstance</span>(result, <span class="built_in">tuple</span>):</span><br><span class="line">                        result = (result,)</span><br><span class="line">                    <span class="built_in">input</span> = result</span><br><span class="line"></span><br><span class="line">        bw_hook = <span class="literal">None</span></span><br><span class="line">        <span class="keyword">if</span> full_backward_hooks:</span><br><span class="line">            bw_hook = hooks.BackwardHook(self, full_backward_hooks)</span><br><span class="line">            <span class="built_in">input</span> = bw_hook.setup_input_hook(<span class="built_in">input</span>)</span><br><span class="line"></span><br><span class="line">        result = forward_call(*<span class="built_in">input</span>, **kwargs)</span><br><span class="line">        <span class="keyword">if</span> _global_forward_hooks <span class="keyword">or</span> self._forward_hooks:</span><br><span class="line">            <span class="keyword">for</span> hook <span class="keyword">in</span> (*_global_forward_hooks.values(), *self._forward_hooks.values()):</span><br><span class="line">                hook_result = hook(self, <span class="built_in">input</span>, result)</span><br><span class="line">                <span class="keyword">if</span> hook_result <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">                    result = hook_result</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> bw_hook:</span><br><span class="line">            result = bw_hook.setup_output_hook(result)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Handle the non-full backward hooks</span></span><br><span class="line">        <span class="keyword">if</span> non_full_backward_hooks:</span><br><span class="line">            var = result</span><br><span class="line">            <span class="keyword">while</span> <span class="keyword">not</span> <span class="built_in">isinstance</span>(var, torch.Tensor):</span><br><span class="line">                <span class="keyword">if</span> <span class="built_in">isinstance</span>(var, <span class="built_in">dict</span>):</span><br><span class="line">                    var = <span class="built_in">next</span>((v <span class="keyword">for</span> v <span class="keyword">in</span> var.values() <span class="keyword">if</span> <span class="built_in">isinstance</span>(v, torch.Tensor)))</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    var = var[<span class="number">0</span>]</span><br><span class="line">            grad_fn = var.grad_fn</span><br><span class="line">            <span class="keyword">if</span> grad_fn <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">                <span class="keyword">for</span> hook <span class="keyword">in</span> non_full_backward_hooks:</span><br><span class="line">                    wrapper = functools.partial(hook, self)</span><br><span class="line">                    functools.update_wrapper(wrapper, hook)</span><br><span class="line">                    grad_fn.register_hook(wrapper)</span><br><span class="line">                self._maybe_warn_non_full_backward_hook(<span class="built_in">input</span>, result, grad_fn)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> result</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">def</span> <span class="hljs-title function_">_call_impl</span>(<span class="hljs-params">self, *<span class="hljs-built_in">input</span>, **kwargs</span>):<br>        forward_call = (self._slow_forward <span class="hljs-keyword">if</span> torch._C._get_tracing_state() <span class="hljs-keyword">else</span> self.forward)<br>        <span class="hljs-comment"># If we don&#x27;t have any hooks, we want to skip the rest of the logic in</span><br>        <span class="hljs-comment"># this function, and just call forward.</span><br>        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> (self._backward_hooks <span class="hljs-keyword">or</span> self._forward_hooks <span class="hljs-keyword">or</span> self._forward_pre_hooks <span class="hljs-keyword">or</span> _global_backward_hooks<br>                <span class="hljs-keyword">or</span> _global_forward_hooks <span class="hljs-keyword">or</span> _global_forward_pre_hooks):<br>            <span class="hljs-keyword">return</span> forward_call(*<span class="hljs-built_in">input</span>, **kwargs)<br>        <span class="hljs-comment"># Do not call functions when jit is used</span><br>        full_backward_hooks, non_full_backward_hooks = [], []<br>        <span class="hljs-keyword">if</span> self._backward_hooks <span class="hljs-keyword">or</span> _global_backward_hooks:<br>            full_backward_hooks, non_full_backward_hooks = self._get_backward_hooks()<br>        <span class="hljs-keyword">if</span> _global_forward_pre_hooks <span class="hljs-keyword">or</span> self._forward_pre_hooks:<br>            <span class="hljs-keyword">for</span> hook <span class="hljs-keyword">in</span> (*_global_forward_pre_hooks.values(), *self._forward_pre_hooks.values()):<br>                result = hook(self, <span class="hljs-built_in">input</span>)<br>                <span class="hljs-keyword">if</span> result <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span>:<br>                    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-built_in">isinstance</span>(result, <span class="hljs-built_in">tuple</span>):<br>                        result = (result,)<br>                    <span class="hljs-built_in">input</span> = result<br><br>        bw_hook = <span class="hljs-literal">None</span><br>        <span class="hljs-keyword">if</span> full_backward_hooks:<br>            bw_hook = hooks.BackwardHook(self, full_backward_hooks)<br>            <span class="hljs-built_in">input</span> = bw_hook.setup_input_hook(<span class="hljs-built_in">input</span>)<br><br>        result = forward_call(*<span class="hljs-built_in">input</span>, **kwargs)<br>        <span class="hljs-keyword">if</span> _global_forward_hooks <span class="hljs-keyword">or</span> self._forward_hooks:<br>            <span class="hljs-keyword">for</span> hook <span class="hljs-keyword">in</span> (*_global_forward_hooks.values(), *self._forward_hooks.values()):<br>                hook_result = hook(self, <span class="hljs-built_in">input</span>, result)<br>                <span class="hljs-keyword">if</span> hook_result <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span>:<br>                    result = hook_result<br><br>        <span class="hljs-keyword">if</span> bw_hook:<br>            result = bw_hook.setup_output_hook(result)<br><br>        <span class="hljs-comment"># Handle the non-full backward hooks</span><br>        <span class="hljs-keyword">if</span> non_full_backward_hooks:<br>            var = result<br>            <span class="hljs-keyword">while</span> <span class="hljs-keyword">not</span> <span class="hljs-built_in">isinstance</span>(var, torch.Tensor):<br>                <span class="hljs-keyword">if</span> <span class="hljs-built_in">isinstance</span>(var, <span class="hljs-built_in">dict</span>):<br>                    var = <span class="hljs-built_in">next</span>((v <span class="hljs-keyword">for</span> v <span class="hljs-keyword">in</span> var.values() <span class="hljs-keyword">if</span> <span class="hljs-built_in">isinstance</span>(v, torch.Tensor)))<br>                <span class="hljs-keyword">else</span>:<br>                    var = var[<span class="hljs-number">0</span>]<br>            grad_fn = var.grad_fn<br>            <span class="hljs-keyword">if</span> grad_fn <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span>:<br>                <span class="hljs-keyword">for</span> hook <span class="hljs-keyword">in</span> non_full_backward_hooks:<br>                    wrapper = functools.partial(hook, self)<br>                    functools.update_wrapper(wrapper, hook)<br>                    grad_fn.register_hook(wrapper)<br>                self._maybe_warn_non_full_backward_hook(<span class="hljs-built_in">input</span>, result, grad_fn)<br><br>        <span class="hljs-keyword">return</span> result<br></code></pre></td></tr></table></figure>
 <p>好长一大段是吧？别急，我们只需关注第一行最后面那个<code>self.foward</code>就行了：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">forward_call = (self._slow_forward <span class="keyword">if</span> torch._C._get_tracing_state() <span class="keyword">else</span> self.forward)</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">forward_call = (self._slow_forward <span class="hljs-keyword">if</span> torch._C._get_tracing_state() <span class="hljs-keyword">else</span> self.forward)<br></code></pre></td></tr></table></figure>
 <p>现在应该懂了<code>__call__()</code>是干啥的了吧？总之通过复杂的继承关系，让最后的<code>CrossEntropyLoss</code>的<code>__call__()</code>调用了当前类里定义的<code>foward()</code>函数。所以这也是一种装饰器！</p>
 <h2 id="装饰器顺序"><a href="#装饰器顺序" class="headerlink" title="装饰器顺序"></a>装饰器顺序</h2><p>结论就是离函数最近的装饰器最先执行。可以这么理解：装饰器包裹着一个函数，然后又被另一个装饰器包裹，然后在执行函数的时候最先完成执行的是函数，随后才是函数外第一层的装饰器，然后到第二层，第三层…</p>
 <h2 id="装饰器用在哪？"><a href="#装饰器用在哪？" class="headerlink" title="装饰器用在哪？"></a>装饰器用在哪？</h2><p>以上就是装饰器的所有用法啦！除了我们用来测时间的应用场景，我们还可以通过装饰器来设定参数传入函数，比如说你在测试用户权限啥的，你可以写一个用户等级的函数，然后在测试的时候调用这个等级函数作为装饰器去测试你的业务；总之这个装饰器的用法很多，恰当使用的话可以提高开发效率。</p>
-</article><div class="post-copyright"><div class="post-copyright__author_group"><a class="post-copyright__author_img" href="/about/"><img class="post-copyright__author_img_front" src= "/img/loading.gif" data-lazy-src="https://pic.imgdb.cn/item/6696936cd9c307b7e97a9c1d.png"></a><div class="post-copyright__author_name">Laked22</div><div class="post-copyright__author_desc"></div></div><div class="post-tools" id="post-tools"><div class="post-tools-left"><div id="quit-box" onclick="RemoveRewardMask()"></div></div></div><div class="post-copyright__notice"><span class="post-copyright-info">本文是原创文章，采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0</a>协议，完整转载请注明来自<a href="/">Laked22</a></span></div></div><div class="post-tools-right"><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/python/"><span class="tags-punctuation"></span>python<span class="tagsPageCount">1</span></a><a class="post-meta__tags" href="/tags/%E8%A3%85%E9%A5%B0%E5%99%A8/"><span class="tags-punctuation"></span>装饰器<span class="tagsPageCount">1</span></a></div></div><div class="social-share"></div></div><nav class="needEndHide pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/06/02/Pytorch%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%BF%87%E7%A8%8B/"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Pytorch训练神经网络的一般过程</div></div></a></div><div class="next-post pull-right"><a href="/2024/06/02/LS%E4%BF%A1%E9%81%93%E4%BC%B0%E8%AE%A1%E4%B8%8EOAI%E5%AE%9E%E7%8E%B0/"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">LS信道估计与OAI代码工程优化</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-content"><div class="card-info-bg-top"><div class="is-center"><div class="author-info__top-group"><div class="author-info__sayhi" id="author-info__sayhi" onclick="sco.changeSayHelloText()">sayhello.morning</div></div></div></div><a class="card-info-avatar" href="/about/" title="头像"><div class="avatar-img"><img src= "/img/loading.gif" data-lazy-src="https://pic.imgdb.cn/item/6696936cd9c307b7e97a9c1d.png" alt="头像"></div></a><div class="card-info__desc_group"><div class="author-info__name">小林花子</div><div class="author-info__desc"></div><div class="card-info__data is-center"><a href="/archives/" title="累计文章数:21"><div class="length-num">21</div><div class="headline">文章</div></a><a href="/tags/" title="标签总数:42"><div class="length-num">42</div><div class="headline">标签</div></a><a href="/categories/" title="分类总数:8"><div class="length-num">8</div><div class="headline">分类</div></a></div><div class="card-info-social-icons is-center"><a class="social-icon" target="_blank" rel="noopener" href="https://github.com/dafeigy" title="Github"><i class="solitude  st-github-line"></i></a></div></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="solitude st-menu-line"></i><span>文章目录</span></div><div class="toc-content" id="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-text">函数是什么</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E4%BD%9C%E4%B8%BA%E5%8F%82%E6%95%B0"><span class="toc-text">函数作为参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E4%BD%9C%E4%B8%BA%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="toc-text">函数作为返回值</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%81%87%E5%A6%82%E6%88%91%E8%A6%81%E6%B5%8B%E4%B8%AA%E6%97%B6%E9%97%B4"><span class="toc-text">假如我要测个时间</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A3%85%E9%A5%B0%E5%99%A8%E7%9A%84%E8%AF%AD%E6%B3%95%E7%B3%96"><span class="toc-text">装饰器的语法糖</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%86%E6%98%AF%E6%88%91%E7%9A%84%E5%87%BD%E6%95%B0%E9%9C%80%E8%A6%81%E4%BC%A0%E5%85%A5%E5%8F%82%E6%95%B0%E2%80%A6"><span class="toc-text">但是我的函数需要传入参数…?</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A3%85%E9%A5%B0%E5%99%A8%E4%BC%A0%E5%8F%82"><span class="toc-text">装饰器传参</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A3%85%E9%A5%B0%E5%99%A8%E5%B8%A6%E5%8F%82"><span class="toc-text">装饰器带参</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B1%BB%E8%A3%85%E9%A5%B0%E5%99%A8%E5%88%B0%E5%BA%95%E6%98%AF%E4%B8%8D%E6%98%AF%E8%A3%85%E9%A5%B0%E5%99%A8%EF%BC%9F"><span class="toc-text">类装饰器到底是不是装饰器？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A3%85%E9%A5%B0%E5%99%A8%E9%A1%BA%E5%BA%8F"><span class="toc-text">装饰器顺序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A3%85%E9%A5%B0%E5%99%A8%E7%94%A8%E5%9C%A8%E5%93%AA%EF%BC%9F"><span class="toc-text">装饰器用在哪？</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="solitude st-map-line"></i><span>最近发布</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2024/07/16/How-CPU-Cache-Work/" title="【译】Exploring How Cache Memory Really Works"><img alt="【译】Exploring How Cache Memory Really Works" src= "/img/loading.gif" data-lazy-src="https://pic.imgdb.cn/item/6696805ad9c307b7e94e067b.jpg"></a><div class="content"><a class="title" href="/2024/07/16/How-CPU-Cache-Work/" title="【译】Exploring How Cache Memory Really Works">【译】Exploring How Cache Memory Really Works</a><a class="article-recent_post_categories" href="/2024/07/16/How-CPU-Cache-Work/">文章翻译</a></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/07/09/OAI-Multi_UEs_behaviors/" title="OAI开发记录——多UE接入下的物理层行为"><img alt="OAI开发记录——多UE接入下的物理层行为" src= "/img/loading.gif" data-lazy-src="https://pic.imgdb.cn/item/6696865ad9c307b7e95be385.jpg"></a><div class="content"><a class="title" href="/2024/07/09/OAI-Multi_UEs_behaviors/" title="OAI开发记录——多UE接入下的物理层行为">OAI开发记录——多UE接入下的物理层行为</a><a class="article-recent_post_categories" href="/2024/07/09/OAI-Multi_UEs_behaviors/">OAI</a></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/07/08/Rust-Snake-AI-NN-related/" title="使用Rust编写游玩贪吃蛇的神经网络（一）"><img alt="使用Rust编写游玩贪吃蛇的神经网络（一）" src= "/img/loading.gif" data-lazy-src="https://s2.loli.net/2024/07/04/QAtIcu4ROM9Sk3N.png"></a><div class="content"><a class="title" href="/2024/07/08/Rust-Snake-AI-NN-related/" title="使用Rust编写游玩贪吃蛇的神经网络（一）">使用Rust编写游玩贪吃蛇的神经网络（一）</a><a class="article-recent_post_categories" href="/2024/07/08/Rust-Snake-AI-NN-related/">摸鱼折腾</a></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/07/01/Rust-Snake-AI-Introduction/" title="使用Rust编写游玩贪吃蛇的神经网络（零）"><img alt="使用Rust编写游玩贪吃蛇的神经网络（零）" src= "/img/loading.gif" data-lazy-src="https://s2.loli.net/2024/07/04/QAtIcu4ROM9Sk3N.png"></a><div class="content"><a class="title" href="/2024/07/01/Rust-Snake-AI-Introduction/" title="使用Rust编写游玩贪吃蛇的神经网络（零）">使用Rust编写游玩贪吃蛇的神经网络（零）</a><a class="article-recent_post_categories" href="/2024/07/01/Rust-Snake-AI-Introduction/">摸鱼折腾</a></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/06/24/ChartsGPT%20%E6%9E%84%E5%BB%BA/" title="ChartsGPT：使用自然语言生成图表"><img alt="ChartsGPT：使用自然语言生成图表" src= "/img/loading.gif" data-lazy-src="https://pic.imgdb.cn/item/66968691d9c307b7e95c57f0.png"></a><div class="content"><a class="title" href="/2024/06/24/ChartsGPT%20%E6%9E%84%E5%BB%BA/" title="ChartsGPT：使用自然语言生成图表">ChartsGPT：使用自然语言生成图表</a><a class="article-recent_post_categories" href="/2024/06/24/ChartsGPT%20%E6%9E%84%E5%BB%BA/">摸鱼折腾</a></div></div></div></div></div></div></main><footer id="footer"><div id="st-footer-bar"><div class="footer-logo"><span>Laked22</span></div><div class="footer-bar-description">来自 Cybersh1t 的文章</div><a class="footer-bar-link" href="/about/">了解更多</a></div><div id="footer_deal"></div><div id="st-footer"></div><div id="footer-bar"><div class="footer-bar-links"><div class="footer-bar-left"><div class="copyright">© 2021 - 2024 By&nbsp;<a class="footer-bar-link" href="/">小林花子</a></div></div><div class="footer-bar-right"><a class="footer-bar-link" target="_blank" rel="noopener" href="https://github.com/valor-x/hexo-theme-solitude" alt="主题">主题</a><a class="footer-bar-link cc" href="/null" aria-label="copyright"><i class="solitude st-copyright-line"></i><i class="solitude st-creative-commons-by-line"></i><i class="solitude st-creative-commons-nc-line"></i><i class="solitude st-creative-commons-nd-line"></i></a></div></div></div></footer></div><!-- right_menu--><div id="rightMenu"><div class="rightMenu-group rightMenu-small"><div class="rightMenu-item" id="menu-backward"><i class="solitude st-arrow-left-line"></i></div><div class="rightMenu-item" id="menu-forward"><i class="solitude st-arrow-right-line"></i></div><div class="rightMenu-item" id="menu-refresh"><i class="solitude st-restart-line"></i></div><div class="rightMenu-item" id="menu-top"><i class="solitude st-arrow-up-line"></i></div></div><div class="rightMenu-group rightMenu-line rightMenuPlugin"><div class="rightMenu-item" id="menu-copytext"><i class="solitude st-copy-fill"></i><span>复制选中文本</span></div><div class="rightMenu-item" id="menu-pastetext"><i class="solitude st-clipboard-fill"></i><span>粘贴文本</span></div><div class="rightMenu-item" id="menu-newwindow"><i class="solitude st-window-fill"></i><span>新窗口打开</span></div><div class="rightMenu-item" id="menu-copylink"><i class="solitude st-link-line"></i><span>复制链接地址</span></div><div class="rightMenu-item" id="menu-copyimg"><i class="solitude st-copy-fill"></i><span>复制此图片</span></div><div class="rightMenu-item" id="menu-downloadimg"><i class="solitude st-download-cloud-fill"></i><span>下载此图片</span></div></div><div class="rightMenu-group rightMenu-line rightMenuOther"></div><div class="rightMenu-group rightMenu-line rightMenuOther"><div class="rightMenu-item" id="menu-darkmode" onclick="sco.switchDarkMode()"><i class="solitude st-moon-clear-fill"></i><span class="menu-darkmode-text">深色模式</span></div></div></div><div id="rightmenu-mask"></div><!-- inject body--><div><script src="/js/utils.js?v=1.11.3"></script><script src="/js/main.js?v=1.11.3"></script><script src="/js/third_party/waterfall.min.js?v=1.11.3"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/pjax/0.2.8/pjax.min.js"></script><script src="/js/third_party/universe.min.js?v=1.11.3"></script><script>dark()
-</script><script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-lazyload/19.1.3/lazyload.iife.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/node-snackbar/0.1.16/snackbar.min.js"></script><script src="/js/covercolor/local.js?v=1.11.3"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js"></script><script src="/js/right_menu.js?v=1.11.3"></script><div class="js-pjax"></div></div><!-- newest comment--><!-- pjax--><script>const pjax = new Pjax({
-    elements: 'a:not([target="_blank"])',
-    selectors: ['title','#body-wrap','#site-config','meta[name="description"]','.js-pjax','meta[property^="og:"]','#config-diff'],
-    cacheBust: false,
-    analytics: false,
-    scrollRestoration: false
-})
 
-document.querySelectorAll('script[data-pjax]').forEach(item => {
-    const newScript = document.createElement('script')
-    const content = item.text || item.textContent || item.innerHTML || ""
-    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
-    newScript.appendChild(document.createTextNode(content))
-    item.parentNode.replaceChild(newScript, item)
-})
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
 
-document.addEventListener('pjax:complete', () => {
-    window.refreshFn()
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Python%E8%BF%9B%E9%98%B6/" class="category-chain-item">Python进阶</a>
+  
+  
 
-    document.querySelectorAll('script[data-pjax]').forEach(item => {
-        const newScript = document.createElement('script')
-        const content = item.text || item.textContent || item.innerHTML || ""
-        Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
-        newScript.appendChild(document.createTextNode(content))
-        item.parentNode.replaceChild(newScript, item)
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/python/" class="print-no-link">#python</a>
+      
+        <a href="/tags/%E8%A3%85%E9%A5%B0%E5%99%A8/" class="print-no-link">#装饰器</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Python装饰器解析与使用场景</div>
+      <div>http://example.com/2024/06/02/Python装饰器/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>L4k3d22</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年6月2日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/06/02/Pytorch%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%BF%87%E7%A8%8B/" title="Pytorch训练神经网络的一般过程">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Pytorch训练神经网络的一般过程</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/06/02/LS%E4%BF%A1%E9%81%93%E4%BC%B0%E8%AE%A1%E4%B8%8EOAI%E5%AE%9E%E7%8E%B0/" title="LS信道估计与OAI代码工程优化">
+                        <span class="hidden-mobile">LS信道估计与OAI代码工程优化</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://github.com/dafeigy" target="_blank" rel="nofollow noopener"><span>L4k3d22</span></a> <i class="iconfont icon-tool"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
     })
+  </script>
 
-    GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
 
-})
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
 
-document.addEventListener('pjax:error', (e) => {
-    if (e.request.status === 404) {
-        pjax.loadUrl('/404.html')
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
     }
-})</script><!-- theme--><script>initTheme = () => {
-    const cachedMode = utils.saveToLocal.get('theme');
-    if (cachedMode === undefined)
-        document.documentElement.setAttribute('data-theme', 'light');
-    else
-        document.documentElement.setAttribute('data-theme', cachedMode);
-    is_rm && rm.mode(cachedMode === 'dark')
-}
-initTheme()</script><!-- google adsense--><!-- search--><!-- Tianli-Talk--><!-- music--></body></html><script>const posts=["2024/07/16/How-CPU-Cache-Work/","2024/07/09/OAI-Multi_UEs_behaviors/","2024/07/08/Rust-Snake-AI-NN-related/","2024/07/01/Rust-Snake-AI-Introduction/","2024/06/24/ChartsGPT 构建/","2024/06/16/Nine-Sols-Reports/","2024/06/05/24年杂记/","2024/06/03/清板射击/","2024/06/02/5G手机接入入网流程/","2024/06/02/5GNR-参考信号（一）/","2024/06/02/5GNR-参考信号（三）/","2024/06/02/5GNR-参考信号（二）/","2024/06/02/装机/","2024/06/02/编译Lua源码/","2024/06/02/Pytorch训练模型的基本过程/","2024/06/02/Python装饰器/","2024/06/02/LS信道估计与OAI实现/","2024/06/02/Free5GC+OAI gNB+COTSUE/","2024/06/02/free5gc + OAI gNB + OAI nrUE/","2024/06/02/CMA/","2022/06/18/乔斯伯主力/"];function toRandomPost(){ pjax.loadUrl('/'+posts[Math.floor(Math.random()*posts.length)]); }</script>
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

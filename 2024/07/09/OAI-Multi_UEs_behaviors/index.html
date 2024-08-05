@@ -1,259 +1,728 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><title>OAI开发记录——多UE接入下的物理层行为 | Laked22</title><noscript>开启JavaScript才能访问本站哦~</noscript><link rel="icon" href="https://pic.imgdb.cn/item/66968c76d9c307b7e96a79c8.png"><!-- index.css--><link rel="stylesheet" href="/css/index.css?v=1.11.3"><!-- inject head--><link rel="stylesheet" href="https://cdn2.codesign.qq.com/icons/7pOrz0WXB5ZWJPX/latest/iconfont.css"><!-- aplayer--><!-- swiper--><!-- fancybox ui--><!-- katex--><!-- Open Graph--><meta name="description" content="最近有一个开发任务，要求在接入多个UE时提取一些物理层的信息。之前的开发针对都是单个UE，所以多个UE按理来说应该不会很难，但是还是遇到了一些问题… 在物理层标识UE在有多个UE接入的时候，物理层是使用RNTI对不同的UE进行标识的，但是RNTI并不是和真实的COTSUE一一对应进行绑定的。在U"><!-- pwa--><meta name="apple-mobile-web-app-capable" content="Laked22"><meta name="theme-color" content="var(--efu-main)"><meta name="apple-mobile-web-app-status-bar-style" content="var(--efu-main)"><link rel="bookmark" href="https://pic.imgdb.cn/item/66968c76d9c307b7e96a79c8.png"><link rel="apple-touch-icon" href="https://pic.imgdb.cn/item/66968c76d9c307b7e96a79c8.png" sizes="180x180"><script>console.log(
-    "%c Program: Hexo %c Theme: Solitude %c Version: v1.11.3",
-    "border-radius:5px 0 0 5px;padding: 5px 10px;color:white;background:#ff3842;",
-    "padding: 5px 10px;color:white;background:#3e9f50;",
-    "padding: 5px 10px;color:white;background:#0084ff;border-radius:0 5px 5px 0",
-)
-</script><script>(()=>{
-        const saveToLocal = {
-            set: function setWithExpiry(key, value, ttl) {
-                if (ttl === 0)
-                    return
-                const now = new Date()
-                const expiryDay = ttl * 86400000
-                const item = {
-                    value: value,
-                    expiry: now.getTime() + expiryDay
-                }
-                localStorage.setItem(key, JSON.stringify(item))
-            },
-            get: function getWithExpiry(key) {
-                const itemStr = localStorage.getItem(key)
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#5F9EA0">
+  <meta name="author" content="L4k3d22">
+  <meta name="keywords" content="AI+5GNR+DRL">
+  
+    <meta name="description" content="最近有一个开发任务，要求在接入多个UE时提取一些物理层的信息。之前的开发针对都是单个UE，所以多个UE按理来说应该不会很难，但是还是遇到了一些问题…">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OAI开发记录——多UE接入下的物理层行为">
+<meta property="og:url" content="http://example.com/2024/07/09/OAI-Multi_UEs_behaviors/index.html">
+<meta property="og:site_name" content="Laked22">
+<meta property="og:description" content="最近有一个开发任务，要求在接入多个UE时提取一些物理层的信息。之前的开发针对都是单个UE，所以多个UE按理来说应该不会很难，但是还是遇到了一些问题…">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic.imgdb.cn/item/6696865ad9c307b7e95be385.jpg">
+<meta property="article:published_time" content="2024-07-09T12:56:56.889Z">
+<meta property="article:modified_time" content="2024-08-05T17:21:36.550Z">
+<meta property="article:author" content="L4k3d22">
+<meta property="article:tag" content="OAI">
+<meta property="article:tag" content="物理层">
+<meta property="article:tag" content="CMake">
+<meta property="article:tag" content="Protobuf">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://pic.imgdb.cn/item/6696865ad9c307b7e95be385.jpg">
+  
+  
+  
+  <title>OAI开发记录——多UE接入下的物理层行为 - Laked22</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":true,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+
+<body>
+  
+
+  <header>
     
-                if (!itemStr) {
-                    return undefined
-                }
-                const item = JSON.parse(itemStr)
-                const now = new Date()
-    
-                if (now.getTime() > item.expiry) {
-                    localStorage.removeItem(key)
-                    return undefined
-                }
-                return item.value
-            }
-        };
-        window.utils = {
-            saveToLocal: saveToLocal,
-            getCSS: (url, id = false) => new Promise((resolve, reject) => {
-              const link = document.createElement('link')
-              link.rel = 'stylesheet'
-              link.href = url
-              if (id) link.id = id
-              link.onerror = reject
-              link.onload = link.onreadystatechange = function() {
-                const loadState = this.readyState
-                if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
-                link.onload = link.onreadystatechange = null
-                resolve()
-              }
-              document.head.appendChild(link)
-            }),
-            getScript: (url, attr = {}) => new Promise((resolve, reject) => {
-              const script = document.createElement('script')
-              script.src = url
-              script.async = true
-              script.onerror = reject
-              script.onload = script.onreadystatechange = function() {
-                const loadState = this.readyState
-                if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
-                script.onload = script.onreadystatechange = null
-                resolve()
-              }
-    
-              Object.keys(attr).forEach(key => {
-                script.setAttribute(key, attr[key])
-              })
-    
-              document.head.appendChild(script)
-            }),
-            addGlobalFn: (key, fn, name = false, parent = window) => {
-                const globalFn = parent.globalFn || {}
-                const keyObj = globalFn[key] || {}
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Laked22</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
         
-                if (name && keyObj[name]) return
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
         
-                name = name || Object.keys(keyObj).length
-                keyObj[name] = fn
-                globalFn[key] = keyObj
-                parent.globalFn = globalFn
-            },
-        }
-    })()</script><!-- global head--><script>const GLOBAL_CONFIG = {
-    root: '/',
-    algolia: undefined,
-    localsearch: undefined,
-    runtime: '2021-04-20 00:00:00',
-    lazyload: {
-        enable: true,
-        error: '/img/error_load.webp'
-    },
-    copyright: {"limit":50,"author":"作者: 小林花子","link":"链接: ","source":"来源: Laked22","info":"著作权归作者所有。 商业转载请联系作者获得授权，非商业转载请注明出处。"},
-    highlight: {
-        enable: true,
-        limit: 200,
-        expand: true,
-        copy: true,
-        syntax: 'highlight.js'
-    },
-    randomlink: false,
-    lang: {"theme":{"dark":"已切换至深色模式","light":"已切换至浅色模式"},"copy":{"success":"复制成功","error":"复制失败"},"backtop":"返回顶部","time":{"day":"天前","hour":"小时前","just":"刚刚","min":"分钟前","month":"个月前"},"day":" 天","f12":"开发者模式已打开，请遵循GPL协议。","totalk":"无需删除空行，直接输入评论即可"},
-    aside: {
-        sayhello: {
-            morning: '一日之计在于晨',
-            noon: '吃饱了才有力气干活',
-            afternoon: '集中精力，攻克难关',
-            night: '不要太劳累了，早睡更健康',
-            goodnight: '睡个好觉，保证精力充沛',
-        },
-        sayhello2: ["🤖️ 数码科技爱好者","🔍 分享与热心帮助","🔨 设计开发一条龙","🤝 专修交互与设计","🏃 脚踏实地行动派","🧱 团队小组发动机","💢 壮汉人狠话不多","🎮 电竞游戏爱好者"],
-        sayhello3: {
-            prefix: '好久不见，',
-            back: '欢迎再次回来，',
-        },
-    },
-    covercolor: {
-        enable: true
-    },
-    comment: false,
-    lightbox: 'null',
-    post_ai: false,
-    right_menu: {"mode":{"dark":"深色模式","light":"浅色模式"},"img_error":"此图片无法复制与下载"},
-};</script><!-- page-config head--><script id="config-diff">var PAGE_CONFIG = {
-    is_post: true,
-    is_page: false,
-    is_home: false,
-    page: '',
-    toc: true,
-    comment: false,
-    ai_text: false
-}</script><meta name="generator" content="Hexo 7.2.0"></head><body id="body"><!-- universe--><canvas id="universe"></canvas><!-- loading--><!-- console--><div id="console"><div class="close-btn" onclick="sco.hideConsole()"><i class="solitude st-close-fill"></i></div><div class="button-group"><div class="console-btn-item"><span class="darkmode_switchbutton" onclick="sco.switchDarkMode()" title="昼夜切换"><i class="solitude st-moon-clear-fill"></i></span></div><div class="console-btn-item" id="consoleHideAside"><span class="asideSwitch" onclick="sco.switchHideAside()" title="边栏显示控制"><i class="solitude st-side-bar-fill"></i></span></div></div><div class="console-mask" onclick="sco.hideConsole()"></div></div><!-- sidebar--><div id="sidebar" style="zoom: 1;"><div id="menu-mask" style="display: none;"></div><div id="sidebar-menus"><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">21</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">42</div></a></div></div></div><span class="sidebar-menu-item-title">功能</span><div class="sidebar-menu-item"><span class="darkmode_switchbutton menu-child" onclick="sco.switchDarkMode()"><i class="solitude st-moon-clear-fill"></i><span>显示模式</span></span></div><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">项目</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://github.com/Dafeigy/ChartsGPT" title="ChartsGPT"><img class="nolazyload back-menu-item-icon" src="https://s2.loli.net/2023/05/10/LDUpFzo7VJiOshd.png" alt="ChartsGPT"><span class="back-menu-item-text">ChartsGPT</span></a></div></div></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span>首页</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span>文库</span></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="solitude  st-folder-fill"></i><span>文章列表</span></a></li><li><a class="site-page child" href="/categories/"><i class="solitude  st-checkbox-multiple-blank-fill"></i><span>全部分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="solitude  st-price-tag-fill"></i><span>全部标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span>我的</span></a><ul class="menus_item_child"><li><a class="site-page child" href="/equipment/"><i class="solitude  st-laptop-line"></i><span>装备</span></a></li><li><a class="site-page child" href="/tlink/"><i class="solitude  st-tools-fill"></i><span>工具箱</span></a></li><li><a class="site-page child" href="/music/"><i class="solitude  st-disc-fill"></i><span>音乐馆</span></a></li></ul></div></div><span class="sidebar-menu-item-title">标签</span><div class="card-widget card-tags card-archives card-webinfo card-allinfo"><div class="card-tag-cloud"><a href="/tags/%E9%9A%8F%E6%83%B3/">随想<sup>1</sup></a><a href="/tags/5GNR/">5GNR<sup>3</sup></a><a href="/tags/5G/">5G<sup>2</sup></a><a href="/tags/UE/">UE<sup>1</sup></a><a href="/tags/%E5%85%A5%E7%BD%91/">入网<sup>1</sup></a><a href="/tags/CMA/">CMA<sup>1</sup></a><a href="/tags/%E8%87%AA%E9%80%82%E5%BA%94%E5%9D%87%E8%A1%A1/">自适应均衡<sup>1</sup></a><a href="/tags/Matlab/">Matlab<sup>1</sup></a><a href="/tags/GPT/">GPT<sup>1</sup></a><a href="/tags/ECharts/">ECharts<sup>1</sup></a><a href="/tags/%E9%85%8D%E7%BD%AE/">配置<sup>1</sup></a><a href="/tags/OAI/">OAI<sup>4</sup></a><a href="/tags/%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98/">高速缓存<sup>1</sup></a><a href="/tags/CPU/">CPU<sup>1</sup></a><a href="/tags/%E4%BF%A1%E9%81%93%E4%BC%B0%E8%AE%A1/">信道估计<sup>1</sup></a><a href="/tags/%E4%B9%9D%E6%97%A5/">九日<sup>1</sup></a><a href="/tags/%E8%B5%A4%E7%83%9B%E6%B8%B8%E6%88%8F/">赤烛游戏<sup>1</sup></a><a href="/tags/%E7%B1%BB%E9%93%B6%E6%B2%B3%E5%9F%8E/">类银河城<sup>1</sup></a><a href="/tags/%E9%AD%82%E7%B3%BB/">魂系<sup>1</sup></a><a href="/tags/%E7%89%A9%E7%90%86%E5%B1%82/">物理层<sup>1</sup></a><a href="/tags/CMake/">CMake<sup>1</sup></a><a href="/tags/Protobuf/">Protobuf<sup>1</sup></a><a href="/tags/python/">python<sup>1</sup></a><a href="/tags/%E8%A3%85%E9%A5%B0%E5%99%A8/">装饰器<sup>1</sup></a><a href="/tags/Python/">Python<sup>1</sup></a><a href="/tags/Pytorch/">Pytorch<sup>1</sup></a><a href="/tags/Rust/">Rust<sup>2</sup></a><a href="/tags/%E7%A5%9E%E7%BB%8F%E8%BF%9B%E5%8C%96/">神经进化<sup>1</sup></a><a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">神经网络<sup>2</sup></a><a href="/tags/%E5%A4%9A%E5%B1%82%E6%84%9F%E7%9F%A5%E6%9C%BA/">多层感知机<sup>1</sup></a><a href="/tags/%E6%A0%B8%E5%BF%83%E7%BD%91/">核心网<sup>1</sup></a><a href="/tags/MATX/">MATX<sup>1</sup></a><a href="/tags/%E8%A3%85%E6%9C%BA/">装机<sup>2</sup></a><a href="/tags/Akane/">Akane<sup>1</sup></a><a href="/tags/%E6%B8%85%E7%89%88%E5%B0%84%E5%87%BB/">清版射击<sup>1</sup></a><a href="/tags/Unity/">Unity<sup>1</sup></a><a href="/tags/BepInEx/">BepInEx<sup>1</sup></a><a href="/tags/C/">C#<sup>1</sup></a><a href="/tags/Hades/">Hades<sup>1</sup></a><a href="/tags/Lua/">Lua<sup>1</sup></a><a href="/tags/%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/">源码编译<sup>1</sup></a><a href="/tags/ITX/">ITX<sup>1</sup></a></div></div></div></div><!-- keyboard--><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav class="show" id="nav"><div id="nav-group"><div id="blog_name"><div class="back-home-button" tabindex="-1"><i class="back-home-button-icon solitude st-more-fill"></i><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">项目</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://github.com/Dafeigy/ChartsGPT" title="ChartsGPT"><img class="nolazyload back-menu-item-icon" src="https://s2.loli.net/2023/05/10/LDUpFzo7VJiOshd.png" alt="ChartsGPT"><span class="back-menu-item-text">ChartsGPT</span></a></div></div></div></div><a id="site-name" href="/" title="返回博客主页"><span class="title">Laked22</span></a></div><div id="page-name-mask"><div id="page-name"><a id="page-name-text" onclick="sco.toTop()">OAI开发记录——多UE接入下的物理层行为</a></div></div><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span>首页</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span>文库</span></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="solitude  st-folder-fill"></i><span>文章列表</span></a></li><li><a class="site-page child" href="/categories/"><i class="solitude  st-checkbox-multiple-blank-fill"></i><span>全部分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="solitude  st-price-tag-fill"></i><span>全部标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span>我的</span></a><ul class="menus_item_child"><li><a class="site-page child" href="/equipment/"><i class="solitude  st-laptop-line"></i><span>装备</span></a></li><li><a class="site-page child" href="/tlink/"><i class="solitude  st-tools-fill"></i><span>工具箱</span></a></li><li><a class="site-page child" href="/music/"><i class="solitude  st-disc-fill"></i><span>音乐馆</span></a></li></ul></div></div></div><div id="nav-left"></div><div id="nav-right"><div class="nav-button" id="nav-console"><a class="console_switchbutton" onclick="sco.showConsole()" title="中控台" href="javascript:void(0);"><i class="solitude st-dashboard-fill"></i></a></div><div class="nav-button" id="nav-totop" onclick="sco.toTop()"><a class="totopbtn"><i class="solitude st-arrow-up-line"></i><span id="percent">0</span></a></div><div id="toggle-menu"><a class="site-page"><i class="solitude st-menu-line"></i></a></div></div></div></nav><div class="coverdiv" id="coverdiv"><img class="nolazyload" id="post-cover" src="https://pic.imgdb.cn/item/6696865ad9c307b7e95be385.jpg" alt="OAI开发记录——多UE接入下的物理层行为"></div><div id="post-info"><div id="post-firstinfo"><div class="meta-firstline"><a class="post-meta-original" title="该文章为原创文章，注意版权协议">原创</a><span class="post-meta-categories"><a class="post-meta-categories" href="/categories/OAI/">OAI</a></span><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/OAI/"><span class="tags-name tags-punctuation">OAI</span></a><a class="post-meta__tags" href="/tags/%E7%89%A9%E7%90%86%E5%B1%82/"><span class="tags-name tags-punctuation">物理层</span></a><a class="post-meta__tags" href="/tags/CMake/"><span class="tags-name tags-punctuation">CMake</span></a><a class="post-meta__tags" href="/tags/Protobuf/"><span class="tags-name tags-punctuation">Protobuf</span></a></div></div></div></div><h1 class="post-title">OAI开发记录——多UE接入下的物理层行为</h1><div id="post-meta"><div class="meta-secondline"></div></div></div><section class="main-hero-waves-area waves-area"><svg class="waves-svg" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto"><defs><path id="gentle-wave" d="M -160 44 c 30 0 58 -18 88 -18 s 58 18 88 18 s 58 -18 88 -18 s 58 18 88 18 v 44 h -352 Z"></path></defs><g class="parallax"><use href="#gentle-wave" x="48" y="0"></use><use href="#gentle-wave" x="48" y="3"></use><use href="#gentle-wave" x="48" y="5"></use><use href="#gentle-wave" x="48" y="7"></use></g></svg></section></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>最近有一个开发任务，要求在接入多个UE时提取一些物理层的信息。之前的开发针对都是单个UE，所以多个UE按理来说应该不会很难，但是还是遇到了一些问题…</p>
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="OAI开发记录——多UE接入下的物理层行为"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-07-09 20:56" pubdate>
+          2024年7月9日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          28 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">OAI开发记录——多UE接入下的物理层行为</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2024年8月6日 凌晨
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <p>最近有一个开发任务，要求在接入多个UE时提取一些物理层的信息。之前的开发针对都是单个UE，所以多个UE按理来说应该不会很难，但是还是遇到了一些问题…</p>
 <span id="more"></span>
-
 <h2 id="在物理层标识UE"><a href="#在物理层标识UE" class="headerlink" title="在物理层标识UE"></a>在物理层标识UE</h2><p>在有多个UE接入的时候，物理层是使用RNTI对不同的UE进行标识的，但是RNTI并不是和真实的COTSUE一一对应进行绑定的。在UE重新接入，或者在连接时通信中断触发了随机接入后RNTI会被重新计算和分配，RNTI的生成参考参见<code>openair2/LAYER2/NR_MAC_gNB/gNB_scheduler_RA.c</code>：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> loop = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">if</span> (ra-&gt;rnti == <span class="number">0</span>) &#123; <span class="comment">// This condition allows for the usage of a preconfigured rnti for the CFRA</span></span><br><span class="line">  <span class="keyword">do</span> &#123;</span><br><span class="line">    <span class="comment">// 3GPP TS 38.321 version 15.13.0 Section 7.1 Table 7.1-1: RNTI values</span></span><br><span class="line">    ra-&gt;rnti = (taus() % <span class="number">0xffef</span>) + <span class="number">1</span>;</span><br><span class="line">    loop++;</span><br><span class="line">  &#125; <span class="keyword">while</span> (loop != <span class="number">100</span></span><br><span class="line">           &amp;&amp; !((find_nr_UE(&amp;nr_mac-&gt;UE_info, ra-&gt;rnti) == <span class="literal">NULL</span>) &amp;&amp; (find_nr_RA_id(module_idP, CC_id, ra-&gt;rnti) == <span class="number">-1</span>)</span><br><span class="line">                &amp;&amp; ra-&gt;rnti &gt;= <span class="number">0x1</span> &amp;&amp; ra-&gt;rnti &lt;= <span class="number">0xffef</span>));</span><br><span class="line">  <span class="keyword">if</span> (loop == <span class="number">100</span>) &#123;</span><br><span class="line">    LOG_E(NR_MAC, <span class="string">&quot;[RAPROC] initialisation random access aborted\n&quot;</span>);</span><br><span class="line">    <span class="built_in">abort</span>();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">int</span> loop = <span class="hljs-number">0</span>;<br><span class="hljs-keyword">if</span> (ra-&gt;rnti == <span class="hljs-number">0</span>) &#123; <span class="hljs-comment">// This condition allows for the usage of a preconfigured rnti for the CFRA</span><br>  <span class="hljs-keyword">do</span> &#123;<br>    <span class="hljs-comment">// 3GPP TS 38.321 version 15.13.0 Section 7.1 Table 7.1-1: RNTI values</span><br>    ra-&gt;rnti = (taus() % <span class="hljs-number">0xffef</span>) + <span class="hljs-number">1</span>;<br>    loop++;<br>  &#125; <span class="hljs-keyword">while</span> (loop != <span class="hljs-number">100</span><br>           &amp;&amp; !((find_nr_UE(&amp;nr_mac-&gt;UE_info, ra-&gt;rnti) == <span class="hljs-literal">NULL</span>) &amp;&amp; (find_nr_RA_id(module_idP, CC_id, ra-&gt;rnti) == <span class="hljs-number">-1</span>)<br>                &amp;&amp; ra-&gt;rnti &gt;= <span class="hljs-number">0x1</span> &amp;&amp; ra-&gt;rnti &lt;= <span class="hljs-number">0xffef</span>));<br>  <span class="hljs-keyword">if</span> (loop == <span class="hljs-number">100</span>) &#123;<br>    LOG_E(NR_MAC, <span class="hljs-string">&quot;[RAPROC] initialisation random access aborted\n&quot;</span>);<br>    <span class="hljs-built_in">abort</span>();<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 <h2 id="开发环境配置"><a href="#开发环境配置" class="headerlink" title="开发环境配置"></a>开发环境配置</h2><p>首先硬件设备就不多说了，因为我在四楼工作，所以我干脆把整套系统都放到一台机子上运行。怎么All in One进行开发研究请见之前的文章。另外一个需要配置的就是VSCode里面的GDB：首先在VSCode中配置GDB（就是按下<code>Ctrl+Shift+D</code>,然后新建<code>launch.json</code>文件）。写入以下内容：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="comment">// Use IntelliSense to learn about possible attributes.</span></span><br><span class="line">    <span class="comment">// Hover to view descriptions of existing attributes.</span></span><br><span class="line">    <span class="comment">// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387</span></span><br><span class="line">    <span class="attr">&quot;version&quot;</span><span class="punctuation">:</span> <span class="string">&quot;0.2.0&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;configurations&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;IMSI-TEST&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;cppdbg&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;request&quot;</span><span class="punctuation">:</span> <span class="string">&quot;launch&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;program&quot;</span><span class="punctuation">:</span> <span class="string">&quot;$&#123;workspaceFolder&#125;/cmake_targets/ran_build/build/nr-softmodem&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;args&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">                <span class="string">&quot;-O&quot;</span><span class="punctuation">,</span> <span class="string">&quot;../o-band78-106.conf&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="string">&quot;--gNBs.[0].min_rxtxtime&quot;</span><span class="punctuation">,</span> <span class="string">&quot;6&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="string">&quot;--sa&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="string">&quot;--usrp-tx-thread-config&quot;</span><span class="punctuation">,</span> <span class="string">&quot;1&quot;</span></span><br><span class="line">            <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;stopAtEntry&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;cwd&quot;</span><span class="punctuation">:</span> <span class="string">&quot;$&#123;workspaceFolder&#125;/cmake_targets&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;environment&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;externalConsole&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;MIMode&quot;</span><span class="punctuation">:</span> <span class="string">&quot;gdb&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;miDebuggerPath&quot;</span><span class="punctuation">:</span> <span class="string">&quot;$&#123;workspaceFolder&#125;/cmake_targets/sudo-gdb&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;setupCommands&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">                <span class="punctuation">&#123;</span></span><br><span class="line">                    <span class="attr">&quot;description&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Enable pretty-printing for gdb&quot;</span><span class="punctuation">,</span></span><br><span class="line">                    <span class="attr">&quot;text&quot;</span><span class="punctuation">:</span> <span class="string">&quot;-enable-pretty-printing&quot;</span><span class="punctuation">,</span></span><br><span class="line">                    <span class="attr">&quot;ignoreFailures&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span></span><br><span class="line">                <span class="punctuation">&#125;</span></span><br><span class="line">            <span class="punctuation">]</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-comment">// Use IntelliSense to learn about possible attributes.</span><br>    <span class="hljs-comment">// Hover to view descriptions of existing attributes.</span><br>    <span class="hljs-comment">// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387</span><br>    <span class="hljs-attr">&quot;version&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;0.2.0&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;configurations&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>        <span class="hljs-punctuation">&#123;</span><br>            <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;IMSI-TEST&quot;</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;cppdbg&quot;</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-attr">&quot;request&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;launch&quot;</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-attr">&quot;program&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;$&#123;workspaceFolder&#125;/cmake_targets/ran_build/build/nr-softmodem&quot;</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-attr">&quot;args&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>                <span class="hljs-string">&quot;-O&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-string">&quot;../o-band78-106.conf&quot;</span><span class="hljs-punctuation">,</span><br>                <span class="hljs-string">&quot;--gNBs.[0].min_rxtxtime&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-string">&quot;6&quot;</span><span class="hljs-punctuation">,</span><br>                <span class="hljs-string">&quot;--sa&quot;</span><span class="hljs-punctuation">,</span><br>                <span class="hljs-string">&quot;--usrp-tx-thread-config&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-string">&quot;1&quot;</span><br>            <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-attr">&quot;stopAtEntry&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">false</span></span><span class="hljs-punctuation">,</span><br>            <span class="hljs-attr">&quot;cwd&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;$&#123;workspaceFolder&#125;/cmake_targets&quot;</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-attr">&quot;environment&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-attr">&quot;externalConsole&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">false</span></span><span class="hljs-punctuation">,</span><br>            <span class="hljs-attr">&quot;MIMode&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;gdb&quot;</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-attr">&quot;miDebuggerPath&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;$&#123;workspaceFolder&#125;/cmake_targets/sudo-gdb&quot;</span><span class="hljs-punctuation">,</span><br>            <span class="hljs-attr">&quot;setupCommands&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>                <span class="hljs-punctuation">&#123;</span><br>                    <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Enable pretty-printing for gdb&quot;</span><span class="hljs-punctuation">,</span><br>                    <span class="hljs-attr">&quot;text&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;-enable-pretty-printing&quot;</span><span class="hljs-punctuation">,</span><br>                    <span class="hljs-attr">&quot;ignoreFailures&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><br>                <span class="hljs-punctuation">&#125;</span><br>            <span class="hljs-punctuation">]</span><br>        <span class="hljs-punctuation">&#125;</span><br>    <span class="hljs-punctuation">]</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
 <p>这里面关注<code>args</code>里面的内容，这些都是执行OAI程序时需要的命令行参数，自行对应就好，OAI运行时的基站配置文件也需要自己调整一下。</p>
 <p>在项目的一些乱七八糟的目录新建一个文件，只要和上面的<code>miDebuggerPath</code>字段对应上就好。比如说我在<code>cmake_targets</code>文件夹中新建了<code>sudo-gdb</code>写入以下内容：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo /usr/bin/gdb <span class="string">&quot;<span class="variable">$@</span>&quot;</span></span><br></pre></td></tr></table></figure>
-
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo /usr/bin/gdb <span class="hljs-string">&quot;<span class="hljs-variable">$@</span>&quot;</span><br></code></pre></td></tr></table></figure>
 <p>然后保存后变更执行权限：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo <span class="built_in">chmod</span> 777 sudo-gdb</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">sudo <span class="hljs-built_in">chmod</span> 777 sudo-gdb<br></code></pre></td></tr></table></figure>
 <p>就可以开始断点测试了。按下那个播放按钮后可能也会报错，但不要担心，停止debug，然后在弹出的窗口随便运行个sudo命令输入密码后让这个shell获取权限就好了，接着gdb就可以正常运行了。</p>
 <h2 id="解决思路"><a href="#解决思路" class="headerlink" title="解决思路"></a>解决思路</h2><h3 id="IMSI和物理ID的相互转换"><a href="#IMSI和物理ID的相互转换" class="headerlink" title="IMSI和物理ID的相互转换"></a>IMSI和物理ID的相互转换</h3><p>RNTI是不唯一的，但是IMSI是唯一的，可惜的是IMSI的获取是在Layer3，不能直接在Layer1中获取。所以我们可以构建一个全局的哈希表，用于存储RNTI和IMSI的匹配关系，然后在层1中根据RNTI去搜索IMSI进而完成物理UE上的对应关系。我进行尝试：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">extract_imsi</span><span class="params">(<span class="type">uint8_t</span> *pdu_buf, <span class="type">uint32_t</span> pdu_len, rrc_eNB_ue_context_t *ue_context_pP)</span> &#123;</span><br><span class="line">  <span class="comment">/* Process NAS message locally to get the IMSI */</span></span><br><span class="line">  <span class="type">nas_message_t</span> nas_msg;</span><br><span class="line">  <span class="built_in">memset</span>(&amp;nas_msg, <span class="number">0</span>, <span class="keyword">sizeof</span>(<span class="type">nas_message_t</span>));</span><br><span class="line">  <span class="type">int</span> size = <span class="number">0</span>;</span><br><span class="line">  <span class="type">nas_message_security_header_t</span> *header = &amp;nas_msg.header;</span><br><span class="line">  <span class="comment">/* Decode the first octet of the header (security header type or EPS</span></span><br><span class="line"><span class="comment">  * bearer identity, and protocol discriminator) */</span></span><br><span class="line">  DECODE_U8((<span class="type">char</span> *) pdu_buf, *(<span class="type">uint8_t</span> *) (header), size);</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* Decode NAS message only if decodable*/</span></span><br><span class="line">  <span class="keyword">if</span> (!(header-&gt;security_header_type &lt;= SECURITY_HEADER_TYPE_INTEGRITY_PROTECTED</span><br><span class="line">        &amp;&amp; header-&gt;protocol_discriminator == EPS_MOBILITY_MANAGEMENT_MESSAGE</span><br><span class="line">        &amp;&amp; pdu_len &gt; NAS_MESSAGE_SECURITY_HEADER_SIZE))</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// ......</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>但是这个解码好像不对。经过和OAI 团队的沟通发现，IMSI确实不能在gNB侧解，我服了…所以我又绕回来了，其实可以通过接入时的CU&#x2F;DU id 对用户进行区分。那么思路就是找到CU_ID 和 DU_ID的映射关系，显然这个关系应该要用Hash表实现。</p>
-<h3 id="CU-DU下的UE标识"><a href="#CU-DU下的UE标识" class="headerlink" title="CU&#x2F;DU下的UE标识"></a>CU&#x2F;DU下的UE标识</h3><p>本来想着自己实现一个Hash Table，但是我想了想像OAI这样的系统肯定有自己的实现，所以我用<code>grep</code>命令搜索Hashtable，然后在<code>./common/utils/hashtable/hashtable.c</code>找到了其实现。具体的使用用例可以在其他地方搜索到，我就不展开了，我们主要需要用到这个类中的<code>cu_get_f1_ue_data</code>以及<code>du_get_f1_ue_data</code>函数，用于获取<code>CU_UE_ID</code>和<code>DU_UE_ID</code>,简而言之，他们可以实现RNTI&lt;–&gt;普通ID(e.g., 1,2,3,…N)的相互转换。</p>
-<p><img src= "/img/loading.gif" data-lazy-src="https://s2.loli.net/2024/07/09/FCwnMe2VHgIXDb7.png" alt="获取UE_ID"></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-type">void</span> <span class="hljs-title function_">extract_imsi</span><span class="hljs-params">(<span class="hljs-type">uint8_t</span> *pdu_buf, <span class="hljs-type">uint32_t</span> pdu_len, rrc_eNB_ue_context_t *ue_context_pP)</span> &#123;<br>  <span class="hljs-comment">/* Process NAS message locally to get the IMSI */</span><br>  <span class="hljs-type">nas_message_t</span> nas_msg;<br>  <span class="hljs-built_in">memset</span>(&amp;nas_msg, <span class="hljs-number">0</span>, <span class="hljs-keyword">sizeof</span>(<span class="hljs-type">nas_message_t</span>));<br>  <span class="hljs-type">int</span> size = <span class="hljs-number">0</span>;<br>  <span class="hljs-type">nas_message_security_header_t</span> *header = &amp;nas_msg.header;<br>  <span class="hljs-comment">/* Decode the first octet of the header (security header type or EPS</span><br><span class="hljs-comment">  * bearer identity, and protocol discriminator) */</span><br>  DECODE_U8((<span class="hljs-type">char</span> *) pdu_buf, *(<span class="hljs-type">uint8_t</span> *) (header), size);<br><br>  <span class="hljs-comment">/* Decode NAS message only if decodable*/</span><br>  <span class="hljs-keyword">if</span> (!(header-&gt;security_header_type &lt;= SECURITY_HEADER_TYPE_INTEGRITY_PROTECTED<br>        &amp;&amp; header-&gt;protocol_discriminator == EPS_MOBILITY_MANAGEMENT_MESSAGE<br>        &amp;&amp; pdu_len &gt; NAS_MESSAGE_SECURITY_HEADER_SIZE))<br>    <span class="hljs-keyword">return</span>;<br><br>  <span class="hljs-comment">// ......</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>但是这个解码好像不对。经过和OAI 团队的沟通发现，IMSI确实不能在gNB侧解，我服了…所以我又绕回来了，其实可以通过接入时的CU/DU id 对用户进行区分。那么思路就是找到CU_ID 和 DU_ID的映射关系，显然这个关系应该要用Hash表实现。</p>
+<h3 id="CU-DU下的UE标识"><a href="#CU-DU下的UE标识" class="headerlink" title="CU/DU下的UE标识"></a>CU/DU下的UE标识</h3><p>本来想着自己实现一个Hash Table，但是我想了想像OAI这样的系统肯定有自己的实现，所以我用<code>grep</code>命令搜索Hashtable，然后在<code>./common/utils/hashtable/hashtable.c</code>找到了其实现。具体的使用用例可以在其他地方搜索到，我就不展开了，我们主要需要用到这个类中的<code>cu_get_f1_ue_data</code>以及<code>du_get_f1_ue_data</code>函数，用于获取<code>CU_UE_ID</code>和<code>DU_UE_ID</code>,简而言之，他们可以实现RNTI&lt;—&gt;普通ID(e.g., 1,2,3,…N)的相互转换。</p>
+<p><img src="https://s2.loli.net/2024/07/09/FCwnMe2VHgIXDb7.png" srcset="/img/loading.gif" lazyload alt="获取UE_ID"></p>
 <p>注意对这个表的操作是一定要加锁的，否则可能会有同步的问题。但是同步加锁也带来一个新的问题，那就是可能会增加读取的时间。总之我们现在可以分辨出来哪些数据归属于哪个UE了，下一个需要解决的就是如何同时获取对应时间内的数据，因为原本编写的代码是针对一个UE每做一次信道估计发送一次，现在有两个UE同时接入的情况下，需要重新考虑一下编写的方式。</p>
 <h3 id="多UE情况下的Protobuf编写"><a href="#多UE情况下的Protobuf编写" class="headerlink" title="多UE情况下的Protobuf编写"></a>多UE情况下的Protobuf编写</h3><p>把最外层的信息包裹在<code>if ((srs-&gt;active == 1) &amp;&amp; (srs-&gt;frame == frame_rx) &amp;&amp; (srs-&gt;slot == slot_rx))</code>的代码块里。此时如果：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LOG_I(NR_PHY, <span class="string">&quot;(%d.%d) gNB is waiting for SRS, id = %i\n&quot;</span>, frame_rx, slot_rx, i);</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs c">LOG_I(NR_PHY, <span class="hljs-string">&quot;(%d.%d) gNB is waiting for SRS, id = %i\n&quot;</span>, frame_rx, slot_rx, i);<br></code></pre></td></tr></table></figure>
 <p>那么打印出来的ID将会对应的成为SRS估计的顺序标号。接下来就是顺理成章的代码coding了。我将Proto文件保存在<code>openair1/SCHED_NR/MESSAGES/channel_matrix.proto</code>下，内容如下：</p>
-<figure class="highlight protobuf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">syntax = <span class="string">&quot;proto2&quot;</span>;</span><br><span class="line"><span class="keyword">package</span> MultiUEMatrix;</span><br><span class="line"></span><br><span class="line"><span class="keyword">message </span><span class="title class_">UE_SRS_PACK</span>&#123;</span><br><span class="line">    <span class="keyword">repeated</span> NR_SRS_PACK UE_SRS= <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">message </span><span class="title class_">NR_SRS_PACK</span>&#123;</span><br><span class="line">    <span class="keyword">required</span> <span class="type">int32</span> ue_id = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">repeated</span> NR_SRS_INFO Matrix = <span class="number">2</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">message </span><span class="title class_">NR_SRS_INFO</span>&#123;</span><br><span class="line">    <span class="keyword">repeated</span> RESULT PRB_ITEM  = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// RESULT存放的其实是和信道相关的复数结构，由于以上指标都是复数形式所以就统一命名为RESULT</span></span><br><span class="line"><span class="keyword">message </span><span class="title class_">RESULT</span> &#123;</span><br><span class="line">    <span class="keyword">required</span> <span class="type">int32</span> image = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">required</span> <span class="type">int32</span> real  = <span class="number">2</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight protobuf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs protobuf">syntax = <span class="hljs-string">&quot;proto2&quot;</span>;<br><span class="hljs-keyword">package</span> MultiUEMatrix;<br><br><span class="hljs-keyword">message </span><span class="hljs-title class_">UE_SRS_PACK</span>&#123;<br>    <span class="hljs-keyword">repeated</span> NR_SRS_PACK UE_SRS= <span class="hljs-number">1</span>;<br>&#125;<br><br><span class="hljs-keyword">message </span><span class="hljs-title class_">NR_SRS_PACK</span>&#123;<br>    <span class="hljs-keyword">required</span> <span class="hljs-type">int32</span> ue_id = <span class="hljs-number">1</span>;<br>    <span class="hljs-keyword">repeated</span> NR_SRS_INFO Matrix = <span class="hljs-number">2</span>;<br>&#125;<br><span class="hljs-keyword">message </span><span class="hljs-title class_">NR_SRS_INFO</span>&#123;<br>    <span class="hljs-keyword">repeated</span> RESULT PRB_ITEM  = <span class="hljs-number">1</span>;<br>&#125;<br><span class="hljs-comment">// RESULT存放的其实是和信道相关的复数结构，由于以上指标都是复数形式所以就统一命名为RESULT</span><br><span class="hljs-keyword">message </span><span class="hljs-title class_">RESULT</span> &#123;<br>    <span class="hljs-keyword">required</span> <span class="hljs-type">int32</span> image = <span class="hljs-number">1</span>;<br>    <span class="hljs-keyword">required</span> <span class="hljs-type">int32</span> real  = <span class="hljs-number">2</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
 <p>编译的命令为：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">protoc-c -I ./ channel_matrix.proto --c_out ./</span><br><span class="line">protoc -I ./ channel_matrix.proto --python_out ./</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">protoc-c -I ./ channel_matrix.proto --c_out ./<br>protoc -I ./ channel_matrix.proto --python_out ./<br></code></pre></td></tr></table></figure>
 <h3 id="复杂的循环逻辑"><a href="#复杂的循环逻辑" class="headerlink" title="复杂的循环逻辑"></a>复杂的循环逻辑</h3><p>循环内有两个if条件判断，进入了这个判断的才是对应的SRS流的位置。到这里都很好解决，问题出在最后结合多个UE打包发送的时候。首先，发送Proto不可以在虚拟换的最外层，因为最外层会每时每刻都在进行数据的接收，我们需要把发送的逻辑放在两个if条件内的区域。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (srs) &#123;</span><br><span class="line">     <span class="keyword">if</span> ((srs-&gt;active == <span class="number">1</span>) &amp;&amp; (srs-&gt;frame == frame_rx) &amp;&amp; (srs-&gt;slot == slot_rx)) &#123;</span><br><span class="line">         ...</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">if</span> (srs) &#123;<br>     <span class="hljs-keyword">if</span> ((srs-&gt;active == <span class="hljs-number">1</span>) &amp;&amp; (srs-&gt;frame == frame_rx) &amp;&amp; (srs-&gt;slot == slot_rx)) &#123;<br>         ...<br>     &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 <p>只有<code>(srs-&gt;active ==1) &amp;&amp; (srs-&gt;slot == slot_rx)</code>为真的时候，才会进行SRS相关的操作，其余的时候，因为循环写在条件外侧，因此需要在确认该时刻有SRS后才初始化protobuf的外层大包。具体的代码因为保密缘故我不能贴出来，但是我来阐述一下出现的问题：</p>
 <p>当只有一个UE接入的时候，数据可以正常的在接收端被接收。但是当第二个UE也开始发送业务时，Protobuf编码出了问题。这很难想象到底是哪一步的缘故，因为Protobuf编码不可能会有错的，我感觉可能是有信号竞争，所以导致内部混乱。但是GDB下查看不了太多信息，所以以防万一，我们编写个逻辑方面的单元测试看看是个什么情况。</p>
 <h2 id="单元测试"><a href="#单元测试" class="headerlink" title="单元测试"></a>单元测试</h2><p>首先编写CMakeLists.txt:</p>
-<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.10</span>)</span><br><span class="line"><span class="keyword">project</span>(prototest)</span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span>(CMAKE_C_STANDARD <span class="number">11</span>)</span><br><span class="line"><span class="keyword">set</span>(CMAKE_C_STANDARD_REQUIRED <span class="keyword">ON</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">include_directories</span>(protobuf-c)</span><br><span class="line"></span><br><span class="line"><span class="keyword">add_executable</span>(prototest </span><br><span class="line">  <span class="keyword">test</span>.c</span><br><span class="line">  protobuf-c/protobuf-c/protobuf-c.c</span><br><span class="line">  protobuf-c/protobuf-c/protobuf-c.h</span><br><span class="line">  MESSAGES/channel_matrx.pb-c.h</span><br><span class="line">  MESSAGES/channel_matrx.pb-c.c</span><br><span class="line">)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs cmake"><span class="hljs-keyword">cmake_minimum_required</span>(VERSION <span class="hljs-number">3.10</span>)<br><span class="hljs-keyword">project</span>(prototest)<br><br><span class="hljs-keyword">set</span>(CMAKE_C_STANDARD <span class="hljs-number">11</span>)<br><span class="hljs-keyword">set</span>(CMAKE_C_STANDARD_REQUIRED <span class="hljs-keyword">ON</span>)<br><br><br><span class="hljs-keyword">include_directories</span>(protobuf-c)<br><br><span class="hljs-keyword">add_executable</span>(prototest <br>  <span class="hljs-keyword">test</span>.c<br>  protobuf-c/protobuf-c/protobuf-c.c<br>  protobuf-c/protobuf-c/protobuf-c.h<br>  MESSAGES/channel_matrx.pb-c.h<br>  MESSAGES/channel_matrx.pb-c.c<br>)<br><br></code></pre></td></tr></table></figure>
 <p>然后新建一个 <code>build</code> 文件夹用于存放C的程序以及中间结果。编写测试用的<code>test.c</code>，我提取了SRS运算的相关流程，代码比较长，可参考<a target="_blank" rel="noopener" href="https://github.com/Dafeigy/Test-with-OAI">Github仓库</a>内的<code>test.c</code>。测试仓库的目录如下：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">cybersh1t@DESKTOP-BLEL2PT:~/prog/Protobuf-<span class="built_in">test</span>$ tree -I protobuf-c -L 2</span><br><span class="line">.</span><br><span class="line">├── CMakeLists.txt</span><br><span class="line">├── MESSAGES</span><br><span class="line">│   ├── __pycache__</span><br><span class="line">│   ├── channel_matrx.pb-c.c</span><br><span class="line">│   ├── channel_matrx.pb-c.h</span><br><span class="line">│   ├── channel_matrx.proto</span><br><span class="line">│   └── channel_matrx_pb2.py</span><br><span class="line">├── build</span><br><span class="line">│   ├── CMakeCache.txt</span><br><span class="line">│   ├── CMakeFiles</span><br><span class="line">│   ├── Makefile</span><br><span class="line">│   ├── cmake_install.cmake</span><br><span class="line">│   └── prototest</span><br><span class="line">├── receiver.py</span><br><span class="line">└── test.c</span><br><span class="line"></span><br><span class="line">4 directories, 11 files</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs bash">cybersh1t@DESKTOP-BLEL2PT:~/prog/Protobuf-<span class="hljs-built_in">test</span>$ tree -I protobuf-c -L 2<br>.<br>├── CMakeLists.txt<br>├── MESSAGES<br>│   ├── __pycache__<br>│   ├── channel_matrx.pb-c.c<br>│   ├── channel_matrx.pb-c.h<br>│   ├── channel_matrx.proto<br>│   └── channel_matrx_pb2.py<br>├── build<br>│   ├── CMakeCache.txt<br>│   ├── CMakeFiles<br>│   ├── Makefile<br>│   ├── cmake_install.cmake<br>│   └── prototest<br>├── receiver.py<br>└── test.c<br><br>4 directories, 11 files<br></code></pre></td></tr></table></figure>
 <p>在项目根目录下接着输入如下命令：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> build</span><br><span class="line">cmake ../</span><br><span class="line">cmake --build .</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">cd</span> build<br>cmake ../<br>cmake --build .<br></code></pre></td></tr></table></figure>
 <p>编译成功后，可以进行如下的操作来运行测试：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// C <span class="built_in">test</span></span><br><span class="line">sudo ./prototest </span><br><span class="line"></span><br><span class="line">// Python Receiver</span><br><span class="line">python3 receiver.py</span><br></pre></td></tr></table></figure>
-
-<p><img src= "/img/loading.gif" data-lazy-src="https://s2.loli.net/2024/07/05/1pRaHuJoc9KrwWm.png" alt="模拟GNB处理的行为"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">// C <span class="hljs-built_in">test</span><br>sudo ./prototest <br><br>// Python Receiver<br>python3 receiver.py<br></code></pre></td></tr></table></figure>
+<p><img src="https://s2.loli.net/2024/07/05/1pRaHuJoc9KrwWm.png" srcset="/img/loading.gif" lazyload alt="模拟GNB处理的行为"></p>
 <p>看到这里就应该可以啦！看上去我的逻辑是没问题的，那应该是多线程出了些问题（？我尝试加了线程锁，但是并没有太大改观，那么问题到底处在哪里了我请问了…</p>
 <h2 id="分析与代码修改"><a href="#分析与代码修改" class="headerlink" title="分析与代码修改"></a>分析与代码修改</h2><p>在函数的<code>phy_procedures_gNB_TX(processingData_L1tx_t *msgTx,int frame, int slot,int do_meas)</code>这个函数中，相关的逻辑代码是放在这样的结构下运行的：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; gNB-&gt;max_nb_srs; i++) &#123;</span><br><span class="line">    <span class="keyword">if</span> (srs) &#123;</span><br><span class="line">        <span class="keyword">if</span> ((srs-&gt;active == <span class="number">1</span>) &amp;&amp; (srs-&gt;frame == frame_rx) &amp;&amp; (srs-&gt;slot == slot_rx)) &#123;</span><br><span class="line">     		<span class="keyword">for</span> (<span class="type">int</span> uI = <span class="number">0</span>; uI &lt; nr_srs_channel_iq_matrix.num_ue_srs_ports; uI++) &#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="type">int</span> gI = <span class="number">0</span>; gI &lt; nr_srs_channel_iq_matrix.num_gnb_antenna_elements; gI++) &#123;</span><br><span class="line">                    <span class="keyword">for</span> (<span class="type">int</span> pI = <span class="number">0</span>; pI &lt; nr_srs_channel_iq_matrix.num_prgs; pI++) &#123;</span><br><span class="line">                    	channel_matrix[i][uI][gI][pI].r = xxx.r;</span><br><span class="line">                    	channel_matrix[i][uI][gI][pI].i = xxx.i;</span><br><span class="line">                  &#125;<span class="comment">// for (int pI = 0; pI &lt; nr_srs_channel_iq_matrix.num_prgs; pI++)</span></span><br><span class="line">                &#125;<span class="comment">// for (int gI = 0; gI &lt; nr_srs_channel_iq_matrix.num_gnb_antenna_elements; gI++)</span></span><br><span class="line">            &#125;<span class="comment">// for (int uI = 0; uI &lt; nr_srs_channel_iq_matrix.num_ue_srs_ports; uI++)</span></span><br><span class="line">        &#125;<span class="comment">// if ((srs-&gt;active == 1) &amp;&amp; (srs-&gt;frame == frame_rx) &amp;&amp; (srs-&gt;slot == slot_rx))</span></span><br><span class="line">    &#125;<span class="comment">// if (srs)</span></span><br><span class="line">&#125;<span class="comment">// for (int i = 0; i &lt; gNB-&gt;max_nb_srs; i++)</span></span><br></pre></td></tr></table></figure>
-
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> i = <span class="hljs-number">0</span>; i &lt; gNB-&gt;max_nb_srs; i++) &#123;<br>    <span class="hljs-keyword">if</span> (srs) &#123;<br>        <span class="hljs-keyword">if</span> ((srs-&gt;active == <span class="hljs-number">1</span>) &amp;&amp; (srs-&gt;frame == frame_rx) &amp;&amp; (srs-&gt;slot == slot_rx)) &#123;<br>     		<span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> uI = <span class="hljs-number">0</span>; uI &lt; nr_srs_channel_iq_matrix.num_ue_srs_ports; uI++) &#123;<br>                <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> gI = <span class="hljs-number">0</span>; gI &lt; nr_srs_channel_iq_matrix.num_gnb_antenna_elements; gI++) &#123;<br>                    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> pI = <span class="hljs-number">0</span>; pI &lt; nr_srs_channel_iq_matrix.num_prgs; pI++) &#123;<br>                    	channel_matrix[i][uI][gI][pI].r = xxx.r;<br>                    	channel_matrix[i][uI][gI][pI].i = xxx.i;<br>                  &#125;<span class="hljs-comment">// for (int pI = 0; pI &lt; nr_srs_channel_iq_matrix.num_prgs; pI++)</span><br>                &#125;<span class="hljs-comment">// for (int gI = 0; gI &lt; nr_srs_channel_iq_matrix.num_gnb_antenna_elements; gI++)</span><br>            &#125;<span class="hljs-comment">// for (int uI = 0; uI &lt; nr_srs_channel_iq_matrix.num_ue_srs_ports; uI++)</span><br>        &#125;<span class="hljs-comment">// if ((srs-&gt;active == 1) &amp;&amp; (srs-&gt;frame == frame_rx) &amp;&amp; (srs-&gt;slot == slot_rx))</span><br>    &#125;<span class="hljs-comment">// if (srs)</span><br>&#125;<span class="hljs-comment">// for (int i = 0; i &lt; gNB-&gt;max_nb_srs; i++)</span><br></code></pre></td></tr></table></figure>
 <p>并且最外层的这个<code>i</code>变量也确实对应的是UE的id。但是我突然想到一点：有没有可能，虽然<code>i</code>代表的是UE，但是循环里只有一个<code>i</code>才是有UE，而其他<code>i</code>的取值并没有对应的SRS信息？因为假设是这样的话，那么从打印的结果来看，一个for循环时打印两次和<code>i</code>相关的值，以及不同次下for循环时打出唯一一个<code>i</code>的效果是一样的，为了验证我的猜想，我额外做了一些测试，发现确实就是我想的那种情况，那么真相大白了：就是这个OAI的代码逻辑的问题，导致每一次进行SRS相关信息的计算时，函数内只会进行一次计算，得到的结果也是只有一台UE的。</p>
 <p>这下就好办了，由于我们需要发送同一时刻的两台UE的信息，所以我们肯定要把这两个UE的数据都拿到再打包。我们可以建立一个N维数组来存储数据，不过比较遗憾的是暂时不能动态的分配内存，因为这样的代码写起来很麻烦，并且我还想使用到一些静态的特性。Anyway，静态声明一个4维数组，第一个维度可以是期望接入的UE数量，第二个维度是天线数，第三个维度是子载波数，最后一个维度就是2，对应了IQ数据中的实部虚部。</p>
 <p>数据的赋值在逻辑中即可实现，并在最后判断：当处理晚目标UE数的数据后时再把数据发送出去，这样就可以获得多UE下的数据流了。</p>
 <h2 id="稳定性与驱动更新"><a href="#稳定性与驱动更新" class="headerlink" title="稳定性与驱动更新"></a>稳定性与驱动更新</h2><p>主要的问题就是进行Proto业务时UE很容易断链，但还不确定是哪部分的原因。尝试更新UHD的驱动，现版本开发的OAI基于4.6，目前最新的UHD驱动为4.7，但我使用的是一年前的4.4版本。使用如下命令安装UHD的驱动：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># https://files.ettus.com/manual/page_build_guide.html</span></span><br><span class="line">sudo apt install -y autoconf automake build-essential ccache cmake cpufrequtils doxygen ethtool g++ git inetutils-tools libboost-all-dev libncurses5 libncurses5-dev libusb-1.0-0 libusb-1.0-0-dev libusb-dev python3-dev python3-mako python3-numpy python3-requests python3-scipy python3-setuptools python3-ruamel.yaml</span><br><span class="line"></span><br><span class="line">git <span class="built_in">clone</span> https://github.com/EttusResearch/uhd.git ~/uhd</span><br><span class="line"><span class="built_in">cd</span> ~/uhd</span><br><span class="line">git checkout v4.6.0.0</span><br><span class="line"><span class="built_in">cd</span> host</span><br><span class="line"><span class="built_in">mkdir</span> build</span><br><span class="line"><span class="built_in">cd</span> build</span><br><span class="line">cmake ../</span><br><span class="line">make -j $(<span class="built_in">nproc</span>)</span><br><span class="line">make <span class="built_in">test</span> <span class="comment"># This step is optional</span></span><br><span class="line">sudo make install</span><br><span class="line">sudo ldconfig</span><br><span class="line">sudo uhd_images_downloader</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># https://files.ettus.com/manual/page_build_guide.html</span><br>sudo apt install -y autoconf automake build-essential ccache cmake cpufrequtils doxygen ethtool g++ git inetutils-tools libboost-all-dev libncurses5 libncurses5-dev libusb-1.0-0 libusb-1.0-0-dev libusb-dev python3-dev python3-mako python3-numpy python3-requests python3-scipy python3-setuptools python3-ruamel.yaml<br><br>git <span class="hljs-built_in">clone</span> https://github.com/EttusResearch/uhd.git ~/uhd<br><span class="hljs-built_in">cd</span> ~/uhd<br>git checkout v4.6.0.0<br><span class="hljs-built_in">cd</span> host<br><span class="hljs-built_in">mkdir</span> build<br><span class="hljs-built_in">cd</span> build<br>cmake ../<br>make -j $(<span class="hljs-built_in">nproc</span>)<br>make <span class="hljs-built_in">test</span> <span class="hljs-comment"># This step is optional</span><br>sudo make install<br>sudo ldconfig<br>sudo uhd_images_downloader<br></code></pre></td></tr></table></figure>
 <p>这一步完成后，由于操作的USRP是N310，需要自己把镜像给捣鼓进去，所以下一步就是配置N310.下载N310的文件系统，下载地址：<a target="_blank" rel="noopener" href="https://files.ettus.com/binaries/cache/n3xx/">https://files.ettus.com/binaries/cache/n3xx/</a> 。找到和驱动版本对应的文件系统下载即可，这里我下载的是mender：</p>
-<p><img src= "/img/loading.gif" data-lazy-src="https://s2.loli.net/2024/07/09/ausIMUWT4DLwPJ5.png" alt="Ettus的文件系统列表"></p>
+<p><img src="https://s2.loli.net/2024/07/09/ausIMUWT4DLwPJ5.png" srcset="/img/loading.gif" lazyload alt="Ettus的文件系统列表"></p>
 <p>下载结束后，将压缩包内的<code>.mender</code>文件传输至N310的ssh接口内：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp C:\Users\Cybersh1t\Desktop\n3xx_common_mender_default-v4.6.0.0\usrp_n3xx_fs.mender root@192.168.3.7:~/.</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">scp C:\Users\Cybersh1t\Desktop\n3xx_common_mender_default-v4.6.0.0\usrp_n3xx_fs.mender root@192.168.3.7:~/.<br></code></pre></td></tr></table></figure>
 <p>其中的<code>root@192.168.3.7</code>指的是N310的操作系统，IP地址通过<code>uhd_find_devices</code>可以获取，这一步骤可能有两个IP，需要使用和你当前电脑同一网段的IP才可。文件传输过去后，使用如下命令更新操作系统：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mender install ./usrp_n3xx_fs.mender</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">mender install ./usrp_n3xx_fs.mender<br></code></pre></td></tr></table></figure>
 <p>然后需要经过漫长的等待其安装，完毕后reboot一下，然后移除掉旧的ssh私钥，重新生成新的。如果能顺利进入系统，那么使用<code>mender -commit</code>命令确认更改即可。更新镜像通过如下命令执行：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ls</span> /usr/share/uhd/images | grep n310</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">ls</span> /usr/share/uhd/images | grep n310<br></code></pre></td></tr></table></figure>
 <p>其中XG HG WG分别代表不同的sfp接口模式：</p>
 <ul>
-<li>1Gb SFP0：将光转电模块插到SFP0上，用网线连接linux主机，设置网口mtu&#x3D;1500（镜像使用HG）</li>
-<li>10Gb SFP1：使用光纤或者万兆直连线将sfp1和服务器光口相连，mtu&#x3D;8000（镜像使用HG或XG）</li>
-<li>双10Gb SFP0&#x2F;SFP1：使用光纤或者万兆直连线将sfp0 sfp1和服务器光口相连，mtu&#x3D;8000（usrp n310的镜像使用XG）</li>
+<li>1Gb SFP0：将光转电模块插到SFP0上，用网线连接linux主机，设置网口mtu=1500（镜像使用HG）</li>
+<li>10Gb SFP1：使用光纤或者万兆直连线将sfp1和服务器光口相连，mtu=8000（镜像使用HG或XG）</li>
+<li>双10Gb SFP0/SFP1：使用光纤或者万兆直连线将sfp0 sfp1和服务器光口相连，mtu=8000（usrp n310的镜像使用XG）</li>
 </ul>
 <p>在N310的文件系统中更新镜像：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uhd_image_loader --args <span class="string">&quot;type=n3xx,fpga=XG&quot;</span> --fpga-path=<span class="string">&quot;/usr/share/uhd/images/usrp_n310_fpga_XG.bit&quot;</span></span><br></pre></td></tr></table></figure>
-
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">uhd_image_loader --args <span class="hljs-string">&quot;type=n3xx,fpga=XG&quot;</span> --fpga-path=<span class="hljs-string">&quot;/usr/share/uhd/images/usrp_n310_fpga_XG.bit&quot;</span><br></code></pre></td></tr></table></figure>
 <p>最后的最后，不要忘记优化MTU：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> ((i=<span class="number">0</span>;i&lt;$(nproc);i++)); <span class="keyword">do</span> sudo cpufreq-set -c <span class="variable">$i</span> -r -g performance; <span class="keyword">done</span></span><br><span class="line">sudo sysctl -w net.core.wmem_max=62500000</span><br><span class="line">sudo sysctl -w net.core.rmem_max=62500000</span><br><span class="line">sudo sysctl -w net.core.wmem_default=62500000</span><br><span class="line">sudo sysctl -w net.core.rmem_default=62500000</span><br><span class="line">sudo ethtool -G &lt;N310_if&gt; tx 4096 rx 4096</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-keyword">for</span> ((i=<span class="hljs-number">0</span>;i&lt;$(nproc);i++)); <span class="hljs-keyword">do</span> sudo cpufreq-set -c <span class="hljs-variable">$i</span> -r -g performance; <span class="hljs-keyword">done</span><br>sudo sysctl -w net.core.wmem_max=62500000<br>sudo sysctl -w net.core.rmem_max=62500000<br>sudo sysctl -w net.core.wmem_default=62500000<br>sudo sysctl -w net.core.rmem_default=62500000<br>sudo ethtool -G &lt;N310_if&gt; tx 4096 rx 4096<br></code></pre></td></tr></table></figure>
 <p>其中的<code>&lt;N310_if&gt;</code>为手动设置的N310的DHCP地址所对应的网口（也就是光口的名称），如果不进行这一步的话，会在运行时弹出一大堆的L。使用回默认的radio库设置并重新编译后，稳定性得到了巨大的提升，看来就是UHD驱动的问题。至此，开发结束！</p>
-</article><div class="post-copyright"><div class="post-copyright__author_group"><a class="post-copyright__author_img" href="/about/"><img class="post-copyright__author_img_front" src= "/img/loading.gif" data-lazy-src="https://pic.imgdb.cn/item/6696936cd9c307b7e97a9c1d.png"></a><div class="post-copyright__author_name">Laked22</div><div class="post-copyright__author_desc"></div></div><div class="post-tools" id="post-tools"><div class="post-tools-left"><div id="quit-box" onclick="RemoveRewardMask()"></div></div></div><div class="post-copyright__notice"><span class="post-copyright-info">本文是原创文章，采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0</a>协议，完整转载请注明来自<a href="/">Laked22</a></span></div></div><div class="post-tools-right"><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/OAI/"><span class="tags-punctuation"></span>OAI<span class="tagsPageCount">4</span></a><a class="post-meta__tags" href="/tags/%E7%89%A9%E7%90%86%E5%B1%82/"><span class="tags-punctuation"></span>物理层<span class="tagsPageCount">1</span></a><a class="post-meta__tags" href="/tags/CMake/"><span class="tags-punctuation"></span>CMake<span class="tagsPageCount">1</span></a><a class="post-meta__tags" href="/tags/Protobuf/"><span class="tags-punctuation"></span>Protobuf<span class="tagsPageCount">1</span></a></div></div><div class="social-share"></div></div><nav class="needEndHide pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/07/16/How-CPU-Cache-Work/"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">【译】Exploring How Cache Memory Really Works</div></div></a></div><div class="next-post pull-right"><a href="/2024/07/08/Rust-Snake-AI-NN-related/"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">使用Rust编写游玩贪吃蛇的神经网络（一）</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-content"><div class="card-info-bg-top"><div class="is-center"><div class="author-info__top-group"><div class="author-info__sayhi" id="author-info__sayhi" onclick="sco.changeSayHelloText()">sayhello.morning</div></div></div></div><a class="card-info-avatar" href="/about/" title="头像"><div class="avatar-img"><img src= "/img/loading.gif" data-lazy-src="https://pic.imgdb.cn/item/6696936cd9c307b7e97a9c1d.png" alt="头像"></div></a><div class="card-info__desc_group"><div class="author-info__name">小林花子</div><div class="author-info__desc"></div><div class="card-info__data is-center"><a href="/archives/" title="累计文章数:21"><div class="length-num">21</div><div class="headline">文章</div></a><a href="/tags/" title="标签总数:42"><div class="length-num">42</div><div class="headline">标签</div></a><a href="/categories/" title="分类总数:8"><div class="length-num">8</div><div class="headline">分类</div></a></div><div class="card-info-social-icons is-center"><a class="social-icon" target="_blank" rel="noopener" href="https://github.com/dafeigy" title="Github"><i class="solitude  st-github-line"></i></a></div></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="solitude st-menu-line"></i><span>文章目录</span></div><div class="toc-content" id="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8%E7%89%A9%E7%90%86%E5%B1%82%E6%A0%87%E8%AF%86UE"><span class="toc-text">在物理层标识UE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="toc-text">开发环境配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%80%9D%E8%B7%AF"><span class="toc-text">解决思路</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#IMSI%E5%92%8C%E7%89%A9%E7%90%86ID%E7%9A%84%E7%9B%B8%E4%BA%92%E8%BD%AC%E6%8D%A2"><span class="toc-text">IMSI和物理ID的相互转换</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CU-DU%E4%B8%8B%E7%9A%84UE%E6%A0%87%E8%AF%86"><span class="toc-text">CU&#x2F;DU下的UE标识</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9AUE%E6%83%85%E5%86%B5%E4%B8%8B%E7%9A%84Protobuf%E7%BC%96%E5%86%99"><span class="toc-text">多UE情况下的Protobuf编写</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%8D%E6%9D%82%E7%9A%84%E5%BE%AA%E7%8E%AF%E9%80%BB%E8%BE%91"><span class="toc-text">复杂的循环逻辑</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95"><span class="toc-text">单元测试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E6%9E%90%E4%B8%8E%E4%BB%A3%E7%A0%81%E4%BF%AE%E6%94%B9"><span class="toc-text">分析与代码修改</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A8%B3%E5%AE%9A%E6%80%A7%E4%B8%8E%E9%A9%B1%E5%8A%A8%E6%9B%B4%E6%96%B0"><span class="toc-text">稳定性与驱动更新</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="solitude st-map-line"></i><span>最近发布</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2024/07/16/How-CPU-Cache-Work/" title="【译】Exploring How Cache Memory Really Works"><img alt="【译】Exploring How Cache Memory Really Works" src= "/img/loading.gif" data-lazy-src="https://pic.imgdb.cn/item/6696805ad9c307b7e94e067b.jpg"></a><div class="content"><a class="title" href="/2024/07/16/How-CPU-Cache-Work/" title="【译】Exploring How Cache Memory Really Works">【译】Exploring How Cache Memory Really Works</a><a class="article-recent_post_categories" href="/2024/07/16/How-CPU-Cache-Work/">文章翻译</a></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/07/09/OAI-Multi_UEs_behaviors/" title="OAI开发记录——多UE接入下的物理层行为"><img alt="OAI开发记录——多UE接入下的物理层行为" src= "/img/loading.gif" data-lazy-src="https://pic.imgdb.cn/item/6696865ad9c307b7e95be385.jpg"></a><div class="content"><a class="title" href="/2024/07/09/OAI-Multi_UEs_behaviors/" title="OAI开发记录——多UE接入下的物理层行为">OAI开发记录——多UE接入下的物理层行为</a><a class="article-recent_post_categories" href="/2024/07/09/OAI-Multi_UEs_behaviors/">OAI</a></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/07/08/Rust-Snake-AI-NN-related/" title="使用Rust编写游玩贪吃蛇的神经网络（一）"><img alt="使用Rust编写游玩贪吃蛇的神经网络（一）" src= "/img/loading.gif" data-lazy-src="https://s2.loli.net/2024/07/04/QAtIcu4ROM9Sk3N.png"></a><div class="content"><a class="title" href="/2024/07/08/Rust-Snake-AI-NN-related/" title="使用Rust编写游玩贪吃蛇的神经网络（一）">使用Rust编写游玩贪吃蛇的神经网络（一）</a><a class="article-recent_post_categories" href="/2024/07/08/Rust-Snake-AI-NN-related/">摸鱼折腾</a></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/07/01/Rust-Snake-AI-Introduction/" title="使用Rust编写游玩贪吃蛇的神经网络（零）"><img alt="使用Rust编写游玩贪吃蛇的神经网络（零）" src= "/img/loading.gif" data-lazy-src="https://s2.loli.net/2024/07/04/QAtIcu4ROM9Sk3N.png"></a><div class="content"><a class="title" href="/2024/07/01/Rust-Snake-AI-Introduction/" title="使用Rust编写游玩贪吃蛇的神经网络（零）">使用Rust编写游玩贪吃蛇的神经网络（零）</a><a class="article-recent_post_categories" href="/2024/07/01/Rust-Snake-AI-Introduction/">摸鱼折腾</a></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/06/24/ChartsGPT%20%E6%9E%84%E5%BB%BA/" title="ChartsGPT：使用自然语言生成图表"><img alt="ChartsGPT：使用自然语言生成图表" src= "/img/loading.gif" data-lazy-src="https://pic.imgdb.cn/item/66968691d9c307b7e95c57f0.png"></a><div class="content"><a class="title" href="/2024/06/24/ChartsGPT%20%E6%9E%84%E5%BB%BA/" title="ChartsGPT：使用自然语言生成图表">ChartsGPT：使用自然语言生成图表</a><a class="article-recent_post_categories" href="/2024/06/24/ChartsGPT%20%E6%9E%84%E5%BB%BA/">摸鱼折腾</a></div></div></div></div></div></div></main><footer id="footer"><div id="st-footer-bar"><div class="footer-logo"><span>Laked22</span></div><div class="footer-bar-description">来自 Cybersh1t 的文章</div><a class="footer-bar-link" href="/about/">了解更多</a></div><div id="footer_deal"></div><div id="st-footer"></div><div id="footer-bar"><div class="footer-bar-links"><div class="footer-bar-left"><div class="copyright">© 2021 - 2024 By&nbsp;<a class="footer-bar-link" href="/">小林花子</a></div></div><div class="footer-bar-right"><a class="footer-bar-link" target="_blank" rel="noopener" href="https://github.com/valor-x/hexo-theme-solitude" alt="主题">主题</a><a class="footer-bar-link cc" href="/null" aria-label="copyright"><i class="solitude st-copyright-line"></i><i class="solitude st-creative-commons-by-line"></i><i class="solitude st-creative-commons-nc-line"></i><i class="solitude st-creative-commons-nd-line"></i></a></div></div></div></footer></div><!-- right_menu--><div id="rightMenu"><div class="rightMenu-group rightMenu-small"><div class="rightMenu-item" id="menu-backward"><i class="solitude st-arrow-left-line"></i></div><div class="rightMenu-item" id="menu-forward"><i class="solitude st-arrow-right-line"></i></div><div class="rightMenu-item" id="menu-refresh"><i class="solitude st-restart-line"></i></div><div class="rightMenu-item" id="menu-top"><i class="solitude st-arrow-up-line"></i></div></div><div class="rightMenu-group rightMenu-line rightMenuPlugin"><div class="rightMenu-item" id="menu-copytext"><i class="solitude st-copy-fill"></i><span>复制选中文本</span></div><div class="rightMenu-item" id="menu-pastetext"><i class="solitude st-clipboard-fill"></i><span>粘贴文本</span></div><div class="rightMenu-item" id="menu-newwindow"><i class="solitude st-window-fill"></i><span>新窗口打开</span></div><div class="rightMenu-item" id="menu-copylink"><i class="solitude st-link-line"></i><span>复制链接地址</span></div><div class="rightMenu-item" id="menu-copyimg"><i class="solitude st-copy-fill"></i><span>复制此图片</span></div><div class="rightMenu-item" id="menu-downloadimg"><i class="solitude st-download-cloud-fill"></i><span>下载此图片</span></div></div><div class="rightMenu-group rightMenu-line rightMenuOther"></div><div class="rightMenu-group rightMenu-line rightMenuOther"><div class="rightMenu-item" id="menu-darkmode" onclick="sco.switchDarkMode()"><i class="solitude st-moon-clear-fill"></i><span class="menu-darkmode-text">深色模式</span></div></div></div><div id="rightmenu-mask"></div><!-- inject body--><div><script src="/js/utils.js?v=1.11.3"></script><script src="/js/main.js?v=1.11.3"></script><script src="/js/third_party/waterfall.min.js?v=1.11.3"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/pjax/0.2.8/pjax.min.js"></script><script src="/js/third_party/universe.min.js?v=1.11.3"></script><script>dark()
-</script><script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-lazyload/19.1.3/lazyload.iife.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/node-snackbar/0.1.16/snackbar.min.js"></script><script src="/js/covercolor/local.js?v=1.11.3"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js"></script><script src="/js/right_menu.js?v=1.11.3"></script><div class="js-pjax"></div></div><!-- newest comment--><!-- pjax--><script>const pjax = new Pjax({
-    elements: 'a:not([target="_blank"])',
-    selectors: ['title','#body-wrap','#site-config','meta[name="description"]','.js-pjax','meta[property^="og:"]','#config-diff'],
-    cacheBust: false,
-    analytics: false,
-    scrollRestoration: false
-})
 
-document.querySelectorAll('script[data-pjax]').forEach(item => {
-    const newScript = document.createElement('script')
-    const content = item.text || item.textContent || item.innerHTML || ""
-    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
-    newScript.appendChild(document.createTextNode(content))
-    item.parentNode.replaceChild(newScript, item)
-})
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
 
-document.addEventListener('pjax:complete', () => {
-    window.refreshFn()
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/OAI/" class="category-chain-item">OAI</a>
+  
+  
 
-    document.querySelectorAll('script[data-pjax]').forEach(item => {
-        const newScript = document.createElement('script')
-        const content = item.text || item.textContent || item.innerHTML || ""
-        Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
-        newScript.appendChild(document.createTextNode(content))
-        item.parentNode.replaceChild(newScript, item)
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/OAI/" class="print-no-link">#OAI</a>
+      
+        <a href="/tags/%E7%89%A9%E7%90%86%E5%B1%82/" class="print-no-link">#物理层</a>
+      
+        <a href="/tags/CMake/" class="print-no-link">#CMake</a>
+      
+        <a href="/tags/Protobuf/" class="print-no-link">#Protobuf</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>OAI开发记录——多UE接入下的物理层行为</div>
+      <div>http://example.com/2024/07/09/OAI-Multi_UEs_behaviors/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>L4k3d22</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年7月9日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/07/16/How-CPU-Cache-Work/" title="【译】Exploring How Cache Memory Really Works">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">【译】Exploring How Cache Memory Really Works</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/07/08/Rust-Snake-AI-NN-related/" title="使用Rust编写游玩贪吃蛇的神经网络（一）">
+                        <span class="hidden-mobile">使用Rust编写游玩贪吃蛇的神经网络（一）</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://github.com/dafeigy" target="_blank" rel="nofollow noopener"><span>L4k3d22</span></a> <i class="iconfont icon-tool"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
     })
+  </script>
 
-    GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
 
-})
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
 
-document.addEventListener('pjax:error', (e) => {
-    if (e.request.status === 404) {
-        pjax.loadUrl('/404.html')
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
     }
-})</script><!-- theme--><script>initTheme = () => {
-    const cachedMode = utils.saveToLocal.get('theme');
-    if (cachedMode === undefined)
-        document.documentElement.setAttribute('data-theme', 'light');
-    else
-        document.documentElement.setAttribute('data-theme', cachedMode);
-    is_rm && rm.mode(cachedMode === 'dark')
-}
-initTheme()</script><!-- google adsense--><!-- search--><!-- Tianli-Talk--><!-- music--></body></html><script>const posts=["2024/07/16/How-CPU-Cache-Work/","2024/07/09/OAI-Multi_UEs_behaviors/","2024/07/08/Rust-Snake-AI-NN-related/","2024/07/01/Rust-Snake-AI-Introduction/","2024/06/24/ChartsGPT 构建/","2024/06/16/Nine-Sols-Reports/","2024/06/05/24年杂记/","2024/06/03/清板射击/","2024/06/02/5G手机接入入网流程/","2024/06/02/5GNR-参考信号（一）/","2024/06/02/5GNR-参考信号（三）/","2024/06/02/5GNR-参考信号（二）/","2024/06/02/装机/","2024/06/02/编译Lua源码/","2024/06/02/Pytorch训练模型的基本过程/","2024/06/02/Python装饰器/","2024/06/02/LS信道估计与OAI实现/","2024/06/02/Free5GC+OAI gNB+COTSUE/","2024/06/02/free5gc + OAI gNB + OAI nrUE/","2024/06/02/CMA/","2022/06/18/乔斯伯主力/"];function toRandomPost(){ pjax.loadUrl('/'+posts[Math.floor(Math.random()*posts.length)]); }</script>
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

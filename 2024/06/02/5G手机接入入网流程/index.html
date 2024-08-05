@@ -1,143 +1,412 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><title>UE手机入网流程 | Laked22</title><noscript>开启JavaScript才能访问本站哦~</noscript><link rel="icon" href="https://pic.imgdb.cn/item/66968c76d9c307b7e96a79c8.png"><!-- index.css--><link rel="stylesheet" href="/css/index.css?v=1.11.3"><!-- inject head--><link rel="stylesheet" href="https://cdn2.codesign.qq.com/icons/7pOrz0WXB5ZWJPX/latest/iconfont.css"><!-- aplayer--><!-- swiper--><!-- fancybox ui--><!-- katex--><!-- Open Graph--><meta name="description" content="在分析UE接入OAI的gNB基站中经常出现连接不稳定的情况，因此对手机接入的流程进行了分析。在5G中的UE入网流程如上图所示，下面将会对每个部分详细展开。 开机我们这里说的开机是系统初始化，此时UE会读取自身的SIM卡中存储的信息，判断有没有存储先验信息，该信息用于PLMN的选"><!-- pwa--><meta name="apple-mobile-web-app-capable" content="Laked22"><meta name="theme-color" content="var(--efu-main)"><meta name="apple-mobile-web-app-status-bar-style" content="var(--efu-main)"><link rel="bookmark" href="https://pic.imgdb.cn/item/66968c76d9c307b7e96a79c8.png"><link rel="apple-touch-icon" href="https://pic.imgdb.cn/item/66968c76d9c307b7e96a79c8.png" sizes="180x180"><script>console.log(
-    "%c Program: Hexo %c Theme: Solitude %c Version: v1.11.3",
-    "border-radius:5px 0 0 5px;padding: 5px 10px;color:white;background:#ff3842;",
-    "padding: 5px 10px;color:white;background:#3e9f50;",
-    "padding: 5px 10px;color:white;background:#0084ff;border-radius:0 5px 5px 0",
-)
-</script><script>(()=>{
-        const saveToLocal = {
-            set: function setWithExpiry(key, value, ttl) {
-                if (ttl === 0)
-                    return
-                const now = new Date()
-                const expiryDay = ttl * 86400000
-                const item = {
-                    value: value,
-                    expiry: now.getTime() + expiryDay
-                }
-                localStorage.setItem(key, JSON.stringify(item))
-            },
-            get: function getWithExpiry(key) {
-                const itemStr = localStorage.getItem(key)
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#5F9EA0">
+  <meta name="author" content="L4k3d22">
+  <meta name="keywords" content="AI+5GNR+DRL">
+  
+    <meta name="description" content="在分析UE接入OAI的gNB基站中经常出现连接不稳定的情况，因此对手机接入的流程进行了分析。在5G中的UE入网流程如上图所示，下面将会对每个部分详细展开。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UE手机入网流程">
+<meta property="og:url" content="http://example.com/2024/06/02/5G%E6%89%8B%E6%9C%BA%E6%8E%A5%E5%85%A5%E5%85%A5%E7%BD%91%E6%B5%81%E7%A8%8B/index.html">
+<meta property="og:site_name" content="Laked22">
+<meta property="og:description" content="在分析UE接入OAI的gNB基站中经常出现连接不稳定的情况，因此对手机接入的流程进行了分析。在5G中的UE入网流程如上图所示，下面将会对每个部分详细展开。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic.imgdb.cn/item/6696863cd9c307b7e95b9cd7.jpg">
+<meta property="article:published_time" content="2024-06-02T12:05:29.798Z">
+<meta property="article:modified_time" content="2024-08-05T17:22:24.485Z">
+<meta property="article:author" content="L4k3d22">
+<meta property="article:tag" content="5G">
+<meta property="article:tag" content="UE">
+<meta property="article:tag" content="入网">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://pic.imgdb.cn/item/6696863cd9c307b7e95b9cd7.jpg">
+  
+  
+  
+  <title>UE手机入网流程 - Laked22</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":true,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.2.0"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+
+<body>
+  
+
+  <header>
     
-                if (!itemStr) {
-                    return undefined
-                }
-                const item = JSON.parse(itemStr)
-                const now = new Date()
-    
-                if (now.getTime() > item.expiry) {
-                    localStorage.removeItem(key)
-                    return undefined
-                }
-                return item.value
-            }
-        };
-        window.utils = {
-            saveToLocal: saveToLocal,
-            getCSS: (url, id = false) => new Promise((resolve, reject) => {
-              const link = document.createElement('link')
-              link.rel = 'stylesheet'
-              link.href = url
-              if (id) link.id = id
-              link.onerror = reject
-              link.onload = link.onreadystatechange = function() {
-                const loadState = this.readyState
-                if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
-                link.onload = link.onreadystatechange = null
-                resolve()
-              }
-              document.head.appendChild(link)
-            }),
-            getScript: (url, attr = {}) => new Promise((resolve, reject) => {
-              const script = document.createElement('script')
-              script.src = url
-              script.async = true
-              script.onerror = reject
-              script.onload = script.onreadystatechange = function() {
-                const loadState = this.readyState
-                if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
-                script.onload = script.onreadystatechange = null
-                resolve()
-              }
-    
-              Object.keys(attr).forEach(key => {
-                script.setAttribute(key, attr[key])
-              })
-    
-              document.head.appendChild(script)
-            }),
-            addGlobalFn: (key, fn, name = false, parent = window) => {
-                const globalFn = parent.globalFn || {}
-                const keyObj = globalFn[key] || {}
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Laked22</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
         
-                if (name && keyObj[name]) return
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
         
-                name = name || Object.keys(keyObj).length
-                keyObj[name] = fn
-                globalFn[key] = keyObj
-                parent.globalFn = globalFn
-            },
-        }
-    })()</script><!-- global head--><script>const GLOBAL_CONFIG = {
-    root: '/',
-    algolia: undefined,
-    localsearch: undefined,
-    runtime: '2021-04-20 00:00:00',
-    lazyload: {
-        enable: true,
-        error: '/img/error_load.webp'
-    },
-    copyright: {"limit":50,"author":"作者: 小林花子","link":"链接: ","source":"来源: Laked22","info":"著作权归作者所有。 商业转载请联系作者获得授权，非商业转载请注明出处。"},
-    highlight: {
-        enable: true,
-        limit: 200,
-        expand: true,
-        copy: true,
-        syntax: 'highlight.js'
-    },
-    randomlink: false,
-    lang: {"theme":{"dark":"已切换至深色模式","light":"已切换至浅色模式"},"copy":{"success":"复制成功","error":"复制失败"},"backtop":"返回顶部","time":{"day":"天前","hour":"小时前","just":"刚刚","min":"分钟前","month":"个月前"},"day":" 天","f12":"开发者模式已打开，请遵循GPL协议。","totalk":"无需删除空行，直接输入评论即可"},
-    aside: {
-        sayhello: {
-            morning: '一日之计在于晨',
-            noon: '吃饱了才有力气干活',
-            afternoon: '集中精力，攻克难关',
-            night: '不要太劳累了，早睡更健康',
-            goodnight: '睡个好觉，保证精力充沛',
-        },
-        sayhello2: ["🤖️ 数码科技爱好者","🔍 分享与热心帮助","🔨 设计开发一条龙","🤝 专修交互与设计","🏃 脚踏实地行动派","🧱 团队小组发动机","💢 壮汉人狠话不多","🎮 电竞游戏爱好者"],
-        sayhello3: {
-            prefix: '好久不见，',
-            back: '欢迎再次回来，',
-        },
-    },
-    covercolor: {
-        enable: true
-    },
-    comment: false,
-    lightbox: 'null',
-    post_ai: false,
-    right_menu: {"mode":{"dark":"深色模式","light":"浅色模式"},"img_error":"此图片无法复制与下载"},
-};</script><!-- page-config head--><script id="config-diff">var PAGE_CONFIG = {
-    is_post: true,
-    is_page: false,
-    is_home: false,
-    page: '',
-    toc: true,
-    comment: false,
-    ai_text: false
-}</script><meta name="generator" content="Hexo 7.2.0"></head><body id="body"><!-- universe--><canvas id="universe"></canvas><!-- loading--><!-- console--><div id="console"><div class="close-btn" onclick="sco.hideConsole()"><i class="solitude st-close-fill"></i></div><div class="button-group"><div class="console-btn-item"><span class="darkmode_switchbutton" onclick="sco.switchDarkMode()" title="昼夜切换"><i class="solitude st-moon-clear-fill"></i></span></div><div class="console-btn-item" id="consoleHideAside"><span class="asideSwitch" onclick="sco.switchHideAside()" title="边栏显示控制"><i class="solitude st-side-bar-fill"></i></span></div></div><div class="console-mask" onclick="sco.hideConsole()"></div></div><!-- sidebar--><div id="sidebar" style="zoom: 1;"><div id="menu-mask" style="display: none;"></div><div id="sidebar-menus"><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">21</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">42</div></a></div></div></div><span class="sidebar-menu-item-title">功能</span><div class="sidebar-menu-item"><span class="darkmode_switchbutton menu-child" onclick="sco.switchDarkMode()"><i class="solitude st-moon-clear-fill"></i><span>显示模式</span></span></div><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">项目</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://github.com/Dafeigy/ChartsGPT" title="ChartsGPT"><img class="nolazyload back-menu-item-icon" src="https://s2.loli.net/2023/05/10/LDUpFzo7VJiOshd.png" alt="ChartsGPT"><span class="back-menu-item-text">ChartsGPT</span></a></div></div></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span>首页</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span>文库</span></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="solitude  st-folder-fill"></i><span>文章列表</span></a></li><li><a class="site-page child" href="/categories/"><i class="solitude  st-checkbox-multiple-blank-fill"></i><span>全部分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="solitude  st-price-tag-fill"></i><span>全部标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span>我的</span></a><ul class="menus_item_child"><li><a class="site-page child" href="/equipment/"><i class="solitude  st-laptop-line"></i><span>装备</span></a></li><li><a class="site-page child" href="/tlink/"><i class="solitude  st-tools-fill"></i><span>工具箱</span></a></li><li><a class="site-page child" href="/music/"><i class="solitude  st-disc-fill"></i><span>音乐馆</span></a></li></ul></div></div><span class="sidebar-menu-item-title">标签</span><div class="card-widget card-tags card-archives card-webinfo card-allinfo"><div class="card-tag-cloud"><a href="/tags/%E9%9A%8F%E6%83%B3/">随想<sup>1</sup></a><a href="/tags/5GNR/">5GNR<sup>3</sup></a><a href="/tags/5G/">5G<sup>2</sup></a><a href="/tags/UE/">UE<sup>1</sup></a><a href="/tags/%E5%85%A5%E7%BD%91/">入网<sup>1</sup></a><a href="/tags/CMA/">CMA<sup>1</sup></a><a href="/tags/%E8%87%AA%E9%80%82%E5%BA%94%E5%9D%87%E8%A1%A1/">自适应均衡<sup>1</sup></a><a href="/tags/Matlab/">Matlab<sup>1</sup></a><a href="/tags/GPT/">GPT<sup>1</sup></a><a href="/tags/ECharts/">ECharts<sup>1</sup></a><a href="/tags/%E9%85%8D%E7%BD%AE/">配置<sup>1</sup></a><a href="/tags/OAI/">OAI<sup>4</sup></a><a href="/tags/%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98/">高速缓存<sup>1</sup></a><a href="/tags/CPU/">CPU<sup>1</sup></a><a href="/tags/%E4%BF%A1%E9%81%93%E4%BC%B0%E8%AE%A1/">信道估计<sup>1</sup></a><a href="/tags/%E4%B9%9D%E6%97%A5/">九日<sup>1</sup></a><a href="/tags/%E8%B5%A4%E7%83%9B%E6%B8%B8%E6%88%8F/">赤烛游戏<sup>1</sup></a><a href="/tags/%E7%B1%BB%E9%93%B6%E6%B2%B3%E5%9F%8E/">类银河城<sup>1</sup></a><a href="/tags/%E9%AD%82%E7%B3%BB/">魂系<sup>1</sup></a><a href="/tags/%E7%89%A9%E7%90%86%E5%B1%82/">物理层<sup>1</sup></a><a href="/tags/CMake/">CMake<sup>1</sup></a><a href="/tags/Protobuf/">Protobuf<sup>1</sup></a><a href="/tags/python/">python<sup>1</sup></a><a href="/tags/%E8%A3%85%E9%A5%B0%E5%99%A8/">装饰器<sup>1</sup></a><a href="/tags/Python/">Python<sup>1</sup></a><a href="/tags/Pytorch/">Pytorch<sup>1</sup></a><a href="/tags/Rust/">Rust<sup>2</sup></a><a href="/tags/%E7%A5%9E%E7%BB%8F%E8%BF%9B%E5%8C%96/">神经进化<sup>1</sup></a><a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">神经网络<sup>2</sup></a><a href="/tags/%E5%A4%9A%E5%B1%82%E6%84%9F%E7%9F%A5%E6%9C%BA/">多层感知机<sup>1</sup></a><a href="/tags/%E6%A0%B8%E5%BF%83%E7%BD%91/">核心网<sup>1</sup></a><a href="/tags/MATX/">MATX<sup>1</sup></a><a href="/tags/%E8%A3%85%E6%9C%BA/">装机<sup>2</sup></a><a href="/tags/Akane/">Akane<sup>1</sup></a><a href="/tags/%E6%B8%85%E7%89%88%E5%B0%84%E5%87%BB/">清版射击<sup>1</sup></a><a href="/tags/Unity/">Unity<sup>1</sup></a><a href="/tags/BepInEx/">BepInEx<sup>1</sup></a><a href="/tags/C/">C#<sup>1</sup></a><a href="/tags/Hades/">Hades<sup>1</sup></a><a href="/tags/Lua/">Lua<sup>1</sup></a><a href="/tags/%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/">源码编译<sup>1</sup></a><a href="/tags/ITX/">ITX<sup>1</sup></a></div></div></div></div><!-- keyboard--><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav class="show" id="nav"><div id="nav-group"><div id="blog_name"><div class="back-home-button" tabindex="-1"><i class="back-home-button-icon solitude st-more-fill"></i><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">项目</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://github.com/Dafeigy/ChartsGPT" title="ChartsGPT"><img class="nolazyload back-menu-item-icon" src="https://s2.loli.net/2023/05/10/LDUpFzo7VJiOshd.png" alt="ChartsGPT"><span class="back-menu-item-text">ChartsGPT</span></a></div></div></div></div><a id="site-name" href="/" title="返回博客主页"><span class="title">Laked22</span></a></div><div id="page-name-mask"><div id="page-name"><a id="page-name-text" onclick="sco.toTop()">UE手机入网流程</a></div></div><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span>首页</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span>文库</span></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="solitude  st-folder-fill"></i><span>文章列表</span></a></li><li><a class="site-page child" href="/categories/"><i class="solitude  st-checkbox-multiple-blank-fill"></i><span>全部分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="solitude  st-price-tag-fill"></i><span>全部标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span>我的</span></a><ul class="menus_item_child"><li><a class="site-page child" href="/equipment/"><i class="solitude  st-laptop-line"></i><span>装备</span></a></li><li><a class="site-page child" href="/tlink/"><i class="solitude  st-tools-fill"></i><span>工具箱</span></a></li><li><a class="site-page child" href="/music/"><i class="solitude  st-disc-fill"></i><span>音乐馆</span></a></li></ul></div></div></div><div id="nav-left"></div><div id="nav-right"><div class="nav-button" id="nav-console"><a class="console_switchbutton" onclick="sco.showConsole()" title="中控台" href="javascript:void(0);"><i class="solitude st-dashboard-fill"></i></a></div><div class="nav-button" id="nav-totop" onclick="sco.toTop()"><a class="totopbtn"><i class="solitude st-arrow-up-line"></i><span id="percent">0</span></a></div><div id="toggle-menu"><a class="site-page"><i class="solitude st-menu-line"></i></a></div></div></div></nav><div class="coverdiv" id="coverdiv"><img class="nolazyload" id="post-cover" src="https://pic.imgdb.cn/item/6696863cd9c307b7e95b9cd7.jpg" alt="UE手机入网流程"></div><div id="post-info"><div id="post-firstinfo"><div class="meta-firstline"><a class="post-meta-original" title="该文章为原创文章，注意版权协议">原创</a><span class="post-meta-categories"><a class="post-meta-categories" href="/categories/5G-PHY/">5G-PHY</a></span><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/5G/"><span class="tags-name tags-punctuation">5G</span></a><a class="post-meta__tags" href="/tags/UE/"><span class="tags-name tags-punctuation">UE</span></a><a class="post-meta__tags" href="/tags/%E5%85%A5%E7%BD%91/"><span class="tags-name tags-punctuation">入网</span></a></div></div></div></div><h1 class="post-title">UE手机入网流程</h1><div id="post-meta"><div class="meta-secondline"></div></div></div><section class="main-hero-waves-area waves-area"><svg class="waves-svg" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto"><defs><path id="gentle-wave" d="M -160 44 c 30 0 58 -18 88 -18 s 58 18 88 18 s 58 -18 88 -18 s 58 18 88 18 v 44 h -352 Z"></path></defs><g class="parallax"><use href="#gentle-wave" x="48" y="0"></use><use href="#gentle-wave" x="48" y="3"></use><use href="#gentle-wave" x="48" y="5"></use><use href="#gentle-wave" x="48" y="7"></use></g></svg></section></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p align="center">
-    <img src= "/img/loading.gif" data-lazy-src="https://s2.loli.net/2023/05/15/B8yrLFs3e1jWmdX.png" alt="logo"/>
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="UE手机入网流程"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-06-02 20:05" pubdate>
+          2024年6月2日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          35 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">UE手机入网流程</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2024年8月6日 凌晨
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <p align="center">
+    <img src="https://s2.loli.net/2023/05/15/B8yrLFs3e1jWmdX.png" srcset="/img/loading.gif" lazyload alt="logo">
 </p>
 
 
 <p>在分析UE接入OAI的gNB基站中经常出现连接不稳定的情况，因此对手机接入的流程进行了分析。在5G中的UE入网流程如上图所示，下面将会对每个部分详细展开。</p>
 <span id="more"></span>
-
 <h2 id="开机"><a href="#开机" class="headerlink" title="开机"></a>开机</h2><p>我们这里说的开机是系统初始化，此时UE会读取自身的SIM卡中存储的信息，判断有没有存储先验信息，该信息用于PLMN的选择。</p>
-<h2 id="PLMN选择"><a href="#PLMN选择" class="headerlink" title="PLMN选择"></a>PLMN选择</h2><h3 id="前置概念"><a href="#前置概念" class="headerlink" title="前置概念"></a>前置概念</h3><p><strong>PLMN</strong>（Public Land Mobile Network，陆上公用移动通信网），由政府或它所批准的经营者，为了公众提供陆地移动通信业务目的而建立和经营的网络。<strong>PLMN &#x3D; MCC + MNC &#x3D; 移动国家码 + 移动网络码</strong>。例如中国移动为46000，中国联通为46001，我们实验室使用的是46692。</p>
-<p><strong>IMSI</strong>（International Mobile Subscriber Identification Number），国际移动用户识别码，用于区别移动用户的标志，存储在SIM卡中，总长度不超过15位。<strong>IMSI &#x3D; MCC + MNC + MSIN</strong> ，实验室常用的是466920000000001。</p>
+<h2 id="PLMN选择"><a href="#PLMN选择" class="headerlink" title="PLMN选择"></a>PLMN选择</h2><h3 id="前置概念"><a href="#前置概念" class="headerlink" title="前置概念"></a>前置概念</h3><p><strong>PLMN</strong>（Public Land Mobile Network，陆上公用移动通信网），由政府或它所批准的经营者，为了公众提供陆地移动通信业务目的而建立和经营的网络。<strong>PLMN = MCC + MNC = 移动国家码 + 移动网络码</strong>。例如中国移动为46000，中国联通为46001，我们实验室使用的是46692。</p>
+<p><strong>IMSI</strong>（International Mobile Subscriber Identification Number），国际移动用户识别码，用于区别移动用户的标志，存储在SIM卡中，总长度不超过15位。<strong>IMSI = MCC + MNC + MSIN</strong> ，实验室常用的是466920000000001。</p>
 <h3 id="PLMN分类"><a href="#PLMN分类" class="headerlink" title="PLMN分类"></a>PLMN分类</h3><p>PLMN选择有两种模式，<strong>自动选择和手动选择</strong>。选网过程按照PLMN选择类型，包括<strong>开机选网</strong>、用户重选网、OOS选网、高优先级选网等。（本文主要介绍开机选网）。如下是一些PLMN的分类：</p>
 <ul>
 <li><p><strong>RPLMN</strong>：注册成功、已登记的PLMN。 是终端在上次关机或脱网前登记上的PLMN。</p>
@@ -165,10 +434,10 @@
 <p>终端在开机或脱网时，<strong>首先由PLMN选择过程通过自动或手动方式选择一个PLMN</strong>，然后搜索属于该PLMN的小区，如果在该PLMN下无法捕捉到合适的小区，则将在小区搜索过程中得到的可捕获PLMN列表报告给PLMN选择过程，由其重新选择PLMN，启动新一轮小区捕获过程。</p>
 <p><strong>自动选择</strong>：UE启动后会自动根据PLMN的优先级，选择优先级最高的PLMN。</p>
 <p><strong>手动选择</strong>：该模式下，开机只能去注册RPLMN，不能自动搜索注册高优先级的网络，手动选网模式会先搜索到当前可用的PLMN，只有当用户选择了其中一个PLMN后，UE才会尝试从该网络上获得服务。</p>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p><img src= "/img/loading.gif" data-lazy-src="https://s2.loli.net/2023/05/15/6t21zexZrf8uQcN.png" alt="img"></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p><img src="https://s2.loli.net/2023/05/15/6t21zexZrf8uQcN.png" srcset="/img/loading.gif" lazyload alt="img"></p>
 <p>PLMN有两种选择模式，手动选择和自动选择，但无论哪种选择模式，UE AS层都需要能够将网络中现有的PLMN列表报告给UE NAS层，为此，（无先验信息情况下）UE AS根据自身的能力和设置, 进行全频段的搜索, 在每一个频点上搜索信号最强的小区, 读取其系统信息, 报告给UE NAS层，由NAS层来决定PLMN搜索是否继续进行。如果有先验信息，如载波频率、小区参数等，则PLMN的搜索过程可以得到优化, NAS层指示AS层按照先验信息的参数来进行PLMN搜索，并把结果上报给NAS层。</p>
 <h2 id="小区搜索"><a href="#小区搜索" class="headerlink" title="小区搜索"></a>小区搜索</h2><p>PLMN选定以后，要进行小区选择，目的是选择属于这个PLMN中信号最好的小区。一般书中介绍初始接入从此处开始，初始接入过程包括<strong>小区搜索、系统信息传递和随机接入</strong>等阶段。5G终端在能够通过通信网络传送数据前首先得通过gNB接入网络，为此就必须先进行小区搜索（Cell Search）。小区搜索包括了终端查找新小区的功能和过程，<strong>即无论在初始接入阶段或者在系统内移动时，都会有小区搜索的操作。</strong></p>
-<h3 id="下行同步"><a href="#下行同步" class="headerlink" title="下行同步"></a>下行同步</h3><p>小区搜索是终端取得小区下行方向的频率和时间同步并进而检测小区识别号（Cell ID）的过程。<strong>SSB</strong>（Synchronization Signal&#x2F;PBCH Block，同步信号块）是实现小区搜索的基础。同步信号包括两部分，<strong>PSS</strong>（Primary Synchronization Signal，主同步信号）和<strong>SSS</strong>（Secondary Synchronization Signal，辅同步信号），<strong>PSS&#x2F;SSS和PBCH</strong>（Physical Broadcast Channel，物理广播信道）一起，称为同步信号块<strong>SSB</strong>。终端需要进行小区搜索的最常见情况是用户新开机和小区切换的需要。小区搜索主要达到的主要目的有3个：</p>
+<h3 id="下行同步"><a href="#下行同步" class="headerlink" title="下行同步"></a>下行同步</h3><p>小区搜索是终端取得小区下行方向的频率和时间同步并进而检测小区识别号（Cell ID）的过程。<strong>SSB</strong>（Synchronization Signal/PBCH Block，同步信号块）是实现小区搜索的基础。同步信号包括两部分，<strong>PSS</strong>（Primary Synchronization Signal，主同步信号）和<strong>SSS</strong>（Secondary Synchronization Signal，辅同步信号），<strong>PSS/SSS和PBCH</strong>（Physical Broadcast Channel，物理广播信道）一起，称为同步信号块<strong>SSB</strong>。终端需要进行小区搜索的最常见情况是用户新开机和小区切换的需要。小区搜索主要达到的主要目的有3个：</p>
 <ol>
 <li>完成下行同步，包括频率、符号和帧同步；<strong>（PSS做的事情）</strong></li>
 <li>获得当前小区的识别符；<strong>（SSS做的事情）</strong></li>
@@ -193,9 +462,9 @@
 <p>在进行随机接入过程之前，UE通过SIB1消息获得SSB索引的集合、PRACH时频资源、PRACH Preamble格式和PRACH Preamble序列集合的参数，然后UE根据所获得的信息，生成PRACH Preamble序列，并在选定的PRACH时频资源上发送随机接入Preamble序列。</p>
 </blockquote>
 </li>
-<li><p>下行Message 2，网络在<strong>PDCCH&#x2F;PDSCH</strong>（Physical Downlink Control&#x2F;Sharing Channel，物理下行控制信道&#x2F;物理下行共享信道）上发送<strong>RAR</strong>（Random Access Response，随机接入响应）表明收到了前导码。</p>
+<li><p>下行Message 2，网络在<strong>PDCCH/PDSCH</strong>（Physical Downlink Control/Sharing Channel，物理下行控制信道/物理下行共享信道）上发送<strong>RAR</strong>（Random Access Response，随机接入响应）表明收到了前导码。</p>
 <blockquote>
-<p>基站针对Preamble序列进行检测，如果基站检测到Preamble序列，则在PDCCH&#x2F;PDSCH上反馈相应的随机接入响应（RAR）信息。<br>UE在发送Preamble序列之后，在一个RAR时间窗口内检测下行PDCCH&#x2F;PDSCH反馈的RAR消息。如果检测到了相应的RAR消息，则说明该UE发送的Preamble序列已被基站检测到。RAR信息中还包含该UE的上行定时提前调整量和调度该UE的消息3传输的上行调度许可。</p>
+<p>基站针对Preamble序列进行检测，如果基站检测到Preamble序列，则在PDCCH/PDSCH上反馈相应的随机接入响应（RAR）信息。<br>UE在发送Preamble序列之后，在一个RAR时间窗口内检测下行PDCCH/PDSCH反馈的RAR消息。如果检测到了相应的RAR消息，则说明该UE发送的Preamble序列已被基站检测到。RAR信息中还包含该UE的上行定时提前调整量和调度该UE的消息3传输的上行调度许可。</p>
 </blockquote>
 </li>
 <li><p>上行Message 3，UE在<strong>PUSCH上发送RRC请求</strong>（第三四步是为了防止多个终端发送前导码导致的冲突）</p>
@@ -212,7 +481,7 @@
 <h2 id="附着流程"><a href="#附着流程" class="headerlink" title="附着流程"></a>附着流程</h2><p>随机接入完成后，进行完整的附着流程，能最终完成上网功能，其中包括<strong>信令接入流程</strong>和<strong>数据接入流程</strong>。信令接入流程包括：SA（独立组网）初始接入和NSA（非独立组网）初始接入。</p>
 <h3 id="信令接入流程"><a href="#信令接入流程" class="headerlink" title="信令接入流程"></a>信令接入流程</h3><p>SA初始接入信令流程包括<strong>RRC连接流程、上下文建立流程、PDU会话流程</strong>。</p>
 <h4 id="RRC连接流程"><a href="#RRC连接流程" class="headerlink" title="RRC连接流程"></a>RRC连接流程</h4><p>RRC连接流程包括UE和gNodeB之间的RRC连接建立、重配、释放、重建过程，以及上行失步管理、UE不活动性管理。有关RRC连接管理的详细描述，见下方信令流程：</p>
-<p><img src= "/img/loading.gif" data-lazy-src="https://s2.loli.net/2023/05/15/HZhU8zjeNDsCtVd.png" alt="img"></p>
+<p><img src="https://s2.loli.net/2023/05/15/HZhU8zjeNDsCtVd.png" srcset="/img/loading.gif" lazyload alt="img"></p>
 <p>RRC建立流程：正常RRC建立三步：</p>
 <ol>
 <li>UE向gNodeB发送<strong>RRCSetupRequest</strong>消息（在初始的随机接入中，Message 3传输的是RRCSetupRequest消息），RRCSetupRequest消息携带RRC建立原因和UE标识。（承载在SRB0上，在CCCH上）</li>
@@ -220,7 +489,7 @@
 <li>UE根据RRCSetup消息指示的SRB1资源信息，进行无线资源配置，然后发送<strong>RRCSetupComplete</strong>消息给gNodeB，消息中携带<strong>selectedPLMN-Identity、registeredAMF、snssai-list和NAS</strong>，RRC连接建立完成。（<strong>UE建立SRB1</strong>，信令承载在SRB1上，在DCCH上）</li>
 </ol>
 <h4 id="上下文建立流程"><a href="#上下文建立流程" class="headerlink" title="上下文建立流程"></a>上下文建立流程</h4><p>gNB先触发NG-c连接建立，核心网AMF发起上下文建立请求<font color="green"><strong>（步骤6）</strong></font>，激活安全模式，对UE能力查询，然后UE建立SRB2和DRB，gDB向AMF回复上下文建立回复。接下来是：</p>
-<ol start="4">
+<ol>
 <li>gNodeB为UE分配专用的<strong>RAN-UE-NGAP-ID</strong>，gNodeB根据selectedPLMNIdentity、registeredAMF、s-nssai-list<strong>选择AMF节点</strong>，然后将<strong>RRCSetupComplete</strong>消息中携带的NAS（是第一条Nas信息）<strong>通过INITIAL UE MESSAGE发送给AMF，触发NG-C连接建立。</strong></li>
 <li>gNodeB透传UE和AMF之间的NAS直传消息，完成IDENTITY查询、鉴权、NAS安全模式和注册过程等。</li>
 <li>AMF向gNodeB发送<strong>INITIAL CONTEXT SETUP REQUEST（初始UE上下文建立请求）消息</strong>，启动初始上下文建立过程。</li>
@@ -233,8 +502,8 @@
 <li>UE收到RRCReconfiguration消息后，开始<strong>建立SRB2和DRB</strong>（如果初始UE上下文建立请求要求建立DRB的话）。SRB2和DRB建立成功后，UE向gNodeB回复<strong>RRCReconfigurationComplete</strong>消息。（UE建立SRB2和DRB，RRCReconfigurationComplete承载在SRB1上，DCCH上）</li>
 <li>gNodeB向AMF回复INITIAL CONTEXT SETUP RESPONSE消息。</li>
 </ol>
-<h3 id="数据接入流程"><a href="#数据接入流程" class="headerlink" title="数据接入流程"></a>数据接入流程</h3><h4 id="PDU建立流程"><a href="#PDU建立流程" class="headerlink" title="PDU建立流程"></a>PDU建立流程</h4><p>初始接入流程到上面就算完成了，PDU建立流程属于初始接入完成后，要做其他业务的流程，可参考<a target="_blank" rel="noopener" href="https://cybercolyce.cn/2022/08/28/PDU%E4%BC%9A%E8%AF%9D/#more">PDU会话过程的建立过程 </a>这篇之前的笔记。AMF向gNB发送PDU建立请求，gNB向UE发送RRC重配置信令（携带DRB建立配置等信息），UE建立DRB，向gNB回复RRC重配置完成，gNB向AMF回复PDU建立回复。最终实现数据交互。</p>
-<ol start="15">
+<h3 id="数据接入流程"><a href="#数据接入流程" class="headerlink" title="数据接入流程"></a>数据接入流程</h3><h4 id="PDU建立流程"><a href="#PDU建立流程" class="headerlink" title="PDU建立流程"></a>PDU建立流程</h4><p>初始接入流程到上面就算完成了，PDU建立流程属于初始接入完成后，要做其他业务的流程，可参考<a target="_blank" rel="noopener" href="https://cybercolyce.cn/2022/08/28/PDU会话/#more">PDU会话过程的建立过程 </a>这篇之前的笔记。AMF向gNB发送PDU建立请求，gNB向UE发送RRC重配置信令（携带DRB建立配置等信息），UE建立DRB，向gNB回复RRC重配置完成，gNB向AMF回复PDU建立回复。最终实现数据交互。</p>
+<ol>
 <li>AMF向gNodeB发送<strong>PDU SESSION RESOURCE SETUP REQUEST</strong>消息。消息中携带了需要建立的PDU会话列表、每个PDU会话的QoS Flow列表、以及每个QoSFlow的质量属性等。</li>
 <li>gNodeB根据QoS Flow的质量属性和MML界面配置的策略，将QoS Flow映射到DRB，向UE发送<strong>RRCReconfiguration</strong>消息，发起DRB建立请求。</li>
 <li>RRCReconfiguration消息中包含了drb-ToAddModList，UE根据消息指示建立，UE完成DRB建立后，向gNodeB回复<strong>RRCReconfigurationComplete</strong>消息。（UE建立DRB）</li>
@@ -261,51 +530,380 @@
 <li>gNB-DU将RRC消息封装在F1AP UL RRC MESSAGE TRANSFER消息中并将其发送到gNB-CU。</li>
 <li>gNB-CU向AMF发送INITIAL UE CONTEXT SETUP RESPONSE消息。</li>
 </ol>
-<p><img src= "/img/loading.gif" data-lazy-src="https://s2.loli.net/2023/05/15/gadpQDNJ9FOePMt.png" alt="5GUE入网整体信令流程"></p>
+<p><img src="https://s2.loli.net/2023/05/15/gadpQDNJ9FOePMt.png" srcset="/img/loading.gif" lazyload alt="5GUE入网整体信令流程"></p>
 <h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/baidu_41616132/article/details/88894357">NR 5G UE初始接入流程_华夏山河雪的博客-CSDN博客</a></p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43727672/article/details/107669321">5G学习]00-UE手机入网流程_5g终端入网流程_雾里赏花的博客-CSDN博客</a></p>
-</article><div class="post-copyright"><div class="post-copyright__author_group"><a class="post-copyright__author_img" href="/about/"><img class="post-copyright__author_img_front" src= "/img/loading.gif" data-lazy-src="https://pic.imgdb.cn/item/6696936cd9c307b7e97a9c1d.png"></a><div class="post-copyright__author_name">Laked22</div><div class="post-copyright__author_desc"></div></div><div class="post-tools" id="post-tools"><div class="post-tools-left"><div id="quit-box" onclick="RemoveRewardMask()"></div></div></div><div class="post-copyright__notice"><span class="post-copyright-info">本文是原创文章，采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0</a>协议，完整转载请注明来自<a href="/">Laked22</a></span></div></div><div class="post-tools-right"><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/5G/"><span class="tags-punctuation"></span>5G<span class="tagsPageCount">2</span></a><a class="post-meta__tags" href="/tags/UE/"><span class="tags-punctuation"></span>UE<span class="tagsPageCount">1</span></a><a class="post-meta__tags" href="/tags/%E5%85%A5%E7%BD%91/"><span class="tags-punctuation"></span>入网<span class="tagsPageCount">1</span></a></div></div><div class="social-share"></div></div><nav class="needEndHide pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/06/03/%E6%B8%85%E6%9D%BF%E5%B0%84%E5%87%BB/"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">【BepInEX】清版射击游戏的自动瞄准实现</div></div></a></div><div class="next-post pull-right"><a href="/2024/06/02/5GNR-%E5%8F%82%E8%80%83%E4%BF%A1%E5%8F%B7%EF%BC%88%E4%B8%80%EF%BC%89/"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">NR参考信号学习（一）</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-content"><div class="card-info-bg-top"><div class="is-center"><div class="author-info__top-group"><div class="author-info__sayhi" id="author-info__sayhi" onclick="sco.changeSayHelloText()">sayhello.morning</div></div></div></div><a class="card-info-avatar" href="/about/" title="头像"><div class="avatar-img"><img src= "/img/loading.gif" data-lazy-src="https://pic.imgdb.cn/item/6696936cd9c307b7e97a9c1d.png" alt="头像"></div></a><div class="card-info__desc_group"><div class="author-info__name">小林花子</div><div class="author-info__desc"></div><div class="card-info__data is-center"><a href="/archives/" title="累计文章数:21"><div class="length-num">21</div><div class="headline">文章</div></a><a href="/tags/" title="标签总数:42"><div class="length-num">42</div><div class="headline">标签</div></a><a href="/categories/" title="分类总数:8"><div class="length-num">8</div><div class="headline">分类</div></a></div><div class="card-info-social-icons is-center"><a class="social-icon" target="_blank" rel="noopener" href="https://github.com/dafeigy" title="Github"><i class="solitude  st-github-line"></i></a></div></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="solitude st-menu-line"></i><span>文章目录</span></div><div class="toc-content" id="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%80%E6%9C%BA"><span class="toc-text">开机</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PLMN%E9%80%89%E6%8B%A9"><span class="toc-text">PLMN选择</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E6%A6%82%E5%BF%B5"><span class="toc-text">前置概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PLMN%E5%88%86%E7%B1%BB"><span class="toc-text">PLMN分类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PLMN%E8%AF%86%E5%88%AB%E6%B5%81%E7%A8%8B"><span class="toc-text">PLMN识别流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PLMN%E9%80%89%E6%8B%A9%E8%BF%87%E7%A8%8B"><span class="toc-text">PLMN选择过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%8F%E5%8C%BA%E6%90%9C%E7%B4%A2"><span class="toc-text">小区搜索</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8B%E8%A1%8C%E5%90%8C%E6%AD%A5"><span class="toc-text">下行同步</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9A%8F%E6%9C%BA%E6%8E%A5%E5%85%A5"><span class="toc-text">随机接入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%99%84%E7%9D%80%E6%B5%81%E7%A8%8B"><span class="toc-text">附着流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%A1%E4%BB%A4%E6%8E%A5%E5%85%A5%E6%B5%81%E7%A8%8B"><span class="toc-text">信令接入流程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#RRC%E8%BF%9E%E6%8E%A5%E6%B5%81%E7%A8%8B"><span class="toc-text">RRC连接流程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%8A%E4%B8%8B%E6%96%87%E5%BB%BA%E7%AB%8B%E6%B5%81%E7%A8%8B"><span class="toc-text">上下文建立流程</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E6%8E%A5%E5%85%A5%E6%B5%81%E7%A8%8B"><span class="toc-text">数据接入流程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#PDU%E5%BB%BA%E7%AB%8B%E6%B5%81%E7%A8%8B"><span class="toc-text">PDU建立流程</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93-1"><span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-text">参考资料</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="solitude st-map-line"></i><span>最近发布</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2024/07/16/How-CPU-Cache-Work/" title="【译】Exploring How Cache Memory Really Works"><img alt="【译】Exploring How Cache Memory Really Works" src= "/img/loading.gif" data-lazy-src="https://pic.imgdb.cn/item/6696805ad9c307b7e94e067b.jpg"></a><div class="content"><a class="title" href="/2024/07/16/How-CPU-Cache-Work/" title="【译】Exploring How Cache Memory Really Works">【译】Exploring How Cache Memory Really Works</a><a class="article-recent_post_categories" href="/2024/07/16/How-CPU-Cache-Work/">文章翻译</a></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/07/09/OAI-Multi_UEs_behaviors/" title="OAI开发记录——多UE接入下的物理层行为"><img alt="OAI开发记录——多UE接入下的物理层行为" src= "/img/loading.gif" data-lazy-src="https://pic.imgdb.cn/item/6696865ad9c307b7e95be385.jpg"></a><div class="content"><a class="title" href="/2024/07/09/OAI-Multi_UEs_behaviors/" title="OAI开发记录——多UE接入下的物理层行为">OAI开发记录——多UE接入下的物理层行为</a><a class="article-recent_post_categories" href="/2024/07/09/OAI-Multi_UEs_behaviors/">OAI</a></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/07/08/Rust-Snake-AI-NN-related/" title="使用Rust编写游玩贪吃蛇的神经网络（一）"><img alt="使用Rust编写游玩贪吃蛇的神经网络（一）" src= "/img/loading.gif" data-lazy-src="https://s2.loli.net/2024/07/04/QAtIcu4ROM9Sk3N.png"></a><div class="content"><a class="title" href="/2024/07/08/Rust-Snake-AI-NN-related/" title="使用Rust编写游玩贪吃蛇的神经网络（一）">使用Rust编写游玩贪吃蛇的神经网络（一）</a><a class="article-recent_post_categories" href="/2024/07/08/Rust-Snake-AI-NN-related/">摸鱼折腾</a></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/07/01/Rust-Snake-AI-Introduction/" title="使用Rust编写游玩贪吃蛇的神经网络（零）"><img alt="使用Rust编写游玩贪吃蛇的神经网络（零）" src= "/img/loading.gif" data-lazy-src="https://s2.loli.net/2024/07/04/QAtIcu4ROM9Sk3N.png"></a><div class="content"><a class="title" href="/2024/07/01/Rust-Snake-AI-Introduction/" title="使用Rust编写游玩贪吃蛇的神经网络（零）">使用Rust编写游玩贪吃蛇的神经网络（零）</a><a class="article-recent_post_categories" href="/2024/07/01/Rust-Snake-AI-Introduction/">摸鱼折腾</a></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/06/24/ChartsGPT%20%E6%9E%84%E5%BB%BA/" title="ChartsGPT：使用自然语言生成图表"><img alt="ChartsGPT：使用自然语言生成图表" src= "/img/loading.gif" data-lazy-src="https://pic.imgdb.cn/item/66968691d9c307b7e95c57f0.png"></a><div class="content"><a class="title" href="/2024/06/24/ChartsGPT%20%E6%9E%84%E5%BB%BA/" title="ChartsGPT：使用自然语言生成图表">ChartsGPT：使用自然语言生成图表</a><a class="article-recent_post_categories" href="/2024/06/24/ChartsGPT%20%E6%9E%84%E5%BB%BA/">摸鱼折腾</a></div></div></div></div></div></div></main><footer id="footer"><div id="st-footer-bar"><div class="footer-logo"><span>Laked22</span></div><div class="footer-bar-description">来自 Cybersh1t 的文章</div><a class="footer-bar-link" href="/about/">了解更多</a></div><div id="footer_deal"></div><div id="st-footer"></div><div id="footer-bar"><div class="footer-bar-links"><div class="footer-bar-left"><div class="copyright">© 2021 - 2024 By&nbsp;<a class="footer-bar-link" href="/">小林花子</a></div></div><div class="footer-bar-right"><a class="footer-bar-link" target="_blank" rel="noopener" href="https://github.com/valor-x/hexo-theme-solitude" alt="主题">主题</a><a class="footer-bar-link cc" href="/null" aria-label="copyright"><i class="solitude st-copyright-line"></i><i class="solitude st-creative-commons-by-line"></i><i class="solitude st-creative-commons-nc-line"></i><i class="solitude st-creative-commons-nd-line"></i></a></div></div></div></footer></div><!-- right_menu--><div id="rightMenu"><div class="rightMenu-group rightMenu-small"><div class="rightMenu-item" id="menu-backward"><i class="solitude st-arrow-left-line"></i></div><div class="rightMenu-item" id="menu-forward"><i class="solitude st-arrow-right-line"></i></div><div class="rightMenu-item" id="menu-refresh"><i class="solitude st-restart-line"></i></div><div class="rightMenu-item" id="menu-top"><i class="solitude st-arrow-up-line"></i></div></div><div class="rightMenu-group rightMenu-line rightMenuPlugin"><div class="rightMenu-item" id="menu-copytext"><i class="solitude st-copy-fill"></i><span>复制选中文本</span></div><div class="rightMenu-item" id="menu-pastetext"><i class="solitude st-clipboard-fill"></i><span>粘贴文本</span></div><div class="rightMenu-item" id="menu-newwindow"><i class="solitude st-window-fill"></i><span>新窗口打开</span></div><div class="rightMenu-item" id="menu-copylink"><i class="solitude st-link-line"></i><span>复制链接地址</span></div><div class="rightMenu-item" id="menu-copyimg"><i class="solitude st-copy-fill"></i><span>复制此图片</span></div><div class="rightMenu-item" id="menu-downloadimg"><i class="solitude st-download-cloud-fill"></i><span>下载此图片</span></div></div><div class="rightMenu-group rightMenu-line rightMenuOther"></div><div class="rightMenu-group rightMenu-line rightMenuOther"><div class="rightMenu-item" id="menu-darkmode" onclick="sco.switchDarkMode()"><i class="solitude st-moon-clear-fill"></i><span class="menu-darkmode-text">深色模式</span></div></div></div><div id="rightmenu-mask"></div><!-- inject body--><div><script src="/js/utils.js?v=1.11.3"></script><script src="/js/main.js?v=1.11.3"></script><script src="/js/third_party/waterfall.min.js?v=1.11.3"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/pjax/0.2.8/pjax.min.js"></script><script src="/js/third_party/universe.min.js?v=1.11.3"></script><script>dark()
-</script><script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-lazyload/19.1.3/lazyload.iife.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/node-snackbar/0.1.16/snackbar.min.js"></script><script src="/js/covercolor/local.js?v=1.11.3"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js"></script><script src="/js/right_menu.js?v=1.11.3"></script><div class="js-pjax"></div></div><!-- newest comment--><!-- pjax--><script>const pjax = new Pjax({
-    elements: 'a:not([target="_blank"])',
-    selectors: ['title','#body-wrap','#site-config','meta[name="description"]','.js-pjax','meta[property^="og:"]','#config-diff'],
-    cacheBust: false,
-    analytics: false,
-    scrollRestoration: false
-})
 
-document.querySelectorAll('script[data-pjax]').forEach(item => {
-    const newScript = document.createElement('script')
-    const content = item.text || item.textContent || item.innerHTML || ""
-    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
-    newScript.appendChild(document.createTextNode(content))
-    item.parentNode.replaceChild(newScript, item)
-})
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
 
-document.addEventListener('pjax:complete', () => {
-    window.refreshFn()
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/5G-PHY/" class="category-chain-item">5G-PHY</a>
+  
+  
 
-    document.querySelectorAll('script[data-pjax]').forEach(item => {
-        const newScript = document.createElement('script')
-        const content = item.text || item.textContent || item.innerHTML || ""
-        Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
-        newScript.appendChild(document.createTextNode(content))
-        item.parentNode.replaceChild(newScript, item)
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/5G/" class="print-no-link">#5G</a>
+      
+        <a href="/tags/UE/" class="print-no-link">#UE</a>
+      
+        <a href="/tags/%E5%85%A5%E7%BD%91/" class="print-no-link">#入网</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>UE手机入网流程</div>
+      <div>http://example.com/2024/06/02/5G手机接入入网流程/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>L4k3d22</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年6月2日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/06/03/%E6%B8%85%E6%9D%BF%E5%B0%84%E5%87%BB/" title="【BepInEX】清版射击游戏的自动瞄准实现">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">【BepInEX】清版射击游戏的自动瞄准实现</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/06/02/5GNR-%E5%8F%82%E8%80%83%E4%BF%A1%E5%8F%B7%EF%BC%88%E4%B8%80%EF%BC%89/" title="NR参考信号学习（一）">
+                        <span class="hidden-mobile">NR参考信号学习（一）</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://github.com/dafeigy" target="_blank" rel="nofollow noopener"><span>L4k3d22</span></a> <i class="iconfont icon-tool"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
     })
+  </script>
 
-    GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
 
-})
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
 
-document.addEventListener('pjax:error', (e) => {
-    if (e.request.status === 404) {
-        pjax.loadUrl('/404.html')
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
     }
-})</script><!-- theme--><script>initTheme = () => {
-    const cachedMode = utils.saveToLocal.get('theme');
-    if (cachedMode === undefined)
-        document.documentElement.setAttribute('data-theme', 'light');
-    else
-        document.documentElement.setAttribute('data-theme', cachedMode);
-    is_rm && rm.mode(cachedMode === 'dark')
-}
-initTheme()</script><!-- google adsense--><!-- search--><!-- Tianli-Talk--><!-- music--></body></html><script>const posts=["2024/07/16/How-CPU-Cache-Work/","2024/07/09/OAI-Multi_UEs_behaviors/","2024/07/08/Rust-Snake-AI-NN-related/","2024/07/01/Rust-Snake-AI-Introduction/","2024/06/24/ChartsGPT 构建/","2024/06/16/Nine-Sols-Reports/","2024/06/05/24年杂记/","2024/06/03/清板射击/","2024/06/02/5G手机接入入网流程/","2024/06/02/5GNR-参考信号（一）/","2024/06/02/5GNR-参考信号（三）/","2024/06/02/5GNR-参考信号（二）/","2024/06/02/装机/","2024/06/02/编译Lua源码/","2024/06/02/Pytorch训练模型的基本过程/","2024/06/02/Python装饰器/","2024/06/02/LS信道估计与OAI实现/","2024/06/02/Free5GC+OAI gNB+COTSUE/","2024/06/02/free5gc + OAI gNB + OAI nrUE/","2024/06/02/CMA/","2022/06/18/乔斯伯主力/"];function toRandomPost(){ pjax.loadUrl('/'+posts[Math.floor(Math.random()*posts.length)]); }</script>
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

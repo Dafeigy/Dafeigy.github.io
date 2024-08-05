@@ -1,138 +1,405 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Pytorch训练神经网络的一般过程 | Laked22</title><noscript>开启JavaScript才能访问本站哦~</noscript><link rel="icon" href="https://pic.imgdb.cn/item/66968c76d9c307b7e96a79c8.png"><!-- index.css--><link rel="stylesheet" href="/css/index.css?v=1.11.3"><!-- inject head--><link rel="stylesheet" href="https://cdn2.codesign.qq.com/icons/7pOrz0WXB5ZWJPX/latest/iconfont.css"><!-- aplayer--><!-- swiper--><!-- fancybox ui--><!-- katex--><!-- Open Graph--><meta name="description" content="这个是我在使用Pytorch进行图像相关任务的神经网络构建和训练过程中的一个记录~ 整体流程Pytorch中构建神经网络训练自己的数据集是个挺繁琐的事情，主要流程分为数据集的构建、网络构建、训练调参以及结果测试四个部分。数据集的构建最好是使用DataLoader类进行构造，这是Pytorch写好"><!-- pwa--><meta name="apple-mobile-web-app-capable" content="Laked22"><meta name="theme-color" content="var(--efu-main)"><meta name="apple-mobile-web-app-status-bar-style" content="var(--efu-main)"><link rel="bookmark" href="https://pic.imgdb.cn/item/66968c76d9c307b7e96a79c8.png"><link rel="apple-touch-icon" href="https://pic.imgdb.cn/item/66968c76d9c307b7e96a79c8.png" sizes="180x180"><script>console.log(
-    "%c Program: Hexo %c Theme: Solitude %c Version: v1.11.3",
-    "border-radius:5px 0 0 5px;padding: 5px 10px;color:white;background:#ff3842;",
-    "padding: 5px 10px;color:white;background:#3e9f50;",
-    "padding: 5px 10px;color:white;background:#0084ff;border-radius:0 5px 5px 0",
-)
-</script><script>(()=>{
-        const saveToLocal = {
-            set: function setWithExpiry(key, value, ttl) {
-                if (ttl === 0)
-                    return
-                const now = new Date()
-                const expiryDay = ttl * 86400000
-                const item = {
-                    value: value,
-                    expiry: now.getTime() + expiryDay
-                }
-                localStorage.setItem(key, JSON.stringify(item))
-            },
-            get: function getWithExpiry(key) {
-                const itemStr = localStorage.getItem(key)
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#5F9EA0">
+  <meta name="author" content="L4k3d22">
+  <meta name="keywords" content="AI+5GNR+DRL">
+  
+    <meta name="description" content="这个是我在使用Pytorch进行图像相关任务的神经网络构建和训练过程中的一个记录~">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Pytorch训练神经网络的一般过程">
+<meta property="og:url" content="http://example.com/2024/06/02/Pytorch%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%BF%87%E7%A8%8B/index.html">
+<meta property="og:site_name" content="Laked22">
+<meta property="og:description" content="这个是我在使用Pytorch进行图像相关任务的神经网络构建和训练过程中的一个记录~">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic.imgdb.cn/item/6696871fd9c307b7e95dc331.jpg">
+<meta property="article:published_time" content="2024-06-02T12:05:29.788Z">
+<meta property="article:modified_time" content="2024-08-05T17:22:10.855Z">
+<meta property="article:author" content="L4k3d22">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="Pytorch">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://pic.imgdb.cn/item/6696871fd9c307b7e95dc331.jpg">
+  
+  
+  
+  <title>Pytorch训练神经网络的一般过程 - Laked22</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":true,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.2.0"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head>
+
+
+<body>
+  
+
+  <header>
     
-                if (!itemStr) {
-                    return undefined
-                }
-                const item = JSON.parse(itemStr)
-                const now = new Date()
-    
-                if (now.getTime() > item.expiry) {
-                    localStorage.removeItem(key)
-                    return undefined
-                }
-                return item.value
-            }
-        };
-        window.utils = {
-            saveToLocal: saveToLocal,
-            getCSS: (url, id = false) => new Promise((resolve, reject) => {
-              const link = document.createElement('link')
-              link.rel = 'stylesheet'
-              link.href = url
-              if (id) link.id = id
-              link.onerror = reject
-              link.onload = link.onreadystatechange = function() {
-                const loadState = this.readyState
-                if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
-                link.onload = link.onreadystatechange = null
-                resolve()
-              }
-              document.head.appendChild(link)
-            }),
-            getScript: (url, attr = {}) => new Promise((resolve, reject) => {
-              const script = document.createElement('script')
-              script.src = url
-              script.async = true
-              script.onerror = reject
-              script.onload = script.onreadystatechange = function() {
-                const loadState = this.readyState
-                if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
-                script.onload = script.onreadystatechange = null
-                resolve()
-              }
-    
-              Object.keys(attr).forEach(key => {
-                script.setAttribute(key, attr[key])
-              })
-    
-              document.head.appendChild(script)
-            }),
-            addGlobalFn: (key, fn, name = false, parent = window) => {
-                const globalFn = parent.globalFn || {}
-                const keyObj = globalFn[key] || {}
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Laked22</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
         
-                if (name && keyObj[name]) return
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
         
-                name = name || Object.keys(keyObj).length
-                keyObj[name] = fn
-                globalFn[key] = keyObj
-                parent.globalFn = globalFn
-            },
-        }
-    })()</script><!-- global head--><script>const GLOBAL_CONFIG = {
-    root: '/',
-    algolia: undefined,
-    localsearch: undefined,
-    runtime: '2021-04-20 00:00:00',
-    lazyload: {
-        enable: true,
-        error: '/img/error_load.webp'
-    },
-    copyright: {"limit":50,"author":"作者: 小林花子","link":"链接: ","source":"来源: Laked22","info":"著作权归作者所有。 商业转载请联系作者获得授权，非商业转载请注明出处。"},
-    highlight: {
-        enable: true,
-        limit: 200,
-        expand: true,
-        copy: true,
-        syntax: 'highlight.js'
-    },
-    randomlink: false,
-    lang: {"theme":{"dark":"已切换至深色模式","light":"已切换至浅色模式"},"copy":{"success":"复制成功","error":"复制失败"},"backtop":"返回顶部","time":{"day":"天前","hour":"小时前","just":"刚刚","min":"分钟前","month":"个月前"},"day":" 天","f12":"开发者模式已打开，请遵循GPL协议。","totalk":"无需删除空行，直接输入评论即可"},
-    aside: {
-        sayhello: {
-            morning: '一日之计在于晨',
-            noon: '吃饱了才有力气干活',
-            afternoon: '集中精力，攻克难关',
-            night: '不要太劳累了，早睡更健康',
-            goodnight: '睡个好觉，保证精力充沛',
-        },
-        sayhello2: ["🤖️ 数码科技爱好者","🔍 分享与热心帮助","🔨 设计开发一条龙","🤝 专修交互与设计","🏃 脚踏实地行动派","🧱 团队小组发动机","💢 壮汉人狠话不多","🎮 电竞游戏爱好者"],
-        sayhello3: {
-            prefix: '好久不见，',
-            back: '欢迎再次回来，',
-        },
-    },
-    covercolor: {
-        enable: true
-    },
-    comment: false,
-    lightbox: 'null',
-    post_ai: false,
-    right_menu: {"mode":{"dark":"深色模式","light":"浅色模式"},"img_error":"此图片无法复制与下载"},
-};</script><!-- page-config head--><script id="config-diff">var PAGE_CONFIG = {
-    is_post: true,
-    is_page: false,
-    is_home: false,
-    page: '',
-    toc: true,
-    comment: false,
-    ai_text: false
-}</script><meta name="generator" content="Hexo 7.2.0"></head><body id="body"><!-- universe--><canvas id="universe"></canvas><!-- loading--><!-- console--><div id="console"><div class="close-btn" onclick="sco.hideConsole()"><i class="solitude st-close-fill"></i></div><div class="button-group"><div class="console-btn-item"><span class="darkmode_switchbutton" onclick="sco.switchDarkMode()" title="昼夜切换"><i class="solitude st-moon-clear-fill"></i></span></div><div class="console-btn-item" id="consoleHideAside"><span class="asideSwitch" onclick="sco.switchHideAside()" title="边栏显示控制"><i class="solitude st-side-bar-fill"></i></span></div></div><div class="console-mask" onclick="sco.hideConsole()"></div></div><!-- sidebar--><div id="sidebar" style="zoom: 1;"><div id="menu-mask" style="display: none;"></div><div id="sidebar-menus"><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">21</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">42</div></a></div></div></div><span class="sidebar-menu-item-title">功能</span><div class="sidebar-menu-item"><span class="darkmode_switchbutton menu-child" onclick="sco.switchDarkMode()"><i class="solitude st-moon-clear-fill"></i><span>显示模式</span></span></div><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">项目</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://github.com/Dafeigy/ChartsGPT" title="ChartsGPT"><img class="nolazyload back-menu-item-icon" src="https://s2.loli.net/2023/05/10/LDUpFzo7VJiOshd.png" alt="ChartsGPT"><span class="back-menu-item-text">ChartsGPT</span></a></div></div></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span>首页</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span>文库</span></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="solitude  st-folder-fill"></i><span>文章列表</span></a></li><li><a class="site-page child" href="/categories/"><i class="solitude  st-checkbox-multiple-blank-fill"></i><span>全部分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="solitude  st-price-tag-fill"></i><span>全部标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span>我的</span></a><ul class="menus_item_child"><li><a class="site-page child" href="/equipment/"><i class="solitude  st-laptop-line"></i><span>装备</span></a></li><li><a class="site-page child" href="/tlink/"><i class="solitude  st-tools-fill"></i><span>工具箱</span></a></li><li><a class="site-page child" href="/music/"><i class="solitude  st-disc-fill"></i><span>音乐馆</span></a></li></ul></div></div><span class="sidebar-menu-item-title">标签</span><div class="card-widget card-tags card-archives card-webinfo card-allinfo"><div class="card-tag-cloud"><a href="/tags/%E9%9A%8F%E6%83%B3/">随想<sup>1</sup></a><a href="/tags/5GNR/">5GNR<sup>3</sup></a><a href="/tags/5G/">5G<sup>2</sup></a><a href="/tags/UE/">UE<sup>1</sup></a><a href="/tags/%E5%85%A5%E7%BD%91/">入网<sup>1</sup></a><a href="/tags/CMA/">CMA<sup>1</sup></a><a href="/tags/%E8%87%AA%E9%80%82%E5%BA%94%E5%9D%87%E8%A1%A1/">自适应均衡<sup>1</sup></a><a href="/tags/Matlab/">Matlab<sup>1</sup></a><a href="/tags/GPT/">GPT<sup>1</sup></a><a href="/tags/ECharts/">ECharts<sup>1</sup></a><a href="/tags/%E9%85%8D%E7%BD%AE/">配置<sup>1</sup></a><a href="/tags/OAI/">OAI<sup>4</sup></a><a href="/tags/%E9%AB%98%E9%80%9F%E7%BC%93%E5%AD%98/">高速缓存<sup>1</sup></a><a href="/tags/CPU/">CPU<sup>1</sup></a><a href="/tags/%E4%BF%A1%E9%81%93%E4%BC%B0%E8%AE%A1/">信道估计<sup>1</sup></a><a href="/tags/%E4%B9%9D%E6%97%A5/">九日<sup>1</sup></a><a href="/tags/%E8%B5%A4%E7%83%9B%E6%B8%B8%E6%88%8F/">赤烛游戏<sup>1</sup></a><a href="/tags/%E7%B1%BB%E9%93%B6%E6%B2%B3%E5%9F%8E/">类银河城<sup>1</sup></a><a href="/tags/%E9%AD%82%E7%B3%BB/">魂系<sup>1</sup></a><a href="/tags/%E7%89%A9%E7%90%86%E5%B1%82/">物理层<sup>1</sup></a><a href="/tags/CMake/">CMake<sup>1</sup></a><a href="/tags/Protobuf/">Protobuf<sup>1</sup></a><a href="/tags/python/">python<sup>1</sup></a><a href="/tags/%E8%A3%85%E9%A5%B0%E5%99%A8/">装饰器<sup>1</sup></a><a href="/tags/Python/">Python<sup>1</sup></a><a href="/tags/Pytorch/">Pytorch<sup>1</sup></a><a href="/tags/Rust/">Rust<sup>2</sup></a><a href="/tags/%E7%A5%9E%E7%BB%8F%E8%BF%9B%E5%8C%96/">神经进化<sup>1</sup></a><a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/">神经网络<sup>2</sup></a><a href="/tags/%E5%A4%9A%E5%B1%82%E6%84%9F%E7%9F%A5%E6%9C%BA/">多层感知机<sup>1</sup></a><a href="/tags/%E6%A0%B8%E5%BF%83%E7%BD%91/">核心网<sup>1</sup></a><a href="/tags/MATX/">MATX<sup>1</sup></a><a href="/tags/%E8%A3%85%E6%9C%BA/">装机<sup>2</sup></a><a href="/tags/Akane/">Akane<sup>1</sup></a><a href="/tags/%E6%B8%85%E7%89%88%E5%B0%84%E5%87%BB/">清版射击<sup>1</sup></a><a href="/tags/Unity/">Unity<sup>1</sup></a><a href="/tags/BepInEx/">BepInEx<sup>1</sup></a><a href="/tags/C/">C#<sup>1</sup></a><a href="/tags/Hades/">Hades<sup>1</sup></a><a href="/tags/Lua/">Lua<sup>1</sup></a><a href="/tags/%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/">源码编译<sup>1</sup></a><a href="/tags/ITX/">ITX<sup>1</sup></a></div></div></div></div><!-- keyboard--><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav class="show" id="nav"><div id="nav-group"><div id="blog_name"><div class="back-home-button" tabindex="-1"><i class="back-home-button-icon solitude st-more-fill"></i><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">项目</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://github.com/Dafeigy/ChartsGPT" title="ChartsGPT"><img class="nolazyload back-menu-item-icon" src="https://s2.loli.net/2023/05/10/LDUpFzo7VJiOshd.png" alt="ChartsGPT"><span class="back-menu-item-text">ChartsGPT</span></a></div></div></div></div><a id="site-name" href="/" title="返回博客主页"><span class="title">Laked22</span></a></div><div id="page-name-mask"><div id="page-name"><a id="page-name-text" onclick="sco.toTop()">Pytorch训练神经网络的一般过程</a></div></div><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><span>首页</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span>文库</span></a><ul class="menus_item_child"><li><a class="site-page child" href="/archives/"><i class="solitude  st-folder-fill"></i><span>文章列表</span></a></li><li><a class="site-page child" href="/categories/"><i class="solitude  st-checkbox-multiple-blank-fill"></i><span>全部分类</span></a></li><li><a class="site-page child" href="/tags/"><i class="solitude  st-price-tag-fill"></i><span>全部标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span>我的</span></a><ul class="menus_item_child"><li><a class="site-page child" href="/equipment/"><i class="solitude  st-laptop-line"></i><span>装备</span></a></li><li><a class="site-page child" href="/tlink/"><i class="solitude  st-tools-fill"></i><span>工具箱</span></a></li><li><a class="site-page child" href="/music/"><i class="solitude  st-disc-fill"></i><span>音乐馆</span></a></li></ul></div></div></div><div id="nav-left"></div><div id="nav-right"><div class="nav-button" id="nav-console"><a class="console_switchbutton" onclick="sco.showConsole()" title="中控台" href="javascript:void(0);"><i class="solitude st-dashboard-fill"></i></a></div><div class="nav-button" id="nav-totop" onclick="sco.toTop()"><a class="totopbtn"><i class="solitude st-arrow-up-line"></i><span id="percent">0</span></a></div><div id="toggle-menu"><a class="site-page"><i class="solitude st-menu-line"></i></a></div></div></div></nav><div class="coverdiv" id="coverdiv"><img class="nolazyload" id="post-cover" src="https://pic.imgdb.cn/item/6696871fd9c307b7e95dc331.jpg" alt="Pytorch训练神经网络的一般过程"></div><div id="post-info"><div id="post-firstinfo"><div class="meta-firstline"><a class="post-meta-original" title="该文章为原创文章，注意版权协议">原创</a><span class="post-meta-categories"><a class="post-meta-categories" href="/categories/Python%E8%BF%9B%E9%98%B6/">Python进阶</a></span><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Python/"><span class="tags-name tags-punctuation">Python</span></a><a class="post-meta__tags" href="/tags/Pytorch/"><span class="tags-name tags-punctuation">Pytorch</span></a></div></div></div></div><h1 class="post-title">Pytorch训练神经网络的一般过程</h1><div id="post-meta"><div class="meta-secondline"></div></div></div><section class="main-hero-waves-area waves-area"><svg class="waves-svg" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto"><defs><path id="gentle-wave" d="M -160 44 c 30 0 58 -18 88 -18 s 58 18 88 18 s 58 -18 88 -18 s 58 18 88 18 v 44 h -352 Z"></path></defs><g class="parallax"><use href="#gentle-wave" x="48" y="0"></use><use href="#gentle-wave" x="48" y="3"></use><use href="#gentle-wave" x="48" y="5"></use><use href="#gentle-wave" x="48" y="7"></use></g></svg></section></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>这个是我在使用<code>Pytorch</code>进行图像相关任务的神经网络构建和训练过程中的一个记录~</p>
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Pytorch训练神经网络的一般过程"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2024-06-02 20:05" pubdate>
+          2024年6月2日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          13 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Pytorch训练神经网络的一般过程</h1>
+            
+              <p id="updated-time" class="note note-info" style="">
+                
+                  
+                    本文最后更新于 2024年8月6日 凌晨
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <p>这个是我在使用<code>Pytorch</code>进行图像相关任务的神经网络构建和训练过程中的一个记录~</p>
 <span id="more"></span>
-
 <h1 id="整体流程"><a href="#整体流程" class="headerlink" title="整体流程"></a>整体流程</h1><p><code>Pytorch</code>中构建神经网络训练自己的数据集是个挺繁琐的事情，主要流程分为数据集的构建、网络构建、训练调参以及结果测试四个部分。数据集的构建最好是使用<code>DataLoader</code>类进行构造，这是<code>Pytorch</code>写好的一个类别，我们只需要简单了解下接口即可顺利地在有监督学习中使用。网络构建则是一个比较中规中矩的过程，写法比较固定，比较好上手；训练调参包含的东西比较繁琐，包括模型参数的调整、加载，以及包含<code>Tensorboard</code>对训练结果的可视化(可选)；最后则是测试部分，这个相对也比较简单。</p>
-<h1 id="数据加载"><a href="#数据加载" class="headerlink" title="数据加载"></a>数据加载</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch.utils.data.DataLoader <span class="keyword">as</span> DataLoader</span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">torch.utils.data.DataLoader(dataset, batch_size=1, shuffle=False, sampler=None,</span></span><br><span class="line"><span class="string">batch_sampler=None, num_workers=0, collate_fn=None,</span></span><br><span class="line"><span class="string">pin_memory=False, drop_last=False, timeout=0,</span></span><br><span class="line"><span class="string">worker_init_fn=None)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
-
+<h1 id="数据加载"><a href="#数据加载" class="headerlink" title="数据加载"></a>数据加载</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> torch.utils.data.DataLoader <span class="hljs-keyword">as</span> DataLoader<br><br><span class="hljs-string">"""</span><br><span class="hljs-string">torch.utils.data.DataLoader(dataset, batch_size=1, shuffle=False, sampler=None,</span><br><span class="hljs-string">batch_sampler=None, num_workers=0, collate_fn=None,</span><br><span class="hljs-string">pin_memory=False, drop_last=False, timeout=0,</span><br><span class="hljs-string">worker_init_fn=None)</span><br><span class="hljs-string">"""</span><br></code></pre></td></tr></table></figure>
 <p>下面对几个重要的参数进行解析。</p>
 <h2 id="dataset"><a href="#dataset" class="headerlink" title="dataset"></a>dataset</h2><p>dataset只接受两种类型的输入，分别是<code>map-style datasets</code>和<code>iterable-style datasets</code>。</p>
 <h3 id="map-style-datasets"><a href="#map-style-datasets" class="headerlink" title="map-style datasets"></a>map-style datasets</h3><p>是一个类，需自行构建两个魔术方法<code>__getitem__()</code>和<code>__len__()</code>，用于表示数据的索引到数据的内容的映射。</p>
@@ -143,75 +410,394 @@
 <li>创建dataset类时可以对数据进行预处理，预处理的函数可以夹杂在<code>__getitem__()</code>方法中进行调用，或者直接在<code>__init__()</code>或<code>__getitem__()</code>中进行编写，但<code>__getitem__()</code>必须根据<code>index</code>返回响应值，因为该值会通过index传到DataLoader类中后续处理。</li>
 </ul>
 <p>这里给出一个基本的模板：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Dataset</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;An abstract class representing a :class:`Dataset`.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    All datasets that represent a map from keys to data samples should subclass</span></span><br><span class="line"><span class="string">    it. All subclasses should overwrite :meth:`__getitem__`, supporting fetching a</span></span><br><span class="line"><span class="string">    data sample for a given key. Subclasses could also optionally overwrite</span></span><br><span class="line"><span class="string">    :meth:`__len__`, which is expected to return the size of the dataset by many</span></span><br><span class="line"><span class="string">    :class:`~torch.utils.data.Sampler` implementations and the default options</span></span><br><span class="line"><span class="string">    of :class:`~torch.utils.data.DataLoader`.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    .. note::</span></span><br><span class="line"><span class="string">      :class:`~torch.utils.data.DataLoader` by default constructs a index</span></span><br><span class="line"><span class="string">      sampler that yields integral indices.  To make it work with a map-style</span></span><br><span class="line"><span class="string">      dataset with non-integral indices/keys, a custom sampler must be provided.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__getitem__</span>(<span class="params">self, index</span>):</span><br><span class="line">        <span class="keyword">raise</span> NotImplementedError</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__len__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">raise</span> NotImplementedError</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Dataset</span>(<span class="hljs-title class_ inherited__">object</span>):<br>    <span class="hljs-string">"""An abstract class representing a :class:`Dataset`.</span><br><span class="hljs-string"></span><br><span class="hljs-string">    All datasets that represent a map from keys to data samples should subclass</span><br><span class="hljs-string">    it. All subclasses should overwrite :meth:`__getitem__`, supporting fetching a</span><br><span class="hljs-string">    data sample for a given key. Subclasses could also optionally overwrite</span><br><span class="hljs-string">    :meth:`__len__`, which is expected to return the size of the dataset by many</span><br><span class="hljs-string">    :class:`~torch.utils.data.Sampler` implementations and the default options</span><br><span class="hljs-string">    of :class:`~torch.utils.data.DataLoader`.</span><br><span class="hljs-string"></span><br><span class="hljs-string">    .. note::</span><br><span class="hljs-string">      :class:`~torch.utils.data.DataLoader` by default constructs a index</span><br><span class="hljs-string">      sampler that yields integral indices.  To make it work with a map-style</span><br><span class="hljs-string">      dataset with non-integral indices/keys, a custom sampler must be provided.</span><br><span class="hljs-string">    """</span><br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__getitem__</span>(<span class="hljs-params">self, index</span>):<br>        <span class="hljs-keyword">raise</span> NotImplementedError<br>        <br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__len__</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-keyword">raise</span> NotImplementedError<br><br></code></pre></td></tr></table></figure>
 <p>给出几种常用的Dataset构造：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> Dataset, DataLoader</span><br><span class="line"></span><br><span class="line"><span class="comment"># 数值类型的数据构造</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Num_dataset</span>(<span class="title class_ inherited__">Dataset</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">    	<span class="comment"># 注意这里输入进来的每个数据是Tensor类型的，承载的部分随便</span></span><br><span class="line">        self.x = torch.randn(<span class="number">1000</span>,<span class="number">3</span>)</span><br><span class="line">        self.y = self.x.<span class="built_in">sum</span>(axis=<span class="number">1</span>)</span><br><span class="line">        self.src,  self.trg = [], []</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1000</span>):</span><br><span class="line">            self.src.append(self.x[i])</span><br><span class="line">            self.trg.append(self.y[i])</span><br><span class="line">           </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__getitem__</span>(<span class="params">self, index</span>):</span><br><span class="line">        <span class="keyword">return</span> self.src[index], self.trg[index]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__len__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">len</span>(self.src) </span><br><span class="line">    </span><br><span class="line"><span class="comment"># 图片类型的数据构造</span></span><br><span class="line"><span class="comment"># 还不完善 等我修补下</span></span><br><span class="line">train_dir = <span class="string">&quot;../data/hotdog/train&quot;</span></span><br><span class="line">test_dir = <span class="string">&quot;../data/hotdog/test&quot;</span></span><br><span class="line"></span><br><span class="line">mean = [<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>]</span><br><span class="line">std = [<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>]</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Img_dataset</span>(<span class="title class_ inherited__">Dataset</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, path</span>):</span><br><span class="line">        data_root = pathlib.Path(path)</span><br><span class="line">        all_image_paths = <span class="built_in">list</span>(data_root.glob(<span class="string">&#x27;*/*&#x27;</span>))</span><br><span class="line">        self.all_image_paths = [<span class="built_in">str</span>(path) <span class="keyword">for</span> path <span class="keyword">in</span> all_image_paths]</span><br><span class="line">        label_names = <span class="built_in">sorted</span>(item.name <span class="keyword">for</span> item <span class="keyword">in</span> data_root.glob(<span class="string">&#x27;*/&#x27;</span>) <span class="keyword">if</span> item.is_dir())</span><br><span class="line">        label_to_index = <span class="built_in">dict</span>((label, index) <span class="keyword">for</span> index, label <span class="keyword">in</span> <span class="built_in">enumerate</span>(label_names))</span><br><span class="line">        self.all_image_labels = [label_to_index[path.parent.name] <span class="keyword">for</span> path <span class="keyword">in</span> all_image_paths]</span><br><span class="line">        self.mean = np.array(mean).reshape((<span class="number">1</span>, <span class="number">1</span>, <span class="number">3</span>))</span><br><span class="line">        self.std = np.array(std).reshape((<span class="number">1</span>, <span class="number">1</span>, <span class="number">3</span>))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__getitem__</span>(<span class="params">self, index</span>):</span><br><span class="line">        img = cv.imread(self.all_image_paths[index])</span><br><span class="line">        img = cv.resize(img, (<span class="number">224</span>, <span class="number">224</span>))</span><br><span class="line">        img = img / <span class="number">255.</span></span><br><span class="line">        img = (img - self.mean) / self.std</span><br><span class="line">        img = np.transpose(img, [<span class="number">2</span>, <span class="number">0</span>, <span class="number">1</span>])</span><br><span class="line">        label = self.all_image_labels[index]</span><br><span class="line">        img = torch.tensor(img, dtype=torch.float32)</span><br><span class="line">        label = torch.tensor(label)</span><br><span class="line">        <span class="keyword">return</span> img, label</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__len__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">len</span>(self.all_image_paths)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h3 id="Iterable-style-datasets"><a href="#Iterable-style-datasets" class="headerlink" title="Iterable-style datasets"></a>Iterable-style datasets</h3><p>可迭代样式的数据集是IterableDataset的一个实例，该实例必须重写__iter__方法,该方法用于对数据集进行迭代。这种类型的数据集特别适合随机读取数据不太可能实现的情况，并且批处理大小batchsize取决于获取的数据。比如读取数据库，远程服务器或者实时日志等数据的时候，可使用该样式，一般时序数据不使用这种样式。我就摸了~</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> torch<br><span class="hljs-keyword">from</span> torch <span class="hljs-keyword">import</span> nn<br><span class="hljs-keyword">from</span> torch.utils.data <span class="hljs-keyword">import</span> Dataset, DataLoader<br><br><span class="hljs-comment"># 数值类型的数据构造</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Num_dataset</span>(<span class="hljs-title class_ inherited__">Dataset</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-built_in">super</span>().__init__()<br>    	<span class="hljs-comment"># 注意这里输入进来的每个数据是Tensor类型的，承载的部分随便</span><br>        self.x = torch.randn(<span class="hljs-number">1000</span>,<span class="hljs-number">3</span>)<br>        self.y = self.x.<span class="hljs-built_in">sum</span>(axis=<span class="hljs-number">1</span>)<br>        self.src,  self.trg = [], []<br>        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">1000</span>):<br>            self.src.append(self.x[i])<br>            self.trg.append(self.y[i])<br>           <br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__getitem__</span>(<span class="hljs-params">self, index</span>):<br>        <span class="hljs-keyword">return</span> self.src[index], self.trg[index]<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__len__</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">len</span>(self.src) <br>    <br><span class="hljs-comment"># 图片类型的数据构造</span><br><span class="hljs-comment"># 还不完善 等我修补下</span><br>train_dir = <span class="hljs-string">"../data/hotdog/train"</span><br>test_dir = <span class="hljs-string">"../data/hotdog/test"</span><br><br>mean = [<span class="hljs-number">0.485</span>, <span class="hljs-number">0.456</span>, <span class="hljs-number">0.406</span>]<br>std = [<span class="hljs-number">0.229</span>, <span class="hljs-number">0.224</span>, <span class="hljs-number">0.225</span>]<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Img_dataset</span>(<span class="hljs-title class_ inherited__">Dataset</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, path</span>):<br>        data_root = pathlib.Path(path)<br>        all_image_paths = <span class="hljs-built_in">list</span>(data_root.glob(<span class="hljs-string">'*/*'</span>))<br>        self.all_image_paths = [<span class="hljs-built_in">str</span>(path) <span class="hljs-keyword">for</span> path <span class="hljs-keyword">in</span> all_image_paths]<br>        label_names = <span class="hljs-built_in">sorted</span>(item.name <span class="hljs-keyword">for</span> item <span class="hljs-keyword">in</span> data_root.glob(<span class="hljs-string">'*/'</span>) <span class="hljs-keyword">if</span> item.is_dir())<br>        label_to_index = <span class="hljs-built_in">dict</span>((label, index) <span class="hljs-keyword">for</span> index, label <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(label_names))<br>        self.all_image_labels = [label_to_index[path.parent.name] <span class="hljs-keyword">for</span> path <span class="hljs-keyword">in</span> all_image_paths]<br>        self.mean = np.array(mean).reshape((<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">3</span>))<br>        self.std = np.array(std).reshape((<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">3</span>))<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__getitem__</span>(<span class="hljs-params">self, index</span>):<br>        img = cv.imread(self.all_image_paths[index])<br>        img = cv.resize(img, (<span class="hljs-number">224</span>, <span class="hljs-number">224</span>))<br>        img = img / <span class="hljs-number">255.</span><br>        img = (img - self.mean) / self.std<br>        img = np.transpose(img, [<span class="hljs-number">2</span>, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>])<br>        label = self.all_image_labels[index]<br>        img = torch.tensor(img, dtype=torch.float32)<br>        label = torch.tensor(label)<br>        <span class="hljs-keyword">return</span> img, label<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__len__</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">len</span>(self.all_image_paths)<br><br></code></pre></td></tr></table></figure>
+<h3 id="Iterable-style-datasets"><a href="#Iterable-style-datasets" class="headerlink" title="Iterable-style datasets"></a>Iterable-style datasets</h3><p>可迭代样式的数据集是IterableDataset的一个实例，该实例必须重写<strong>iter</strong>方法,该方法用于对数据集进行迭代。这种类型的数据集特别适合随机读取数据不太可能实现的情况，并且批处理大小batchsize取决于获取的数据。比如读取数据库，远程服务器或者实时日志等数据的时候，可使用该样式，一般时序数据不使用这种样式。我就摸了~</p>
 <h2 id="batchsize"><a href="#batchsize" class="headerlink" title="batchsize"></a>batchsize</h2><p>一次抽取的数据多少，最好根据数据量的多少以及自己的设备的内存、GPU、显存进行选择，尽量选择2的正整数次幂作为batchsize。</p>
 <h2 id="numworkers"><a href="#numworkers" class="headerlink" title="numworkers"></a>numworkers</h2><p>参与程序使用的CPU核心数，注意使用该参数后需要自写主函数入口：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">"__main__"</span>:<br>    main()<br></code></pre></td></tr></table></figure>
 <h2 id="shuffle"><a href="#shuffle" class="headerlink" title="shuffle"></a>shuffle</h2><p>是否对数据进行打乱，一般都选True，因为数据的相关性会影响网络的训练泛化性能。</p>
 <h1 id="网络构造"><a href="#网络构造" class="headerlink" title="网络构造"></a>网络构造</h1><p>所有的网络构造都需要继承<code>nn.Module</code>类，然后在构造函数<code>__init__()</code>中构造一些网络层的成员，然后重写<code>forward(self,x)</code>成员函数。下面给出LeNet的一个构造示例：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LeNet</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>) -&gt; <span class="literal">None</span>:</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line"></span><br><span class="line">        self.conv1 = nn.Conv2d(<span class="number">1</span>,<span class="number">6</span>,<span class="number">3</span>)</span><br><span class="line">        self.pool1 = nn.MaxPool2d(<span class="number">2</span>,<span class="number">2</span>)</span><br><span class="line">        self.conv2 = nn.Conv2d(<span class="number">6</span>,<span class="number">16</span>,<span class="number">3</span>)</span><br><span class="line">        self.pool2 = nn.MaxPool2d(<span class="number">2</span>,<span class="number">2</span>)</span><br><span class="line">        self.fc1 = nn.Linear(<span class="number">16</span>*<span class="number">6</span>*<span class="number">6</span>, <span class="number">120</span>)</span><br><span class="line">        self.fc2 = nn.Linear(<span class="number">120</span>, <span class="number">84</span>)</span><br><span class="line">        self.fc3 = nn.Linear(<span class="number">84</span>,<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self,x</span>):</span><br><span class="line">        x = self.pool1(torch.relu(self.conv1(x)))</span><br><span class="line">        x = self.pool2(torch.relu(self.conv2(x)))</span><br><span class="line">        x = x.view(x.size(<span class="number">0</span>),-<span class="number">1</span>)</span><br><span class="line">        x = torch.relu(self.fc1(x))</span><br><span class="line">        x = torch.relu(self.fc2(x))</span><br><span class="line">        x = self.fc3(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> torch.nn <span class="hljs-keyword">as</span> nn<br><span class="hljs-keyword">import</span> torch<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">LeNet</span>(nn.Module):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>) -&gt; <span class="hljs-literal">None</span>:<br>        <span class="hljs-built_in">super</span>().__init__()<br><br>        self.conv1 = nn.Conv2d(<span class="hljs-number">1</span>,<span class="hljs-number">6</span>,<span class="hljs-number">3</span>)<br>        self.pool1 = nn.MaxPool2d(<span class="hljs-number">2</span>,<span class="hljs-number">2</span>)<br>        self.conv2 = nn.Conv2d(<span class="hljs-number">6</span>,<span class="hljs-number">16</span>,<span class="hljs-number">3</span>)<br>        self.pool2 = nn.MaxPool2d(<span class="hljs-number">2</span>,<span class="hljs-number">2</span>)<br>        self.fc1 = nn.Linear(<span class="hljs-number">16</span>*<span class="hljs-number">6</span>*<span class="hljs-number">6</span>, <span class="hljs-number">120</span>)<br>        self.fc2 = nn.Linear(<span class="hljs-number">120</span>, <span class="hljs-number">84</span>)<br>        self.fc3 = nn.Linear(<span class="hljs-number">84</span>,<span class="hljs-number">10</span>)<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self,x</span>):<br>        x = self.pool1(torch.relu(self.conv1(x)))<br>        x = self.pool2(torch.relu(self.conv2(x)))<br>        x = x.view(x.size(<span class="hljs-number">0</span>),-<span class="hljs-number">1</span>)<br>        x = torch.relu(self.fc1(x))<br>        x = torch.relu(self.fc2(x))<br>        x = self.fc3(x)<br>        <span class="hljs-keyword">return</span> x<br></code></pre></td></tr></table></figure>
 <p><code>Pytorch</code>构造的网络使用方式比较直观，在实例化对象后，可以直接使调用输出结果：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    model = LeNet()</span><br><span class="line">    ret = model(torch.randn(<span class="number">1</span>,<span class="number">1</span>,<span class="number">32</span>,<span class="number">32</span>))</span><br><span class="line">    <span class="built_in">print</span>(ret.shape)</span><br><span class="line">    <span class="comment">#torch.Size([1, 10])</span></span><br></pre></td></tr></table></figure>
-
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">"__main__"</span>:<br>    model = LeNet()<br>    ret = model(torch.randn(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,<span class="hljs-number">32</span>,<span class="hljs-number">32</span>))<br>    <span class="hljs-built_in">print</span>(ret.shape)<br>    <span class="hljs-comment">#torch.Size([1, 10])</span><br></code></pre></td></tr></table></figure>
 <p>这是因为它继承了<code>nn.Module</code>中的<code>__call__()</code>方法，而默认的<code>__call__()</code>方法则是定义为调用<code>forward(self,x)</code>这个成员函数。</p>
-<h1 id="模型训练"><a href="#模型训练" class="headerlink" title="模型训练"></a>模型训练</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">from</span> model <span class="keyword">import</span> LeNet</span><br><span class="line"></span><br><span class="line"><span class="comment">#Dataset</span></span><br><span class="line"><span class="keyword">from</span> torchvision.datasets <span class="keyword">import</span> MNIST</span><br><span class="line"><span class="keyword">import</span> torchvision.transforms <span class="keyword">as</span> transforms</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> DataLoader</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># Load Data</span></span><br><span class="line"></span><br><span class="line">data_train = MNIST(<span class="string">&#x27;./data&#x27;</span>, </span><br><span class="line">                    download = <span class="literal">True</span>, </span><br><span class="line">                    transform = transforms.Compose([transforms.Resize((<span class="number">32</span>,<span class="number">32</span>)),transforms.ToTensor()]))</span><br><span class="line"></span><br><span class="line">data_train_loader = DataLoader(data_train, batch_size = <span class="number">32</span>, shuffle= <span class="literal">True</span>, num_workers=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Model</span></span><br><span class="line">model = LeNet()</span><br><span class="line"><span class="comment"># 切换状态</span></span><br><span class="line">model.train()</span><br><span class="line">lr = <span class="number">1e-2</span></span><br><span class="line">loss_func = nn.CrossEntropyLoss()</span><br><span class="line">optimizer = torch.optim.SGD(model.parameters(), lr = lr, momentum = <span class="number">0.9</span>, weight_decay = <span class="number">5e-4</span>)</span><br><span class="line"></span><br><span class="line">train_loss = <span class="number">0</span></span><br><span class="line">correct = <span class="number">0</span></span><br><span class="line">total = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> batch_idx, (inputs, targets) <span class="keyword">in</span> <span class="built_in">enumerate</span>(data_train_loader):</span><br><span class="line"></span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        outputs = model(inputs)</span><br><span class="line">        loss = loss_func(outputs, targets)</span><br><span class="line">        loss.backward()</span><br><span class="line">        optimizer.step()</span><br><span class="line"></span><br><span class="line">        train_loss += loss.item()</span><br><span class="line">        _, predicted = outputs.<span class="built_in">max</span>(<span class="number">1</span>)</span><br><span class="line">        total += targets.size(<span class="number">0</span>)</span><br><span class="line">        correct += predicted.eq(targets).<span class="built_in">sum</span>().item()</span><br><span class="line"></span><br><span class="line">        <span class="built_in">print</span>(batch_idx, <span class="built_in">len</span>(data_train_loader), <span class="string">&quot;Loss: %.3f | ACC: %.3f%% (%d/%d)&quot;</span> % (train_loss/(batch_idx+<span class="number">1</span>), <span class="number">100.</span>*correct/total, correct, total))</span><br><span class="line">        </span><br></pre></td></tr></table></figure>
-
+<h1 id="模型训练"><a href="#模型训练" class="headerlink" title="模型训练"></a>模型训练</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> torch<br><span class="hljs-keyword">import</span> torch.nn <span class="hljs-keyword">as</span> nn<br><span class="hljs-keyword">from</span> model <span class="hljs-keyword">import</span> LeNet<br><br><span class="hljs-comment">#Dataset</span><br><span class="hljs-keyword">from</span> torchvision.datasets <span class="hljs-keyword">import</span> MNIST<br><span class="hljs-keyword">import</span> torchvision.transforms <span class="hljs-keyword">as</span> transforms<br><span class="hljs-keyword">from</span> torch.utils.data <span class="hljs-keyword">import</span> DataLoader<br><br><br><span class="hljs-comment"># Load Data</span><br><br>data_train = MNIST(<span class="hljs-string">'./data'</span>, <br>                    download = <span class="hljs-literal">True</span>, <br>                    transform = transforms.Compose([transforms.Resize((<span class="hljs-number">32</span>,<span class="hljs-number">32</span>)),transforms.ToTensor()]))<br><br>data_train_loader = DataLoader(data_train, batch_size = <span class="hljs-number">32</span>, shuffle= <span class="hljs-literal">True</span>, num_workers=<span class="hljs-number">1</span>)<br><br><span class="hljs-comment"># Model</span><br>model = LeNet()<br><span class="hljs-comment"># 切换状态</span><br>model.train()<br>lr = <span class="hljs-number">1e-2</span><br>loss_func = nn.CrossEntropyLoss()<br>optimizer = torch.optim.SGD(model.parameters(), lr = lr, momentum = <span class="hljs-number">0.9</span>, weight_decay = <span class="hljs-number">5e-4</span>)<br><br>train_loss = <span class="hljs-number">0</span><br>correct = <span class="hljs-number">0</span><br>total = <span class="hljs-number">0</span><br><br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">'__main__'</span>:<br><br><br>    <span class="hljs-keyword">for</span> batch_idx, (inputs, targets) <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(data_train_loader):<br><br>        optimizer.zero_grad()<br>        outputs = model(inputs)<br>        loss = loss_func(outputs, targets)<br>        loss.backward()<br>        optimizer.step()<br><br>        train_loss += loss.item()<br>        _, predicted = outputs.<span class="hljs-built_in">max</span>(<span class="hljs-number">1</span>)<br>        total += targets.size(<span class="hljs-number">0</span>)<br>        correct += predicted.eq(targets).<span class="hljs-built_in">sum</span>().item()<br><br>        <span class="hljs-built_in">print</span>(batch_idx, <span class="hljs-built_in">len</span>(data_train_loader), <span class="hljs-string">"Loss: %.3f | ACC: %.3f%% (%d/%d)"</span> % (train_loss/(batch_idx+<span class="hljs-number">1</span>), <span class="hljs-number">100.</span>*correct/total, correct, total))<br>        <br></code></pre></td></tr></table></figure>
 <p>值得注意的是，这里的训练只训练了一个epoch，如果训练多个epoch则需要再套一层for循环。</p>
 <p>如果要使用一些已经预训练好的模型的权重，则可以选择加载部分权重。分为几种情况：</p>
-<h2 id="结构相同，某些层不加载"><a href="#结构相同，某些层不加载" class="headerlink" title="结构相同，某些层不加载"></a>结构相同，某些层不加载</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">model = LeNet()</span><br><span class="line">model_dict = model.state_dict()<span class="comment">#新的模型结构</span></span><br><span class="line">pre_train = torch.load(<span class="string">&#x27;model.pth&#x27;</span>)</span><br><span class="line">pretrain_dict = pre_train.state_dict()<span class="comment">#已有的模型权重</span></span><br><span class="line"><span class="keyword">for</span> each <span class="keyword">in</span> pretrain_dict:</span><br><span class="line">    <span class="built_in">print</span>(each)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;--------------------&#x27;</span>)</span><br><span class="line"></span><br><span class="line">load_pretrained_dict = &#123;key: value <span class="keyword">for</span> key, value <span class="keyword">in</span> pretrain_dict.items() <span class="keyword">if</span> (key <span class="keyword">in</span> model_dict <span class="keyword">and</span> <span class="string">&#x27;fc1&#x27;</span> <span class="keyword">not</span> <span class="keyword">in</span> key)&#125;</span><br><span class="line"><span class="keyword">for</span> each <span class="keyword">in</span> load_pretrained_dict:</span><br><span class="line">    <span class="built_in">print</span>(each)</span><br><span class="line"></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">conv1.weight</span></span><br><span class="line"><span class="string">conv1.bias</span></span><br><span class="line"><span class="string">conv2.weight</span></span><br><span class="line"><span class="string">conv2.bias</span></span><br><span class="line"><span class="string">fc1.weight</span></span><br><span class="line"><span class="string">fc1.bias</span></span><br><span class="line"><span class="string">fc2.weight</span></span><br><span class="line"><span class="string">fc2.bias</span></span><br><span class="line"><span class="string">fc3.weight</span></span><br><span class="line"><span class="string">fc3.bias</span></span><br><span class="line"><span class="string">--------------------</span></span><br><span class="line"><span class="string">conv1.weight</span></span><br><span class="line"><span class="string">conv1.bias</span></span><br><span class="line"><span class="string">conv2.weight</span></span><br><span class="line"><span class="string">conv2.bias</span></span><br><span class="line"><span class="string">fc2.weight</span></span><br><span class="line"><span class="string">fc2.bias</span></span><br><span class="line"><span class="string">fc3.weight</span></span><br><span class="line"><span class="string">fc3.bias</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
-
+<h2 id="结构相同，某些层不加载"><a href="#结构相同，某些层不加载" class="headerlink" title="结构相同，某些层不加载"></a>结构相同，某些层不加载</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs python">model = LeNet()<br>model_dict = model.state_dict()<span class="hljs-comment">#新的模型结构</span><br>pre_train = torch.load(<span class="hljs-string">'model.pth'</span>)<br>pretrain_dict = pre_train.state_dict()<span class="hljs-comment">#已有的模型权重</span><br><span class="hljs-keyword">for</span> each <span class="hljs-keyword">in</span> pretrain_dict:<br>    <span class="hljs-built_in">print</span>(each)<br><span class="hljs-built_in">print</span>(<span class="hljs-string">'--------------------'</span>)<br><br>load_pretrained_dict = {key: value <span class="hljs-keyword">for</span> key, value <span class="hljs-keyword">in</span> pretrain_dict.items() <span class="hljs-keyword">if</span> (key <span class="hljs-keyword">in</span> model_dict <span class="hljs-keyword">and</span> <span class="hljs-string">'fc1'</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> key)}<br><span class="hljs-keyword">for</span> each <span class="hljs-keyword">in</span> load_pretrained_dict:<br>    <span class="hljs-built_in">print</span>(each)<br><br><span class="hljs-string">'''</span><br><span class="hljs-string">conv1.weight</span><br><span class="hljs-string">conv1.bias</span><br><span class="hljs-string">conv2.weight</span><br><span class="hljs-string">conv2.bias</span><br><span class="hljs-string">fc1.weight</span><br><span class="hljs-string">fc1.bias</span><br><span class="hljs-string">fc2.weight</span><br><span class="hljs-string">fc2.bias</span><br><span class="hljs-string">fc3.weight</span><br><span class="hljs-string">fc3.bias</span><br><span class="hljs-string">--------------------</span><br><span class="hljs-string">conv1.weight</span><br><span class="hljs-string">conv1.bias</span><br><span class="hljs-string">conv2.weight</span><br><span class="hljs-string">conv2.bias</span><br><span class="hljs-string">fc2.weight</span><br><span class="hljs-string">fc2.bias</span><br><span class="hljs-string">fc3.weight</span><br><span class="hljs-string">fc3.bias</span><br><span class="hljs-string">'''</span><br></code></pre></td></tr></table></figure>
 <h2 id="结构不同，不同层不加载"><a href="#结构不同，不同层不加载" class="headerlink" title="结构不同，不同层不加载"></a>结构不同，不同层不加载</h2><p>与上面类似，只不过把筛选语句修改以下就可以了：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">load_pretrained_dict = &#123;key: value <span class="keyword">for</span> key, value <span class="keyword">in</span> pretrain_dict.items() <span class="keyword">if</span> (key <span class="keyword">in</span> model_dict)&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">load_pretrained_dict = {key: value <span class="hljs-keyword">for</span> key, value <span class="hljs-keyword">in</span> pretrain_dict.items() <span class="hljs-keyword">if</span> (key <span class="hljs-keyword">in</span> model_dict)}<br></code></pre></td></tr></table></figure>
 
-</article><div class="post-copyright"><div class="post-copyright__author_group"><a class="post-copyright__author_img" href="/about/"><img class="post-copyright__author_img_front" src= "/img/loading.gif" data-lazy-src="https://pic.imgdb.cn/item/6696936cd9c307b7e97a9c1d.png"></a><div class="post-copyright__author_name">Laked22</div><div class="post-copyright__author_desc"></div></div><div class="post-tools" id="post-tools"><div class="post-tools-left"><div id="quit-box" onclick="RemoveRewardMask()"></div></div></div><div class="post-copyright__notice"><span class="post-copyright-info">本文是原创文章，采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0</a>协议，完整转载请注明来自<a href="/">Laked22</a></span></div></div><div class="post-tools-right"><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Python/"><span class="tags-punctuation"></span>Python<span class="tagsPageCount">1</span></a><a class="post-meta__tags" href="/tags/Pytorch/"><span class="tags-punctuation"></span>Pytorch<span class="tagsPageCount">1</span></a></div></div><div class="social-share"></div></div><nav class="needEndHide pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/06/02/%E7%BC%96%E8%AF%91Lua%E6%BA%90%E7%A0%81/"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Lua源码编译</div></div></a></div><div class="next-post pull-right"><a href="/2024/06/02/Python%E8%A3%85%E9%A5%B0%E5%99%A8/"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Python装饰器解析与使用场景</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-content"><div class="card-info-bg-top"><div class="is-center"><div class="author-info__top-group"><div class="author-info__sayhi" id="author-info__sayhi" onclick="sco.changeSayHelloText()">sayhello.morning</div></div></div></div><a class="card-info-avatar" href="/about/" title="头像"><div class="avatar-img"><img src= "/img/loading.gif" data-lazy-src="https://pic.imgdb.cn/item/6696936cd9c307b7e97a9c1d.png" alt="头像"></div></a><div class="card-info__desc_group"><div class="author-info__name">小林花子</div><div class="author-info__desc"></div><div class="card-info__data is-center"><a href="/archives/" title="累计文章数:21"><div class="length-num">21</div><div class="headline">文章</div></a><a href="/tags/" title="标签总数:42"><div class="length-num">42</div><div class="headline">标签</div></a><a href="/categories/" title="分类总数:8"><div class="length-num">8</div><div class="headline">分类</div></a></div><div class="card-info-social-icons is-center"><a class="social-icon" target="_blank" rel="noopener" href="https://github.com/dafeigy" title="Github"><i class="solitude  st-github-line"></i></a></div></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="solitude st-menu-line"></i><span>文章目录</span></div><div class="toc-content" id="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%95%B4%E4%BD%93%E6%B5%81%E7%A8%8B"><span class="toc-text">整体流程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%8A%A0%E8%BD%BD"><span class="toc-text">数据加载</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#dataset"><span class="toc-text">dataset</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#map-style-datasets"><span class="toc-text">map-style datasets</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Iterable-style-datasets"><span class="toc-text">Iterable-style datasets</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#batchsize"><span class="toc-text">batchsize</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#numworkers"><span class="toc-text">numworkers</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#shuffle"><span class="toc-text">shuffle</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E6%9E%84%E9%80%A0"><span class="toc-text">网络构造</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83"><span class="toc-text">模型训练</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E6%9E%84%E7%9B%B8%E5%90%8C%EF%BC%8C%E6%9F%90%E4%BA%9B%E5%B1%82%E4%B8%8D%E5%8A%A0%E8%BD%BD"><span class="toc-text">结构相同，某些层不加载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E6%9E%84%E4%B8%8D%E5%90%8C%EF%BC%8C%E4%B8%8D%E5%90%8C%E5%B1%82%E4%B8%8D%E5%8A%A0%E8%BD%BD"><span class="toc-text">结构不同，不同层不加载</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="solitude st-map-line"></i><span>最近发布</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2024/07/16/How-CPU-Cache-Work/" title="【译】Exploring How Cache Memory Really Works"><img alt="【译】Exploring How Cache Memory Really Works" src= "/img/loading.gif" data-lazy-src="https://pic.imgdb.cn/item/6696805ad9c307b7e94e067b.jpg"></a><div class="content"><a class="title" href="/2024/07/16/How-CPU-Cache-Work/" title="【译】Exploring How Cache Memory Really Works">【译】Exploring How Cache Memory Really Works</a><a class="article-recent_post_categories" href="/2024/07/16/How-CPU-Cache-Work/">文章翻译</a></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/07/09/OAI-Multi_UEs_behaviors/" title="OAI开发记录——多UE接入下的物理层行为"><img alt="OAI开发记录——多UE接入下的物理层行为" src= "/img/loading.gif" data-lazy-src="https://pic.imgdb.cn/item/6696865ad9c307b7e95be385.jpg"></a><div class="content"><a class="title" href="/2024/07/09/OAI-Multi_UEs_behaviors/" title="OAI开发记录——多UE接入下的物理层行为">OAI开发记录——多UE接入下的物理层行为</a><a class="article-recent_post_categories" href="/2024/07/09/OAI-Multi_UEs_behaviors/">OAI</a></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/07/08/Rust-Snake-AI-NN-related/" title="使用Rust编写游玩贪吃蛇的神经网络（一）"><img alt="使用Rust编写游玩贪吃蛇的神经网络（一）" src= "/img/loading.gif" data-lazy-src="https://s2.loli.net/2024/07/04/QAtIcu4ROM9Sk3N.png"></a><div class="content"><a class="title" href="/2024/07/08/Rust-Snake-AI-NN-related/" title="使用Rust编写游玩贪吃蛇的神经网络（一）">使用Rust编写游玩贪吃蛇的神经网络（一）</a><a class="article-recent_post_categories" href="/2024/07/08/Rust-Snake-AI-NN-related/">摸鱼折腾</a></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/07/01/Rust-Snake-AI-Introduction/" title="使用Rust编写游玩贪吃蛇的神经网络（零）"><img alt="使用Rust编写游玩贪吃蛇的神经网络（零）" src= "/img/loading.gif" data-lazy-src="https://s2.loli.net/2024/07/04/QAtIcu4ROM9Sk3N.png"></a><div class="content"><a class="title" href="/2024/07/01/Rust-Snake-AI-Introduction/" title="使用Rust编写游玩贪吃蛇的神经网络（零）">使用Rust编写游玩贪吃蛇的神经网络（零）</a><a class="article-recent_post_categories" href="/2024/07/01/Rust-Snake-AI-Introduction/">摸鱼折腾</a></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/06/24/ChartsGPT%20%E6%9E%84%E5%BB%BA/" title="ChartsGPT：使用自然语言生成图表"><img alt="ChartsGPT：使用自然语言生成图表" src= "/img/loading.gif" data-lazy-src="https://pic.imgdb.cn/item/66968691d9c307b7e95c57f0.png"></a><div class="content"><a class="title" href="/2024/06/24/ChartsGPT%20%E6%9E%84%E5%BB%BA/" title="ChartsGPT：使用自然语言生成图表">ChartsGPT：使用自然语言生成图表</a><a class="article-recent_post_categories" href="/2024/06/24/ChartsGPT%20%E6%9E%84%E5%BB%BA/">摸鱼折腾</a></div></div></div></div></div></div></main><footer id="footer"><div id="st-footer-bar"><div class="footer-logo"><span>Laked22</span></div><div class="footer-bar-description">来自 Cybersh1t 的文章</div><a class="footer-bar-link" href="/about/">了解更多</a></div><div id="footer_deal"></div><div id="st-footer"></div><div id="footer-bar"><div class="footer-bar-links"><div class="footer-bar-left"><div class="copyright">© 2021 - 2024 By&nbsp;<a class="footer-bar-link" href="/">小林花子</a></div></div><div class="footer-bar-right"><a class="footer-bar-link" target="_blank" rel="noopener" href="https://github.com/valor-x/hexo-theme-solitude" alt="主题">主题</a><a class="footer-bar-link cc" href="/null" aria-label="copyright"><i class="solitude st-copyright-line"></i><i class="solitude st-creative-commons-by-line"></i><i class="solitude st-creative-commons-nc-line"></i><i class="solitude st-creative-commons-nd-line"></i></a></div></div></div></footer></div><!-- right_menu--><div id="rightMenu"><div class="rightMenu-group rightMenu-small"><div class="rightMenu-item" id="menu-backward"><i class="solitude st-arrow-left-line"></i></div><div class="rightMenu-item" id="menu-forward"><i class="solitude st-arrow-right-line"></i></div><div class="rightMenu-item" id="menu-refresh"><i class="solitude st-restart-line"></i></div><div class="rightMenu-item" id="menu-top"><i class="solitude st-arrow-up-line"></i></div></div><div class="rightMenu-group rightMenu-line rightMenuPlugin"><div class="rightMenu-item" id="menu-copytext"><i class="solitude st-copy-fill"></i><span>复制选中文本</span></div><div class="rightMenu-item" id="menu-pastetext"><i class="solitude st-clipboard-fill"></i><span>粘贴文本</span></div><div class="rightMenu-item" id="menu-newwindow"><i class="solitude st-window-fill"></i><span>新窗口打开</span></div><div class="rightMenu-item" id="menu-copylink"><i class="solitude st-link-line"></i><span>复制链接地址</span></div><div class="rightMenu-item" id="menu-copyimg"><i class="solitude st-copy-fill"></i><span>复制此图片</span></div><div class="rightMenu-item" id="menu-downloadimg"><i class="solitude st-download-cloud-fill"></i><span>下载此图片</span></div></div><div class="rightMenu-group rightMenu-line rightMenuOther"></div><div class="rightMenu-group rightMenu-line rightMenuOther"><div class="rightMenu-item" id="menu-darkmode" onclick="sco.switchDarkMode()"><i class="solitude st-moon-clear-fill"></i><span class="menu-darkmode-text">深色模式</span></div></div></div><div id="rightmenu-mask"></div><!-- inject body--><div><script src="/js/utils.js?v=1.11.3"></script><script src="/js/main.js?v=1.11.3"></script><script src="/js/third_party/waterfall.min.js?v=1.11.3"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/pjax/0.2.8/pjax.min.js"></script><script src="/js/third_party/universe.min.js?v=1.11.3"></script><script>dark()
-</script><script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-lazyload/19.1.3/lazyload.iife.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/node-snackbar/0.1.16/snackbar.min.js"></script><script src="/js/covercolor/local.js?v=1.11.3"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js"></script><script src="/js/right_menu.js?v=1.11.3"></script><div class="js-pjax"></div></div><!-- newest comment--><!-- pjax--><script>const pjax = new Pjax({
-    elements: 'a:not([target="_blank"])',
-    selectors: ['title','#body-wrap','#site-config','meta[name="description"]','.js-pjax','meta[property^="og:"]','#config-diff'],
-    cacheBust: false,
-    analytics: false,
-    scrollRestoration: false
-})
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
 
-document.querySelectorAll('script[data-pjax]').forEach(item => {
-    const newScript = document.createElement('script')
-    const content = item.text || item.textContent || item.innerHTML || ""
-    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
-    newScript.appendChild(document.createTextNode(content))
-    item.parentNode.replaceChild(newScript, item)
-})
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Python%E8%BF%9B%E9%98%B6/" class="category-chain-item">Python进阶</a>
+  
+  
 
-document.addEventListener('pjax:complete', () => {
-    window.refreshFn()
+      </span>
+    
+  
+</span>
 
-    document.querySelectorAll('script[data-pjax]').forEach(item => {
-        const newScript = document.createElement('script')
-        const content = item.text || item.textContent || item.innerHTML || ""
-        Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
-        newScript.appendChild(document.createTextNode(content))
-        item.parentNode.replaceChild(newScript, item)
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/Python/" class="print-no-link">#Python</a>
+      
+        <a href="/tags/Pytorch/" class="print-no-link">#Pytorch</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Pytorch训练神经网络的一般过程</div>
+      <div>http://example.com/2024/06/02/Pytorch训练模型的基本过程/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>L4k3d22</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2024年6月2日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/06/02/%E7%BC%96%E8%AF%91Lua%E6%BA%90%E7%A0%81/" title="Lua源码编译">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Lua源码编译</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2024/06/02/Python%E8%A3%85%E9%A5%B0%E5%99%A8/" title="Python装饰器解析与使用场景">
+                        <span class="hidden-mobile">Python装饰器解析与使用场景</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://github.com/dafeigy" target="_blank" rel="nofollow noopener"><span>L4k3d22</span></a> <i class="iconfont icon-tool"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
     })
+  </script>
 
-    GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
 
-})
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
 
-document.addEventListener('pjax:error', (e) => {
-    if (e.request.status === 404) {
-        pjax.loadUrl('/404.html')
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
     }
-})</script><!-- theme--><script>initTheme = () => {
-    const cachedMode = utils.saveToLocal.get('theme');
-    if (cachedMode === undefined)
-        document.documentElement.setAttribute('data-theme', 'light');
-    else
-        document.documentElement.setAttribute('data-theme', cachedMode);
-    is_rm && rm.mode(cachedMode === 'dark')
-}
-initTheme()</script><!-- google adsense--><!-- search--><!-- Tianli-Talk--><!-- music--></body></html><script>const posts=["2024/07/16/How-CPU-Cache-Work/","2024/07/09/OAI-Multi_UEs_behaviors/","2024/07/08/Rust-Snake-AI-NN-related/","2024/07/01/Rust-Snake-AI-Introduction/","2024/06/24/ChartsGPT 构建/","2024/06/16/Nine-Sols-Reports/","2024/06/05/24年杂记/","2024/06/03/清板射击/","2024/06/02/5G手机接入入网流程/","2024/06/02/5GNR-参考信号（一）/","2024/06/02/5GNR-参考信号（三）/","2024/06/02/5GNR-参考信号（二）/","2024/06/02/装机/","2024/06/02/编译Lua源码/","2024/06/02/Pytorch训练模型的基本过程/","2024/06/02/Python装饰器/","2024/06/02/LS信道估计与OAI实现/","2024/06/02/Free5GC+OAI gNB+COTSUE/","2024/06/02/free5gc + OAI gNB + OAI nrUE/","2024/06/02/CMA/","2022/06/18/乔斯伯主力/"];function toRandomPost(){ pjax.loadUrl('/'+posts[Math.floor(Math.random()*posts.length)]); }</script>
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
